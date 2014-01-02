@@ -31,13 +31,21 @@ int main(int argc, char **argv) {
 	size_t id = sig.connect(dummy);
 	
 	const int input = 100;
-	std::vector<int> val = sig.emit(input);
-	assert((val.size() == 1) && (val[0] == dummy(input)));
+	int numVal = sig.emit(input);
+	std::vector<int> val = sig.results();
+	assert(numVal == val.size());
+	assert(val.size() == 1);
+	assert(val[0] == dummy(input));
+
 	val.clear();
 
 	size_t id2 = sig.connect(dummy2);
-	val = sig.emit(input);
-	assert((val.size() == 2) && (val[0] == dummy(input)) && (val[1] == dummy2(input)));
+	numVal = sig.emit(input);
+	val = sig.results();
+	assert(numVal == val.size());
+	assert(val.size() == 2);
+	assert(val[0] == dummy(input));
+	assert(val[1] == dummy2(input));
 
 	//tests
 	{

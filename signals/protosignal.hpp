@@ -39,11 +39,15 @@ public:
 		}
 	}
 
-	ResultValue emit(Args... args) {
-		Result result; //TODO: test with an alternate collector
+	size_t emit(Args... args) {
+		result.clear();
 		for each (auto cb in callbacks) {
 			result(cb.second->callback(args...));
 		}
+		return callbacks.size();
+	}
+
+	ResultValue results() {
 		return result.get();
 	}
 
@@ -61,4 +65,5 @@ private:
 
 	ConnectionManager callbacks; //TODO: make an interface for the ConnectionManager to remove code from this class
 	std::atomic<size_t> uid;
+	Result result;
 };

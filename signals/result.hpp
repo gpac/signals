@@ -3,29 +3,7 @@
 #include <vector>
 
 
-//get the last value when multiple calls
-template<typename Result>
-class ResultLast {
-public:
-	typedef Result ResultValue;
-
-	explicit ResultLast() {
-	}
-
-	bool operator() (Result r) {
-		last = r;
-		return true;
-	}
-
-	Result get() {
-		return last;
-	}
-
-private:
-	Result last;
-};
-
-//FIXME: needs to make a copy of the value
+//FIXME: needs to make a copy of the result value
 template<typename Result>
 class ResultVector {
 public:
@@ -41,6 +19,10 @@ public:
 
 	std::vector<Result>& get() {
 		return results;
+	}
+
+	void clear() {
+		results.clear();
 	}
 
 private:
