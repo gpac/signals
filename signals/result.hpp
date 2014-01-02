@@ -1,13 +1,15 @@
 #pragma once
 
+#include <vector>
 
-//get the last value when multiple calls //TODO: alt implem with a vector of results?
+
+//get the last value when multiple calls
 template<typename Result>
 class ResultLast {
 public:
 	typedef Result ResultValue;
 
-	explicit ResultLast() : last() {
+	explicit ResultLast() {
 	}
 
 	bool operator() (Result r) {
@@ -15,7 +17,7 @@ public:
 		return true;
 	}
 
-	Result result() {
+	Result get() {
 		return last;
 	}
 
@@ -23,6 +25,28 @@ private:
 	Result last;
 };
 
+//FIXME: needs to make a copy of the value
 template<typename Result>
-class ResultDefault : public ResultLast<Result> {
+class ResultVector {
+public:
+	typedef std::vector<Result> ResultValue;
+
+	explicit ResultVector() {
+	}
+
+	bool operator() (Result r) {
+		results.push_back(r);
+		return true;
+	}
+
+	std::vector<Result>& get() {
+		return results;
+	}
+
+private:
+	std::vector<Result> results;
+};
+
+template<typename Result>
+class ResultDefault : public ResultVector<Result> {
 };

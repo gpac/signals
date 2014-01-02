@@ -44,7 +44,7 @@ public:
 		for each (auto cb in callbacks) {
 			result(cb.second->callback(args...));
 		}
-		return result.result();
+		return result.get();
 	}
 
 protected:
