@@ -3,19 +3,19 @@
 #include <vector>
 
 
-template<typename Result>
+template<typename ResultType>
 class ResultVector {
 public:
-	typedef std::vector<Result> ResultValue;
+	typedef std::vector<ResultType> ResultValue;
 
 	explicit ResultVector() {
 	}
 
-	void set(Result r) {
+	void set(ResultType r) {
 		results.push_back(r);
 	}
 
-	std::vector<Result>& get() {
+	std::vector<ResultType>& get() {
 		return results;
 	}
 
@@ -24,5 +24,5 @@ public:
 	}
 
 private:
-	std::vector<Result> results;
+	std::vector<ResultType> results;
 };
