@@ -8,5 +8,6 @@
     <ClInclude Include="protosignal.hpp" />
     <ClInclude Include="result.hpp" />
     <ClInclude Include="connection.hpp" />
+    <ClInclude Include="caller.hpp" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "caller.hpp"
 #include "connection.hpp"
 
 #include <atomic>
@@ -11,10 +12,10 @@
 
 template<typename, typename> class ProtoSignal;
 
-template<typename Result, typename R, typename... Args>
-class ProtoSignal<R(Args...), Result> {
+template<typename Result, typename Callback, typename... Args>
+class ProtoSignal<Result, Callback(Args...)> : private CallerSync<Result, Callback(Args...)> {
 protected:
-	typedef std::function<R(Args...)> Callback;
+	typedef std::function<Callback(Args...)> Callback;
 
 private:
 	typedef typename Result::ResultValue ResultValue;
@@ -42,7 +43,7 @@ public:
 	size_t emit(Args... args) {
 		result.clear();
 		for each (auto cb in callbacks) {
-			result(cb.second->callback(args...));
+			call(result, cb.second->callback, args...);
 		}
 		return callbacks.size();
 	}

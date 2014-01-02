@@ -78,6 +78,7 @@
     <ClCompile Include="signal_test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="caller.hpp" />
     <ClInclude Include="connection.hpp" />
     <ClInclude Include="protosignal.hpp" />
     <ClInclude Include="result.hpp" />

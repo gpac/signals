@@ -5,8 +5,8 @@
 
 
 template <typename SignalSignature, typename Result = ResultDefault<typename std::function<SignalSignature>::result_type>>
-class Signal : public ProtoSignal<SignalSignature, Result> {
-	typedef typename ProtoSignal<SignalSignature, Result>::Callback Callback;
+class Signal : public ProtoSignal<Result, SignalSignature> {
+	typedef typename ProtoSignal<Result, SignalSignature>::Callback Callback;
 
 	class Connector {
 		friend class Signal;
@@ -29,6 +29,6 @@ class Signal : public ProtoSignal<SignalSignature, Result> {
 	};
 
 public:	
-	Signal(const Callback &method = Callback()) : ProtoSignal(method) {
+	Signal(const Callback &callback = Callback()) : ProtoSignal(callback) {
 	}
 };
