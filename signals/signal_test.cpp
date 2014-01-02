@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 	
 	const int input = 100;
 	int numVal = sig.emit(input);
-	std::vector<int> val = sig.results();
+	auto val = sig.results();
 	assert(numVal == val.size());
 	assert(val.size() == 1);
 	assert(val[0] == dummy(input));
@@ -40,12 +40,16 @@ int main(int argc, char **argv) {
 	val.clear();
 
 	size_t id2 = sig.connect(dummy2);
+	size_t id3 = sig.connect(dummy);
+	size_t id4 = sig.connect(dummy2);
 	numVal = sig.emit(input);
 	val = sig.results();
 	assert(numVal == val.size());
-	assert(val.size() == 2);
+	assert(val.size() == 4);
 	assert(val[0] == dummy(input));
 	assert(val[1] == dummy2(input));
+	assert(val[2] == dummy(input));
+	assert(val[3] == dummy2(input));
 
 	//tests
 	{

@@ -13,7 +13,7 @@
 template<typename, typename> class ProtoSignal;
 
 template<typename Result, typename Callback, typename... Args>
-class ProtoSignal<Result, Callback(Args...)> : private CallerSync<Result, Callback(Args...)> {
+class ProtoSignal<Result, Callback(Args...)> : private CallerAsync<Result, Callback(Args...)> {
 protected:
 	typedef std::function<Callback(Args...)> Callback;
 
@@ -42,18 +42,23 @@ public:
 
 	size_t emit(Args... args) {
 		result.clear();
+		futures.clear();
 		for each (auto cb in callbacks) {
-			call(result, cb.second->callback, args...);
+			futures.push_back(call(result, cb.second->callback, args...));
 		}
 		return callbacks.size();
 	}
 
 	ResultValue results() {
+		for (size_t i = 0; i < futures.size(); i++) {
+			std::future<ResultType> f = std::move(futures[i]);
+			result.set(f.get());
+		}
 		return result.get();
 	}
 
 protected:
-	ProtoSignal(const Callback &cb) : callbacks(Callback()), uid(0) {
+	ProtoSignal(const Callback &cb) : uid(0) {
 		if (cb != NULL) {
 			size_t connectionId = uid++;
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
@@ -65,6 +70,7 @@ private:
 	ProtoSignal& operator= (const ProtoSignal&) = delete;
 
 	ConnectionManager callbacks; //TODO: make an interface for the ConnectionManager to remove code from this class
+	std::vector<std::future<ResultType>> futures;
 	std::atomic<size_t> uid;
 	Result result;
 };

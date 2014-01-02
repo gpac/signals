@@ -3,7 +3,6 @@
 #include <vector>
 
 
-//FIXME: needs to make a copy of the result value
 template<typename Result>
 class ResultVector {
 public:
@@ -12,9 +11,8 @@ public:
 	explicit ResultVector() {
 	}
 
-	bool operator() (Result r) {
+	void set(Result r) {
 		results.push_back(r);
-		return true;
 	}
 
 	std::vector<Result>& get() {
@@ -27,8 +25,4 @@ public:
 
 private:
 	std::vector<Result> results;
-};
-
-template<typename Result>
-class ResultDefault : public ResultVector<Result> {
 };

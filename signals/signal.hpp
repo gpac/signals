@@ -4,7 +4,7 @@
 #include "protosignal.hpp"
 
 
-template <typename SignalSignature, typename Result = ResultDefault<typename std::function<SignalSignature>::result_type>>
+template <typename SignalSignature, typename Result = ResultVector<typename std::function<SignalSignature>::result_type>>
 class Signal : public ProtoSignal<Result, SignalSignature> {
 	typedef typename ProtoSignal<Result, SignalSignature>::Callback Callback;
 
