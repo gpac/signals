@@ -7,6 +7,15 @@
 #include <iostream>
 
 namespace Tests {
+	//class Test {
+	//public:
+		void Test(const std::string &name) {
+			std::cout << std::endl << "[ ***** " << name.c_str() << " ***** ]" << std::endl;
+		}
+
+		//TODO test result in destuctor?
+	//};
+
 namespace Util {
 	bool isPow2(int i) {
 		return (i == 0) || (i - ((1 << (int)std::log2(i))) == 0);
@@ -19,12 +28,15 @@ namespace Util {
 		}
 
 		~Profiler() {
+			std::cout << "[" << name.c_str() << "] " << elapsedInUs() << " us" << std::endl;
+		}
+
+		uint64_t elapsedInUs() {
 			LARGE_INTEGER stopTime;
 			QueryPerformanceCounter(&stopTime);
 			LARGE_INTEGER countsPerSecond;
 			QueryPerformanceFrequency(&countsPerSecond);
-			uint64_t duration = (uint64_t)((1000000 * (stopTime.QuadPart - startTime.QuadPart)) / countsPerSecond.QuadPart);
-			std::cout << "[" << name.c_str() << "] " << duration << " us" << std::endl;
+			return (uint64_t)((1000000 * (stopTime.QuadPart - startTime.QuadPart)) / countsPerSecond.QuadPart);
 		}
 
 	private:

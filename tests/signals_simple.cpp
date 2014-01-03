@@ -15,17 +15,17 @@ namespace Tests {
 		int main(int argc, char **argv) {
 			Signal<int(int)> sig;
 
-			//disconnect non existing
+			Test("disconnect non existing");
 			{
 				bool res;
 				res = sig.disconnect(0);
 				assert(!res);
 			}
 
-			//connect
+			Test("connect");
 			size_t id = sig.connect(dummy);
 
-			//single connection: check result
+			Test("single connection: check result");
 			const int input = 100;
 			auto numVal = sig.emit(input);
 			auto val = sig.results();
@@ -35,7 +35,7 @@ namespace Tests {
 
 			val.clear();
 
-			//single connection: check results
+			Test("single connection: check results");
 			size_t id2 = sig.connect(dummy2);
 			size_t id3 = sig.connect(dummy);
 			size_t id4 = sig.connect(dummy2);
@@ -48,7 +48,7 @@ namespace Tests {
 			assert(val[2] == dummy(input));
 			assert(val[3] == dummy2(input));
 
-			//disconnections
+			Test("disconnections");
 			{
 				bool res;
 				res = sig.disconnect(id2);
