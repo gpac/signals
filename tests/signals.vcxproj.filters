@@ -2,12 +2,36 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="signals.cpp" />
+    <ClCompile Include="signals_perf.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="signals_simple.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="signal.hpp" />
-    <ClInclude Include="protosignal.hpp" />
-    <ClInclude Include="result.hpp" />
-    <ClInclude Include="connection.hpp" />
-    <ClInclude Include="caller.hpp" />
+    <ClInclude Include="signal.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="caller.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="connection.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="protosignal.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="result.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="includes">
+      <UniqueIdentifier>{530f0ffe-8ea0-469c-ab97-08dc8a2d2bb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests">
+      <UniqueIdentifier>{7bf9eaed-692e-4050-b005-92e0d8380a51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
