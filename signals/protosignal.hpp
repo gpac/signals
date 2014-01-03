@@ -10,10 +10,10 @@
 #include <vector>
 
 
-template<typename, typename> class ProtoSignal;
+template<typename, typename, typename> class ProtoSignal;
 
-template<typename Result, typename Callback, typename... Args>
-class ProtoSignal<Result, Callback(Args...)> : private CallerAsync<Result, Callback(Args...)> {
+template<typename Result, typename Callback, typename... Args, typename Caller>
+class ProtoSignal<Result, Callback(Args...), Caller> {
 protected:
 	typedef std::function<Callback(Args...)> Callback;
 
@@ -44,7 +44,7 @@ public:
 		result.clear();
 		futures.clear();
 		for each (auto cb in callbacks) {
-			futures.push_back(call(result, cb.second->callback, args...));
+			futures.push_back(caller(result, cb.second->callback, args...));
 		}
 		return callbacks.size();
 	}
@@ -84,4 +84,5 @@ private:
 	std::vector<std::future<ResultType>> futures;
 	std::atomic<size_t> uid;
 	Result result;
+	Caller caller;
 };

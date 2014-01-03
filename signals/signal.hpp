@@ -4,9 +4,9 @@
 #include "protosignal.hpp"
 
 
-template <typename SignalSignature, typename Result = ResultVector<typename std::function<SignalSignature>::result_type>>
-class Signal : public ProtoSignal<Result, SignalSignature> {
-	typedef typename ProtoSignal<Result, SignalSignature>::Callback Callback;
+template <typename SignalSignature, typename Result = ResultVector<typename std::function<SignalSignature>::result_type>, typename Caller = CallerAsync<Result, SignalSignature>>
+class Signal : public ProtoSignal<Result, SignalSignature, Caller> {
+	typedef typename ProtoSignal<Result, SignalSignature, Caller>::Callback Callback;
 
 	class Connector {
 		friend class Signal;
