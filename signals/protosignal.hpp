@@ -6,7 +6,7 @@
 #include <atomic>
 #include <cassert>
 #include <functional>
-#include <unordered_map>
+#include <map>
 #include <vector>
 
 
@@ -21,7 +21,7 @@ private:
 	typedef typename Result::ResultValue ResultValue;
 	typedef typename Callback::result_type ResultType;
 	typedef typename Connection<Callback> ConnectionType;
-	typedef typename std::unordered_map<size_t, ConnectionType*> ConnectionManager;
+	typedef typename std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
 	size_t connect(const Callback &cb) {
