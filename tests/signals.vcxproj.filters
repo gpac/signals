@@ -10,19 +10,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="signal.hpp">
+    <ClInclude Include="tests.hpp">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\caller.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="caller.hpp">
+    <ClInclude Include="..\signals\connection.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="connection.hpp">
+    <ClInclude Include="..\signals\protosignal.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="protosignal.hpp">
+    <ClInclude Include="..\signals\result.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="result.hpp">
+    <ClInclude Include="..\signals\signal.hpp">
       <Filter>includes</Filter>
     </ClInclude>
   </ItemGroup>

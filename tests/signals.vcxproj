@@ -86,11 +86,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="caller.hpp" />
-    <ClInclude Include="connection.hpp" />
-    <ClInclude Include="protosignal.hpp" />
-    <ClInclude Include="result.hpp" />
-    <ClInclude Include="signal.hpp" />
+    <ClInclude Include="..\signals\caller.hpp" />
+    <ClInclude Include="..\signals\connection.hpp" />
+    <ClInclude Include="..\signals\protosignal.hpp" />
+    <ClInclude Include="..\signals\result.hpp" />
+    <ClInclude Include="..\signals\signal.hpp" />
+    <ClInclude Include="tests.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
