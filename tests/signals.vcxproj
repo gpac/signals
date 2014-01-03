@@ -75,7 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="signal_test.cpp" />
+    <ClCompile Include="signals.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="caller.hpp" />
