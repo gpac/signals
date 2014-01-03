@@ -68,7 +68,7 @@ protected:
 	~ProtoSignal() {
 		//delete still connected callbacks
 		for each(auto cb in callbacks) {
-			int id = cb.first;
+			auto id = cb.first;
 			if (callbacks[id] != nullptr) {
 				bool res = disconnect(id);
 				assert(res);
