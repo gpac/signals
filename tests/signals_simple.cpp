@@ -20,7 +20,7 @@ namespace Tests {
 
 			Test("connect");
 			size_t id = sig.connect(Util::dummy);
-
+			
 			Test("single connection: check result");
 			const int input = 100;
 			auto numVal = sig.emit(input);
@@ -29,9 +29,7 @@ namespace Tests {
 			assert(val.size() == 1);
 			assert(val[0] == Util::dummy(input));
 
-			val.clear();
-
-			Test("single connection: check results");
+			Test("multiple connections: check results");
 			size_t id2 = sig.connect(dummy2);
 			size_t id3 = sig.connect(Util::dummy);
 			size_t id4 = sig.connect(dummy2);
@@ -44,7 +42,7 @@ namespace Tests {
 			assert(val[2] == Util::dummy(input));
 			assert(val[3] == dummy2(input));
 
-			Test("single connection: ask results again");
+			Test("multiple connections: ask results again");
 			auto val2 = sig.results();
 			assert(numVal == val2.size());
 			assert(val2.size() == 4);

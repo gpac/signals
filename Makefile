@@ -1,5 +1,11 @@
+ifeq ($(DEBUG), 1)
+  CFLAGS += -g
+else
+  CFLAGS += -O3 -DNDEBUG
+endif
+
 all:
-	cd tests && g++ -o signals -O3 -std=c++11 -I../signals signals.cpp
+	cd tests && g++ -o signals $(CFLAGS) -std=c++11 -I../signals signals.cpp -lpthread
 
 unit:
 	cd tests && g++ -o signals_simple -O3 -DUNIT -std=c++11 -I../signals signals_simple.cpp
