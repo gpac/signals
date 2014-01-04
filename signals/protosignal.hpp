@@ -42,7 +42,9 @@ public:
 
 	size_t emit(Args... args) {
 		for (auto &cb : callbacks) {
-			cb.second->future = caller(cb.second->callback, args...);
+			if (cb.second) {
+				cb.second->future = caller(cb.second->callback, args...);
+			}
 		}
 		return callbacks.size();
 	}
@@ -50,7 +52,9 @@ public:
 	ResultValue results() {
 		Result result;
 		for (auto &cb : callbacks) {
-			result.set(std::move(cb.second->future).get());
+			if (cb.second) {
+				result.set(std::move(cb.second->future).get());
+			}
 		}
 		return result.get();
 	}
@@ -64,10 +68,12 @@ protected:
 	}
 
 	~ProtoSignal() {
+		Result result;
 		//delete still connected callbacks
 		for (auto &cb : callbacks) {
 			auto id = cb.first;
 			if (callbacks[id] != nullptr) {
+				result.set(std::move(cb.second->future).get()); //forces objects to be sync on destroy //TODO: move to the caller's responsability to avoid lazy computation?
 				bool res = disconnect(id);
 				assert(res);
 			}

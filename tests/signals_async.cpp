@@ -8,11 +8,18 @@
 namespace Tests {
 	namespace Async {
 		int main(int argc, char **argv) {
-
 			Test("destroy on execution");
 			{
 				Signal<void(int)> sig;
 				sig.connect(Util::sleepInMs);
+				sig.emit(1000);
+			}
+
+			Test("disconnect before execution");
+			{
+				Signal<void(int)> sig;
+				size_t uid = sig.connect(Util::sleepInMs);
+				sig.disconnect(uid);
 				sig.emit(1000);
 			}
 
@@ -24,7 +31,6 @@ namespace Tests {
 				sig.disconnect(uid);
 			}
 
-#ifdef ENABLE_FAILING_TESTS
 			Test("asks results after disconnection");
 			{
 				Signal<int(int)> sig;
@@ -32,8 +38,8 @@ namespace Tests {
 				sig.emit(27);
 				sig.disconnect(uid);
 				auto res = sig.results();
+				assert(res.size() == 0);
 			}
-#endif
 
 			return 0;
 		}

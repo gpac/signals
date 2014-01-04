@@ -44,7 +44,6 @@ namespace Tests {
 			assert(val[2] == Util::dummy(input));
 			assert(val[3] == dummy2(input));
 
-#ifdef ENABLE_FAILING_TESTS
 			Test("single connection: ask results again");
 			auto val2 = sig.results();
 			assert(numVal == val2.size());
@@ -53,7 +52,6 @@ namespace Tests {
 			assert(val2[1] == dummy2(input));
 			assert(val2[2] == Util::dummy(input));
 			assert(val2[3] == dummy2(input));
-#endif
 
 			Test("disconnections");
 			{

@@ -12,9 +12,9 @@ template<typename> class CallerAsync;
 template<typename Callback, typename... Args>
 class CallerSync<Callback(Args...)> {
 public:
-	std::future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
 		std::packaged_task<Callback(Args...)> task(callback);
-		auto f = task.get_future();
+		const std::shared_future<Callback> &f = task.get_future();
 		task(args...);
 		return f;
 	}
@@ -22,10 +22,10 @@ public:
 template<typename... Args>
 class CallerSync<void(Args...)> {
 public:
-	std::future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
-		auto closure = [&](Args... args)->int { callback(args...); return 0; };
+	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		auto closure = [=](Args... args)->int { callback(args...); return 0; };
 		std::packaged_task<int(Args...)> task(closure);
-		auto f = task.get_future();
+		const std::shared_future<int> &f = task.get_future();
 		task(args...);
 		return f;
 	}
@@ -35,15 +35,15 @@ public:
 template<typename Callback, typename... Args>
 class CallerLazy<Callback(Args...)> {
 public:
-	std::future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
 		return std::async(std::launch::deferred, callback, args...);
 	}
 };
 template<typename... Args>
 class CallerLazy<void(Args...)> {
 public:
-	std::future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
-		auto closure = [&](Args... args)->int { callback(args...); return 0; };
+	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		auto closure = [=](Args... args)->int { callback(args...); return 0; };
 		return std::async(std::launch::deferred, closure, args...);
 	}
 };
@@ -52,16 +52,15 @@ public:
 template<typename Callback, typename... Args>
 class CallerAsync<Callback(Args...)> {
 public:
-	std::future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
 		return std::async(std::launch::async, callback, args...);
 	}
 };
 template<typename... Args>
 class CallerAsync<void(Args...)> {
 public:
-	std::future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
-		auto closure = [&](Args... args)->int { callback(args...); return 0; };
+	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		auto closure = [=](Args... args)->int { callback(args...); return 0; };
 		return std::async(std::launch::async, closure, args...);
 	}
 };
-

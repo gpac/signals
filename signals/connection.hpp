@@ -8,7 +8,7 @@ template<typename Callback, typename ResultType>
 class Connection {
 public:
 	Callback callback;
-	std::future<ResultType> future;
+	std::shared_future<ResultType> future;
 	size_t uid;
 
 	explicit Connection(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
@@ -23,7 +23,7 @@ template<typename Callback>
 class Connection<Callback, void> {
 public:
 	Callback callback;
-	std::future<int> future;
+	std::shared_future<int> future;
 	size_t uid;
 
 	explicit Connection(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
