@@ -20,7 +20,7 @@ public:
 
 //specialized for void
 template<typename Callback>
-class Connection<typename Callback, void> {
+class Connection<Callback, void> {
 public:
 	Callback callback;
 	std::future<int> future;

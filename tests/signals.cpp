@@ -11,6 +11,8 @@ using namespace Tests;
 
 
 int main(int argc, char **argv) {
+	Util::Profiler p("TESTS TOTAL TIME");
+
 	int res = 0;
 	
 	res = Simple::main(argc, argv);
@@ -19,5 +21,6 @@ int main(int argc, char **argv) {
 	res = Perf::main(argc, argv);
 	assert(!res);
 
+	std::cout << std::endl;
 	return 0;
 }

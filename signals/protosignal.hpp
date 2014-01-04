@@ -3,11 +3,11 @@
 #include "caller.hpp"
 #include "connection.hpp"
 
+#include <algorithm>
 #include <atomic>
 #include <cassert>
 #include <functional>
 #include <map>
-#include <vector>
 
 
 template<typename, typename, typename> class ProtoSignal;
@@ -15,16 +15,16 @@ template<typename, typename, typename> class ProtoSignal;
 template<typename Result, typename Callback, typename... Args, typename Caller>
 class ProtoSignal<Result, Callback(Args...), Caller> {
 protected:
-	typedef std::function<Callback(Args...)> Callback;
+	typedef std::function<Callback(Args...)> CallbackType;
 
 private:
 	typedef typename Result::ResultValue ResultValue;
-	typedef typename Callback::result_type ResultType;
-	typedef typename Connection<Callback, ResultType> ConnectionType;
-	typedef typename std::map<size_t, ConnectionType*> ConnectionManager;
+	typedef typename CallbackType::result_type ResultType;
+	typedef Connection<CallbackType, ResultType> ConnectionType;
+	typedef std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
-	size_t connect(const Callback &cb) {
+	size_t connect(const CallbackType &cb) {
 		size_t connectionId = uid++;
 		callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		return connectionId;
@@ -41,8 +41,7 @@ public:
 	}
 
 	size_t emit(Args... args) {
-		std::vector<std::future<ResultType>> futures;
-		for each (auto cb in callbacks) {
+		for (auto &cb : callbacks) {
 			cb.second->future = caller(cb.second->callback, args...);
 		}
 		return callbacks.size();
@@ -50,7 +49,7 @@ public:
 
 	ResultValue results() {
 		Result result;
-		for each (auto cb in callbacks) {
+		for (auto &cb : callbacks) {
 			auto f = std::move(cb.second->future);
 			result.set(f.get());
 		}
@@ -58,7 +57,7 @@ public:
 	}
 
 protected:
-	ProtoSignal(const Callback &cb) : uid(0) {
+	ProtoSignal(const CallbackType &cb) : uid(0) {
 		if (cb != NULL) {
 			size_t connectionId = uid++;
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
@@ -67,7 +66,7 @@ protected:
 
 	~ProtoSignal() {
 		//delete still connected callbacks
-		for each(auto cb in callbacks) {
+		for (auto &cb : callbacks) {
 			auto id = cb.first;
 			if (callbacks[id] != nullptr) {
 				bool res = disconnect(id);

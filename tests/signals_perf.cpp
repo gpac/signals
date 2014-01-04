@@ -66,7 +66,7 @@ namespace Tests {
 		}
 
 		void sleepInMs(int ms) {
-			Sleep(ms);
+			SLEEP_IN_MS(ms);
 		}
 
 		int main(int argc, char **argv) {
