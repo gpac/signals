@@ -30,12 +30,20 @@ namespace Tests {
 			std::cout << std::endl << "[ ***** " << name.c_str() << " ***** ]" << std::endl;
 		}
 
-		//TODO test result in destuctor?
+		//TODO test result in destructor?
 	//};
 
 namespace Util {
+	int log2(int i) {
+		int res = 0;
+		while (i >>= 1) {
+			++res;
+		}
+		return res;
+	}
+
 	bool isPow2(int i) {
-		return (i == 0) || (i - ((1 << (int)log2(i))) == 0);
+		return (i == 0) || (i - (1 << (int)log2(i)) == 0);
 	}
 
 	class Profiler {
