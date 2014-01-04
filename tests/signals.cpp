@@ -11,7 +11,7 @@ using namespace Tests;
 
 
 int main(int argc, char **argv) {
-	int res;
+	int res = 0;
 	
 	res = Simple::main(argc, argv);
 	assert(!res);

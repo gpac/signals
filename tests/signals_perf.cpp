@@ -15,7 +15,7 @@ namespace Tests {
 			bool timeout = false;
 			for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
 				if (Util::isPow2(i)) {
-					const int val = 28;
+					const int val = 28; //TODO: set as an arg
 					{
 						std::stringstream ss;
 						ss << "Emit time for " << i << " connected callbacks";
@@ -35,6 +35,9 @@ namespace Tests {
 						Util::Profiler p(ss.str());
 						for (int j = 0; j < i; ++j) {
 							f(val);
+						}
+						if (p.elapsedInUs() > 2*TEST_TIMEOUT_IN_US) {
+							timeout = true;
 						}
 					}
 					if (timeout) {
@@ -61,6 +64,10 @@ namespace Tests {
 				res *= n;
 			}
 			return (int)res;
+		}
+
+		void sleepInMs(int ms) {
+			Sleep(ms);
 		}
 
 		int main(int argc, char **argv) {
@@ -113,13 +120,17 @@ namespace Tests {
 			}
 
 			Test("emit dummy  on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<ResultVector<int>, int(int)>>(dummy);
+			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>>(dummy);
 			Test("emit dummy  on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <ResultVector<int>, int(int)>>(dummy);
+			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>>(dummy);
 			Test("emit compute on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<ResultVector<int>, int(int)>>(compute);
+			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>>(compute);
 			Test("emit compute on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <ResultVector<int>, int(int)>>(compute);
+			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>>(compute);
+			Test("emit sleep   on async");
+			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>>(sleepInMs);
+			Test("emit sleep   on  sync");
+			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>>(sleepInMs);
 
 			return 0;
 		}
