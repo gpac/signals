@@ -8,17 +8,16 @@
 
 namespace Tests {
 	namespace Perf {
-		template<typename SignalSignature, typename Result, typename Caller>
-		void emitTest(std::function<SignalSignature> f) {
+		template<typename SignalSignature, typename Result, typename Caller, typename ValType>
+		void emitTest(std::function<SignalSignature> f, ValType val) {
 			Signal<SignalSignature, Result, Caller> sig;
 			std::vector<size_t> id(TEST_MAX_SIZE);
 			bool timeout = false;
 			for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
 				if (Util::isPow2(i)) {
-					const int val = 28; //TODO: set as an arg
 					{
 						std::stringstream ss;
-						ss << "Emit time for " << i << " connected callbacks";
+						ss << "Emit time for " << FORMAT(i, TEST_MAX_SIZE) << " connected callbacks";
 						if (i > 0) {
 							id[i - 1] = sig.connect(f);
 						}
@@ -31,7 +30,7 @@ namespace Tests {
 					}
 					{
 						std::stringstream ss;
-						ss << i << " direct calls                     ";
+						ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
 						Util::Profiler p(ss.str());
 						for (int j = 0; j < i; ++j) {
 							f(val);
@@ -96,7 +95,7 @@ namespace Tests {
 				for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
 					std::stringstream ss;
 					if (Util::isPow2(i)) {
-						ss << "Connect number " << i;
+						ss << "Connect number    " << FORMAT(i, TEST_MAX_SIZE);
 						Util::Profiler p(ss.str());
 						id[i] = sig.connect(dummy);
 					}
@@ -107,7 +106,7 @@ namespace Tests {
 				for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
 					std::stringstream ss;
 					if (Util::isPow2(i)) {
-						ss << "Disconnect number " << i;
+						ss << "Disconnect number " << FORMAT(i, TEST_MAX_SIZE);
 						Util::Profiler p(ss.str());
 						bool res = sig.disconnect(id[i]);
 						assert(res);
@@ -120,17 +119,17 @@ namespace Tests {
 			}
 
 			Test("emit dummy  on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>>(dummy);
+			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(dummy, 1789);
 			Test("emit dummy  on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>>(dummy);
+			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(dummy, 1789);
 			Test("emit compute on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>>(compute);
+			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(compute, 27);
 			Test("emit compute on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>>(compute);
+			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(compute, 27);
 			Test("emit sleep   on async");
-			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>>(sleepInMs);
+			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>, int>(sleepInMs, 100);
 			Test("emit sleep   on  sync");
-			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>>(sleepInMs);
+			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>, int>(sleepInMs, 100);
 
 			return 0;
 		}
