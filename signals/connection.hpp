@@ -1,12 +1,29 @@
 #pragma once
 
 #include <cassert>
+#include <future>
 
 
-template<typename Callback>
+template<typename Callback, typename ResultType>
 class Connection {
 public:
 	Callback callback;
+	std::future<ResultType> future;
+	size_t uid;
+
+	explicit Connection(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
+	}
+
+	~Connection() {
+	}
+};
+
+//specialized for void
+template<typename Callback>
+class Connection<typename Callback, void> {
+public:
+	Callback callback;
+	std::future<int> future;
 	size_t uid;
 
 	explicit Connection(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {

@@ -27,15 +27,16 @@ private:
 	std::vector<ResultType> results;
 };
 
+//specialized for void
 template<>
 class ResultVector<void> {
 public:
-	typedef std::vector<void> ResultValue;
+	typedef void ResultValue;
 
 	explicit ResultVector() {
 	}
 
-	void set() {
+	void set(int) {
 	}
 
 	void get() {

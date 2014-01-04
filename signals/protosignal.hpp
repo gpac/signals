@@ -20,7 +20,7 @@ protected:
 private:
 	typedef typename Result::ResultValue ResultValue;
 	typedef typename Callback::result_type ResultType;
-	typedef typename Connection<Callback> ConnectionType;
+	typedef typename Connection<Callback, ResultType> ConnectionType;
 	typedef typename std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
@@ -41,17 +41,17 @@ public:
 	}
 
 	size_t emit(Args... args) {
-		result.clear();
-		futures.clear();
+		std::vector<std::future<ResultType>> futures;
 		for each (auto cb in callbacks) {
-			futures.push_back(caller(result, cb.second->callback, args...));
+			cb.second->future = caller(cb.second->callback, args...);
 		}
 		return callbacks.size();
 	}
 
 	ResultValue results() {
-		for (size_t i = 0; i < futures.size(); i++) {
-			std::future<ResultType> f = std::move(futures[i]);
+		Result result;
+		for each (auto cb in callbacks) {
+			auto f = std::move(cb.second->future);
 			result.set(f.get());
 		}
 		return result.get();
@@ -81,8 +81,6 @@ private:
 	ProtoSignal& operator= (const ProtoSignal&) = delete;
 
 	ConnectionManager callbacks; //TODO: make an interface for the ConnectionManager to remove code from this class
-	std::vector<std::future<ResultType>> futures;
 	std::atomic<size_t> uid;
-	Result result;
 	Caller caller;
 };
