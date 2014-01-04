@@ -1,3 +1,7 @@
+#include "signal.hpp"
+#include "tests.hpp"
+
+
 namespace Tests {
 	namespace Simple {
 		int dummy(int a) {
@@ -6,10 +10,6 @@ namespace Tests {
 		}
 		int dummy2(int a) {
 			return dummy(dummy(a));
-		}
-		int dummyReentrant(int a) {
-			std::cout << "a = " << a << std::endl;
-			return a + 1;
 		}
 
 		int main(int argc, char **argv) {
@@ -71,3 +71,18 @@ namespace Tests {
 		}
 	}
 }
+
+#ifdef UNIT
+using namespace Tests;
+int main(int argc, char **argv) {
+	Util::Profiler p("TESTS TOTAL TIME");
+
+	int res = 0;
+
+	res = Simple::main(argc, argv);
+	assert(!res);
+
+	std::cout << std::endl;
+	return 0;
+}
+#endif
