@@ -12,12 +12,12 @@ namespace Tests {
 		class Slot {
 		public:
 			int slot(int a) {
-				std::cout << "a=" << a << std::endl;
-				return a+1;
+				return 1+Util::dummyPrint(a);
 			}
 		};
 
 		int main(int argc, char **argv) {
+			Test("module connection");
 			Signaller sender;
 			Slot receiver;
 			std::function<int(int)> f = std::bind(&Slot::slot, receiver, std::placeholders::_1);
@@ -25,6 +25,7 @@ namespace Tests {
 			sender.signal.emit(100);
 			sender.signal.results();
 
+			Test("module connection XXX");
 			Signaller sender2;
 			Slot receiver2;
 			sender.signal.emit(100);

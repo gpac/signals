@@ -22,6 +22,8 @@
 #endif
 
 
+#define TEST_MAX_SIZE (2<<11)
+#define TEST_TIMEOUT_IN_US 4000000
 #define TEST_MAX_TIME_IN_S 100
 
 
@@ -35,7 +37,31 @@ namespace Tests {
 		//TODO test result in destructor?
 	//};
 
-namespace Util {
+	namespace Util {
+		int dummy(int a) {
+			return a;
+		}
+		int dummyPrint(int a) {
+			std::cout << "a = " << a << std::endl;
+			return a;
+		}
+
+		int compute(int a) {
+			int64_t n = (int64_t)1 << a;
+			if (a <= 0) {
+				return 1;
+			}
+			uint64_t res = n;
+			while (--n > 1) {
+				res *= n;
+			}
+			return (int)res;
+		}
+
+		void sleepInMs(int ms) {
+			SLEEP_IN_MS(ms);
+		}
+
 	int log2(int i) {
 		int res = 0;
 		while (i >>= 1) {

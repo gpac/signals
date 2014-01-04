@@ -11,6 +11,9 @@
     <ClCompile Include="signals_module.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="signals_async.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests.hpp">

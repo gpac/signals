@@ -5,10 +5,6 @@
 #include <vector>
 
 
-#define TEST_MAX_SIZE (2<<11)
-#define TEST_TIMEOUT_IN_US 4000000
-
-
 namespace Tests {
 	namespace Perf {
 		template<typename SignalSignature, typename Result, typename Caller, typename ValType>
@@ -47,29 +43,9 @@ namespace Tests {
 						return;
 					}
 				} else {
-					id[i] = sig.connect(f);
+					id[i - 1] = sig.connect(f);
 				}
 			}
-		}
-
-		int dummy(int a) {
-			return a;
-		}
-
-		int compute(int a) {
-			int64_t n = (int64_t)1 << a;
-			if (a <= 0) {
-				return 1;
-			}
-			uint64_t res = n;
-			while (--n > 1) {
-				res *= n;
-			}
-			return (int)res;
-		}
-
-		void sleepInMs(int ms) {
-			SLEEP_IN_MS(ms);
 		}
 
 		int main(int argc, char **argv) {
@@ -100,10 +76,10 @@ namespace Tests {
 					if (Util::isPow2(i)) {
 						ss << "Connect number    " << FORMAT(i, TEST_MAX_SIZE);
 						Util::Profiler p(ss.str());
-						id[i] = sig.connect(dummy);
+						id[i] = sig.connect(Util::dummy);
 					}
 					else {
-						id[i] = sig.connect(dummy);
+						id[i] = sig.connect(Util::dummy);
 					}
 				}
 				for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
@@ -122,23 +98,23 @@ namespace Tests {
 			}
 
 			Test("emit dummy  on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(dummy, 1789);
+			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::dummy, 1789);
 			Test("emit dummy  on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(dummy, 1789);
+			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::dummy, 1789);
 			Test("emit dummy  on  lazy");
-			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(dummy, 1789);
+			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::dummy, 1789);
 			Test("emit compute on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(compute, 27);
+			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::compute, 27);
 			Test("emit compute on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(compute, 27);
+			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::compute, 27);
 			Test("emit compute on  lazy");
-			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(compute, 27);
+			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::compute, 27);
 			Test("emit sleep   on async");
-			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>, int>(sleepInMs, 100);
+			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>, int>(Util::sleepInMs, 100);
 			Test("emit sleep   on  sync");
-			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>, int>(sleepInMs, 100);
+			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>, int>(Util::sleepInMs, 100);
 			Test("emit sleep   on  lazy");
-			emitTest<void(int), ResultVector<void>, CallerLazy <void(int)>, int>(sleepInMs, 100);
+			emitTest<void(int), ResultVector<void>, CallerLazy <void(int)>, int>(Util::sleepInMs, 100);
 
 			return 0;
 		}

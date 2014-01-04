@@ -4,12 +4,8 @@
 
 namespace Tests {
 	namespace Simple {
-		int dummy(int a) {
-			//std::cout << "a = " << a << std::endl;
-			return a + 1;
-		}
 		int dummy2(int a) {
-			return dummy(dummy(a));
+			return Util::dummy(Util::dummy(a));
 		}
 
 		int main(int argc, char **argv) {
@@ -23,7 +19,7 @@ namespace Tests {
 			}
 
 			Test("connect");
-			size_t id = sig.connect(dummy);
+			size_t id = sig.connect(Util::dummy);
 
 			Test("single connection: check result");
 			const int input = 100;
@@ -31,22 +27,33 @@ namespace Tests {
 			auto val = sig.results();
 			assert(numVal == val.size());
 			assert(val.size() == 1);
-			assert(val[0] == dummy(input));
+			assert(val[0] == Util::dummy(input));
 
 			val.clear();
 
 			Test("single connection: check results");
 			size_t id2 = sig.connect(dummy2);
-			size_t id3 = sig.connect(dummy);
+			size_t id3 = sig.connect(Util::dummy);
 			size_t id4 = sig.connect(dummy2);
 			numVal = sig.emit(input);
 			val = sig.results();
 			assert(numVal == val.size());
 			assert(val.size() == 4);
-			assert(val[0] == dummy(input));
+			assert(val[0] == Util::dummy(input));
 			assert(val[1] == dummy2(input));
-			assert(val[2] == dummy(input));
+			assert(val[2] == Util::dummy(input));
 			assert(val[3] == dummy2(input));
+
+#ifdef ENABLE_FAILING_TESTS
+			Test("single connection: ask results again");
+			auto val2 = sig.results();
+			assert(numVal == val2.size());
+			assert(val2.size() == 4);
+			assert(val2[0] == Util::dummy(input));
+			assert(val2[1] == dummy2(input));
+			assert(val2[2] == Util::dummy(input));
+			assert(val2[3] == dummy2(input));
+#endif
 
 			Test("disconnections");
 			{
@@ -54,7 +61,6 @@ namespace Tests {
 				res = sig.disconnect(id2);
 				assert(res);
 
-				res;
 				res = sig.disconnect(id);
 				assert(res);
 
