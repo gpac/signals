@@ -15,7 +15,7 @@ namespace Tests {
 			{
 				bool res;
 				res = sig.disconnect(0);
-				assert(!res);
+				ASSERT(!res);
 			}
 
 			Test("connect");
@@ -25,9 +25,9 @@ namespace Tests {
 			const int input = 100;
 			auto numVal = sig.emit(input);
 			auto val = sig.results();
-			assert(numVal == val.size());
-			assert(val.size() == 1);
-			assert(val[0] == Util::dummy(input));
+			ASSERT(numVal == val.size());
+			ASSERT(val.size() == 1);
+			ASSERT(val[0] == Util::dummy(input));
 
 			Test("multiple connections: check results");
 			size_t id2 = sig.connect(dummy2);
@@ -35,38 +35,38 @@ namespace Tests {
 			size_t id4 = sig.connect(dummy2);
 			numVal = sig.emit(input);
 			val = sig.results();
-			assert(numVal == val.size());
-			assert(val.size() == 4);
-			assert(val[0] == Util::dummy(input));
-			assert(val[1] == dummy2(input));
-			assert(val[2] == Util::dummy(input));
-			assert(val[3] == dummy2(input));
+			ASSERT(numVal == val.size());
+			ASSERT(val.size() == 4);
+			ASSERT(val[0] == Util::dummy(input));
+			ASSERT(val[1] == dummy2(input));
+			ASSERT(val[2] == Util::dummy(input));
+			ASSERT(val[3] == dummy2(input));
 
 			Test("multiple connections: ask results again");
 			auto val2 = sig.results();
-			assert(numVal == val2.size());
-			assert(val2.size() == 4);
-			assert(val2[0] == Util::dummy(input));
-			assert(val2[1] == dummy2(input));
-			assert(val2[2] == Util::dummy(input));
-			assert(val2[3] == dummy2(input));
+			ASSERT(numVal == val2.size());
+			ASSERT(val2.size() == 4);
+			ASSERT(val2[0] == Util::dummy(input));
+			ASSERT(val2[1] == dummy2(input));
+			ASSERT(val2[2] == Util::dummy(input));
+			ASSERT(val2[3] == dummy2(input));
 
 			Test("disconnections");
 			{
 				bool res;
 				res = sig.disconnect(id2);
-				assert(res);
+				ASSERT(res);
 
 				res = sig.disconnect(id);
-				assert(res);
+				ASSERT(res);
 
 				//disconnect again
 				res = sig.disconnect(id);
-				assert(!res);
+				ASSERT(!res);
 
 				//wrong id
 				res = sig.disconnect(id + 1);
-				assert(!res);
+				ASSERT(!res);
 			}
 
 			return 0;
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 	int res = 0;
 
 	res = Simple::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	std::cout << std::endl;
 	return 0;

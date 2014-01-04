@@ -88,11 +88,11 @@ namespace Tests {
 						ss << "Disconnect number " << FORMAT(i, TEST_MAX_SIZE);
 						Util::Profiler p(ss.str());
 						bool res = sig.disconnect(id[i]);
-						assert(res);
+						ASSERT(res);
 					}
 					else {
 						bool res = sig.disconnect(id[i]);
-						assert(res);
+						ASSERT(res);
 					}
 				}
 			}
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 	int res = 0;
 
 	res = Perf::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	std::cout << std::endl;
 	return 0;

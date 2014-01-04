@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 	int res = 0;
 
 	res = Module::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	std::cout << std::endl;
 	return 0;

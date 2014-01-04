@@ -21,16 +21,16 @@ int main(int argc, char **argv) {
 	int res = 0;
 
 	res = Simple::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	res = Module::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	res = Async::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	res = Perf::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	std::cout << std::endl;
 	return 0;

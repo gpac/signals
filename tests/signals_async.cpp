@@ -43,7 +43,7 @@ namespace Tests {
 				sig.emit(27);
 				sig.disconnect(uid);
 				auto res = sig.results();
-				assert(res.size() == 0);
+				ASSERT(res.size() == 0);
 			}
 
 			Test("as many results as emit() calls");
@@ -53,9 +53,9 @@ namespace Tests {
 				sig.emit(27);
 				sig.emit(1789);
 				auto res = sig.results();
-				assert(res.size() == 2);
-				assert(res[0] == 27);
-				assert(res[1] == 1789);
+				ASSERT(res.size() == 2);
+				ASSERT(res[0] == 27);
+				ASSERT(res[1] == 1789);
 			}
 
 			Test("as many results as emit() calls, results arriving in wrong order");
@@ -65,9 +65,9 @@ namespace Tests {
 				sig.emit(200, 27);
 				sig.emit(20, 1789);
 				auto res = sig.results();
-				assert(res.size() == 2);
-				assert(res[0] == 27);
-				assert(res[1] == 1789);
+				ASSERT(res.size() == 2);
+				ASSERT(res[0] == 27);
+				ASSERT(res[1] == 1789);
 			}
 
 			return 0;
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 	int res = 0;
 
 	res = Async::main(argc, argv);
-	assert(!res);
+	ASSERT(!res);
 
 	std::cout << std::endl;
 	return 0;

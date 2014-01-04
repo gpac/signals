@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <csignal>
 #include <iomanip>
 #include <iostream>
 
@@ -28,6 +29,13 @@
 
 
 namespace Tests {
+	void ASSERT(bool condition) {
+		if (!condition) {
+			std::cerr << "TEST FAILED" << std::endl;
+			std::raise(SIGABRT);
+		}
+	}
+
 	//class Test {
 	//public:
 		void Test(const std::string &name) {
