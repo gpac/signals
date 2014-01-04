@@ -41,19 +41,22 @@ public:
 	}
 
 	size_t emit(Args... args) {
+		result.clear();
 		for (auto &cb : callbacks) {
 			if (cb.second) {
-				cb.second->future = caller(cb.second->callback, args...);
+				cb.second->futures.push_back(caller(cb.second->callback, args...));
 			}
 		}
 		return callbacks.size();
 	}
 
 	ResultValue results() {
-		Result result;
 		for (auto &cb : callbacks) {
 			if (cb.second) {
-				result.set(std::move(cb.second->future).get());
+				for (auto &f : cb.second->futures) {
+					result.set(std::move(f).get());
+				}
+				cb.second->futures.clear(); //FIXME: this may delete the future queue while new elements are added
 			}
 		}
 		return result.get();
@@ -69,12 +72,12 @@ protected:
 
 	~ProtoSignal() {
 		Result result;
-		//delete still connected callbacks
-		for (auto &cb : callbacks) {
-			auto id = cb.first;
-			if (callbacks[id] != nullptr) {
-				result.set(std::move(cb.second->future).get()); //forces objects to be sync on destroy //TODO: move to the caller's responsability to avoid lazy computation?
-				bool res = disconnect(id);
+		for (auto &cb : callbacks) { //delete still connected callbacks
+			if (cb.second) {
+				for (auto &f : cb.second->futures) {
+					result.set(std::move(f).get()); //sync on destroy //TODO: move to the Caller's class responsability to avoid lazy computation?
+				}
+				bool res = disconnect(cb.first);
 				assert(res);
 			}
 		}
@@ -87,4 +90,5 @@ private:
 	ConnectionManager callbacks; //TODO: make an interface for the ConnectionManager to remove code from this class
 	std::atomic<size_t> uid;
 	Caller caller;
+	Result result;
 };

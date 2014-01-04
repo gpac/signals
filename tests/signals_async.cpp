@@ -7,6 +7,11 @@
 
 namespace Tests {
 	namespace Async {
+		int sleepAndDummy(int ms, int a) {
+			Util::sleepInMs(ms);
+			return a;
+		}
+
 		int main(int argc, char **argv) {
 			Test("destroy on execution");
 			{
@@ -39,6 +44,30 @@ namespace Tests {
 				sig.disconnect(uid);
 				auto res = sig.results();
 				assert(res.size() == 0);
+			}
+
+			Test("as many results as emit() calls");
+			{
+				Signal<int(int)> sig;
+				size_t uid = sig.connect(Util::dummy);
+				sig.emit(27);
+				sig.emit(1789);
+				auto res = sig.results();
+				assert(res.size() == 2);
+				assert(res[0] == 27);
+				assert(res[1] == 1789);
+			}
+
+			Test("as many results as emit() calls, results arriving in wrong order");
+			{
+				Signal<int(int, int)> sig;
+				size_t uid = sig.connect(sleepAndDummy);
+				sig.emit(200, 27);
+				sig.emit(20, 1789);
+				auto res = sig.results();
+				assert(res.size() == 2);
+				assert(res[0] == 27);
+				assert(res[1] == 1789);
 			}
 
 			return 0;
