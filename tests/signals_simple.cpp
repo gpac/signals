@@ -1,7 +1,7 @@
 namespace Tests {
 	namespace Simple {
 		int dummy(int a) {
-			std::cout << "a = " << a << std::endl;
+			//std::cout << "a = " << a << std::endl;
 			return a + 1;
 		}
 		int dummy2(int a) {

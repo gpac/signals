@@ -88,7 +88,7 @@ namespace Tests {
 				}
 			}
 
-			Test("connect, and disconnect a high number of callbacks on one signal");
+			Test("connect and disconnect a high number of callbacks on one signal");
 			{
 				Signal<int(int)> sig;
 				std::vector<size_t> id(TEST_MAX_SIZE + 1);
@@ -122,14 +122,20 @@ namespace Tests {
 			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(dummy, 1789);
 			Test("emit dummy  on  sync");
 			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(dummy, 1789);
+			Test("emit dummy  on  lazy");
+			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(dummy, 1789);
 			Test("emit compute on async");
 			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(compute, 27);
 			Test("emit compute on  sync");
 			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(compute, 27);
+			Test("emit compute on  lazy");
+			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(compute, 27);
 			Test("emit sleep   on async");
 			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>, int>(sleepInMs, 100);
 			Test("emit sleep   on  sync");
 			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>, int>(sleepInMs, 100);
+			Test("emit sleep   on  lazy");
+			emitTest<void(int), ResultVector<void>, CallerLazy <void(int)>, int>(sleepInMs, 100);
 
 			return 0;
 		}

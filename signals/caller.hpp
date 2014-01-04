@@ -5,6 +5,7 @@
 
 
 template<typename> class CallerSync;
+template<typename> class CallerLazy;
 template<typename> class CallerAsync;
 
 //synchronous calls
@@ -27,6 +28,23 @@ public:
 		auto f = task.get_future();
 		task(args...);
 		return f;
+	}
+};
+
+//synchronous lazy calls
+template<typename Callback, typename... Args>
+class CallerLazy<Callback(Args...)> {
+public:
+	std::future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+		return std::async(std::launch::deferred, callback, args...);
+	}
+};
+template<typename... Args>
+class CallerLazy<void(Args...)> {
+public:
+	std::future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		auto closure = [&](Args... args)->int { callback(args...); return 0; };
+		return std::async(std::launch::deferred, closure, args...);
 	}
 };
 

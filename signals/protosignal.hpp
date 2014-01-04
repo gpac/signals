@@ -50,7 +50,7 @@ public:
 	ResultValue results() {
 		Result result;
 		for (auto &cb : callbacks) {
-			auto f = std::move(cb.second->future);
+			auto &f = std::move(cb.second->future);
 			result.set(f.get());
 		}
 		return result.get();
