@@ -170,12 +170,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\signals\caller.hpp" />
-    <ClInclude Include="..\signals\connection.hpp" />
-    <ClInclude Include="..\signals\helper.hpp" />
-    <ClInclude Include="..\signals\protosignal.hpp" />
-    <ClInclude Include="..\signals\result.hpp" />
-    <ClInclude Include="..\signals\signal.hpp" />
+    <ClInclude Include="..\signals\internal\caller.hpp" />
+    <ClInclude Include="..\signals\internal\connection.hpp" />
+    <ClInclude Include="..\signals\internal\helper.hpp" />
+    <ClInclude Include="..\signals\internal\protosignal.hpp" />
+    <ClInclude Include="..\signals\internal\result.hpp" />
+    <ClInclude Include="..\signals\internal\signal.hpp" />
     <ClInclude Include="..\signals\signals.hpp" />
     <ClInclude Include="tests.hpp" />
   </ItemGroup>

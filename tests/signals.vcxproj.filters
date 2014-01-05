@@ -22,22 +22,22 @@
     <ClInclude Include="..\signals\signals.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\signal.hpp">
+    <ClInclude Include="..\signals\internal\caller.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\caller.hpp">
+    <ClInclude Include="..\signals\internal\connection.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\connection.hpp">
+    <ClInclude Include="..\signals\internal\helper.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\helper.hpp">
+    <ClInclude Include="..\signals\internal\protosignal.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\protosignal.hpp">
+    <ClInclude Include="..\signals\internal\result.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\result.hpp">
+    <ClInclude Include="..\signals\internal\signal.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
   </ItemGroup>
