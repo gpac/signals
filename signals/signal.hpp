@@ -6,6 +6,7 @@
 
 template <typename SignalSignature, typename Result = ResultVector<typename std::function<SignalSignature>::result_type>, typename Caller = CallerAsync<SignalSignature>>
 class Signal : public ProtoSignal<Result, SignalSignature, Caller> {
+private:
 	typedef typename ProtoSignal<Result, SignalSignature, Caller>::CallbackType Callback;
 
 	class Connector {
