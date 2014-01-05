@@ -1,4 +1,4 @@
 #pragma once
 
-#include "helper.hpp"
-#include "signal.hpp"
+#include "internal/helper.hpp"
+#include "internal/signal.hpp"

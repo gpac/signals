@@ -19,26 +19,26 @@
     <ClInclude Include="tests.hpp">
       <Filter>tests</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\caller.hpp">
-      <Filter>includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\connection.hpp">
-      <Filter>includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\protosignal.hpp">
-      <Filter>includes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\result.hpp">
+    <ClInclude Include="..\signals\signals.hpp">
       <Filter>includes</Filter>
     </ClInclude>
     <ClInclude Include="..\signals\signal.hpp">
-      <Filter>includes</Filter>
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\caller.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\connection.hpp">
+      <Filter>includes\internal</Filter>
     </ClInclude>
     <ClInclude Include="..\signals\helper.hpp">
-      <Filter>includes</Filter>
+      <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\signals.hpp">
-      <Filter>includes</Filter>
+    <ClInclude Include="..\signals\protosignal.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\result.hpp">
+      <Filter>includes\internal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +47,9 @@
     </Filter>
     <Filter Include="tests">
       <UniqueIdentifier>{7bf9eaed-692e-4050-b005-92e0d8380a51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\internal">
+      <UniqueIdentifier>{4352ee3e-f1a2-4f14-9bb7-86c9a1cd9c78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
