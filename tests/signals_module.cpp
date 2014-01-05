@@ -17,27 +17,25 @@ namespace Tests {
 		};
 
 		int main(int argc, char **argv) {
-			Test("module connection");
-			Signaler sender;
-			Signaler &senderRef = sender;
-			Signaler *senderPtr = &sender; //TODO: tester const?
-			Slot receiver;
-			auto f1 = MEMBER_FUNCTOR(receiver, Slot::slot);
-			sender.signal.connect(f1);
-			CONNECT(&sender   , signal, receiver, Slot::slot);
-			CONNECT(&senderRef, signal, receiver, Slot::slot);
-			CONNECT(senderPtr , signal, receiver, Slot::slot);
-			//CONNECT(this, ...)
+			Test("basic module connection tests");
+			{
+				Signaler sender;
+				Signaler &senderRef = sender;
+				Signaler *senderPtr = &sender;
+				Slot receiver;
+				Slot &receiverRef = receiver;
+				Slot *receiverPtr = &receiver;
+				CONNECT(&sender, signal, &receiver, &Slot::slot);
+				CONNECT(&senderRef, signal, &receiver, &Slot::slot);
+				CONNECT(senderPtr, signal, &receiver, &Slot::slot);
+				CONNECT(senderPtr, signal, &receiverRef, &Slot::slot);
+				CONNECT(senderPtr, signal, receiverPtr, &Slot::slot);
 
-			sender.signal.emit(100);
-			auto res = sender.signal.results();
-			ASSERT(res.size() == 1);
-			ASSERT(res[0] == 101);
-
-			Test("module connection XXX");
-			Signaler sender2;
-			Slot receiver2;
-			sender.signal.emit(100);
+				sender.signal.emit(100);
+				auto res = sender.signal.results();
+				ASSERT(res.size() == 5);
+				ASSERT(res[0] == 101 && res[4] == 101);
+			}
 
 			return 0;
 		}

@@ -3,7 +3,7 @@
 
 /* member funtion helper */
 
-#define MEMBER_FUNCTOR(Object, MemberFunction) MemberFunctor<decltype(get_return_type(&MemberFunction)), decltype(get_class(&MemberFunction)), decltype(&MemberFunction)>(&Object, &MemberFunction)
+#define MEMBER_FUNCTOR(ObjectPtr, MemberFunctionPtr) MemberFunctor<decltype(get_return_type(MemberFunctionPtr)), decltype(get_class(MemberFunctionPtr)), decltype(MemberFunctionPtr)>(ObjectPtr, MemberFunctionPtr)
 
 #define CONNECT(ObjectSig, MemberFunctionSig, ObjectSlot, MemberFunctionSlot) (ObjectSig)->MemberFunctionSig.connect(MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot))
 
