@@ -64,7 +64,7 @@ public:
 
 protected:
 	ProtoSignal(const CallbackType &cb) : uid(0) {
-		if (cb != NULL) {
+		if (cb != nullptr) {
 			size_t connectionId = uid++;
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		}
