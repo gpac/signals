@@ -172,9 +172,11 @@
   <ItemGroup>
     <ClInclude Include="..\signals\caller.hpp" />
     <ClInclude Include="..\signals\connection.hpp" />
+    <ClInclude Include="..\signals\helper.hpp" />
     <ClInclude Include="..\signals\protosignal.hpp" />
     <ClInclude Include="..\signals\result.hpp" />
     <ClInclude Include="..\signals\signal.hpp" />
+    <ClInclude Include="..\signals\signals.hpp" />
     <ClInclude Include="tests.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

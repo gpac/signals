@@ -34,6 +34,12 @@
     <ClInclude Include="..\signals\signal.hpp">
       <Filter>includes</Filter>
     </ClInclude>
+    <ClInclude Include="..\signals\helper.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\signals.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="includes">

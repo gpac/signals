@@ -1,10 +1,10 @@
-#include "signal.hpp"
+#include "signals.hpp"
 #include "tests.hpp"
 
 
 namespace Tests {
 	namespace Module {
-		class Signaller {
+		class Signaler {
 		public:
 			Signal<int(int)> signal;
 		};
@@ -18,17 +18,27 @@ namespace Tests {
 
 		int main(int argc, char **argv) {
 			Test("module connection");
-			Signaller sender;
+			Signaler sender;
+			Signaler &senderRef = sender;
+			Signaler *senderPtr = &sender; //TODO: tester const?
 			Slot receiver;
-			std::function<int(int)> f = std::bind(&Slot::slot, receiver, std::placeholders::_1);
-			sender.signal.connect(f);
+			auto f1 = MEMBER_FUNCTOR(receiver, Slot::slot);
+			sender.signal.connect(f1);
+			CONNECT(&sender   , signal, receiver, Slot::slot);
+			CONNECT(&senderRef, signal, receiver, Slot::slot);
+			CONNECT(senderPtr , signal, receiver, Slot::slot);
+			//CONNECT(this, ...)
+
 			sender.signal.emit(100);
-			sender.signal.results();
+			auto res = sender.signal.results();
+			ASSERT(res.size() == 1);
+			ASSERT(res[0] == 101);
 
 			Test("module connection XXX");
-			Signaller sender2;
+			Signaler sender2;
 			Slot receiver2;
 			sender.signal.emit(100);
+
 			return 0;
 		}
 	}
