@@ -7,6 +7,7 @@
 template<typename> class CallerSync;
 template<typename> class CallerLazy;
 template<typename> class CallerAsync;
+template<typename> class CallerAuto;
 
 //synchronous calls
 template<typename Callback, typename... Args>
@@ -62,5 +63,22 @@ public:
 	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
 		auto closure = [=](Args... args)->int { callback(args...); return 0; };
 		return std::async(std::launch::async, closure, args...);
+	}
+};
+
+//asynchronous or synchronous calls at the runtime convenience
+template<typename Callback, typename... Args>
+class CallerAuto<Callback(Args...)> {
+public:
+	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+		return std::async(std::launch::async | std::launch::deferred, callback, args...);
+	}
+};
+template<typename... Args>
+class CallerAuto<void(Args...)> {
+public:
+	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		auto closure = [=](Args... args)->int { callback(args...); return 0; };
+		return std::async(std::launch::async | std::launch::deferred, closure, args...);
 	}
 };
