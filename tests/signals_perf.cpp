@@ -1,4 +1,4 @@
-#include "signal.hpp"
+#include "signals.hpp"
 #include "tests.hpp"
 
 #include <sstream>
