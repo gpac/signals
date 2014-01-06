@@ -1,5 +1,6 @@
 #include "signals.hpp"
 #include "tests.hpp"
+#include "threadpool.hpp"
 
 #include <sstream>
 #include <vector>
@@ -43,6 +44,51 @@ namespace Tests {
 						return;
 					}
 				} else {
+					id[i - 1] = sig.connect(f);
+				}
+			}
+		}
+
+		template<typename SignalSignature, typename Result, typename Caller, typename ValType>
+		void emitTestPool(std::function<SignalSignature> f, ValType val) { //TODO: same function as others?
+			Signal<SignalSignature, Result, Caller> sig;
+			std::vector<size_t> id(TEST_MAX_SIZE);
+			bool timeout = false;
+			for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
+				if (Util::isPow2(i)) {
+					{
+						std::stringstream ss;
+						ss << "Emit time for " << FORMAT(i, TEST_MAX_SIZE) << " connected callbacks";
+						if (i > 0) {
+							id[i - 1] = sig.connect(f);
+						}
+						ThreadPool pool;
+						Util::Profiler p(ss.str());
+						sig.emit(val);
+						std::function<void(void)> f = [&sig]() { sig.results(); }; //TODO: lastResult(); };
+						pool.submit<void(void)>(f);
+						if (p.elapsedInUs() > TEST_TIMEOUT_IN_US) {
+							timeout = true;
+						}
+						pool.WaitForCompletion();
+					}
+					{
+					std::stringstream ss;
+					ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
+					Util::Profiler p(ss.str());
+					for (int j = 0; j < i; ++j) {
+						f(val);
+					}
+					if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
+						timeout = true;
+					}
+				}
+					if (timeout) {
+						std::cout << "TIMEOUT: ABORT CURRENT TEST" << std::endl;
+						return;
+					}
+				}
+				else {
 					id[i - 1] = sig.connect(f);
 				}
 			}
@@ -97,38 +143,48 @@ namespace Tests {
 				}
 			}
 
-			Test("emit dummy  on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::dummy, 1789);
-			Test("emit dummy  on auto");
-			emitTest<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::dummy, 1789);
-			Test("emit dummy  on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::dummy, 1789);
-			Test("emit dummy  on  lazy");
-			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::dummy, 1789);
-			Test("emit light computation on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::compute, 12);
-			Test("emit light computation on auto");
-			emitTest<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::compute, 12);
-			Test("emit light computation on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::compute, 12);
-			Test("emit light computation on  lazy");
-			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::compute, 12);
-			Test("emit heavy computation on async");
-			emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::compute, 27);
-			Test("emit heavy computation on auto");
-			emitTest<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::compute, 27);
-			Test("emit heavy computation on  sync");
-			emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::compute, 27);
-			Test("emit heavy computation on  lazy");
-			emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::compute, 27);
-			Test("emit sleep   on async");
-			emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>, int>(Util::sleepInMs, 100);
-			Test("emit sleep   on  auto");
-			emitTest<void(int), ResultVector<void>, CallerAuto<void(int)>, int>(Util::sleepInMs, 100);
-			Test("emit sleep   on  sync");
-			emitTest<void(int), ResultVector<void>, CallerSync <void(int)>, int>(Util::sleepInMs, 100);
-			Test("emit sleep   on  lazy");
-			emitTest<void(int), ResultVector<void>, CallerLazy <void(int)>, int>(Util::sleepInMs, 100);
+			{
+				Test("emit dummy  on async");
+				emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::dummy, 1789);
+				Test("emit dummy  on auto");
+				emitTest<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::dummy, 1789);
+				Test("emit dummy  on pool");
+				emitTestPool<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::dummy, 1789);
+				Test("emit dummy  on  sync");
+				emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::dummy, 1789);
+				Test("emit dummy  on  lazy");
+				emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::dummy, 1789);
+				Test("emit light computation on async");
+				emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::compute, 12);
+				Test("emit light computation on auto");
+				emitTest<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::compute, 12);
+				Test("emit light computation on pool");
+				emitTestPool<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::compute, 12);
+				Test("emit light computation on  sync");
+				emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::compute, 12);
+				Test("emit light computation on  lazy");
+				emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::compute, 12);
+				Test("emit heavy computation on async");
+				emitTest<int(int), ResultVector<int>, CallerAsync<int(int)>, int>(Util::compute, 27);
+				Test("emit heavy computation on auto");
+				emitTest<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::compute, 27);
+				Test("emit heavy computation on pool");
+				emitTestPool<int(int), ResultVector<int>, CallerAuto<int(int)>, int>(Util::compute, 27);
+				Test("emit heavy computation on  sync");
+				emitTest<int(int), ResultVector<int>, CallerSync <int(int)>, int>(Util::compute, 27);
+				Test("emit heavy computation on  lazy");
+				emitTest<int(int), ResultVector<int>, CallerLazy <int(int)>, int>(Util::compute, 27);
+				Test("emit sleep   on async");
+				emitTest<void(int), ResultVector<void>, CallerAsync<void(int)>, int>(Util::sleepInMs, 100);
+				Test("emit sleep   on  auto");
+				emitTest<void(int), ResultVector<void>, CallerAuto<void(int)>, int>(Util::sleepInMs, 100);
+				Test("emit sleep   on  pool");
+				emitTestPool<void(int), ResultVector<void>, CallerAuto<void(int)>, int>(Util::sleepInMs, 100);
+				Test("emit sleep   on  sync");
+				emitTest<void(int), ResultVector<void>, CallerSync <void(int)>, int>(Util::sleepInMs, 100);
+				Test("emit sleep   on  lazy");
+				emitTest<void(int), ResultVector<void>, CallerLazy <void(int)>, int>(Util::sleepInMs, 100);
+			}
 
 			return 0;
 		}

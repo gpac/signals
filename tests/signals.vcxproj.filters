@@ -40,6 +40,9 @@
     <ClInclude Include="..\signals\internal\signal.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
+    <ClInclude Include="threadpool.hpp">
+      <Filter>tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="includes">

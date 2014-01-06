@@ -178,6 +178,7 @@
     <ClInclude Include="..\signals\internal\signal.hpp" />
     <ClInclude Include="..\signals\signals.hpp" />
     <ClInclude Include="tests.hpp" />
+    <ClInclude Include="threadpool.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
