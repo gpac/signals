@@ -15,7 +15,7 @@ public:
 		results.push_back(r);
 	}
 
-	std::vector<ResultType>& get() {
+	ResultValue& get() {
 		return results;
 	}
 
@@ -24,7 +24,7 @@ public:
 	}
 
 private:
-	std::vector<ResultType> results;
+	ResultValue results;
 };
 
 //specialized for void
