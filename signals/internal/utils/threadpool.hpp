@@ -1,5 +1,11 @@
 #pragma once
 
+#include <atomic>
+#include <functional>
+#include <thread>
+
+#include "queue.hpp"
+
 
 namespace Tests { //TODO: create a util namespace?
 	class ThreadPool {

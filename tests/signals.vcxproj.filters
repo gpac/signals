@@ -14,7 +14,7 @@
     <ClCompile Include="signals_async.cpp">
       <Filter>tests</Filter>
     </ClCompile>
-    <ClCompile Include="signal_unit_result.cpp">
+    <ClCompile Include="signals_unit_result.cpp">
       <Filter>tests</Filter>
     </ClCompile>
   </ItemGroup>
@@ -24,9 +24,6 @@
     </ClInclude>
     <ClInclude Include="..\signals\signals.hpp">
       <Filter>includes</Filter>
-    </ClInclude>
-    <ClInclude Include="threadpool.hpp">
-      <Filter>tests</Filter>
     </ClInclude>
     <ClInclude Include="..\signals\internal\core\caller.hpp">
       <Filter>includes\internal\core</Filter>
@@ -47,6 +44,9 @@
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\signals\internal\utils\queue.hpp">
+      <Filter>includes\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\utils\threadpool.hpp">
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -168,7 +168,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="signal_unit_result.cpp">
+    <ClCompile Include="signals_unit_result.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -183,9 +183,9 @@
     <ClInclude Include="..\signals\internal\core\signal.hpp" />
     <ClInclude Include="..\signals\internal\utils\helper.hpp" />
     <ClInclude Include="..\signals\internal\utils\queue.hpp" />
+    <ClInclude Include="..\signals\internal\utils\threadpool.hpp" />
     <ClInclude Include="..\signals\signals.hpp" />
     <ClInclude Include="tests.hpp" />
-    <ClInclude Include="threadpool.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
