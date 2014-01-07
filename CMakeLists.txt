@@ -34,17 +34,19 @@ macro(ADD_ASYNC_UNIT_TEST NAME)
   target_link_libraries( ${NAME} ${CMAKE_THREAD_LIBS_INIT} )
 endmacro(ADD_ASYNC_UNIT_TEST)
 
-ADD_ASYNC_UNIT_TEST(signals_simple tests/signals_simple.cpp)
-ADD_ASYNC_UNIT_TEST(signals_perf   tests/signals_perf.cpp)
-ADD_ASYNC_UNIT_TEST(signals_module tests/signals_module.cpp)
-ADD_ASYNC_UNIT_TEST(signals_async  tests/signals_async.cpp)
+ADD_ASYNC_UNIT_TEST(signals_unit_result tests/signals_unit_result.cpp)
+ADD_ASYNC_UNIT_TEST(signals_simple      tests/signals_simple.cpp)
+ADD_ASYNC_UNIT_TEST(signals_perf        tests/signals_perf.cpp)
+ADD_ASYNC_UNIT_TEST(signals_module      tests/signals_module.cpp)
+ADD_ASYNC_UNIT_TEST(signals_async       tests/signals_async.cpp)
 
 
 # Run unit tests
-add_test(Exec_signals             signals)
-add_test(Unit_test_signals_simple signals_simple)
-add_test(Unit_test_signals_perf   signals_perf)
-add_test(Unit_test_signals_module signals_module)
-add_test(Unit_test_signals_async  signals_async)
+add_test(Exec_signals                  signals)
+add_test(Unit_test_signals_unit_result signals_unit_result)
+add_test(Unit_test_signals_simple      signals_simple)
+add_test(Unit_test_signals_perf        signals_perf)
+add_test(Unit_test_signals_module      signals_module)
+add_test(Unit_test_signals_async       signals_async)
 
 

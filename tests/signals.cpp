@@ -7,6 +7,7 @@
 //#define ENABLE_FAILING_TESTS
 
 
+#include "signal_unit_result.cpp"
 #include "signals_simple.cpp"
 #include "signals_module.cpp"
 #include "signals_async.cpp"
@@ -19,6 +20,9 @@ int main(int argc, char **argv) {
 	Util::Profiler p("TESTS TOTAL TIME");
 
 	int res = 0;
+
+	res = Unit::Result::main(argc, argv);
+	ASSERT(!res);
 
 	res = Simple::main(argc, argv);
 	ASSERT(!res);
