@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(async)
+project(signals)
 enable_testing()
 
 # C++11 support (a better portable way will be available in the next version of CMake)
