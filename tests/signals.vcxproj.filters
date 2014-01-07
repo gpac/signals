@@ -22,26 +22,29 @@
     <ClInclude Include="..\signals\signals.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\internal\caller.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\internal\connection.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\internal\helper.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\internal\protosignal.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\internal\result.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="..\signals\internal\signal.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
     <ClInclude Include="threadpool.hpp">
       <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\core\caller.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\core\connection.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\core\protosignal.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\core\result.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\core\signal.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\utils\helper.hpp">
+      <Filter>includes\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\signals\internal\utils\queue.hpp">
+      <Filter>includes\internal\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +56,12 @@
     </Filter>
     <Filter Include="includes\internal">
       <UniqueIdentifier>{4352ee3e-f1a2-4f14-9bb7-86c9a1cd9c78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\internal\core">
+      <UniqueIdentifier>{9f7d2980-9041-4d4e-967a-8c6dcb5ea1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\internal\utils">
+      <UniqueIdentifier>{1581a664-fcb7-4f3b-be4e-1ce13327cb64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

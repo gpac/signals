@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "../utils/queue.hpp"
 
 
 template<typename ResultType>
