@@ -6,11 +6,11 @@
 
 
 template<typename ResultType>
-class ResultThreadSafeQueue {
+class ResultQueueThreadSafe {
 public:
-	typedef std::shared_ptr<ThreadSafeQueue<ResultType>> ResultValue;
+	typedef std::shared_ptr<QueueThreadSafe<ResultType>> ResultValue;
 
-	explicit ResultThreadSafeQueue() : results(new ThreadSafeQueue<ResultType>()) {
+	explicit ResultQueueThreadSafe() : results(new QueueThreadSafe<ResultType>()) {
 	}
 
 	void set(ResultType r) {
@@ -31,11 +31,11 @@ private:
 
 //specialized for void
 template<>
-class ResultThreadSafeQueue<void> {
+class ResultQueueThreadSafe<void> {
 public:
 	typedef std::shared_ptr<void> ResultValue;
 
-	explicit ResultThreadSafeQueue() {
+	explicit ResultQueueThreadSafe() {
 	}
 
 	void set(int) {
@@ -49,17 +49,16 @@ public:
 	}
 };
 
-#if 0 //TODO: write an interface for Result
 template<typename ResultType>
 class ResultVector {
 public:
-	typedef std::vector<ResultType> ResultValue;
+	typedef std::shared_ptr<std::vector<ResultType>> ResultValue;
 
 	explicit ResultVector() {
 	}
 
 	void set(ResultType r) {
-		results.push_back(r);
+		results->push_back(r);
 	}
 
 	ResultValue& get() {
@@ -67,7 +66,7 @@ public:
 	}
 
 	void clear() {
-		results.clear();
+		results->clear();
 	}
 
 private:
@@ -78,7 +77,7 @@ private:
 template<>
 class ResultVector<void> {
 public:
-	typedef void ResultValue;
+	typedef std::shared_ptr<void> ResultValue;
 
 	explicit ResultVector() {
 	}
@@ -92,4 +91,3 @@ public:
 	void clear() {
 	}
 };
-#endif

@@ -2,34 +2,53 @@
 
 #include <cassert>
 #include <future>
-#include <queue>
+
+#include "../utils/queue.hpp"
 
 
 template<typename Callback, typename ResultType>
-class Connection {
+class ConnectionQueue {
 public:
 	Callback callback;
-	ThreadSafeQueue<std::shared_future<ResultType>> futures;
+	Queue<std::shared_future<ResultType>> futures;
 	size_t uid;
 
-	explicit Connection(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
-	}
-
-	~Connection() {
+	explicit ConnectionQueue(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
 	}
 };
 
 //specialized for void
 template<typename Callback>
-class Connection<Callback, void> {
+class ConnectionQueue<Callback, void> {
 public:
 	Callback callback;
-	ThreadSafeQueue<std::shared_future<int>> futures;
+	Queue<std::shared_future<int>> futures;
 	size_t uid;
 
-	explicit Connection(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
+	explicit ConnectionQueue(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
 	}
+};
 
-	~Connection() {
+
+template<typename Callback, typename ResultType>
+class ConnectionQueueThreadSafe {
+public:
+	Callback callback;
+	QueueThreadSafe<std::shared_future<ResultType>> futures;
+	size_t uid;
+
+	explicit ConnectionQueueThreadSafe(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
+	}
+};
+
+//specialized for void
+template<typename Callback>
+class ConnectionQueueThreadSafe<Callback, void> {
+public:
+	Callback callback;
+	QueueThreadSafe<std::shared_future<int>> futures;
+	size_t uid;
+
+	explicit ConnectionQueueThreadSafe(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
 	}
 };

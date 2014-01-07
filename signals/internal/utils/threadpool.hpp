@@ -53,7 +53,7 @@ namespace Tests { //TODO: create a util namespace?
 		}
 
 		std::atomic_bool done, waitAndExit;
-		ThreadSafeQueue<std::function<void()>> workQueue;
+		QueueThreadSafe<std::function<void()>> workQueue;
 		std::vector<std::thread> threads;
 	};
 }

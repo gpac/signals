@@ -7,9 +7,14 @@
 
 
 template<typename T>
-class ThreadSafeQueue {
+class IQueue {
+	virtual std::shared_ptr<T> tryPop() = 0;
+};
+
+template<typename T>
+class QueueThreadSafe : public IQueue<T> {
 public:
-	ThreadSafeQueue() {
+	QueueThreadSafe() {
 	}
 
 	void push(T data) {
@@ -56,10 +61,22 @@ public:
 	}
 
 private:
-	ThreadSafeQueue(const ThreadSafeQueue&) = delete;
-	ThreadSafeQueue& operator= (const ThreadSafeQueue&) = delete;
+	QueueThreadSafe(const QueueThreadSafe&) = delete;
+	QueueThreadSafe& operator= (const QueueThreadSafe&) = delete;
 
 	mutable std::mutex mutex;
 	std::queue<T> dataQueue;
 	std::condition_variable dataCondition;
+};
+
+template<typename T>
+class Queue : public IQueue<T>, public std::queue<T>{
+	std::shared_ptr<T> tryPop() {
+		if (std::queue<T>::empty()) {
+			return std::shared_ptr<T>();
+		}
+		std::shared_ptr<T> res(std::make_shared<T>(std::move(std::queue<T>::front())));
+		std::queue<T>::pop();
+		return res;
+	}
 };

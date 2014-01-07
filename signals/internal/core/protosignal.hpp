@@ -20,7 +20,7 @@ protected:
 private:
 	typedef typename Result::ResultValue ResultValue;
 	typedef typename CallbackType::result_type ResultType;
-	typedef Connection<CallbackType, ResultType> ConnectionType;
+	typedef ConnectionQueueThreadSafe<CallbackType, ResultType> ConnectionType;
 	typedef std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
@@ -85,7 +85,7 @@ protected:
 				for (;;) {
 					auto f = cb.second->futures.tryPop();
 					if (f) {
-						result.set(std::move(f)->get()); //sync on destroy //TODO: move to the Caller's class responsability to avoid lazy computation?
+						result.set(std::move(f)->get()); //sync on destroy
 					} else {
 						break;
 					}
@@ -100,7 +100,7 @@ private:
 	ProtoSignal(const ProtoSignal&) = delete;
 	ProtoSignal& operator= (const ProtoSignal&) = delete;
 
-	ConnectionManager callbacks; //TODO: make an interface for the ConnectionManager to remove code from this class
+	ConnectionManager callbacks;
 	std::atomic<size_t> uid;
 	Caller caller;
 	Result result;
