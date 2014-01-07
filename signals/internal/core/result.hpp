@@ -5,8 +5,12 @@
 #include "../utils/queue.hpp"
 
 
+class IResult {
+};
+
+
 template<typename ResultType>
-class ResultQueueThreadSafe {
+class ResultQueueThreadSafe : public IResult {
 public:
 	typedef std::shared_ptr<QueueThreadSafe<ResultType>> ResultValue;
 
@@ -31,7 +35,7 @@ private:
 
 //specialized for void
 template<>
-class ResultQueueThreadSafe<void> {
+class ResultQueueThreadSafe<void> : public IResult {
 public:
 	typedef std::shared_ptr<void> ResultValue;
 
@@ -50,11 +54,11 @@ public:
 };
 
 template<typename ResultType>
-class ResultVector {
+class ResultVector : public IResult {
 public:
 	typedef std::shared_ptr<std::vector<ResultType>> ResultValue;
 
-	explicit ResultVector() {
+	explicit ResultVector() : results(new std::vector<ResultType>()) {
 	}
 
 	void set(ResultType r) {
@@ -75,17 +79,18 @@ private:
 
 //specialized for void
 template<>
-class ResultVector<void> {
+class ResultVector<void> : public IResult {
 public:
 	typedef std::shared_ptr<void> ResultValue;
 
-	explicit ResultVector() {
+	explicit ResultVector()  {
 	}
 
 	void set(int) {
 	}
 
-	void get() {
+	std::shared_ptr<void> get() {
+		return std::shared_ptr<void>();
 	}
 
 	void clear() {

@@ -22,7 +22,7 @@ template<typename Callback>
 class ConnectionQueue<Callback, void> {
 public:
 	Callback callback;
-	Queue<std::shared_future<int>> futures;
+	Queue<std::shared_future<void>> futures;
 	size_t uid;
 
 	explicit ConnectionQueue(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {

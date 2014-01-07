@@ -1,7 +1,6 @@
 #pragma once
 
 #include "caller.hpp"
-#include "connection.hpp"
 
 #include <algorithm>
 #include <atomic>

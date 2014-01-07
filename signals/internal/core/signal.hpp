@@ -1,10 +1,11 @@
 #pragma once
 
+#include "connection.hpp"
 #include "result.hpp"
 #include "protosignal.hpp"
 
 
-template <typename SignalSignature, typename Result = ResultQueueThreadSafe<typename std::function<SignalSignature>::result_type>, typename Caller = CallerAsync<SignalSignature>>
+template <typename SignalSignature, typename Result = ResultQueueThreadSafe<typename std::function<SignalSignature>::result_type>, typename Caller = CallerAsync<SignalSignature>, typename Connection = ConnectionQueueThreadSafe<SignalSignature, typename std::function<SignalSignature>::result_type>>
 class Signal : public ProtoSignal<Result, SignalSignature, Caller> {
 private:
 	typedef typename ProtoSignal<Result, SignalSignature, Caller>::CallbackType Callback;
