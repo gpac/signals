@@ -40,12 +40,12 @@ public:
 
 	bool empty() const {
 		std::lock_guard<std::mutex> lock(mutex);
-		return dataQueue.size();
+		return dataQueue.empty();
 	}
 
 	size_t size() const {
 		std::lock_guard<std::mutex> lock(mutex);
-		return dataQueue.empty();
+		return dataQueue.size();
 	}
 
 	void clear() {
