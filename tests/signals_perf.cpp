@@ -28,16 +28,16 @@ namespace Tests {
 						}
 					}
 					{
-						std::stringstream ss;
-						ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
-						Util::Profiler p(ss.str());
-						for (int j = 0; j < i; ++j) {
-							f(val);
-						}
-						if (p.elapsedInUs() > 2*TEST_TIMEOUT_IN_US) {
-							timeout = true;
-						}
+					std::stringstream ss;
+					ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
+					Util::Profiler p(ss.str());
+					for (int j = 0; j < i; ++j) {
+						f(val);
 					}
+					if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
+						timeout = true;
+					}
+				}
 					if (timeout) {
 						std::cout << "TIMEOUT: ABORT CURRENT TEST" << std::endl;
 						return;
@@ -77,22 +77,21 @@ namespace Tests {
 						}
 					}
 					{
-						std::stringstream ss;
-						ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
-						Util::Profiler p(ss.str());
-						for (int j = 0; j < i; ++j) {
-							f(val);
-						}
-						if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
-							timeout = true;
-						}
+					std::stringstream ss;
+					ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
+					Util::Profiler p(ss.str());
+					for (int j = 0; j < i; ++j) {
+						f(val);
 					}
+					if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
+						timeout = true;
+					}
+				}
 					if (timeout) {
 						std::cout << "TIMEOUT: ABORT CURRENT TEST" << std::endl;
 						return;
 					}
-				}
-				else {
+				} else {
 					id[i - 1] = sig.connect(f);
 				}
 			}
@@ -127,8 +126,7 @@ namespace Tests {
 						ss << "Connect number    " << FORMAT(i, TEST_MAX_SIZE);
 						Util::Profiler p(ss.str());
 						id[i] = sig.connect(Util::dummy);
-					}
-					else {
+					} else {
 						id[i] = sig.connect(Util::dummy);
 					}
 				}
@@ -139,8 +137,7 @@ namespace Tests {
 						Util::Profiler p(ss.str());
 						bool res = sig.disconnect(id[i]);
 						ASSERT(res);
-					}
-					else {
+					} else {
 						bool res = sig.disconnect(id[i]);
 						ASSERT(res);
 					}

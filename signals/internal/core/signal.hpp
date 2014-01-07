@@ -29,7 +29,7 @@ private:
 		Signal &signal;
 	};
 
-public:	
+public:
 	Signal(const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature, Caller>(callback) {
 	}
 };

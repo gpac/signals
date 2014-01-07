@@ -5,7 +5,7 @@
 namespace Tests {
 	namespace Simple {
 		int dummy2(int a) {
-			return Util::dummy(1+Util::dummy(a));
+			return Util::dummy(1 + Util::dummy(a));
 		}
 
 		int main(int argc, char **argv) {
@@ -20,7 +20,7 @@ namespace Tests {
 
 			Test("connect");
 			size_t id = sig.connect(Util::dummy);
-			
+
 			Test("single connection: check result");
 			const int input = 100;
 			auto numVal = sig.emit(input);

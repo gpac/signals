@@ -12,7 +12,7 @@ namespace Tests {
 		class Slot {
 		public:
 			int slot(int a) {
-				return 1+Util::dummyPrint(a);
+				return 1 + Util::dummyPrint(a);
 			}
 		};
 
