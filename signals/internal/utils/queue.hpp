@@ -40,6 +40,11 @@ public:
 
 	bool empty() const {
 		std::lock_guard<std::mutex> lock(mutex);
+		return dataQueue.size();
+	}
+
+	size_t size() const {
+		std::lock_guard<std::mutex> lock(mutex);
 		return dataQueue.empty();
 	}
 
@@ -51,6 +56,9 @@ public:
 	}
 
 private:
+	ThreadSafeQueue(const ThreadSafeQueue&) = delete;
+	ThreadSafeQueue& operator= (const ThreadSafeQueue&) = delete;
+
 	mutable std::mutex mutex;
 	std::queue<T> dataQueue;
 	std::condition_variable dataCondition;
