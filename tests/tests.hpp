@@ -23,7 +23,7 @@
 #endif
 
 
-#define TEST_MAX_SIZE (2<<11)
+#define TEST_MAX_SIZE (1<<12)
 #define TEST_TIMEOUT_IN_US 3000000
 #define TEST_MAX_TIME_IN_S 100
 
@@ -67,6 +67,7 @@ namespace Tests {
 		}
 
 		void sleepInMs(int ms) {
+			//std::cout << "sleepInMs(" << ms << ") in thread " << std::this_thread::get_id() << std::endl;
 			SLEEP_IN_MS(ms);
 		}
 

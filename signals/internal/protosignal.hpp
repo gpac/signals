@@ -44,19 +44,27 @@ public:
 		result.clear();
 		for (auto &cb : callbacks) {
 			if (cb.second) {
-				cb.second->futures.push_back(caller(cb.second->callback, args...));
+				cb.second->futures.push(caller(cb.second->callback, args...));
 			}
 		}
 		return callbacks.size();
 	}
 
-	ResultValue results() {
+	ResultValue results(bool single = false) {
 		for (auto &cb : callbacks) {
 			if (cb.second) {
-				for (auto &f : cb.second->futures) {
-					result.set(std::move(f).get());
+				for (;;) {
+					auto f = cb.second->futures.tryPop();
+					if (f) {
+						result.set(std::move(f)->get());
+						if (single) {
+							break;
+						}
+					} else {
+						break;
+					}
 				}
-				cb.second->futures.clear(); //FIXME: this may delete the future queue while new elements are added
+				cb.second->futures.clear();
 			}
 		}
 		return result.get();
@@ -74,8 +82,13 @@ protected:
 		Result result;
 		for (auto &cb : callbacks) { //delete still connected callbacks
 			if (cb.second) {
-				for (auto &f : cb.second->futures) {
-					result.set(std::move(f).get()); //sync on destroy //TODO: move to the Caller's class responsability to avoid lazy computation?
+				for (;;) {
+					auto f = cb.second->futures.tryPop();
+					if (f) {
+						result.set(std::move(f)->get()); //sync on destroy //TODO: move to the Caller's class responsability to avoid lazy computation?
+					} else {
+						break;
+					}
 				}
 				bool res = disconnect(cb.first);
 				assert(res);
