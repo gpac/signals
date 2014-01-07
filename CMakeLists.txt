@@ -3,7 +3,9 @@ project(async)
 enable_testing()
 
 # C++11 support (a better portable way will be available in the next version of CMake)
-add_definitions(-std=c++11)
+if(UNIX)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+endif()
 
 # Thread support
 find_package(Threads)

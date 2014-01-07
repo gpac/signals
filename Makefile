@@ -4,7 +4,7 @@ LDFLAGS = -lpthread
 ifeq ($(DEBUG), 1)
   CFLAGS += -g
 else
-  CFLAGS += -O3 -DNDEBUG
+  CFLAGS += -O3 -DNDEBUG -Wno-unused-variable
 endif
 
 ifeq ($(CLANG), 1)
