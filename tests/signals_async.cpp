@@ -43,9 +43,7 @@ namespace Tests {
 				sig.emit(27);
 				sig.disconnect(uid);
 				auto res = sig.results();
-#ifdef ENABLE_FAILING_TESTS
-				ASSERT(res.size() == 0);
-#endif
+				ASSERT(res->size() == 0);
 			}
 
 			Test("as many results as emit() calls");
@@ -56,10 +54,8 @@ namespace Tests {
 				sig.emit(1789);
 				auto res = sig.results();
 				ASSERT(res->size() == 2);
-#ifdef ENABLE_FAILING_TESTS
-				ASSERT(res[0] == 27);
-				ASSERT(res[1] == 1789);
-#endif
+				ASSERT((*res)[0] == 27);
+				ASSERT((*res)[1] == 1789);
 			}
 
 			Test("as many results as emit() calls, results arriving in wrong order");
@@ -70,10 +66,8 @@ namespace Tests {
 				sig.emit(20, 1789);
 				auto res = sig.results();
 				ASSERT(res->size() == 2);
-#ifdef ENABLE_FAILING_TESTS
-				ASSERT(res[0] == 27);
-				ASSERT(res[1] == 1789);
-#endif
+				ASSERT((*res)[0] == 27);
+				ASSERT((*res)[1] == 1789);
 			}
 
 			return 0;

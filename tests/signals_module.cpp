@@ -34,9 +34,7 @@ namespace Tests {
 				sender.signal.emit(100);
 				auto res = sender.signal.results();
 				ASSERT(res->size() == 5);
-#ifdef ENABLE_FAILING_TESTS
-				ASSERT(res[0] == 101 && res[4] == 101);
-#endif
+				ASSERT((*res)[0] == 101 && (*res)[4] == 101);
 			}
 
 			return 0;

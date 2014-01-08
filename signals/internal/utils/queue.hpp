@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
@@ -59,6 +60,33 @@ public:
 			dataQueue.pop();
 		}
 	}
+
+//#ifdef TESTS
+	T& operator[] (size_t index) {
+		std::lock_guard<std::mutex> lock(mutex);
+		const size_t dataSize = dataQueue.size();
+		assert(index < dataSize);
+		if (index == 0) {
+			return dataQueue.front();
+		}
+		std::queue<T> tmpQueue;
+		for (size_t i = 0; i < index; ++i) {
+			tmpQueue.push(dataQueue.front());
+			dataQueue.pop();
+		}
+		T &res = dataQueue.front();
+		for (size_t i = index; i < dataSize; ++i) {
+			tmpQueue.push(dataQueue.front());
+			dataQueue.pop();
+		}
+		assert((dataQueue.size() == 0) && (tmpQueue.size() == dataSize));
+		for (size_t i = 0; i < dataSize; ++i) {
+			dataQueue.push(tmpQueue.front());
+			tmpQueue.pop();
+		}
+		return res;
+	}
+//#endif
 
 private:
 	QueueThreadSafe(const QueueThreadSafe&) = delete;

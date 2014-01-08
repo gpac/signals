@@ -5,6 +5,7 @@
 
 
 //#define ENABLE_FAILING_TESTS
+#define TESTS
 
 
 #include "signals_unit_result.cpp"

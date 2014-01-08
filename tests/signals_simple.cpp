@@ -27,9 +27,7 @@ namespace Tests {
 			auto val = sig.results();
 			ASSERT(numVal == val->size());
 			ASSERT(val->size() == 1);
-#ifdef ENABLE_FAILING_TESTS
-			ASSERT(val[0] == Util::dummy(input));
-#endif
+			ASSERT((*val)[0] == Util::dummy(input));
 
 			Test("multiple connections: check results");
 			size_t id2 = sig.connect(dummy2);
@@ -39,23 +37,19 @@ namespace Tests {
 			val = sig.results();
 			ASSERT(numVal == val->size());
 			ASSERT(val->size() == 4);
-#ifdef ENABLE_FAILING_TESTS
-			ASSERT(val. == Util::dummy(input));
-			ASSERT(val[1] == dummy2(input));
-			ASSERT(val[2] == Util::dummy(input));
-			ASSERT(val[3] == dummy2(input));
-#endif
+			ASSERT((*val)[0] == Util::dummy(input));
+			ASSERT((*val)[1] == dummy2(input));
+			ASSERT((*val)[2] == Util::dummy(input));
+			ASSERT((*val)[3] == dummy2(input));
 
 			Test("multiple connections: ask results again");
 			auto val2 = sig.results();
 			ASSERT(numVal == val2->size());
 			ASSERT(val2->size() == 4);
-#ifdef ENABLE_FAILING_TESTS
-			ASSERT(val2[0] == Util::dummy(input));
-			ASSERT(val2[1] == dummy2(input));
-			ASSERT(val2[2] == Util::dummy(input));
-			ASSERT(val2[3] == dummy2(input));
-#endif
+			ASSERT((*val2)[0] == Util::dummy(input));
+			ASSERT((*val2)[1] == dummy2(input));
+			ASSERT((*val2)[2] == Util::dummy(input));
+			ASSERT((*val2)[3] == dummy2(input));
 
 			Test("disconnections");
 			{
