@@ -24,7 +24,7 @@
 
 
 #define TEST_MAX_SIZE (1<<12)
-#define TEST_TIMEOUT_IN_US 3000000
+#define TEST_TIMEOUT_IN_US 800000
 #define TEST_MAX_TIME_IN_S 100
 
 

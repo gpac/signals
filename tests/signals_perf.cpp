@@ -214,28 +214,28 @@ namespace Tests {
 				Test("safe emit light computation on  lazy");
 				emitTest<int(int), ResultQueueThreadSafe<int>, CallerLazy<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 12);
 
-				//heavy computation (~300us) unsafe - the result type is set to void to avoid crashed
+				//heavy computation (~40ms) unsafe - the result type is set to void to avoid crashed
 				Test("unsafe emit heavy computation on async");
-				emitTest<int(int), ResultVector<void>, CallerAsync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultVector<void>, CallerAsync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
 				Test("unsafe emit heavy computation on auto");
-				emitTest<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
 				Test("unsafe emit heavy computation on pool");
-				emitTestPool<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 27);
+				emitTestPool<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
 				Test("unsafe emit heavy computation on  sync");
-				emitTest<int(int), ResultVector<void>, CallerSync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultVector<void>, CallerSync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
 				Test("unsafe emit heavy computation on  lazy");
-				emitTest<int(int), ResultVector<void>, CallerLazy<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 27);
-				//heavy computation (~300us) safe
+				emitTest<int(int), ResultVector<void>, CallerLazy<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
+				//heavy computation (~40ms) safe
 				Test("safe emit heavy computation on async");
-				emitTest<int(int), ResultQueueThreadSafe<int>, CallerAsync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultQueueThreadSafe<int>, CallerAsync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 25);
 				Test("safe emit heavy computation on auto");
-				emitTest<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 25);
 				Test("safe emit heavy computation on pool");
-				emitTestPool<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 27);
+				emitTestPool<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 25);
 				Test("safe emit heavy computation on  sync");
-				emitTest<int(int), ResultQueueThreadSafe<int>, CallerSync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultQueueThreadSafe<int>, CallerSync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 25);
 				Test("safe emit heavy computation on  lazy");
-				emitTest<int(int), ResultQueueThreadSafe<int>, CallerLazy<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 27);
+				emitTest<int(int), ResultQueueThreadSafe<int>, CallerLazy<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 25);
 
 				//sleep unsafe
 				Test("unsafe emit sleep   on async");
