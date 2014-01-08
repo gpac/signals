@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _SIGNALS_HPP_
+#error Please include tests.hpp before signals.hpp
+#endif
+
 #ifdef _MSC_VER
 #include <Windows.h>
 #else
@@ -10,9 +14,12 @@
 #include <cassert>
 #include <cmath>
 #include <csignal>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 
+
+#define TESTS
 
 #define FORMAT(i, max) std::setw(1+(std::streamsize)log10(max)) << i
 #ifdef _MSC_VER

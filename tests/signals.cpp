@@ -1,11 +1,10 @@
-#include "signals.hpp"
 #include "tests.hpp"
+#include "signals.hpp"
 
 #include <iostream>
 
 
 //#define ENABLE_FAILING_TESTS
-#define TESTS
 
 
 #include "signals_unit_result.cpp"

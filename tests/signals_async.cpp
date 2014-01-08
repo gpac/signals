@@ -1,5 +1,5 @@
-#include "signals.hpp"
 #include "tests.hpp"
+#include "signals.hpp"
 
 #include <sstream>
 #include <vector>

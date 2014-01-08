@@ -61,7 +61,7 @@ public:
 		}
 	}
 
-//#ifdef TESTS
+#ifdef TESTS
 	T& operator[] (size_t index) {
 		std::lock_guard<std::mutex> lock(mutex);
 		const size_t dataSize = dataQueue.size();
@@ -86,7 +86,7 @@ public:
 		}
 		return res;
 	}
-//#endif
+#endif
 
 private:
 	QueueThreadSafe(const QueueThreadSafe&) = delete;
