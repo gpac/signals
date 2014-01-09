@@ -22,6 +22,7 @@
     <ProjectGuid>{56B7E6F6-9666-4F71-A75C-C24AFFC93FCA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>simplesignal</RootNamespace>
+    <ProjectName>test_signals</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -176,15 +177,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\signals\internal\core\caller.hpp" />
-    <ClInclude Include="..\signals\internal\core\connection.hpp" />
-    <ClInclude Include="..\signals\internal\core\protosignal.hpp" />
-    <ClInclude Include="..\signals\internal\core\result.hpp" />
-    <ClInclude Include="..\signals\internal\core\signal.hpp" />
-    <ClInclude Include="..\signals\internal\utils\helper.hpp" />
-    <ClInclude Include="..\signals\internal\utils\queue.hpp" />
-    <ClInclude Include="..\signals\internal\utils\threadpool.hpp" />
-    <ClInclude Include="..\signals\signals.hpp" />
     <ClInclude Include="tests.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
