@@ -3,7 +3,6 @@
 #include <atomic>
 #include <functional>
 #include <thread>
-
 #include "queue.hpp"
 
 

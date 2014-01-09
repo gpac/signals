@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <future>
-
 #include "../utils/queue.hpp"
 
 
