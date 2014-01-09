@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="includes">
+      <UniqueIdentifier>{60b9021d-d140-4d60-bbf1-f45ea34e06b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\internal">
+      <UniqueIdentifier>{c1310a27-6c14-4808-84a1-4ca97125b74c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{22a3d231-ad2c-47ab-ae2a-99b76ea5919f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\demux">
+      <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\in">
+      <UniqueIdentifier>{a3f6e730-3170-425f-819d-cc94e02e576b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\out">
+      <UniqueIdentifier>{c0fba10d-1043-4ef0-a075-207627a0576e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="modules.hpp">
+      <Filter>includes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\demux\gpac_mp4_simple.hpp">
+      <Filter>src\demux</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\log.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\module.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\in\file.hpp">
+      <Filter>src\in</Filter>
+    </ClInclude>
+    <ClInclude Include="src\out\print.hpp">
+      <Filter>src\out</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\param.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\config.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
+      <Filter>src\demux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\in\file.cpp">
+      <Filter>src\in</Filter>
+    </ClCompile>
+    <ClCompile Include="src\out\print.cpp">
+      <Filter>src\out</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\log.cpp">
+      <Filter>includes\internal</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

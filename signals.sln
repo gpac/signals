@@ -10,6 +10,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_signals", "tests\test_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "signals", "signals\signals.vcxproj", "{2ECCB03E-D138-43B8-823F-C9CF1837D97A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modules", "modules\modules.vcxproj", "{F6843994-F116-4E68-8EF8-C88149887D4C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_modules", "tests\test_modules.vcxproj", "{E89A9760-ED01-4413-915F-EE1B36F3E35E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F6843994-F116-4E68-8EF8-C88149887D4C} = {F6843994-F116-4E68-8EF8-C88149887D4C}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -34,6 +41,22 @@ Global
 		{2ECCB03E-D138-43B8-823F-C9CF1837D97A}.Release|Win32.Build.0 = Release|Win32
 		{2ECCB03E-D138-43B8-823F-C9CF1837D97A}.Release|x64.ActiveCfg = Release|x64
 		{2ECCB03E-D138-43B8-823F-C9CF1837D97A}.Release|x64.Build.0 = Release|x64
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Debug|Win32.Build.0 = Debug|Win32
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Debug|x64.ActiveCfg = Debug|x64
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Debug|x64.Build.0 = Debug|x64
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Release|Win32.ActiveCfg = Release|Win32
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Release|Win32.Build.0 = Release|Win32
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Release|x64.ActiveCfg = Release|x64
+		{F6843994-F116-4E68-8EF8-C88149887D4C}.Release|x64.Build.0 = Release|x64
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Debug|Win32.Build.0 = Debug|Win32
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Debug|x64.ActiveCfg = Debug|x64
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Debug|x64.Build.0 = Debug|x64
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Release|Win32.ActiveCfg = Release|Win32
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Release|Win32.Build.0 = Release|Win32
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Release|x64.ActiveCfg = Release|x64
+		{E89A9760-ED01-4413-915F-EE1B36F3E35E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
