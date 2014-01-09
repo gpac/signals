@@ -55,8 +55,8 @@ GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 	gf_isom_close(movie);
 }
 
-bool GPAC_MP4_Simple::process() { //Romain
-#if 0
+bool GPAC_MP4_Simple::process(Data *data) {
+#if 0 //Romain
 	deleteLastSample();
 
 	u32 sample_description_index;

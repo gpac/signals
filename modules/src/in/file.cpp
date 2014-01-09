@@ -6,10 +6,12 @@
 
 File::File(FILE *file)
 : file(file) {
+	signals.push_back(new Pin);
 }
 
 File::~File() {
 	fclose(file);
+	delete signals[0];//FIXME: use unique_ptr
 }
 
 File* File::create(const Param &parameters) {
@@ -27,23 +29,22 @@ File* File::create(const Param &parameters) {
 	}
 }
 
-bool File::process() {
-#if 0 //Romain
-	if (in.size()) {
-		//FIXME
-		Log::get(Log::Error) << "Module File doesn't take any input!" << std::endl;
-		in.clear();
-	}
+bool File::process(Data *data) {
+	//ignore input
+	//Romain: data.release()
+	delete data;
 
-	std::vector<char*> &data = in;
-	data.resize(IOSIZE);
-	size_t read = fread(data.data(), 1, IOSIZE, file);
+	Data *out = new Data(IOSIZE);
+	size_t read = fread(out->data(), 1, IOSIZE, file);
 	if (read < IOSIZE) {
-		data.resize(read);
+		if (read == 0) {
+			delete out; //Romain
+			return false;
+		}
+		out->resize(read);
 	}
 
-	return data;
-#endif
+	signals[0]->emit(out);
 	return true;
 }
 

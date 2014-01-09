@@ -6,11 +6,11 @@
 #include <string>
 
 
-class EXPORT File : public IModule {
+class EXPORT File : public Module {
 public:
 	static File* create(const Param &p);
 	~File();
-	bool process();
+	bool process(Data *data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 

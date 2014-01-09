@@ -6,12 +6,9 @@ Print* Print::create(const Param &parameters) {
 	return new Print();
 }
 
-bool Print::process() {
-#if 0 //Romain
-	Log::get(Log::Error) << "Print: received data of size: " << in.size() << std::endl;
-	//FIXME: implicit passthru
-	return in;
-#endif
+bool Print::process(Data *data) {
+	Log::get(Log::Error) << "Print: received data of size: " << data->size() << std::endl;
+	delete data;
 	return true;
 }
 

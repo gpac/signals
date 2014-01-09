@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="internal\config.hpp" />
+    <ClInclude Include="internal\data.hpp" />
     <ClInclude Include="internal\log.hpp" />
     <ClInclude Include="internal\module.hpp" />
     <ClInclude Include="internal\param.hpp" />
+    <ClInclude Include="internal\pin.hpp" />
     <ClInclude Include="modules.hpp" />
     <ClInclude Include="src\demux\gpac_mp4_simple.hpp" />
     <ClInclude Include="src\in\file.hpp" />
@@ -110,6 +112,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include\</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +130,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include\</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,6 +150,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,6 +171,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

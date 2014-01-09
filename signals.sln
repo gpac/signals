@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "signals", "signals\signals.vcxproj", "{2ECCB03E-D138-43B8-823F-C9CF1837D97A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modules", "modules\modules.vcxproj", "{F6843994-F116-4E68-8EF8-C88149887D4C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2ECCB03E-D138-43B8-823F-C9CF1837D97A} = {2ECCB03E-D138-43B8-823F-C9CF1837D97A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_modules", "tests\test_modules.vcxproj", "{E89A9760-ED01-4413-915F-EE1B36F3E35E}"
 	ProjectSection(ProjectDependencies) = postProject
