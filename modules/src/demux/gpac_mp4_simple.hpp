@@ -10,11 +10,11 @@ typedef struct __tag_isom GF_ISOFile;
 struct GF_ISOSample;
 
 
-class EXPORT GPAC_MP4_Simple : public IModule {
+class EXPORT GPAC_MP4_Simple : public Module {
 public:
 	static GPAC_MP4_Simple* create(const Param &parameters);
 	~GPAC_MP4_Simple();
-	bool process(); //Romain: Packet
+	bool process(Data *data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url); //Romain: useful?
 

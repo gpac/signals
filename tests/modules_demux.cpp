@@ -33,6 +33,26 @@ namespace Tests {
 					ASSERT(f != nullptr);
 				}
 
+				Test("print packets size from file");
+				{
+					Param paramFile;
+					paramFile["filename"] = "data/BatmanHD_1000kbit_mpeg.mp4";
+					std::unique_ptr<File> f(File::create(paramFile));
+					ASSERT(f != nullptr);
+
+					Param paramPrint;
+					std::unique_ptr<Print> p(Print::create(paramPrint));
+					ASSERT(p != nullptr);
+
+					size_t uid = CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
+					while (f->process(NULL)) {
+					}
+					//Util::sleepInMs(300);
+					//f->signals[0]->signal.disconnect(uid);
+				}
+
+#if 0
+				//TODO
 				Test("demux one track");
 				{
 					Param paramMP4Demux;
@@ -44,6 +64,7 @@ namespace Tests {
 					std::unique_ptr<Print> p(Print::create(paramPrint));
 					ASSERT(p != nullptr);
 				}
+#endif
 
 #if 0
 				//TODO

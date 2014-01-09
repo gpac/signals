@@ -45,6 +45,12 @@
     <ClInclude Include="internal\config.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
+    <ClInclude Include="internal\data.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\pin.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">

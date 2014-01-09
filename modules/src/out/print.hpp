@@ -6,10 +6,10 @@
 #include <string>
 
 
-class EXPORT Print : public IModule {
+class EXPORT Print : public Module {
 public:
 	static Print* create(const Param &parameters);
-	bool process();
+	bool process(Data *data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 
