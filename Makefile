@@ -24,18 +24,23 @@ TARGETS:=
 
 TARGETS+=$(BIN)/tests/signals_simple.exe
 $(BIN)/tests/signals_simple.exe: $(BIN)/tests/signals_simple.o
+DEPS+=$(BIN)/tests/signals_simple.deps
 
 TARGETS+=$(BIN)/tests/signals_perf.exe
 $(BIN)/tests/signals_perf.exe: $(BIN)/tests/signals_perf.o
+DEPS+=$(BIN)/tests/signals_perf.deps
 
 TARGETS+=$(BIN)/tests/signals_module.exe
 $(BIN)/tests/signals_module.exe: $(BIN)/tests/signals_module.o
+DEPS+=$(BIN)/tests/signals_module.deps
 
 TARGETS+=$(BIN)/tests/signals_async.exe
 $(BIN)/tests/signals_async.exe: $(BIN)/tests/signals_async.o
+DEPS+=$(BIN)/tests/signals_async.deps
 
 TARGETS+=$(BIN)/tests/signals_unit_result.exe
 $(BIN)/tests/signals_unit_result.exe: $(BIN)/tests/signals_unit_result.o
+DEPS+=$(BIN)/tests/signals_unit_result.deps
 
 targets: $(TARGETS)
 
@@ -60,8 +65,20 @@ $(BIN)/%.exe:
 	
 $(BIN)/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -c -o "$@" $^ $(CFLAGS)
+	$(CXX) -c -o "$@" $< $(CFLAGS)
 	
 clean:
 	rm -rf $(BIN)
 	mkdir $(BIN)
+
+#-------------------------------------------------------------------------------
+
+$(BIN)/alldeps: $(DEPS)
+	@mkdir -p "$(dir $@)"
+	cat $^ > "$@"
+
+$(BIN)/%.deps: %.cpp
+	@mkdir -p "$(dir $@)"
+	$(CXX) $(CFLAGS) -c -MM "$^" -MT "$(BIN)/$*.o" > "$@"
+
+-include $(BIN)/alldeps
