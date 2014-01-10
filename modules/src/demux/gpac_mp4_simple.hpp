@@ -16,7 +16,7 @@ public:
 	~GPAC_MP4_Simple();
 	bool process(Data *data);
 	bool handles(const std::string &url);
-	static bool canHandle(const std::string &url); //Romain: useful?
+	static bool canHandle(const std::string &url);
 
 private:
 	GPAC_MP4_Simple(GF_ISOFile *movie);

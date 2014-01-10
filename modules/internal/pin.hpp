@@ -15,7 +15,7 @@ public:
 };
 #endif
 
-class EXPORT Pin {//Romain : public IPin<bool, Data*> {
+class EXPORT Pin {//FIXME? but not exportable : public IPin<bool, Data*> {
 public:
 	size_t emit(Data *data) {
 		size_t numReceivers = signal.emit(data);

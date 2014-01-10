@@ -8,6 +8,7 @@
 
 //TODO: move elsewhere
 #include "src/demux/gpac_mp4_simple.hpp"
+#include "src/demux/gpac_mp4_full.hpp"
 #include "src/in/file.hpp"
 #include "src/out/print.hpp"
 

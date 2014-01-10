@@ -23,6 +23,27 @@ namespace Tests {
 					}
 				}
 
+				Test("demux one track: File -> GPAC_MP4_Full -> Print");
+				{
+					Param paramFile;
+					paramFile["filename"] = "data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4";
+					std::unique_ptr<File> f(File::create(paramFile));
+					ASSERT(f != nullptr);
+
+					Param paramMP4Demux;
+					std::unique_ptr<GPAC_MP4_Full> mp4Demux(GPAC_MP4_Full::create(paramMP4Demux));
+					ASSERT(mp4Demux != nullptr);
+
+					Param paramPrint;
+					std::unique_ptr<Print> p(Print::create(paramPrint));
+					ASSERT(p != nullptr);
+
+					size_t uid1 = CONNECT(f.get(), signals[0]->signal, mp4Demux.get(), &GPAC_MP4_Full::process);
+					size_t uid2 = CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
+					while (f->process(NULL)) {
+					}
+				}
+
 #if 0
 				//TODO
 				Test("demux two tracks: MP4Simple -> Print");

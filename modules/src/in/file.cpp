@@ -2,7 +2,7 @@
 #include "file.hpp"
 
 
-#define IOSIZE 16384
+#define IOSIZE 65536
 
 File::File(FILE *file)
 : file(file) {
@@ -31,14 +31,13 @@ File* File::create(const Param &parameters) {
 
 bool File::process(Data *data) {
 	//ignore input
-	//Romain: data.release()
 	delete data;
 
 	Data *out = new Data(IOSIZE);
 	size_t read = fread(out->data(), 1, IOSIZE, file);
 	if (read < IOSIZE) {
 		if (read == 0) {
-			delete out; //Romain
+			delete out;
 			return false;
 		}
 		out->resize(read);

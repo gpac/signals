@@ -19,7 +19,7 @@ public:
 	virtual void resize(size_t size) = 0;
 };
 
-//Romain: il faudrait faire get() et récupérer la future
+//TODO: we should do get() et use the future
 class Data : public IData {
 public:
 	Data(size_t size)
