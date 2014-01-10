@@ -51,7 +51,6 @@ namespace Tests {
 					//f->signals[0]->signal.disconnect(uid);
 				}
 
-#if 0
 				//TODO
 				Test("demux one track");
 				{
@@ -63,8 +62,11 @@ namespace Tests {
 					Param paramPrint;
 					std::unique_ptr<Print> p(Print::create(paramPrint));
 					ASSERT(p != nullptr);
+
+					size_t uid = CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
+					while (mp4Demux->process(NULL)) {
+					}
 				}
-#endif
 
 #if 0
 				//TODO

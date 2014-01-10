@@ -47,38 +47,41 @@ GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 	}
 	sample_count = gf_isom_get_sample_count(movie, track_number);
 	sample_index = 1;
+	signals.push_back(new Pin);
 }
 
 GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 	deleteLastSample();
-
 	gf_isom_close(movie);
+	delete signals[0];
 }
 
 bool GPAC_MP4_Simple::process(Data *data) {
-#if 0 //Romain
+	delete data; //Romain: actually reads from file
 	deleteLastSample();
 
 	u32 sample_description_index;
 	iso_sample = gf_isom_get_sample(movie, track_number, sample_index, &sample_description_index);
 	if (iso_sample) {
 		Log::get(Log::Error) << "Found sample #" << sample_index << "/" << sample_count << " of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS: " << iso_sample->DTS << ", CTS: " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
-		in.resize(iso_sample->dataLength);
-		memcpy(&in[0], iso_sample->data, iso_sample->dataLength);
 		sample_index++;
 
+		Data *out = new Data(iso_sample->dataLength);
+		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
+		signals[0]->emit(out);
+
 		/*release the sample data, once you're done with it*/
-		//FIXME: embed it in the allocator: gf_isom_sample_del(&iso_sample);
+		gf_isom_sample_del(&iso_sample); //FIXME: embed it in the allocator:
 	} else {
 		GF_Err e = gf_isom_last_error(movie);
 		if (e == GF_ISOM_INCOMPLETE_FILE) {
 			u64 missing_bytes = gf_isom_get_missing_bytes(movie, track_number);
 			Log::get(Log::Error) << "Missing " << missing_bytes << " bytes on input file" << std::endl;
-			//TODO: ask for a timer delay? gf_sleep(1000);
+		} else {
+			return false;
 		}
 	}
-	return in;
-#endif
+
 	return true;
 }
 
