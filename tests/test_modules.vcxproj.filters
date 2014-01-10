@@ -5,6 +5,9 @@
     <ClCompile Include="modules_demux.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="modules_simple.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tests">

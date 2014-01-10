@@ -7,52 +7,7 @@ namespace Tests {
 	namespace Modules {
 		namespace Demux {
 			int main(int argc, char **argv) {
-				//Romain: move to a 'simple' file test
-				Test("empty param test");
-				{
-					Param paramFile;
-					std::unique_ptr<File> f(File::create(paramFile));
-					ASSERT(f == nullptr);
-				}
-				{
-					Param paramMP4Demux;
-					std::unique_ptr<GPAC_MP4_Simple> mp4Demux(GPAC_MP4_Simple::create(paramMP4Demux));
-					ASSERT(mp4Demux == nullptr);
-				}
-				{
-					Param paramPrint;
-					std::unique_ptr<Print> p(Print::create(paramPrint));
-					ASSERT(p != nullptr);
-				}
-
-				Test("simple param test");
-				{
-					Param paramFile;
-					paramFile["filename"] = "data/BatmanHD_1000kbit_mpeg.mp4";
-					std::unique_ptr<File> f(File::create(paramFile));
-					ASSERT(f != nullptr);
-				}
-
-				Test("print packets size from file");
-				{
-					Param paramFile;
-					paramFile["filename"] = "data/BatmanHD_1000kbit_mpeg.mp4";
-					std::unique_ptr<File> f(File::create(paramFile));
-					ASSERT(f != nullptr);
-
-					Param paramPrint;
-					std::unique_ptr<Print> p(Print::create(paramPrint));
-					ASSERT(p != nullptr);
-
-					size_t uid = CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
-					while (f->process(NULL)) {
-					}
-					//Util::sleepInMs(300);
-					//f->signals[0]->signal.disconnect(uid);
-				}
-
-				//TODO
-				Test("demux one track");
+				Test("demux one track: GPAC_MP4_Simple -> Print");
 				{
 					Param paramMP4Demux;
 					paramMP4Demux["filename"] = "data/BatmanHD_1000kbit_mpeg.mp4";
@@ -70,10 +25,10 @@ namespace Tests {
 
 #if 0
 				//TODO
-				Test("demux two tracks");
+				Test("demux two tracks: MP4Simple -> Print");
 
 				//TODO
-				Test("demux a dynamic number of tracks");
+				Test("demux a dynamic number of tracks: MP4Simple -> Print");
 #endif
 
 				return 0;
@@ -81,3 +36,19 @@ namespace Tests {
 		}
 	}
 }
+
+#ifdef UNIT
+using namespace Tests;
+int main(int argc, char **argv) {
+	Util::Profiler p("TESTS TOTAL TIME");
+
+	int res = 0;
+
+	res = Modules::Demux::main(argc, argv);
+	ASSERT(!res);
+
+	std::cout << std::endl;
+	return 0;
+}
+#endif
+
