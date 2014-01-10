@@ -51,6 +51,9 @@
     <ClInclude Include="internal\pin.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
+    <ClInclude Include="src\demux\gpac_mp4_full.hpp">
+      <Filter>src\demux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
@@ -64,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="internal\log.cpp">
       <Filter>includes\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demux\gpac_mp4_full.cpp">
+      <Filter>src\demux</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

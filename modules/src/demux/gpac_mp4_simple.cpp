@@ -40,6 +40,7 @@ void GPAC_MP4_Simple::deleteLastSample() {
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 : movie(movie), iso_sample(NULL) {
+	gf_sys_init(GF_FALSE);
 	u32 track_id = gf_isom_get_track_id(movie, 1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
 	track_number = gf_isom_get_track_by_id(movie, track_id);
 	if (track_number == 0) {
@@ -54,10 +55,11 @@ GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 	deleteLastSample();
 	gf_isom_close(movie);
 	delete signals[0];
+	gf_sys_close();
 }
 
 bool GPAC_MP4_Simple::process(Data *data) {
-	delete data; //Romain: actually reads from file
+	delete data;
 	deleteLastSample();
 
 	u32 sample_description_index;
