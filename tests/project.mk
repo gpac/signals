@@ -24,7 +24,7 @@ $(BIN)/$(ProjectName)/signals_unit_result.exe: $(BIN)/$(ProjectName)/signals_uni
 DEPS+=$(BIN)/$(ProjectName)/signals_unit_result.deps
 
 run: unit
-	$(BIN)/$(ProjectName)/modules_demux.exe
+	PROGRAM=$(realpath $(BIN)/$(ProjectName)/modules_demux.exe) && cd $(ProjectName) && $$PROGRAM
 	$(BIN)/$(ProjectName)/signals_unit_result.exe
 	$(BIN)/$(ProjectName)/signals_simple.exe
 	$(BIN)/$(ProjectName)/signals_perf.exe
