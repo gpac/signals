@@ -7,10 +7,19 @@ extern "C" {
 #include <gpac/isomedia.h>
 }
 
-#include "gpacpp.h"
+#include "gpacpp.hpp"
 
 class ISOFileReader {
 public:
+
+  void init(GF_ISOFile* m) {
+    movie.reset(new gpacpp::IsoFile(m));
+    u32 track_id = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
+    track_number = movie->getTrackById(track_id);
+    sample_count = movie->getSampleCount(track_number);
+    sample_index = 1;
+  }
+
   std::unique_ptr<gpacpp::IsoFile> movie;
 	uint32_t track_number;
   std::unique_ptr<gpacpp::IsoSample> iso_sample;
@@ -41,12 +50,8 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 : reader(new ISOFileReader) {
-  reader->movie.reset(new gpacpp::IsoFile(movie));
 	gf_sys_init(GF_FALSE);
-	u32 track_id = reader->movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
-	reader->track_number = reader->movie->getTrackById(track_id);
-	reader->sample_count = reader->movie->getSampleCount(reader->track_number);
-	reader->sample_index = 1;
+  reader->init(movie);
 	signals.push_back(new Pin);
 }
 
