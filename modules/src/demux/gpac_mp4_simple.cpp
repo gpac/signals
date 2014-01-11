@@ -22,11 +22,10 @@ public:
 
 	std::unique_ptr<gpacpp::IsoFile> movie;
 	uint32_t track_number;
-	std::unique_ptr<gpacpp::IsoSample> iso_sample;
 	uint32_t sample_index, sample_count;
 
 #ifdef GPAC_MEM_TRACKER
-  MemTracker memTracker;
+	MemTracker memTracker;
 #endif
 };
 
@@ -65,18 +64,15 @@ GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 	try {
 		int sample_description_index;
-		reader->iso_sample.reset();
-		reader->iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
+		std::unique_ptr<gpacpp::IsoSample> iso_sample;
+		iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
 
-		Log::get(Log::Error) << "Found sample #" << reader->sample_index << "/" << reader->sample_count << " of length " << reader->iso_sample->dataLength << ", RAP: " << reader->iso_sample->IsRAP << ", DTS: " << reader->iso_sample->DTS << ", CTS: " << reader->iso_sample->DTS + reader->iso_sample->CTS_Offset << std::endl;
+		Log::get(Log::Error) << "Found sample #" << reader->sample_index << "/" << reader->sample_count << " of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS: " << iso_sample->DTS << ", CTS: " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
 		reader->sample_index++;
 
-		std::shared_ptr<Data> out(new Data(reader->iso_sample->dataLength));
-		memcpy(out->data(), reader->iso_sample->data, reader->iso_sample->dataLength);
+		std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
+		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 		signals[0]->emit(out);
-
-		/*release the sample data, once you're done with it*/
-		reader->iso_sample.reset();
 	}
 	catch(gpacpp::Error const& err) {
 		if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {

@@ -36,7 +36,7 @@ public:
 	int track_number; //TODO: multi-tracks
 
 #ifdef GPAC_MEM_TRACKER
-  MemTracker memTracker;
+	MemTracker memTracker;
 #endif
 };
 
@@ -57,13 +57,13 @@ GPAC_MP4_Full::~GPAC_MP4_Full() {
 bool GPAC_MP4_Full::openData() {
 	/* if the file is not yet opened (no movie), open it in progressive mode (to update its data later on) */
 	u64 missing_bytes;
-  GF_ISOFile *movie;
+	GF_ISOFile *movie;
 	GF_Err e = gf_isom_open_progressive(reader->data_url, 0, 0, &movie, &missing_bytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
 		Log::get(Log::Warning) << "Error opening fragmented mp4 in progressive mode: " << gf_error_to_string(e) << " (missing " << missing_bytes << " bytes)" << std::endl;
 		return false;
 	}
-  reader->movie.reset(new gpacpp::IsoFile(movie));
+	reader->movie.reset(new gpacpp::IsoFile(movie));
 	reader->movie->setSingleMoofMode(true);
 	return true;
 }
@@ -71,32 +71,32 @@ bool GPAC_MP4_Full::openData() {
 bool GPAC_MP4_Full::updateData() {
 	/* let inform the parser that the buffer has been updated with new data */
 	uint64_t missing_bytes;
-  reader->movie->refreshFragmented(missing_bytes, reader->data_url);
+	reader->movie->refreshFragmented(missing_bytes, reader->data_url);
 	return true;
 }
 
 bool GPAC_MP4_Full::processSample() {
-  try {
-    /* only if we have the track number can we try to get the sample data */
-    if (reader->track_number != 0) {
-      u32 new_sample_count;
+	try {
+		/* only if we have the track number can we try to get the sample data */
+		if (reader->track_number != 0) {
+		  u32 new_sample_count;
 
-      /* let's see how many samples we have since the last parsed */
-      new_sample_count = reader->movie->getSampleCount(reader->track_number);
-      if (new_sample_count > reader->sample_count) {
-        /* New samples have been added to the file */
-        Log::get(Log::Info) << "Found " << new_sample_count - reader->sample_count << " new samples (total: " << new_sample_count << ")" << std::endl;
-        if (reader->sample_count == 0) {
-          reader->sample_count = new_sample_count;
-        }
-      }
-      if (reader->sample_count == 0) {
-        /* no sample yet, let the data input force a reparsing of the data */
-        reader->refresh_boxes = GF_TRUE;
-      } else {
-        /* we have some samples, lets keep things stable in the parser for now and
-           don't let the data input force a reparsing of the data */
-        reader->refresh_boxes = GF_FALSE;
+		  /* let's see how many samples we have since the last parsed */
+		  new_sample_count = reader->movie->getSampleCount(reader->track_number);
+		  if (new_sample_count > reader->sample_count) {
+		    /* New samples have been added to the file */
+		    Log::get(Log::Info) << "Found " << new_sample_count - reader->sample_count << " new samples (total: " << new_sample_count << ")" << std::endl;
+		    if (reader->sample_count == 0) {
+		      reader->sample_count = new_sample_count;
+		    }
+		  }
+		  if (reader->sample_count == 0) {
+		    /* no sample yet, let the data input force a reparsing of the data */
+		    reader->refresh_boxes = GF_TRUE;
+		  } else {
+		    /* we have some samples, lets keep things stable in the parser for now and
+		       don't let the data input force a reparsing of the data */
+		    reader->refresh_boxes = GF_FALSE;
 
 				{
 					/* let's analyze the samples we have parsed so far one by one */
@@ -116,42 +116,42 @@ bool GPAC_MP4_Full::processSample() {
 					signals[0]->emit(out);
 				}
 
-        /* once we have read all the samples, we can release some data and force a reparse of the input buffer */
-        if (reader->sample_index > reader->sample_count) {
-          u64 new_buffer_start;
-          u64 missing_bytes;
+		    /* once we have read all the samples, we can release some data and force a reparse of the input buffer */
+		    if (reader->sample_index > reader->sample_count) {
+		      u64 new_buffer_start;
+		      u64 missing_bytes;
 
-          Log::get(Log::Debug) << std::endl << "Releasing unnecessary buffers" << std::endl;
-          /* release internal structures associated with the samples read so far */
-          reader->movie->resetTables(true);
+		      Log::get(Log::Debug) << std::endl << "Releasing unnecessary buffers" << std::endl;
+		      /* release internal structures associated with the samples read so far */
+		      reader->movie->resetTables(true);
 
-          /* release the associated input data as well */
-          reader->movie->resetDataOffset(new_buffer_start);
-          if (new_buffer_start) {
-            u32 offset = (u32)new_buffer_start;
-            const size_t newSize = reader->data.size() - offset;
-            memmove(reader->data.data(), reader->data.data() + offset, newSize);
-            reader->data.resize(newSize);
-          }
-          std::stringstream ss;
-          ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();
-          strcpy(reader->data_url, ss.str().c_str());
-          reader->movie->refreshFragmented(missing_bytes, reader->data_url);
+		      /* release the associated input data as well */
+		      reader->movie->resetDataOffset(new_buffer_start);
+		      if (new_buffer_start) {
+		        u32 offset = (u32)new_buffer_start;
+		        const size_t newSize = reader->data.size() - offset;
+		        memmove(reader->data.data(), reader->data.data() + offset, newSize);
+		        reader->data.resize(newSize);
+		      }
+		      std::stringstream ss;
+		      ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();
+		      strcpy(reader->data_url, ss.str().c_str());
+		      reader->movie->refreshFragmented(missing_bytes, reader->data_url);
 
-          /* update the sample count and sample index */
-          reader->sample_count = new_sample_count - reader->sample_count;
-          //FIXME: doesn't happen because the size of the chunck is not aligned on samples: assert(reader->sample_count == 0);
-          reader->sample_index = 1;
-        }
-      }
-    }
+		      /* update the sample count and sample index */
+		      reader->sample_count = new_sample_count - reader->sample_count;
+		      //FIXME: doesn't happen because the size of the chunck is not aligned on samples: assert(reader->sample_count == 0);
+		      reader->sample_index = 1;
+		    }
+		  }
+		}
 
-    return true;
-  }
-  catch(gpacpp::Error const& e) {
-    Log::get(Log::Warning) << "Could not get sample: " << gf_error_to_string(e.error_) << std::endl;
-    return false;
-  }
+		return true;
+	}
+	catch(gpacpp::Error const& e) {
+		Log::get(Log::Warning) << "Could not get sample: " << gf_error_to_string(e.error_) << std::endl;
+		return false;
+	}
 }
 
 bool GPAC_MP4_Full::processData() {
