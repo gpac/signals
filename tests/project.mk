@@ -5,7 +5,7 @@ DEPS+=$(BIN)/$(ProjectName)/signals_simple.deps
 TARGETS+=$(BIN)/$(ProjectName)/modules_demux.exe
 MODULES_DEMUX_OBJS:=$(BIN)/$(ProjectName)/modules_demux.o $(MODULES_OBJS)
 $(BIN)/$(ProjectName)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
-DEPS+=$(MODULES_DEMUX_OBJS:%.o=.deps)
+DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
 
 TARGETS+=$(BIN)/$(ProjectName)/signals_perf.exe
 $(BIN)/$(ProjectName)/signals_perf.exe: $(BIN)/$(ProjectName)/signals_perf.o

@@ -25,6 +25,7 @@ all: targets
 #
 
 TARGETS:=
+DEPS:=
 
 ProjectName:=modules
 include $(ProjectName)/project.mk
