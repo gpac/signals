@@ -24,7 +24,7 @@ all: targets
 #
 
 # Subproject: modules
-ROOT:=modules
+ProjectName:=modules
 include modules/project.mk
 CFLAGS+=-I$(SRC)/modules
 CFLAGS+=-I$(SRC)/modules/internal
