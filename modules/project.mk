@@ -6,3 +6,5 @@ MODULES_SRCS:=\
   $(ProjectName)/src/out/print.cpp\
 
 MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
+
+CFLAGS+=-I$(ProjectName)/internal
