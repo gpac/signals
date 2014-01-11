@@ -20,17 +20,8 @@ class ISOProgressiveReader {
 public:
 	ISOProgressiveReader()
 		: data(0), refresh_boxes(GF_TRUE), samples_processed(0), sample_index(1), sample_count(0), track_number(1) {
-#ifdef GPAC_MEM_TRACKER
-		gf_sys_init(GF_TRUE);
-#endif
 	}
 
-	~ISOProgressiveReader() {
-#ifdef GPAC_MEM_TRACKER
-		gf_sys_close();
-#endif
-	}
- 
 	/* data buffer to be read by the parser */
 	std::vector<u8> data;
 	/* URL used to pass a buffer to the parser */
@@ -43,6 +34,10 @@ public:
 	u32 sample_index; /* samples are numbered starting from 1 */
 	u32 sample_count;
 	int track_number; //TODO: multi-tracks
+
+#ifdef GPAC_MEM_TRACKER
+  MemTracker memTracker;
+#endif
 };
 
 GPAC_MP4_Full* GPAC_MP4_Full::create(const Param &parameters) {
@@ -51,18 +46,12 @@ GPAC_MP4_Full* GPAC_MP4_Full::create(const Param &parameters) {
 
 GPAC_MP4_Full::GPAC_MP4_Full()
 : reader(new ISOProgressiveReader) {
-#ifndef GPAC_MEM_TRACKER
-	gf_sys_init(GF_FALSE);
-#endif
 	//gf_log_set_tool_level(GF_LOG_ALL, GF_LOG_INFO);
 	signals.push_back(new Pin);
 }
 
 GPAC_MP4_Full::~GPAC_MP4_Full() {
 	delete signals[0];
-#ifndef GPAC_MEM_TRACKER
-	gf_sys_close();
-#endif
 }
 
 bool GPAC_MP4_Full::openData() {
