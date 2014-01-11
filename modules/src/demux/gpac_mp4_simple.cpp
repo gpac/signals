@@ -12,17 +12,17 @@ extern "C" {
 class ISOFileReader {
 public:
 
-  void init(GF_ISOFile* m) {
-    movie.reset(new gpacpp::IsoFile(m));
-    u32 track_id = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
-    track_number = movie->getTrackById(track_id);
-    sample_count = movie->getSampleCount(track_number);
-    sample_index = 1;
-  }
+	void init(GF_ISOFile* m) {
+		movie.reset(new gpacpp::IsoFile(m));
+		u32 track_id = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
+		track_number = movie->getTrackById(track_id);
+		sample_count = movie->getSampleCount(track_number);
+		sample_index = 1;
+	}
 
-  std::unique_ptr<gpacpp::IsoFile> movie;
+	std::unique_ptr<gpacpp::IsoFile> movie;
 	uint32_t track_number;
-  std::unique_ptr<gpacpp::IsoSample> iso_sample;
+	std::unique_ptr<gpacpp::IsoSample> iso_sample;
 	uint32_t sample_index, sample_count;
 };
 
@@ -51,7 +51,7 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 : reader(new ISOFileReader) {
 	gf_sys_init(GF_FALSE);
-  reader->init(movie);
+	reader->init(movie);
 	signals.push_back(new Pin);
 }
 
@@ -61,10 +61,10 @@ GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 }
 
 bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
-  try {
-    int sample_description_index;
-    reader->iso_sample.reset();
-    reader->iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
+	try {
+		int sample_description_index;
+		reader->iso_sample.reset();
+		reader->iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
 
 		Log::get(Log::Error) << "Found sample #" << reader->sample_index << "/" << reader->sample_count << " of length " << reader->iso_sample->dataLength << ", RAP: " << reader->iso_sample->IsRAP << ", DTS: " << reader->iso_sample->DTS << ", CTS: " << reader->iso_sample->DTS + reader->iso_sample->CTS_Offset << std::endl;
 		reader->sample_index++;
@@ -74,9 +74,9 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 		signals[0]->emit(out);
 
 		/*release the sample data, once you're done with it*/
-    reader->iso_sample.reset();
-  }
-  catch(gpacpp::Error const& err) {
+		reader->iso_sample.reset();
+	}
+	catch(gpacpp::Error const& err) {
 		if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 			u64 missing_bytes = reader->movie->getMissingBytes(reader->track_number);
 			Log::get(Log::Error) << "Missing " << missing_bytes << " bytes on input file" << std::endl;
