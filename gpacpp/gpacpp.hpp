@@ -126,10 +126,10 @@ namespace gpacpp {
 		  gf_isom_reset_tables(movie_, (Bool)flag);
 		}
 
-    void resetDataOffset(uint64_t& newBufferStart)
-    {
-      gf_isom_reset_data_offset(movie_, &newBufferStart);
-    }
+		void resetDataOffset(uint64_t& newBufferStart)
+		{
+		  gf_isom_reset_data_offset(movie_, &newBufferStart);
+		}
 
 		uint64_t getMissingBytes(int trackNumber) {
 		  return gf_isom_get_missing_bytes(movie_, trackNumber);
