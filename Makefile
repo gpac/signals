@@ -1,5 +1,5 @@
 CFLAGS = -std=c++11 -Wall
-LDFLAGS = -lpthread
+LDFLAGS = -lpthread -lgpac
 
 BIN=bin/make
 SRC=.
@@ -20,11 +20,27 @@ endif
 
 all: targets
 
+# include sub-projects here
+#
+
+# Subproject: modules
+ROOT:=modules
+include modules/project.mk
+CFLAGS+=-I$(SRC)/modules
+CFLAGS+=-I$(SRC)/modules/internal
+
 TARGETS:=
 
+# define executable targets here
+#
 TARGETS+=$(BIN)/tests/signals_simple.exe
 $(BIN)/tests/signals_simple.exe: $(BIN)/tests/signals_simple.o
 DEPS+=$(BIN)/tests/signals_simple.deps
+
+TARGETS+=$(BIN)/tests/modules_demux.exe
+MODULES_DEMUX_OBJS:=$(BIN)/tests/modules_demux.o $(MODULES_OBJS)
+$(BIN)/tests/modules_demux.exe: $(MODULES_DEMUX_OBJS)
+DEPS+=$(MODULES_DEMUX_OBJS:%.o=.deps)
 
 TARGETS+=$(BIN)/tests/signals_perf.exe
 $(BIN)/tests/signals_perf.exe: $(BIN)/tests/signals_perf.o
@@ -63,7 +79,7 @@ $(BIN)/%.exe:
 	@mkdir -p $(dir $@)
 	$(CXX) -o "$@" $^ $(LDFLAGS)
 	
-$(BIN)/%.o: %.cpp
+$(BIN)/%.o: $(SRC)/%.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) -c -o "$@" $< $(CFLAGS)
 	
