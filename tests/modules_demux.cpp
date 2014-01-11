@@ -21,6 +21,7 @@ namespace Tests {
 					size_t uid = CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
 					while (mp4Demux->process(NULL)) {
 					}
+					mp4Demux->destroy();
 				}
 
 				Test("demux one track: File -> GPAC_MP4_Full -> Print");
@@ -42,6 +43,8 @@ namespace Tests {
 					size_t uid2 = CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
 					while (f->process(NULL)) {
 					}
+					f->destroy();
+					mp4Demux->destroy();
 				}
 
 #if 0

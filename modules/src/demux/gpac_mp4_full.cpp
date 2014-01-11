@@ -126,9 +126,9 @@ bool GPAC_MP4_Full::processSample() {
 				Log::get(Log::Info) << "Found sample #" << reader->sample_index << "(#" << reader->samples_processed << ") of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS : " << iso_sample->DTS << ", CTS : " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
 				reader->sample_index++;
 
-				Data *data = new Data(iso_sample->dataLength);
-				memcpy(data->data(), iso_sample->data, iso_sample->dataLength);
-				signals[0]->emit(data);
+				std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
+				memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
+				signals[0]->emit(out);
 
 				/*release the sample data, once you're done with it*/
 				gf_isom_sample_del(&iso_sample);
@@ -181,7 +181,7 @@ bool GPAC_MP4_Full::processData() {
 	return true;
 }
 
-bool GPAC_MP4_Full::process(Data *data) {
+bool GPAC_MP4_Full::process(std::shared_ptr<Data> data) {
 #if 0 //TODO: zero copy mode, or at least improve the current system
 	reader->valid_data_size = reader->dataSize = data->size();
 	reader->data.data() = data->data();
@@ -189,7 +189,6 @@ bool GPAC_MP4_Full::process(Data *data) {
 	const int currSize = reader->data.size();
 	reader->data.resize(reader->data.size() + data->size());
 	memcpy(reader->data.data() + currSize, data->data(), data->size());
-	delete data;
 #endif
 	std::stringstream ss;
 	ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();

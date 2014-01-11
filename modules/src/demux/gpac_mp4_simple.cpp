@@ -58,8 +58,7 @@ GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 	gf_sys_close();
 }
 
-bool GPAC_MP4_Simple::process(Data *data) {
-	delete data;
+bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 	deleteLastSample();
 
 	u32 sample_description_index;
@@ -68,7 +67,7 @@ bool GPAC_MP4_Simple::process(Data *data) {
 		Log::get(Log::Error) << "Found sample #" << sample_index << "/" << sample_count << " of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS: " << iso_sample->DTS << ", CTS: " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
 		sample_index++;
 
-		Data *out = new Data(iso_sample->dataLength);
+		std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
 		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 		signals[0]->emit(out);
 

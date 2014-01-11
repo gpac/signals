@@ -14,7 +14,7 @@ class EXPORT GPAC_MP4_Simple : public Module {
 public:
 	static GPAC_MP4_Simple* create(const Param &parameters);
 	~GPAC_MP4_Simple();
-	bool process(Data *data);
+	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 

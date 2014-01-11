@@ -2,6 +2,7 @@
 
 #include "data.hpp"
 #include <../signals/signals.hpp>
+#include <vector>
 
 
 #if 0
@@ -15,13 +16,32 @@ public:
 };
 #endif
 
+//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
+//      The other option is to invalidate all the data by calling
+//TODO: the pin could check the bool result and retry on failure (but is it its role?)
 class EXPORT Pin {//FIXME? but not exportable : public IPin<bool, Data*> {
 public:
-	size_t emit(Data *data) {
+	~Pin() {
+		destroy();
+	}
+
+	size_t emit(std::shared_ptr<Data> data) {
 		size_t numReceivers = signal.emit(data);
-		assert(numReceivers == 1); //FIXME: we eed a smart_ptr to count them all
+		sentData.push_back(data);
+		assert(numReceivers == 1);
 		return numReceivers;
 	}
 
-	Signal<bool(Data*), ResultVector<bool>, CallerSync<bool(Data*)>, ConnectionQueue<bool(Data*), bool>> signal; //FIXME: forced to sync
+	void destroy() {
+		//getting the result release the shared_ptr, hence the data
+		//FIXME: we should lock since emit could be called from any thread
+		signal.results();
+		sentData.clear();
+	}
+
+	//TODO: Signal<bool(std::shared_ptr<Data>)> signal;
+	Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync<bool(std::shared_ptr<Data>)>, ConnectionQueue<bool(std::shared_ptr<Data>), bool >> signal;
+
+private:
+	std::vector<std::weak_ptr<Data>> sentData;
 };

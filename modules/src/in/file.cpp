@@ -29,15 +29,11 @@ File* File::create(const Param &parameters) {
 	}
 }
 
-bool File::process(Data *data) {
-	//ignore input
-	delete data;
-
-	Data *out = new Data(IOSIZE);
+bool File::process(std::shared_ptr<Data> /*data*/) {
+	std::shared_ptr<Data> out(new Data(IOSIZE));
 	size_t read = fread(out->data(), 1, IOSIZE, file);
 	if (read < IOSIZE) {
 		if (read == 0) {
-			delete out;
 			return false;
 		}
 		out->resize(read);

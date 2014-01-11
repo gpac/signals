@@ -46,8 +46,7 @@ namespace Tests {
 					size_t uid = CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
 					while (f->process(NULL)) {
 					}
-					//Util::sleepInMs(300);
-					//f->signals[0]->signal.disconnect(uid);
+					f->destroy();
 				}
 
 				return 0;
