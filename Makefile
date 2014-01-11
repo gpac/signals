@@ -53,8 +53,6 @@ run: unit
 
 $(BIN)/tests/%.o: CFLAGS+=-DUNIT
 
-$(BIN)/signals.exe: $(BIN)/signals.o
-
 #------------------------------------------------------------------------------
 
 $(BIN)/%.exe:
