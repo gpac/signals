@@ -4,6 +4,9 @@ LDFLAGS := -lpthread -lgpac
 BIN=bin/make
 SRC=.
 
+# default to debug mode
+DEBUG?=1
+
 ifeq ($(DEBUG), 1)
   CFLAGS += -g3
   LDFLAGS += -g
