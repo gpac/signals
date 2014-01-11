@@ -21,7 +21,6 @@ public:
 
 private:
 	GPAC_MP4_Simple(GF_ISOFile *movie);
-	void deleteLastSample();
 
 	std::unique_ptr<ISOFileReader> reader;
 };
