@@ -69,15 +69,12 @@ bool GPAC_MP4_Full::openData() {
 	/* if the file is not yet opened (no movie), open it in progressive mode (to update its data later on) */
 	u64 missing_bytes;
 	GF_Err e = gf_isom_open_progressive(reader->data_url, 0, 0, &reader->movie, &missing_bytes);
-	if (reader->movie) {
-		gf_isom_set_single_moof_mode(reader->movie, GF_TRUE);
-	}
-	if ((e == GF_OK || e == GF_ISOM_INCOMPLETE_FILE) && reader->movie) {
-		return true;
-	} else {
+	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
 		Log::get(Log::Warning) << "Error opening fragmented mp4 in progressive mode: " << gf_error_to_string(e) << " (missing " << missing_bytes << " bytes)" << std::endl;
 		return false;
 	}
+  gf_isom_set_single_moof_mode(reader->movie, GF_TRUE);
+  return true;
 }
 
 bool GPAC_MP4_Full::updateData() {
