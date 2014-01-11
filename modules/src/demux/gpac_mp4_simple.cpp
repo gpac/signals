@@ -7,16 +7,13 @@ extern "C" {
 #include <gpac/isomedia.h>
 }
 
+#include "gpacpp.h"
 
 class ISOFileReader {
 public:
-	ISOFileReader()
-		: movie(NULL), iso_sample(NULL) {
-	}
-
-	GF_ISOFile *movie;
+  std::unique_ptr<gpacpp::IsoFile> movie;
 	uint32_t track_number;
-	GF_ISOSample *iso_sample;
+  std::unique_ptr<gpacpp::IsoSample> iso_sample;
 	uint32_t sample_index, sample_count;
 };
 
@@ -43,12 +40,7 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 }
 
 void GPAC_MP4_Simple::deleteLastSample() {
-	if (reader->iso_sample) {
-		//invalidate the previous data and delete the sample.
-		reader->iso_sample->data = NULL;
-		reader->iso_sample->dataLength = 0;
-		gf_isom_sample_del(&reader->iso_sample);
-	}
+  reader->iso_sample.reset();
 }
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
@@ -65,18 +57,16 @@ GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 }
 
 GPAC_MP4_Simple::~GPAC_MP4_Simple() {
-	deleteLastSample();
-	gf_isom_close(reader->movie);
 	delete signals[0];
 	gf_sys_close();
 }
 
 bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
-	deleteLastSample();
+  try {
+    int sample_description_index;
+    reader->iso_sample.reset();
+    reader->iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
 
-	u32 sample_description_index;
-	reader->iso_sample = gf_isom_get_sample(reader->movie, reader->track_number, reader->sample_index, &sample_description_index);
-	if (reader->iso_sample) {
 		Log::get(Log::Error) << "Found sample #" << reader->sample_index << "/" << reader->sample_count << " of length " << reader->iso_sample->dataLength << ", RAP: " << reader->iso_sample->IsRAP << ", DTS: " << reader->iso_sample->DTS << ", CTS: " << reader->iso_sample->DTS + reader->iso_sample->CTS_Offset << std::endl;
 		reader->sample_index++;
 
@@ -85,11 +75,11 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 		signals[0]->emit(out);
 
 		/*release the sample data, once you're done with it*/
-		gf_isom_sample_del(&reader->iso_sample); //FIXME: embed it in the allocator:
-	} else {
-		GF_Err e = gf_isom_last_error(reader->movie);
-		if (e == GF_ISOM_INCOMPLETE_FILE) {
-			u64 missing_bytes = gf_isom_get_missing_bytes(reader->movie, reader->track_number);
+    reader->iso_sample.reset();
+  }
+  catch(gpacpp::Error const& err) {
+		if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
+			u64 missing_bytes = reader->movie->getMissingBytes(reader->track_number);
 			Log::get(Log::Error) << "Missing " << missing_bytes << " bytes on input file" << std::endl;
 		} else {
 			return false;

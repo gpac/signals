@@ -11,6 +11,7 @@ else
 endif
 
 CFLAGS += -I$(SRC)/signals
+CFLAGS += -I$(SRC)/gpacpp
 
 ifeq ($(CLANG), 1)
   CXX = clang++
