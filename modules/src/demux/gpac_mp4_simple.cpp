@@ -11,7 +11,7 @@ extern "C" {
 class ISOFileReader {
 public:
 	ISOFileReader()
-		: movie(movie), iso_sample(NULL) {
+		: movie(NULL), iso_sample(NULL) {
 	}
 
 	GF_ISOFile *movie;
@@ -53,7 +53,7 @@ void GPAC_MP4_Simple::deleteLastSample() {
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 : reader(new ISOFileReader) {
-	gf_sys_init(GF_FALSE);
+	gf_sys_init(0);
 	u32 track_id = gf_isom_get_track_id(movie, 1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
 	reader->track_number = gf_isom_get_track_by_id(movie, track_id);
 	if (reader->track_number == 0) {
