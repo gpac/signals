@@ -10,7 +10,7 @@ class EXPORT File : public Module {
 public:
 	static File* create(const Param &p);
 	~File();
-	bool process(Data *data);
+	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 
