@@ -16,6 +16,8 @@ CFLAGS += -I$(SRC)/gpacpp
 
 ifeq ($(CLANG), 1)
   CXX = clang++
+  CFLAGS += -stdlib=libc++
+  LDFLAGS += -stdlib=libc++
 else
   CXX = g++
 endif
