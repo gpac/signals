@@ -5,7 +5,8 @@ BIN=bin/make
 SRC=.
 
 ifeq ($(DEBUG), 1)
-  CFLAGS += -g
+  CFLAGS += -g3
+  LDFLAGS += -g
 else
   CFLAGS += -O3 -DNDEBUG -Wno-unused-variable
 endif
