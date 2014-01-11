@@ -82,6 +82,17 @@ namespace gpacpp {
         throw Error("Can't refreshing fragmented MP4", e);
     }
 
+    uint32_t getTrackId(int i) const {
+      return gf_isom_get_track_id(movie_, i);
+    }
+
+    uint32_t getTrackById(uint32_t id) const {
+      auto const number = gf_isom_get_track_by_id(movie_, id);
+      if(number == 0)
+        throw Error("Can't find track ID", GF_BAD_PARAM);
+      return number;
+    }
+
     uint32_t getSampleCount(int trackNumber) const {
       return gf_isom_get_sample_count(movie_, trackNumber);
     }
