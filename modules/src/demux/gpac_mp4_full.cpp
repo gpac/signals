@@ -30,7 +30,7 @@ public:
 		gf_sys_close();
 #endif
 	}
-
+ 
 	/* data buffer to be read by the parser */
 	std::vector<u8> data;
 	/* URL used to pass a buffer to the parser */
@@ -73,8 +73,8 @@ bool GPAC_MP4_Full::openData() {
 		Log::get(Log::Warning) << "Error opening fragmented mp4 in progressive mode: " << gf_error_to_string(e) << " (missing " << missing_bytes << " bytes)" << std::endl;
 		return false;
 	}
-  gf_isom_set_single_moof_mode(reader->movie, GF_TRUE);
-  return true;
+	gf_isom_set_single_moof_mode(reader->movie, GF_TRUE);
+	return true;
 }
 
 bool GPAC_MP4_Full::updateData() {
