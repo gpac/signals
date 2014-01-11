@@ -44,13 +44,6 @@ targets: $(TARGETS)
 
 unit: $(TARGETS)
 
-run: unit
-	$(BIN)/tests/signals_unit_result.exe
-	$(BIN)/tests/signals_simple.exe
-	$(BIN)/tests/signals_perf.exe
-	$(BIN)/tests/signals_module.exe
-	$(BIN)/tests/signals_async.exe
-
 $(BIN)/tests/%.o: CFLAGS+=-DUNIT
 
 #------------------------------------------------------------------------------
