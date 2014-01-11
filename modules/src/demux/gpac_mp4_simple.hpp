@@ -6,8 +6,9 @@
 #include <cstdint>
 #include <string>
 
+
 typedef struct __tag_isom GF_ISOFile;
-struct GF_ISOSample;
+class ISOFileReader;
 
 
 class EXPORT GPAC_MP4_Simple : public Module {
@@ -20,12 +21,7 @@ public:
 
 private:
 	GPAC_MP4_Simple(GF_ISOFile *movie);
-
 	void deleteLastSample();
 
-	GF_ISOFile *movie;
-	uint32_t track_number;
-
-	GF_ISOSample *iso_sample;
-	uint32_t sample_index, sample_count;
+	std::unique_ptr<ISOFileReader> reader;
 };

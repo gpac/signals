@@ -8,6 +8,19 @@ extern "C" {
 }
 
 
+class ISOFileReader {
+public:
+	ISOFileReader()
+		: movie(movie), iso_sample(NULL) {
+	}
+
+	GF_ISOFile *movie;
+	uint32_t track_number;
+	GF_ISOSample *iso_sample;
+	uint32_t sample_index, sample_count;
+};
+
+
 GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 	auto filename = parameters.find("filename");
 	if (filename == parameters.end()) {
@@ -30,30 +43,30 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 }
 
 void GPAC_MP4_Simple::deleteLastSample() {
-	if (iso_sample) {
+	if (reader->iso_sample) {
 		//invalidate the previous data and delete the sample.
-		iso_sample->data = NULL;
-		iso_sample->dataLength = 0;
-		gf_isom_sample_del(&iso_sample);
+		reader->iso_sample->data = NULL;
+		reader->iso_sample->dataLength = 0;
+		gf_isom_sample_del(&reader->iso_sample);
 	}
 }
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
-: movie(movie), iso_sample(NULL) {
+: reader(new ISOFileReader) {
 	gf_sys_init(GF_FALSE);
 	u32 track_id = gf_isom_get_track_id(movie, 1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
-	track_number = gf_isom_get_track_by_id(movie, track_id);
-	if (track_number == 0) {
+	reader->track_number = gf_isom_get_track_by_id(movie, track_id);
+	if (reader->track_number == 0) {
 		Log::get(Log::Error) << "Could not find track ID=" << track_id << std::endl;
 	}
-	sample_count = gf_isom_get_sample_count(movie, track_number);
-	sample_index = 1;
+	reader->sample_count = gf_isom_get_sample_count(movie, reader->track_number);
+	reader->sample_index = 1;
 	signals.push_back(new Pin);
 }
 
 GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 	deleteLastSample();
-	gf_isom_close(movie);
+	gf_isom_close(reader->movie);
 	delete signals[0];
 	gf_sys_close();
 }
@@ -62,21 +75,21 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 	deleteLastSample();
 
 	u32 sample_description_index;
-	iso_sample = gf_isom_get_sample(movie, track_number, sample_index, &sample_description_index);
-	if (iso_sample) {
-		Log::get(Log::Error) << "Found sample #" << sample_index << "/" << sample_count << " of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS: " << iso_sample->DTS << ", CTS: " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
-		sample_index++;
+	reader->iso_sample = gf_isom_get_sample(reader->movie, reader->track_number, reader->sample_index, &sample_description_index);
+	if (reader->iso_sample) {
+		Log::get(Log::Error) << "Found sample #" << reader->sample_index << "/" << reader->sample_count << " of length " << reader->iso_sample->dataLength << ", RAP: " << reader->iso_sample->IsRAP << ", DTS: " << reader->iso_sample->DTS << ", CTS: " << reader->iso_sample->DTS + reader->iso_sample->CTS_Offset << std::endl;
+		reader->sample_index++;
 
-		std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
-		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
+		std::shared_ptr<Data> out(new Data(reader->iso_sample->dataLength));
+		memcpy(out->data(), reader->iso_sample->data, reader->iso_sample->dataLength);
 		signals[0]->emit(out);
 
 		/*release the sample data, once you're done with it*/
-		gf_isom_sample_del(&iso_sample); //FIXME: embed it in the allocator:
+		gf_isom_sample_del(&reader->iso_sample); //FIXME: embed it in the allocator:
 	} else {
-		GF_Err e = gf_isom_last_error(movie);
+		GF_Err e = gf_isom_last_error(reader->movie);
 		if (e == GF_ISOM_INCOMPLETE_FILE) {
-			u64 missing_bytes = gf_isom_get_missing_bytes(movie, track_number);
+			u64 missing_bytes = gf_isom_get_missing_bytes(reader->movie, reader->track_number);
 			Log::get(Log::Error) << "Missing " << missing_bytes << " bytes on input file" << std::endl;
 		} else {
 			return false;
