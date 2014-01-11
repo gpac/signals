@@ -26,7 +26,7 @@
 #define SLEEP_IN_MS(ms) Sleep(ms)
 #else
 //#define SLEEP_IN_MS(ms) usleep(ms)
-#define SLEEP_IN_MS(ms) { struct timespec t; t.tv_sec=ms/1000; t.tv_nsec=(ms-t.tv_sec*1000)*1000000; nanosleep(&t, NULL); };
+#define SLEEP_IN_MS(ms) { struct timespec t; t.tv_sec=ms/1000; t.tv_nsec=(ms-t.tv_sec*1000)*1000000; nanosleep(&t, nullptr); };
 #endif
 
 
@@ -96,7 +96,7 @@ namespace Tests {
 #ifdef _MSC_VER
 				QueryPerformanceCounter(&startTime);
 #else
-				gettimeofday(&startTime, NULL);
+				gettimeofday(&startTime, nullptr);
 #endif
 			}
 
@@ -113,7 +113,7 @@ namespace Tests {
 				return (uint64_t)((unit * (stopTime.QuadPart - startTime.QuadPart)) / countsPerSecond.QuadPart);
 #else
 				struct timeval stopTime;
-				gettimeofday(&stopTime, NULL);
+				gettimeofday(&stopTime, nullptr);
 				return ((uint64_t)stopTime.tv_sec * 1000000 + stopTime.tv_usec) - ((uint64_t)startTime.tv_sec * 1000000 + startTime.tv_usec);
 #endif
 			}
