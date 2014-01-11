@@ -25,7 +25,7 @@ public:
 	/* data buffer to be read by the parser */
 	std::vector<u8> data;
 	/* URL used to pass a buffer to the parser */
-	char data_url[256];
+	std::string data_url;
 	/* The ISO file structure created for the parsing of data */
 	std::unique_ptr<gpacpp::IsoFile> movie;
 	/* Boolean state to indicate if the needs to be parsed */
@@ -58,7 +58,7 @@ bool GPAC_MP4_Full::openData() {
 	/* if the file is not yet opened (no movie), open it in progressive mode (to update its data later on) */
 	u64 missing_bytes;
 	GF_ISOFile *movie;
-	GF_Err e = gf_isom_open_progressive(reader->data_url, 0, 0, &movie, &missing_bytes);
+	GF_Err e = gf_isom_open_progressive(reader->data_url.c_str(), 0, 0, &movie, &missing_bytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
 		Log::get(Log::Warning) << "Error opening fragmented mp4 in progressive mode: " << gf_error_to_string(e) << " (missing " << missing_bytes << " bytes)" << std::endl;
 		return false;
@@ -135,7 +135,7 @@ bool GPAC_MP4_Full::processSample() {
 		      }
 		      std::stringstream ss;
 		      ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();
-		      strcpy(reader->data_url, ss.str().c_str());
+		      reader->data_url = ss.str();
 		      reader->movie->refreshFragmented(missing_bytes, reader->data_url);
 
 		      /* update the sample count and sample index */
@@ -175,7 +175,7 @@ bool GPAC_MP4_Full::process(std::shared_ptr<Data> data) {
 #endif
 	std::stringstream ss;
 	ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();
-	strcpy(reader->data_url, ss.str().c_str());
+	reader->data_url = ss.str();
 
 	if (!reader->movie) {
 		if (!openData()) {
