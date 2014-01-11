@@ -39,10 +39,6 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 	return new GPAC_MP4_Simple(movie);
 }
 
-void GPAC_MP4_Simple::deleteLastSample() {
-  reader->iso_sample.reset();
-}
-
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 : reader(new ISOFileReader) {
   reader->movie.reset(new gpacpp::IsoFile(movie));
