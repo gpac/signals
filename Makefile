@@ -1,5 +1,5 @@
-CFLAGS = -std=c++11 -Wall
-LDFLAGS = -lpthread -lgpac
+CFLAGS := -std=c++11 -Wall
+LDFLAGS := -lpthread -lgpac
 
 BIN=bin/make
 SRC=.
@@ -25,9 +25,9 @@ all: targets
 
 # Subproject: modules
 ProjectName:=modules
-include modules/project.mk
-CFLAGS+=-I$(SRC)/modules
-CFLAGS+=-I$(SRC)/modules/internal
+include $(ProjectName)/project.mk
+CFLAGS+=-I$(ProjectName)
+CFLAGS+=-I$(ProjectName)/internal
 
 TARGETS:=
 
