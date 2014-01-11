@@ -76,7 +76,7 @@ namespace gpacpp {
 		  gf_isom_set_single_moof_mode(movie_, (Bool)enable);
 		}
 
-		void refreshFragmented(uint64_t missingBytes, std::string const& url) {
+		void refreshFragmented(uint64_t& missingBytes, std::string const& url) {
 		  GF_Err e = gf_isom_refresh_fragmented(movie_, &missingBytes, url.c_str());
 		  if (e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE)
 		    throw Error("Can't refreshing fragmented MP4", e);
@@ -111,6 +111,11 @@ namespace gpacpp {
 		void resetTables(bool flag) {
 		  gf_isom_reset_tables(movie_, (Bool)flag);
 		}
+
+    void resetDataOffset(uint64_t& newBufferStart)
+    {
+      gf_isom_reset_data_offset(movie_, &newBufferStart);
+    }
 
 		uint64_t getMissingBytes(int trackNumber) {
 		  return gf_isom_get_missing_bytes(movie_, trackNumber);
