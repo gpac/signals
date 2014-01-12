@@ -11,8 +11,6 @@ extern "C" {
 
 #include "gpacpp.hpp"
 
-//#define GPAC_MEM_TRACKER
-
 
 //TODO: set appropriate CCO credits
 //see http://sourceforge.net/p/gpac/code/HEAD/tree/trunk/gpac/applications/testapps/fmp4demux/main.c
@@ -20,15 +18,9 @@ class ISOProgressiveReader {
 public:
 	ISOProgressiveReader()
 		: data(0), refresh_boxes(GF_TRUE), samples_processed(0), sample_index(1), sample_count(0), track_number(1) {
-#ifdef GPAC_MEM_TRACKER
-		gf_sys_init(GF_TRUE);
-#endif
 	}
 
 	~ISOProgressiveReader() {
-#ifdef GPAC_MEM_TRACKER
-		gf_sys_close();
-#endif
 	}
  
 	/* data buffer to be read by the parser */
@@ -51,18 +43,11 @@ GPAC_MP4_Full* GPAC_MP4_Full::create(const Param &parameters) {
 
 GPAC_MP4_Full::GPAC_MP4_Full()
 : reader(new ISOProgressiveReader) {
-#ifndef GPAC_MEM_TRACKER
-	gf_sys_init(GF_FALSE);
-#endif
-	//gf_log_set_tool_level(GF_LOG_ALL, GF_LOG_INFO);
 	signals.push_back(new Pin);
 }
 
 GPAC_MP4_Full::~GPAC_MP4_Full() {
 	delete signals[0];
-#ifndef GPAC_MEM_TRACKER
-	gf_sys_close();
-#endif
 }
 
 bool GPAC_MP4_Full::openData() {
@@ -180,7 +165,7 @@ bool GPAC_MP4_Full::process(std::shared_ptr<Data> data) {
 	reader->valid_data_size = reader->dataSize = data->size();
 	reader->data.data() = data->data();
 #else
-	const int currSize = reader->data.size();
+	const size_t currSize = reader->data.size();
 	reader->data.resize(reader->data.size() + data->size());
 	memcpy(reader->data.data() + currSize, data->data(), data->size());
 #endif

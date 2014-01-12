@@ -9,6 +9,8 @@
 #include <gpac/isomedia.h>
 #include <gpac/thread.h>
 
+//#define GPAC_MEM_TRACKER
+
 namespace gpacpp {
 	//------------------------------------------------
 	// GPAC error
@@ -51,9 +53,28 @@ namespace gpacpp {
 	};
 
 	//------------------------------------------------
+	// wrapper for GPAC init
+	//------------------------------------------------
+	class Init {
+	public:
+		Init(/*bool memTracker = false, */uint32_t globalLogTools = GF_LOG_ALL, uint32_t globalLogLevel = GF_LOG_DEBUG) {
+#ifdef GPAC_MEM_TRACKER
+			gf_sys_init(GF_TRUE);
+#else
+			gf_sys_init(GF_FALSE);
+#endif
+			gf_log_set_tool_level(globalLogTools, globalLogLevel);
+		}
+
+		~Init() {
+			gf_sys_close();
+		}
+	};
+
+	//------------------------------------------------
 	// wrapper for GF_ISOFile
 	//------------------------------------------------
-	class IsoFile {
+	class IsoFile : public Init {
 	public:
 		IsoFile(std::string const& url) {
 			u64 missingBytes;
