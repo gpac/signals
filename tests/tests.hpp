@@ -47,7 +47,7 @@
 	unittestLine(testFunction, __LINE__, prettyName)
 
 namespace Tests {
-	void ASSERT(bool condition) {
+	inline void ASSERT(bool condition) {
 		if (!condition) {
 			std::cerr << "TEST FAILED" << std::endl;
 			std::raise(SIGABRT);
@@ -57,25 +57,20 @@ namespace Tests {
 	int RegisterTest(void (*f)(), const char* testName, int& dummy);
 	void RunAll();
 
-	//class Test {
-	//public:
-	void Test(const std::string &name) {
+	inline void Test(const std::string &name) {
 		std::cout << std::endl << "[ ***** " << name.c_str() << " ***** ]" << std::endl;
 	}
 
-	//TODO test result in destructor?
-	//};
-
 	namespace Util {
-		int dummy(int a) {
+		inline int dummy(int a) {
 			return a;
 		}
-		int dummyPrint(int a) {
+		inline int dummyPrint(int a) {
 			std::cout << "a = " << a << std::endl;
 			return a;
 		}
 
-		int compute(int a) {
+		inline int compute(int a) {
 			int64_t n = (int64_t)1 << a;
 			if (a <= 0) {
 				return 1;
@@ -87,12 +82,12 @@ namespace Tests {
 			return (int)res;
 		}
 
-		void sleepInMs(int ms) {
+		inline void sleepInMs(int ms) {
 			//std::cout << "sleepInMs(" << ms << ") in thread " << std::this_thread::get_id() << std::endl;
 			SLEEP_IN_MS(ms);
 		}
 
-		int log2(int i) {
+		inline int log2(int i) {
 			int res = 0;
 			while (i >>= 1) {
 				++res;
@@ -100,7 +95,7 @@ namespace Tests {
 			return res;
 		}
 
-		bool isPow2(int i) {
+		inline bool isPow2(int i) {
 			return (i == 0) || (i - (1 << (int)log2(i)) == 0);
 		}
 
