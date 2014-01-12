@@ -13,7 +13,7 @@ class ISOFileReader;
 
 class EXPORT GPAC_MP4_Simple : public Module {
 public:
-	static GPAC_MP4_Simple* create(const Param &parameters);
+	static GPAC_MP4_Simple* create(std::string const& path);
 	~GPAC_MP4_Simple();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);

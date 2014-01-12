@@ -12,7 +12,7 @@ class ISOProgressiveReader;
 
 class EXPORT GPAC_MP4_Full : public Module {
 public:
-	static GPAC_MP4_Full* create(const Param &parameters);
+	static GPAC_MP4_Full* create();
 	~GPAC_MP4_Full();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url); //FIXME: useless for memory-based module...
