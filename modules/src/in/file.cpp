@@ -14,12 +14,7 @@ File::~File() {
 	delete signals[0];//FIXME: use unique_ptr
 }
 
-File* File::create(const Param &parameters) {
-	auto filename = parameters.find("filename");
-	if (filename == parameters.end()) {
-		return NULL;
-	}
-	const std::string &fn = (*filename).second;
+File* File::create(std::string const& fn) {
 	FILE *f = fopen(fn.c_str(), "rb");
 	if (!f) {
 		Log::msg(Log::Error, "Can't open file: %s", fn);

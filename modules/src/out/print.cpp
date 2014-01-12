@@ -2,7 +2,7 @@
 #include "internal/log.hpp"
 
 
-Print* Print::create(const Param &parameters) {
+Print* Print::create() {
 	return new Print();
 }
 

@@ -8,7 +8,7 @@
 
 class EXPORT File : public Module {
 public:
-	static File* create(const Param &p);
+	static File* create(std::string const& path);
 	~File();
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);

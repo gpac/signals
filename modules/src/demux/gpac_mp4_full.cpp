@@ -37,7 +37,7 @@ public:
 	int track_number; //TODO: multi-tracks
 };
 
-GPAC_MP4_Full* GPAC_MP4_Full::create(const Param &parameters) {
+GPAC_MP4_Full* GPAC_MP4_Full::create() {
 	return new GPAC_MP4_Full();
 }
 

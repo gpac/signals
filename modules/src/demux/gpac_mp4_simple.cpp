@@ -26,12 +26,7 @@ public:
 };
 
 
-GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
-	auto filename = parameters.find("filename");
-	if (filename == parameters.end()) {
-		return NULL;
-	}
-	const std::string &fn = (*filename).second;
+GPAC_MP4_Simple* GPAC_MP4_Simple::create(std::string const& fn) {
 
 	/* The ISO progressive reader */
 	GF_ISOFile *movie;
