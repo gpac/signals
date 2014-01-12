@@ -47,12 +47,13 @@
 	unittestLine(testFunction, __LINE__, prettyName)
 
 namespace Tests {
-	inline void ASSERT(bool condition) {
-		if (!condition) {
-			std::cerr << "TEST FAILED" << std::endl;
-			std::raise(SIGABRT);
-		}
+	inline void Fail(char const* file, int line, const char* expr) {
+		std::cerr << "TEST FAILED: " << file << "(" << line << "): (" << expr << ")" << std::endl;
+		std::raise(SIGABRT);
 	}
+
+#define ASSERT(expr) \
+	if(!(expr)) { Fail(__FILE__, __LINE__, #expr); }
 
 	int RegisterTest(void (*f)(), const char* testName, int& dummy);
 	void RunAll();
