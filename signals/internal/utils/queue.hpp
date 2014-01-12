@@ -44,16 +44,6 @@ public:
 		return res;
 	}
 
-	bool empty() const {
-		std::lock_guard<std::mutex> lock(mutex);
-		return dataQueue.empty();
-	}
-
-	size_t size() const {
-		std::lock_guard<std::mutex> lock(mutex);
-		return dataQueue.size();
-	}
-
 	void clear() {
 		std::lock_guard<std::mutex> lock(mutex);
 		while (!dataQueue.empty()) {
@@ -62,6 +52,11 @@ public:
 	}
 
 #ifdef TESTS
+	size_t size() const {
+		std::lock_guard<std::mutex> lock(mutex);
+		return dataQueue.size();
+	}
+
 	T& operator[] (size_t index) {
 		std::lock_guard<std::mutex> lock(mutex);
 		const size_t dataSize = dataQueue.size();
