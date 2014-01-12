@@ -11,8 +11,6 @@ private:
 	typedef typename ProtoSignal<Result, SignalSignature, Caller>::CallbackType Callback;
 
 	class Connector {
-		friend class Signal;
-
 	public:
 		size_t connect(const Callback &cb) {
 			return signal.connect(cb);
