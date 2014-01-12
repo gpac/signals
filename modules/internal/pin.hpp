@@ -27,7 +27,6 @@ public:
 
 	size_t emit(std::shared_ptr<Data> data) {
 		size_t numReceivers = signal.emit(data);
-		sentData.push_back(data);
 		assert(numReceivers == 1);
 		return numReceivers;
 	}
@@ -36,12 +35,8 @@ public:
 		//getting the result release the shared_ptr, hence the data
 		//FIXME: we should lock since emit could be called from any thread
 		signal.results();
-		sentData.clear();
 	}
 
 	//TODO: Signal<bool(std::shared_ptr<Data>)> signal;
 	Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync<bool(std::shared_ptr<Data>)>, ConnectionQueue<bool(std::shared_ptr<Data>), bool >> signal;
-
-private:
-	std::vector<std::weak_ptr<Data>> sentData;
 };
