@@ -32,20 +32,6 @@ namespace gpacpp {
 		const GF_Err error_;
 	};
 
-	class MemTracker
-	{
-	public:
-		MemTracker()
-		{
-			gf_sys_init(GF_TRUE);
-		}
-
-		~MemTracker()
-		{
-			gf_sys_close();
-		}
-	};
-
 	//------------------------------------------------
 	// wrapper for GF_ISOSample
 	//------------------------------------------------
