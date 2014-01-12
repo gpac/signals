@@ -18,7 +18,7 @@ namespace Tests {
 					std::unique_ptr<Print> p(Print::create(paramPrint));
 					ASSERT(p != nullptr);
 
-					size_t uid = CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
+					CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
 					while (mp4Demux->process(nullptr)) {
 					}
 					mp4Demux->destroy();
@@ -39,8 +39,8 @@ namespace Tests {
 					std::unique_ptr<Print> p(Print::create(paramPrint));
 					ASSERT(p != nullptr);
 
-					size_t uid1 = CONNECT(f.get(), signals[0]->signal, mp4Demux.get(), &GPAC_MP4_Full::process);
-					size_t uid2 = CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
+					CONNECT(f.get(), signals[0]->signal, mp4Demux.get(), &GPAC_MP4_Full::process);
+					CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
 					while (f->process(nullptr)) {
 					}
 					f->destroy();

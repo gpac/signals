@@ -8,6 +8,7 @@ SRC=.
 DEBUG?=1
 
 ifeq ($(DEBUG), 1)
+  CFLAGS += -Werror
   CFLAGS += -g3
   LDFLAGS += -g
 else
