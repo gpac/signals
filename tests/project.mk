@@ -1,40 +1,44 @@
 
 OUTDIR:=$(BIN)/$(ProjectName)
 
+TEST_COMMON_OBJ:=\
+	$(OUTDIR)/tests.o
+DEPS+=$(TEST_COMMON_OBJ:%.o=%.deps)
+
 $(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
 $(BIN)/tests/modules_%.o: CFLAGS+=-DUNIT
 
 TARGETS+=$(OUTDIR)/signals_simple.exe
-$(OUTDIR)/signals_simple.exe: $(OUTDIR)/signals_simple.o
+$(OUTDIR)/signals_simple.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_simple.o
 DEPS+=$(OUTDIR)/signals_simple.deps
 
 TARGETS+=$(OUTDIR)/modules_demux.exe
-MODULES_DEMUX_OBJS:=$(OUTDIR)/modules_demux.o $(MODULES_OBJS)
+MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS)
 $(OUTDIR)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
 DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/signals_perf.exe
-$(OUTDIR)/signals_perf.exe: $(OUTDIR)/signals_perf.o
+$(OUTDIR)/signals_perf.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_perf.o
 DEPS+=$(OUTDIR)/signals_perf.deps
 
 TARGETS+=$(OUTDIR)/signals_module.exe
-$(OUTDIR)/signals_module.exe: $(OUTDIR)/signals_module.o
+$(OUTDIR)/signals_module.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_module.o
 DEPS+=$(OUTDIR)/signals_module.deps
 
 TARGETS+=$(OUTDIR)/signals_async.exe
-$(OUTDIR)/signals_async.exe: $(OUTDIR)/signals_async.o
+$(OUTDIR)/signals_async.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_async.o
 DEPS+=$(OUTDIR)/signals_async.deps
 
 TARGETS+=$(OUTDIR)/signals_unit_result.exe
-$(OUTDIR)/signals_unit_result.exe: $(OUTDIR)/signals_unit_result.o
+$(OUTDIR)/signals_unit_result.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_unit_result.o
 DEPS+=$(OUTDIR)/signals_unit_result.deps
 
 TARGETS+=$(OUTDIR)/signals.exe
-$(OUTDIR)/signals.exe: $(OUTDIR)/signals.o
+$(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
 DEPS+=$(OUTDIR)/signals.deps
 
 TARGETS+=$(OUTDIR)/modules.exe
-$(OUTDIR)/modules.exe: $(MODULES_OBJS) $(OUTDIR)/modules.o
+$(OUTDIR)/modules.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(OUTDIR)/modules.o
 DEPS+=$(OUTDIR)/modules.deps
 
 run: unit

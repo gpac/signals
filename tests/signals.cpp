@@ -17,24 +17,6 @@ using namespace Tests;
 
 int main(int argc, char **argv) {
 	Util::Profiler p("TESTS TOTAL TIME");
-
-	int res = 0;
-
-	res = Unit::Result::main(argc, argv);
-	ASSERT(!res);
-
-	res = Simple::main(argc, argv);
-	ASSERT(!res);
-
-	res = Module::main(argc, argv);
-	ASSERT(!res);
-
-	res = Async::main(argc, argv);
-	ASSERT(!res);
-
-	res = Perf::main(argc, argv);
-	ASSERT(!res);
-
-	std::cout << std::endl;
+	Tests::RunAll();
 	return 0;
 }

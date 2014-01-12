@@ -2,47 +2,34 @@
 #include "signals.hpp"
 #include "internal/core/result.hpp"
 
+using namespace Tests;
 
-namespace Tests {
-	namespace Unit {
-		namespace Result {
-			template<typename T>
-			bool test() {
-				ResultQueueThreadSafe<T> result;
-				auto res = result.get();
+namespace {
+	template<typename T>
+		bool test() {
+			ResultQueueThreadSafe<T> result;
+			auto res = result.get();
 
-				return true;
-			}
+			return true;
+		}
 
-			int main(int argc, char **argv) {
-				//TODO: complete this test... and create other unit tests
-				Test("unit test on class Result");
-				{
-					bool res = test<int>();
-					ASSERT(res);
-				}
-				{
-					bool res = test<void>();
-					ASSERT(res);
-				}
-
-				return 0;
-			}
+	//TODO: complete this test... and create other unit tests
+	unittest("unit test on class Result") {
+		{
+			bool res = test<int>();
+			ASSERT(res);
+		}
+		{
+			bool res = test<void>();
+			ASSERT(res);
 		}
 	}
 }
 
 #ifdef UNIT
-using namespace Tests;
 int main(int argc, char **argv) {
 	Util::Profiler p("TESTS TOTAL TIME");
-
-	int res = 0;
-
-	res = Unit::Result::main(argc, argv);
-	ASSERT(!res);
-
-	std::cout << std::endl;
+	Tests::RunAll();
 	return 0;
 }
 #endif
