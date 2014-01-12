@@ -40,8 +40,9 @@ namespace {
 
 		CONNECT(f.get(), signals[0]->signal, mp4Demux.get(), &GPAC_MP4_Full::process);
 		CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
-		while (f->process(nullptr)) {
-		}
+
+		f->push();
+
 		f->destroy();
 		mp4Demux->destroy();
 	}
