@@ -29,9 +29,13 @@ TARGETS+=$(OUTDIR)/signals_unit_result.exe
 $(OUTDIR)/signals_unit_result.exe: $(OUTDIR)/signals_unit_result.o
 DEPS+=$(OUTDIR)/signals_unit_result.deps
 
-TARGETS+=$(OUTDIR)/all.exe
-$(OUTDIR)/all.exe: $(OUTDIR)/signals.o
+TARGETS+=$(OUTDIR)/signals.exe
+$(OUTDIR)/signals.exe: $(OUTDIR)/signals.o
 DEPS+=$(OUTDIR)/signals.deps
+
+TARGETS+=$(OUTDIR)/modules.exe
+$(OUTDIR)/modules.exe: $(MODULES_OBJS) $(OUTDIR)/modules.o
+DEPS+=$(OUTDIR)/modules.deps
 
 run: unit
 	PROGRAM=$(realpath $(OUTDIR)/modules_demux.exe) && cd $(ProjectName) && $$PROGRAM
