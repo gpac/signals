@@ -1,6 +1,9 @@
 
 OUTDIR:=$(BIN)/$(ProjectName)
 
+$(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
+$(BIN)/tests/modules_%.o: CFLAGS+=-DUNIT
+
 TARGETS+=$(OUTDIR)/signals_simple.exe
 $(OUTDIR)/signals_simple.exe: $(OUTDIR)/signals_simple.o
 DEPS+=$(OUTDIR)/signals_simple.deps
@@ -25,6 +28,10 @@ DEPS+=$(OUTDIR)/signals_async.deps
 TARGETS+=$(OUTDIR)/signals_unit_result.exe
 $(OUTDIR)/signals_unit_result.exe: $(OUTDIR)/signals_unit_result.o
 DEPS+=$(OUTDIR)/signals_unit_result.deps
+
+TARGETS+=$(OUTDIR)/all.exe
+$(OUTDIR)/all.exe: $(OUTDIR)/signals.o
+DEPS+=$(OUTDIR)/signals.deps
 
 run: unit
 	PROGRAM=$(realpath $(OUTDIR)/modules_demux.exe) && cd $(ProjectName) && $$PROGRAM
