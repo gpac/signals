@@ -22,7 +22,7 @@
 #define TESTS
 
 #define FORMAT(i, max) std::setw(1+(std::streamsize)log10(max)) << i
-#ifdef WIN32
+#ifdef _WIN32
 #define SLEEP_IN_MS(ms) Sleep(ms)
 #else
 //#define SLEEP_IN_MS(ms) usleep(ms)
