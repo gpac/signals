@@ -34,6 +34,17 @@
 #define TEST_TIMEOUT_IN_US 800000
 #define TEST_MAX_TIME_IN_S 100
 
+// generate a file-unique identifier, based on current line
+#define unittestLine2(prefix, line, prettyName) \
+	static void prefix##line(); \
+	int g_isRegistered##line = Tests::RegisterTest(&prefix##line, prettyName, g_isRegistered##line); \
+	static void prefix##line()
+
+#define unittestLine(prefix, line, prettyName) \
+	unittestLine2(prefix, line, prettyName)
+
+#define unittest(prettyName) \
+	unittestLine(testFunction, __LINE__, prettyName)
 
 namespace Tests {
 	void ASSERT(bool condition) {
@@ -42,6 +53,9 @@ namespace Tests {
 			std::raise(SIGABRT);
 		}
 	}
+
+	int RegisterTest(void (*f)(), const char* testName, int& dummy);
+	void RunAll();
 
 	//class Test {
 	//public:
