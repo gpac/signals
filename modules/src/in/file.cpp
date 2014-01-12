@@ -22,7 +22,7 @@ File* File::create(const Param &parameters) {
 	const std::string &fn = (*filename).second;
 	FILE *f = fopen(fn.c_str(), "rb");
 	if (!f) {
-		Log::get(Log::Error) << "Can't open file: " << fn << std::endl;
+		Log::msg(Log::Error, "Can't open file: %s", fn);
 		return NULL;
 	} else {
 		return new File(f);

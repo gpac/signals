@@ -56,7 +56,9 @@ bool GPAC_MP4_Full::openData() {
 	GF_ISOFile *movie;
 	GF_Err e = gf_isom_open_progressive(reader->data_url.c_str(), 0, 0, &movie, &missing_bytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
-		Log::get(Log::Warning) << "Error opening fragmented mp4 in progressive mode: " << gf_error_to_string(e) << " (missing " << missing_bytes << " bytes)" << std::endl;
+		Log::msg(Log::Warning, "Error opening fragmented mp4 in progressive mode: %s (missing %s bytes)",
+				gf_error_to_string(e), missing_bytes);
+
 		return false;
 	}
 	reader->movie.reset(new gpacpp::IsoFile(movie));
@@ -81,7 +83,9 @@ bool GPAC_MP4_Full::processSample() {
 			new_sample_count = reader->movie->getSampleCount(reader->track_number);
 			if (new_sample_count > reader->sample_count) {
 				/* New samples have been added to the file */
-				Log::get(Log::Info) << "Found " << new_sample_count - reader->sample_count << " new samples (total: " << new_sample_count << ")" << std::endl;
+				Log::msg(Log::Info, "Found %s new samples (total: %s)",
+						new_sample_count - reader->sample_count,
+						new_sample_count);
 				if (reader->sample_count == 0) {
 					reader->sample_count = new_sample_count;
 				}
@@ -104,7 +108,15 @@ bool GPAC_MP4_Full::processSample() {
 
 					reader->samples_processed++;
 					/*here we dump some sample info: samp->data, samp->dataLength, samp->isRAP, samp->DTS, samp->CTS_Offset */
-					Log::get(Log::Info) << "Found sample #" << reader->sample_index << "(#" << reader->samples_processed << ") of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS : " << iso_sample->DTS << ", CTS : " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
+					Log::msg(Log::Info,
+						 	"Found sample #%s(#%s) of length %s , RAP: %s, DTS : %s, CTS : %s",
+							reader->sample_index,
+							reader->samples_processed,
+							iso_sample->dataLength,
+							iso_sample->IsRAP,
+							iso_sample->DTS,
+							iso_sample->DTS + iso_sample->CTS_Offset
+							);
 					reader->sample_index++;
 
 					std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
@@ -117,7 +129,7 @@ bool GPAC_MP4_Full::processSample() {
 					u64 new_buffer_start;
 					u64 missing_bytes;
 
-					Log::get(Log::Debug) << std::endl << "Releasing unnecessary buffers" << std::endl;
+					Log::msg(Log::Debug, "Releasing unnecessary buffers");
 					/* release internal structures associated with the samples read so far */
 					reader->movie->resetTables(true);
 
@@ -144,7 +156,7 @@ bool GPAC_MP4_Full::processSample() {
 
 		return true;
 	} catch(gpacpp::Error const& e) {
-		Log::get(Log::Warning) << "Could not get sample: " << gf_error_to_string(e.error_) << std::endl;
+		Log::msg(Log::Warning, "Could not get sample: %s", gf_error_to_string(e.error_));
 		return false;
 	}
 }
