@@ -17,12 +17,9 @@ endif
 CFLAGS += -I$(SRC)/signals
 CFLAGS += -I$(SRC)/gpacpp
 
-ifeq ($(CLANG), 1)
-  CXX = clang++
+ifeq ($(CXX),clang++)
   CFLAGS += -stdlib=libc++
   LDFLAGS += -stdlib=libc++
-else
-  CXX = g++
 endif
 
 all: targets
