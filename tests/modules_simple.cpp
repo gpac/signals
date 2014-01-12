@@ -43,7 +43,7 @@ namespace Tests {
 					std::unique_ptr<Print> p(Print::create(paramPrint));
 					ASSERT(p != nullptr);
 
-					size_t uid = CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
+					CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
 					while (f->process(NULL)) {
 					}
 					f->destroy();

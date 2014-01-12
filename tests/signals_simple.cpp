@@ -31,8 +31,8 @@ namespace Tests {
 
 			Test("multiple connections: check results");
 			size_t id2 = sig.connect(dummy2);
-			size_t id3 = sig.connect(Util::dummy);
-			size_t id4 = sig.connect(dummy2);
+			sig.connect(Util::dummy);
+			sig.connect(dummy2);
 			numVal = sig.emit(input);
 			val = sig.results();
 			ASSERT(numVal == val->size());

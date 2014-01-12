@@ -48,7 +48,7 @@ namespace Tests {
 			Test("as many results as emit() calls");
 			{
 				Signal<int(int)> sig;
-				size_t uid = sig.connect(Util::dummy);
+				sig.connect(Util::dummy);
 				sig.emit(27);
 				sig.emit(1789);
 				auto res = sig.results();
@@ -60,7 +60,7 @@ namespace Tests {
 			Test("as many results as emit() calls, results arriving in wrong order");
 			{
 				Signal<int(int, int)> sig;
-				size_t uid = sig.connect(sleepAndDummy);
+				sig.connect(sleepAndDummy);
 				sig.emit(200, 27);
 				sig.emit(20, 1789);
 				auto res = sig.results();
