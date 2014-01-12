@@ -49,14 +49,12 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 : reader(new ISOFileReader) {
-	gf_sys_init(GF_FALSE);
 	reader->init(movie);
 	signals.push_back(new Pin);
 }
 
 GPAC_MP4_Simple::~GPAC_MP4_Simple() {
 	delete signals[0];
-	gf_sys_close();
 }
 
 bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
