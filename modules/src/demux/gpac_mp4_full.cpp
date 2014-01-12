@@ -22,7 +22,7 @@ public:
 
 	~ISOProgressiveReader() {
 	}
- 
+
 	/* data buffer to be read by the parser */
 	std::vector<u8> data;
 	/* URL used to pass a buffer to the parser */
@@ -42,7 +42,7 @@ GPAC_MP4_Full* GPAC_MP4_Full::create(const Param &parameters) {
 }
 
 GPAC_MP4_Full::GPAC_MP4_Full()
-: reader(new ISOProgressiveReader) {
+	: reader(new ISOProgressiveReader) {
 	signals.push_back(new Pin);
 }
 
@@ -143,8 +143,7 @@ bool GPAC_MP4_Full::processSample() {
 		}
 
 		return true;
-	}
-	catch(gpacpp::Error const& e) {
+	} catch(gpacpp::Error const& e) {
 		Log::get(Log::Warning) << "Could not get sample: " << gf_error_to_string(e.error_) << std::endl;
 		return false;
 	}

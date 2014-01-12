@@ -36,8 +36,7 @@ namespace gpacpp {
 	//------------------------------------------------
 	// wrapper for GF_ISOSample
 	//------------------------------------------------
-	class IsoSample : public GF_ISOSample
-	{
+	class IsoSample : public GF_ISOSample {
 	public:
 		IsoSample(GF_ISOSample* pOther) {
 			GF_ISOSample* pMe = this;
@@ -132,8 +131,7 @@ namespace gpacpp {
 			gf_isom_reset_tables(movie_, (Bool)flag);
 		}
 
-		void resetDataOffset(uint64_t& newBufferStart)
-		{
+		void resetDataOffset(uint64_t& newBufferStart) {
 			gf_isom_reset_data_offset(movie_, &newBufferStart);
 		}
 

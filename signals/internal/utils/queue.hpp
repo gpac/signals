@@ -93,7 +93,7 @@ private:
 };
 
 template<typename T>
-class Queue : public IQueue<T>, public std::queue<T>{
+class Queue : public IQueue<T>, public std::queue<T> {
 	std::shared_ptr<T> tryPop() {
 		if (std::queue<T>::empty()) {
 			return std::shared_ptr<T>();

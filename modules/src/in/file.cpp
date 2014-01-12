@@ -5,7 +5,7 @@
 #define IOSIZE 65536
 
 File::File(FILE *file)
-: file(file) {
+	: file(file) {
 	signals.push_back(new Pin);
 }
 
