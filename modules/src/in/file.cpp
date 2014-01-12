@@ -30,17 +30,23 @@ File* File::create(const Param &parameters) {
 }
 
 bool File::process(std::shared_ptr<Data> /*data*/) {
-	std::shared_ptr<Data> out(new Data(IOSIZE));
-	size_t read = fread(out->data(), 1, IOSIZE, file);
-	if (read < IOSIZE) {
-		if (read == 0) {
-			return false;
-		}
-		out->resize(read);
-	}
+	assert(false); // this module has no input
+	return false;
+}
 
-	signals[0]->emit(out);
-	return true;
+void File::push() {
+	for(;;) {
+		std::shared_ptr<Data> out(new Data(IOSIZE));
+		size_t read = fread(out->data(), 1, IOSIZE, file);
+		if (read < IOSIZE) {
+			if (read == 0) {
+				break;
+			}
+			out->resize(read);
+		}
+
+		signals[0]->emit(out);
+	}
 }
 
 bool File::handles(const std::string &url) {
@@ -50,3 +56,4 @@ bool File::handles(const std::string &url) {
 bool File::canHandle(const std::string &url) {
 	return true;
 }
+
