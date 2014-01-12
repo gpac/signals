@@ -27,16 +27,16 @@ namespace Tests {
 						}
 					}
 					{
-					std::stringstream ss;
-					ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
-					Util::Profiler p(ss.str());
-					for (int j = 0; j < i; ++j) {
-						f(val);
+						std::stringstream ss;
+						ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
+						Util::Profiler p(ss.str());
+						for (int j = 0; j < i; ++j) {
+							f(val);
+						}
+						if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
+							timeout = true;
+						}
 					}
-					if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
-						timeout = true;
-					}
-				}
 					if (timeout) {
 						std::cout << "TIMEOUT: ABORT CURRENT TEST" << std::endl;
 						return;
@@ -63,7 +63,9 @@ namespace Tests {
 						ThreadPool pool;
 						Util::Profiler p(ss.str());
 						sig.emit(val);
-						std::function<void(void)> f = [&sig]() { sig.results(true); };
+						std::function<void(void)> f = [&sig]() {
+							sig.results(true);
+						};
 						for (int j = 0; j < i; ++j) {
 							pool.submit<void(void)>(f);
 						}
@@ -76,16 +78,16 @@ namespace Tests {
 						}
 					}
 					{
-					std::stringstream ss;
-					ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
-					Util::Profiler p(ss.str());
-					for (int j = 0; j < i; ++j) {
-						f(val);
+						std::stringstream ss;
+						ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
+						Util::Profiler p(ss.str());
+						for (int j = 0; j < i; ++j) {
+							f(val);
+						}
+						if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
+							timeout = true;
+						}
 					}
-					if (p.elapsedInUs() > 2 * TEST_TIMEOUT_IN_US) {
-						timeout = true;
-					}
-				}
 					if (timeout) {
 						std::cout << "TIMEOUT: ABORT CURRENT TEST" << std::endl;
 						return;

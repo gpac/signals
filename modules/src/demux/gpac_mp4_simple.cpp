@@ -48,7 +48,7 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 }
 
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
-: reader(new ISOFileReader) {
+	: reader(new ISOFileReader) {
 	reader->init(movie);
 	signals.push_back(new Pin);
 }
@@ -69,8 +69,7 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 		std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
 		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 		signals[0]->emit(out);
-	}
-	catch(gpacpp::Error const& err) {
+	} catch(gpacpp::Error const& err) {
 		if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 			u64 missing_bytes = reader->movie->getMissingBytes(reader->track_number);
 			Log::get(Log::Error) << "Missing " << missing_bytes << " bytes on input file" << std::endl;
