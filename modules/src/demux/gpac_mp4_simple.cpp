@@ -40,7 +40,7 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(const Param &parameters) {
 
 	GF_Err e = gf_isom_open_progressive(fn.c_str(), 0, 0, &movie, &missing_bytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || movie == NULL) {
-		Log::get(Log::Error) << "Could not open file " << fn << " for reading (" << gf_error_to_string(e) << ")." << std::endl;
+		Log::msg(Log::Error, "Could not open file %s for reading (%s).", fn, gf_error_to_string(e));
 		return NULL;
 	}
 
@@ -63,7 +63,13 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 		std::unique_ptr<gpacpp::IsoSample> iso_sample;
 		iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
 
-		Log::get(Log::Error) << "Found sample #" << reader->sample_index << "/" << reader->sample_count << " of length " << iso_sample->dataLength << ", RAP: " << iso_sample->IsRAP << ", DTS: " << iso_sample->DTS << ", CTS: " << iso_sample->DTS + iso_sample->CTS_Offset << std::endl;
+		Log::msg(Log::Error, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s", 
+				reader->sample_index,
+				reader->sample_count,
+			 	iso_sample->dataLength,
+			 	iso_sample->IsRAP,
+			 	iso_sample->DTS,
+				iso_sample->DTS + iso_sample->CTS_Offset);
 		reader->sample_index++;
 
 		std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
@@ -72,7 +78,7 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 	} catch(gpacpp::Error const& err) {
 		if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 			u64 missing_bytes = reader->movie->getMissingBytes(reader->track_number);
-			Log::get(Log::Error) << "Missing " << missing_bytes << " bytes on input file" << std::endl;
+			Log::msg(Log::Error, "Missing %s bytes on input file", missing_bytes);
 		} else {
 			return false;
 		}

@@ -7,7 +7,7 @@ Print* Print::create(const Param &parameters) {
 }
 
 bool Print::process(std::shared_ptr<Data> data) {
-	Log::get(Log::Error) << "Print: received data of size: " << data->size() << std::endl;
+	Log::msg(Log::Error, "Print: received data of size: %s", data->size());
 	return true;
 }
 
