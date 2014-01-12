@@ -71,11 +71,3 @@ namespace {
 	}
 }
 
-#ifdef UNIT
-int main(int argc, char **argv) {
-	Util::Profiler p("TESTS TOTAL TIME");
-
-	Tests::RunAll();
-	return 0;
-}
-#endif

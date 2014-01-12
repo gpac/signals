@@ -1,4 +1,5 @@
 #include <iostream>
+#include "tests.hpp"
 
 namespace {
 	typedef void (*TestFunction)();
@@ -28,4 +29,10 @@ namespace Tests {
 			std::cout << std::endl;
 		}
 	}
+}
+
+int main(int argc, char **argv) {
+	Tests::Util::Profiler p("TESTS TOTAL TIME");
+	Tests::RunAll();
+	return 0;
 }
