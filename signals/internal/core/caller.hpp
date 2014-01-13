@@ -100,6 +100,20 @@ public:
 private:
 	Tests::ThreadPool threadPool;
 };
+template<typename... Args>
+class CallerThread<void(Args...)> {
+public:
+	CallerThread() : threadPool(1) {
+	}
+
+	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		std::function<int(Args...)> closure = [=](Args... args)->int { callback(args...); return 0; };
+		return threadPool.submit(closure, args...);
+	}
+
+private:
+	Tests::ThreadPool threadPool;
+};
 
 //tasks occur in the pool
 template<typename Callback, typename... Args>
@@ -107,6 +121,17 @@ class CallerThreadPool<Callback(Args...)> {
 public:
 	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
 		return threadPool.submit(callback, args...);
+	}
+
+private:
+	Tests::ThreadPool threadPool;
+};
+template< typename... Args>
+class CallerThreadPool<void(Args...)> {
+public:
+	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+		std::function<int(Args...)> closure = [=](Args... args)->int { callback(args...); return 0; };
+		return threadPool.submit(closure, args...);
 	}
 
 private:

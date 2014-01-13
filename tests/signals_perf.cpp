@@ -102,7 +102,7 @@ namespace {
 		emitTest<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("unsafe emit dummy  on pool") {
-		emitTest<int(int), ResultVector<void>, CallerLazy<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
+		emitTest<int(int), ResultVector<void>, CallerThreadPool<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("unsafe emit dummy  on  sync") {
 		emitTest<int(int), ResultVector<void>, CallerSync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
@@ -119,7 +119,7 @@ namespace {
 		emitTest<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("safe emit dummy  on pool") {
-		emitTest<int(int), ResultQueueThreadSafe<int>, CallerLazy<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
+		emitTest<int(int), ResultQueueThreadSafe<int>, CallerThreadPool<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("safe emit dummy  on  sync") {
 		emitTest<int(int), ResultQueueThreadSafe<int>, CallerSync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
@@ -136,7 +136,7 @@ namespace {
 		emitTest<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("unsafe emit dummy  on pool") {
-		emitTest<int(int), ResultVector<void>, CallerLazy<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
+		emitTest<int(int), ResultVector<void>, CallerThreadPool<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("unsafe emit dummy  on  sync") {
 		emitTest<int(int), ResultVector<void>, CallerSync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::dummy, 1789);
@@ -153,7 +153,7 @@ namespace {
 		emitTest<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("safe emit dummy  on pool") {
-		emitTest<int(int), ResultQueueThreadSafe<int>, CallerLazy<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
+		emitTest<int(int), ResultQueueThreadSafe<int>, CallerThreadPool<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
 	}
 	unittest("safe emit dummy  on  sync") {
 		emitTest<int(int), ResultQueueThreadSafe<int>, CallerSync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::dummy, 1789);
@@ -170,7 +170,7 @@ namespace {
 		emitTest<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 12);
 	}
 	unittest("unsafe emit light computation on pool") {
-		emitTest<int(int), ResultVector<void>, CallerLazy<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 12);
+		emitTest<int(int), ResultVector<void>, CallerThreadPool<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 12);
 	}
 	unittest("unsafe emit light computation on  sync") {
 		emitTest<int(int), ResultVector<void>, CallerSync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 12);
@@ -187,7 +187,7 @@ namespace {
 		emitTest<int(int), ResultQueueThreadSafe<int>, CallerAuto<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 12);
 	}
 	unittest("safe emit light computation on pool") {
-		emitTest<int(int), ResultQueueThreadSafe<int>, CallerLazy<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 12);
+		emitTest<int(int), ResultQueueThreadSafe<int>, CallerThreadPool<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 12);
 	}
 	unittest("safe emit light computation on  sync") {
 		emitTest<int(int), ResultQueueThreadSafe<int>, CallerSync<int(int)>, ConnectionQueueThreadSafe<int(int), int>, int>(Util::compute, 12);
@@ -204,7 +204,7 @@ namespace {
 		emitTest<int(int), ResultVector<void>, CallerAuto<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
 	}
 	unittest("unsafe emit heavy computation on pool") {
-		emitTest<int(int), ResultVector<void>, CallerLazy<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
+		emitTest<int(int), ResultVector<void>, CallerThreadPool<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
 	}
 	unittest("unsafe emit heavy computation on  sync") {
 		emitTest<int(int), ResultVector<void>, CallerSync<int(int)>, ConnectionQueue<int(int), int>, int>(Util::compute, 25);
@@ -238,7 +238,7 @@ namespace {
 		emitTest<void(int), ResultVector<void>, CallerAuto<void(int)>, ConnectionQueue<void(int), void>, int>(Util::sleepInMs, 100);
 	}
 	unittest("unsafe emit sleep   on  pool") {
-		emitTest<void(int), ResultVector<void>, CallerLazy<void(int)>, ConnectionQueue<void(int), void>, int>(Util::sleepInMs, 100);
+		emitTest<void(int), ResultVector<void>, CallerThreadPool<void(int)>, ConnectionQueue<void(int), void>, int>(Util::sleepInMs, 100);
 	}
 	unittest("unsafe emit sleep   on  sync") {
 		emitTest<void(int), ResultVector<void>, CallerSync<void(int)>, ConnectionQueue<void(int), void>, int>(Util::sleepInMs, 100);
@@ -255,7 +255,7 @@ namespace {
 		emitTest<void(int), ResultQueueThreadSafe<void>, CallerAuto<void(int)>, ConnectionQueueThreadSafe<void(int), void>, int>(Util::sleepInMs, 100);
 	}
 	unittest("safe emit sleep   on  pool") {
-		emitTest<void(int), ResultQueueThreadSafe<void>, CallerLazy<void(int)>, ConnectionQueueThreadSafe<void(int), void>, int>(Util::sleepInMs, 100);
+		emitTest<void(int), ResultQueueThreadSafe<void>, CallerThreadPool<void(int)>, ConnectionQueueThreadSafe<void(int), void>, int>(Util::sleepInMs, 100);
 	}
 	unittest("safe emit sleep   on  sync") {
 		emitTest<void(int), ResultQueueThreadSafe<void>, CallerSync<void(int)>, ConnectionQueueThreadSafe<void(int), void>, int>(Util::sleepInMs, 100);
