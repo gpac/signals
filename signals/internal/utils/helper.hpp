@@ -3,15 +3,7 @@
 
 /* member funtion helper */
 
-#define MEMBER_FUNCTOR(ObjectPtr, MemberFunctionPtr) MemberFunctor<decltype(get_return_type(MemberFunctionPtr)), decltype(get_class(MemberFunctionPtr)), decltype(MemberFunctionPtr)>(ObjectPtr, MemberFunctionPtr)
-
 #define CONNECT(ObjectSig, MemberFunctionSig, ObjectSlot, MemberFunctionSlot) (ObjectSig)->MemberFunctionSig.connect(MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot))
-
-template<typename Result, typename Class, typename... Args>
-Result get_return_type(Result(Class::*)(Args...));
-
-template<typename Result, typename Class, typename... Args>
-Class get_class(Result(Class::*)(Args...));
 
 template<typename Result, typename Class, typename MemberFunction>
 class MemberFunctor {
@@ -28,3 +20,9 @@ private:
 	Class *object;
 	MemberFunction function;
 };
+
+template<typename Result, typename Class, typename... Args>
+MemberFunctor<Result, Class, Result (Class::*)(Args...)>
+MEMBER_FUNCTOR(Class* ObjectPtr, Result (Class::*MemberFunction) (Args...)) {
+	return MemberFunctor<Result, Class, Result (Class::*)(Args...)>(ObjectPtr, MemberFunction);
+}
