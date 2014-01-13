@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../utils/threadpool.hpp"
 #include <functional>
 #include <future>
 
@@ -8,6 +9,7 @@ template<typename> class CallerSync;
 template<typename> class CallerLazy;
 template<typename> class CallerAsync;
 template<typename> class CallerAuto;
+template<typename> class CallerThreadPool;
 
 //synchronous calls
 template<typename Callback, typename... Args>
@@ -81,4 +83,16 @@ public:
 		auto closure = [=](Args... args)->int { callback(args...); return 0; };
 		return std::async(std::launch::async | std::launch::deferred, closure, args...);
 	}
+};
+
+//tasks occur in the pool
+template<typename Callback, typename... Args>
+class CallerThreadPool<Callback(Args...)> {
+public:
+	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+		return threadPool.submit(callback, args...);
+	}
+
+private:
+	Tests::ThreadPool threadPool;
 };

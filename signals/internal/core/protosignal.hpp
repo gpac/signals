@@ -69,7 +69,7 @@ public:
 	}
 
 protected:
-	ProtoSignal(const CallbackType &cb) : uid(0) {
+	ProtoSignal(Caller &caller, const CallbackType &cb) : uid(0), caller(caller) {
 		if (cb != nullptr) {
 			size_t connectionId = uid++;
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
@@ -100,6 +100,6 @@ private:
 
 	ConnectionManager callbacks;
 	std::atomic<size_t> uid;
-	Caller caller;
+	Caller &caller;
 	Result result;
 };
