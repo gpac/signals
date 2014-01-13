@@ -1,9 +1,10 @@
 #pragma once
 
 
-/* member funtion helper */
+/* member function helper */
 
-#define CONNECT(ObjectSig, MemberFunctionSig, ObjectSlot, MemberFunctionSlot) (ObjectSig)->MemberFunctionSig.connect(MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot))
+#define CONNECT(ObjectSig, MemberFunctionSig, ObjectSlot, MemberFunctionSlot) \
+	(ObjectSig)->MemberFunctionSig.connect(MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot))
 
 template<typename Result, typename Class, typename MemberFunction>
 class MemberFunctor {
