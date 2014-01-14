@@ -122,7 +122,7 @@ public:
 	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
 	}
 
-	CallerThreadPool(const Tests::ThreadPool& threadPool) : threadPool(std::shared_ptr<Tests::ThreadPool>(&threadPool)) {
+	CallerThreadPool(Tests::ThreadPool& threadPool) : threadPool(std::shared_ptr<Tests::ThreadPool>(&threadPool)) {
 	}
 
 	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
@@ -138,7 +138,7 @@ public:
 	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
 	}
 
-	CallerThreadPool(const Tests::ThreadPool& threadPool) : threadPool(std::shared_ptr<Tests::ThreadPool>(&threadPool)) {
+	CallerThreadPool(Tests::ThreadPool& threadPool) : threadPool(std::shared_ptr<Tests::ThreadPool>(&threadPool)) {
 	}
 
 	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
