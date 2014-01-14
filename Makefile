@@ -1,4 +1,4 @@
-CFLAGS := -I/usr/local/include-std=c++11 -Wall
+CFLAGS := -I/usr/local/include -std=c++11 -Wall
 LDFLAGS := -L/usr/local/lib -lpthread -lgpac
 
 BIN=bin/make
