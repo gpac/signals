@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../utils/threadpool.hpp"
+#include "../utils/helper.hpp"
 #include <functional>
 #include <future>
 
@@ -31,19 +32,9 @@ std::function<int(Args...)> NotVoidFunction(std::function<void(Args...)> fn) {
 template<typename R, typename... Args>
 class CallerSync<R(Args...)> {
 public:
-	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
-		std::packaged_task<R(Args...)> task(NotVoidFunction(callback));
-		const std::shared_future<R> &f = task.get_future();
-		task(args...);
-		return f;
-	}
-};
-template<typename... Args>
-class CallerSync<void(Args...)> {
-public:
-	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
-		std::packaged_task<int(Args...)> task(NotVoidFunction(callback));
-		const std::shared_future<int> &f = task.get_future();
+	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
+		std::packaged_task<NotVoid<R>(Args...)> task(NotVoidFunction(callback));
+		const std::shared_future<NotVoid<R>> &f = task.get_future();
 		task(args...);
 		return f;
 	}
@@ -53,14 +44,7 @@ public:
 template<typename R, typename... Args>
 class CallerLazy<R(Args...)> {
 public:
-	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
-		return std::async(std::launch::deferred, NotVoidFunction(callback), args...);
-	}
-};
-template<typename... Args>
-class CallerLazy<void(Args...)> {
-public:
-	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return std::async(std::launch::deferred, NotVoidFunction(callback), args...);
 	}
 };
@@ -69,14 +53,7 @@ public:
 template<typename R, typename... Args>
 class CallerAsync<R(Args...)> {
 public:
-	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
-		return std::async(std::launch::async, NotVoidFunction(callback), args...);
-	}
-};
-template<typename... Args>
-class CallerAsync<void(Args...)> {
-public:
-	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return std::async(std::launch::async, NotVoidFunction(callback), args...);
 	}
 };
@@ -85,14 +62,7 @@ public:
 template<typename R, typename... Args>
 class CallerAuto<R(Args...)> {
 public:
-	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
-		return std::async(std::launch::async | std::launch::deferred, NotVoidFunction(callback), args...);
-	}
-};
-template<typename... Args>
-class CallerAuto<void(Args...)> {
-public:
-	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return std::async(std::launch::async | std::launch::deferred, NotVoidFunction(callback), args...);
 	}
 };
@@ -104,20 +74,7 @@ public:
 	CallerThread() : threadPool(1) {
 	}
 
-	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
-		return threadPool.submit(NotVoidFunction(callback), args...);
-	}
-
-private:
-	Tests::ThreadPool threadPool;
-};
-template<typename... Args>
-class CallerThread<void(Args...)> {
-public:
-	CallerThread() : threadPool(1) {
-	}
-
-	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
+	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return threadPool.submit(NotVoidFunction(callback), args...);
 	}
 
@@ -135,26 +92,11 @@ public:
 	CallerThreadPool(std::shared_ptr<Tests::ThreadPool> threadPool) : threadPool(threadPool) {
 	}
 
-	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
+	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return threadPool->submit(NotVoidFunction(callback), args...);
 	}
 
 private:
 	std::shared_ptr<Tests::ThreadPool> threadPool;
 };
-template< typename... Args>
-class CallerThreadPool<void(Args...)> {
-public:
-	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
-	}
 
-	CallerThreadPool(std::shared_ptr<Tests::ThreadPool> threadPool) : threadPool(threadPool) {
-	}
-
-	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
-		return threadPool->submit(NotVoidFunction(callback), args...);
-	}
-
-private:
-	std::shared_ptr<Tests::ThreadPool> threadPool;
-};
