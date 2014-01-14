@@ -4,19 +4,6 @@
 #include <future>
 #include "../utils/queue.hpp"
 
-template<typename T>
-struct NotVoid
-{
-	typedef T Type;
-};
-
-template<>
-struct NotVoid<void>
-{
-	typedef int Type;
-};
-
-
 template<typename Callback, typename ResultType>
 class ConnectionQueue {
 public:

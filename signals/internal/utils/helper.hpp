@@ -27,3 +27,14 @@ MemberFunctor<Result, Class, Result (Class::*)(Args...)>
 MEMBER_FUNCTOR(Class* ObjectPtr, Result (Class::*MemberFunction) (Args...)) {
 	return MemberFunctor<Result, Class, Result (Class::*)(Args...)>(ObjectPtr, MemberFunction);
 }
+
+template<typename T>
+struct NotVoid {
+	typedef T Type;
+};
+
+template<>
+struct NotVoid<void> {
+	typedef int Type;
+};
+
