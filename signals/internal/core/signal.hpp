@@ -29,6 +29,8 @@ private:
 	};
 
 public:
-	Signal(Caller &caller = Caller(), const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature, Caller>(caller, callback) {
+	Signal(const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature, Caller>(callback) {
+	}
+	Signal(Caller &caller, const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature, Caller>(caller, callback) {
 	}
 };
