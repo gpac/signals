@@ -119,21 +119,33 @@ private:
 template<typename Callback, typename... Args>
 class CallerThreadPool<Callback(Args...)> {
 public:
+	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
+	}
+
+	CallerThreadPool(const Tests::ThreadPool& threadPool) : threadPool(threadPool) {
+	}
+
 	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
-		return threadPool.submit(callback, args...);
+		return threadPool->submit(callback, args...);
 	}
 
 private:
-	Tests::ThreadPool threadPool;
+	std::shared_ptr<Tests::ThreadPool> threadPool;
 };
 template< typename... Args>
 class CallerThreadPool<void(Args...)> {
 public:
+	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
+	}
+
+	CallerThreadPool(const Tests::ThreadPool& threadPool) : threadPool(threadPool) {
+	}
+
 	std::shared_future<int> operator() (const std::function<void(Args...)> &callback, Args... args) {
 		std::function<int(Args...)> closure = [=](Args... args)->int { callback(args...); return 0; };
-		return threadPool.submit(closure, args...);
+		return threadPool->submit(closure, args...);
 	}
 
 private:
-	Tests::ThreadPool threadPool;
+	std::shared_ptr<Tests::ThreadPool> threadPool;
 };
