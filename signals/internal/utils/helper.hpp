@@ -29,12 +29,13 @@ MEMBER_FUNCTOR(Class* ObjectPtr, Result (Class::*MemberFunction) (Args...)) {
 }
 
 template<typename T>
-struct NotVoid {
+struct NotVoidStruct {
 	typedef T Type;
 };
 
 template<>
-struct NotVoid<void> {
+struct NotVoidStruct<void> {
 	typedef int Type;
 };
 
+template <typename T> using NotVoid = typename NotVoidStruct<T>::Type;
