@@ -38,8 +38,8 @@ public:
 		}
 	}
 
-	Signal<bool(std::shared_ptr<Data>)> signal;
-	//Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync, ConnectionQueue<bool(std::shared_ptr<Data>), bool >> signal;
+	//Signal<bool(std::shared_ptr<Data>)> signal;
+	Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync, ConnectionQueue<bool(std::shared_ptr<Data>), bool >> signal;
 
 private:
 	Allocator allocator;
