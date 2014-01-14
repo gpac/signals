@@ -13,12 +13,12 @@ template<typename> class CallerThread;
 template<typename> class CallerThreadPool;
 
 //synchronous calls
-template<typename Callback, typename... Args>
-class CallerSync<Callback(Args...)> {
+template<typename R, typename... Args>
+class CallerSync<R(Args...)> {
 public:
-	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
-		std::packaged_task<Callback(Args...)> task(callback);
-		const std::shared_future<Callback> &f = task.get_future();
+	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
+		std::packaged_task<R(Args...)> task(callback);
+		const std::shared_future<R> &f = task.get_future();
 		task(args...);
 		return f;
 	}
@@ -36,10 +36,10 @@ public:
 };
 
 //synchronous lazy calls
-template<typename Callback, typename... Args>
-class CallerLazy<Callback(Args...)> {
+template<typename R, typename... Args>
+class CallerLazy<R(Args...)> {
 public:
-	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return std::async(std::launch::deferred, callback, args...);
 	}
 };
@@ -53,10 +53,10 @@ public:
 };
 
 //asynchronous calls with std::launch::async (spawns a thread)
-template<typename Callback, typename... Args>
-class CallerAsync<Callback(Args...)> {
+template<typename R, typename... Args>
+class CallerAsync<R(Args...)> {
 public:
-	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return std::async(std::launch::async, callback, args...);
 	}
 };
@@ -70,10 +70,10 @@ public:
 };
 
 //asynchronous or synchronous calls at the runtime convenience
-template<typename Callback, typename... Args>
-class CallerAuto<Callback(Args...)> {
+template<typename R, typename... Args>
+class CallerAuto<R(Args...)> {
 public:
-	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return std::async(std::launch::async | std::launch::deferred, callback, args...);
 	}
 };
@@ -87,13 +87,13 @@ public:
 };
 
 //tasks occur in a thread
-template<typename Callback, typename... Args>
-class CallerThread<Callback(Args...)> {
+template<typename R, typename... Args>
+class CallerThread<R(Args...)> {
 public:
 	CallerThread() : threadPool(1) {
 	}
 
-	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return threadPool.submit(callback, args...);
 	}
 
@@ -116,8 +116,8 @@ private:
 };
 
 //tasks occur in the pool
-template<typename Callback, typename... Args>
-class CallerThreadPool<Callback(Args...)> {
+template<typename R, typename... Args>
+class CallerThreadPool<R(Args...)> {
 public:
 	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
 	}
@@ -125,7 +125,7 @@ public:
 	CallerThreadPool(std::shared_ptr<Tests::ThreadPool> threadPool) : threadPool(threadPool) {
 	}
 
-	std::shared_future<Callback> operator() (const std::function<Callback(Args...)> &callback, Args... args) {
+	std::shared_future<R> operator() (const std::function<R(Args...)> &callback, Args... args) {
 		return threadPool->submit(callback, args...);
 	}
 
