@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="internal\allocator.hpp" />
     <ClInclude Include="internal\config.hpp" />
     <ClInclude Include="internal\data.hpp" />
     <ClInclude Include="internal\log.hpp" />

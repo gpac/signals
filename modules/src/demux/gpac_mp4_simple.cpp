@@ -45,7 +45,7 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(std::string const& fn) {
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
-	signals.push_back(new Pin);
+	signals.push_back(new Pin<>);
 }
 
 GPAC_MP4_Simple::~GPAC_MP4_Simple() {
@@ -67,7 +67,7 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 				iso_sample->DTS + iso_sample->CTS_Offset);
 		reader->sample_index++;
 
-		std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
+		std::shared_ptr<Data> out(signals[0]->getBuffer(iso_sample->dataLength));
 		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 		signals[0]->emit(out);
 	} catch(gpacpp::Error const& err) {
