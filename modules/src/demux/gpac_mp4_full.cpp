@@ -43,7 +43,7 @@ GPAC_MP4_Full* GPAC_MP4_Full::create() {
 
 GPAC_MP4_Full::GPAC_MP4_Full()
 	: reader(new ISOProgressiveReader) {
-	signals.push_back(new Pin);
+	signals.push_back(new Pin<>);
 }
 
 GPAC_MP4_Full::~GPAC_MP4_Full() {
@@ -119,7 +119,7 @@ bool GPAC_MP4_Full::processSample() {
 							);
 					reader->sample_index++;
 
-					std::shared_ptr<Data> out(new Data(iso_sample->dataLength));
+					std::shared_ptr<Data> out(signals[0]->getBuffer(iso_sample->dataLength));
 					memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 					signals[0]->emit(out);
 				}

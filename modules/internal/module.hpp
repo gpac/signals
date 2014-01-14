@@ -29,5 +29,5 @@ public:
 		}
 	}
 
-	std::vector<Pin*> signals; //TODO: evaluate how public this needs to be
+	std::vector<Pin<>*> signals; //TODO: evaluate how public this needs to be
 };

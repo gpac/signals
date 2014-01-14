@@ -54,6 +54,9 @@
     <ClInclude Include="src\demux\gpac_mp4_full.hpp">
       <Filter>src\demux</Filter>
     </ClInclude>
+    <ClInclude Include="internal\allocator.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">

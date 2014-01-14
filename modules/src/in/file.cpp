@@ -6,7 +6,7 @@
 
 File::File(FILE *file)
 	: file(file) {
-	signals.push_back(new Pin);
+	signals.push_back(new Pin<>());
 }
 
 File::~File() {
@@ -31,7 +31,7 @@ bool File::process(std::shared_ptr<Data> /*data*/) {
 
 void File::push() {
 	for(;;) {
-		std::shared_ptr<Data> out(new Data(IOSIZE));
+		std::shared_ptr<Data> out(signals[0]->getBuffer(IOSIZE));
 		size_t read = fread(out->data(), 1, IOSIZE, file);
 		if (read < IOSIZE) {
 			if (read == 0) {
