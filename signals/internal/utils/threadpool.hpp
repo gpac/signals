@@ -10,7 +10,7 @@
 namespace Tests { //TODO: create a util namespace?
 	class ThreadPool {
 	public:
-		ThreadPool(const unsigned  threadCount = std::thread::hardware_concurrency()) {
+		ThreadPool(const unsigned threadCount = std::thread::hardware_concurrency()) {
 			done = false;
 			waitAndExit = false;
 			for (unsigned i = 0; i < threadCount; ++i) {
@@ -49,10 +49,11 @@ namespace Tests { //TODO: create a util namespace?
 			};
 			workQueue.push(f);
 			return future;
-
 		}
 
 	private:
+		ThreadPool(const ThreadPool&) = delete;
+
 		void run() {
 			while (!done) {
 				std::function<void(void)> task;
