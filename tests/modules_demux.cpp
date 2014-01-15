@@ -12,7 +12,7 @@ namespace {
 		std::unique_ptr<GPAC_MP4_Simple> mp4Demux(GPAC_MP4_Simple::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 		ASSERT(mp4Demux != nullptr);
 
-		std::unique_ptr<Print> p(Print::create());
+		std::unique_ptr<Print> p(Print::create(std::cout));
 		ASSERT(p != nullptr);
 
 		CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Print::process);
@@ -28,7 +28,7 @@ namespace {
 
 		std::unique_ptr<GPAC_MP4_Full> mp4Demux(GPAC_MP4_Full::create());
 
-		std::unique_ptr<Print> p(Print::create());
+		std::unique_ptr<Print> p(Print::create(std::cout));
 		ASSERT(p != nullptr);
 
 		CONNECT(f.get(), signals[0]->signal, mp4Demux.get(), &GPAC_MP4_Full::process);

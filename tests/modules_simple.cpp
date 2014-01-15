@@ -16,7 +16,7 @@ unittest("empty param test: Demux") {
 }
 
 unittest("empty param test: Print") {
-	std::unique_ptr<Print> p(Print::create());
+	std::unique_ptr<Print> p(Print::create(std::cout));
 	ASSERT(p != nullptr);
 }
 
@@ -29,7 +29,7 @@ unittest("print packets size from file: File -> Print") {
 	std::unique_ptr<File> f(File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	ASSERT(f != nullptr);
 
-	std::unique_ptr<Print> p(Print::create());
+	std::unique_ptr<Print> p(Print::create(std::cout));
 	ASSERT(p != nullptr);
 
 	CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
