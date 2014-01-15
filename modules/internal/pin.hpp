@@ -3,6 +3,7 @@
 #include "allocator.hpp"
 #include "data.hpp"
 #include <../signals/signals.hpp>
+#include <thread>
 
 
 //TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
@@ -33,7 +34,19 @@ public:
 			if (data.get()) {
 				return data;
 			} else {
-				destroy();
+				signal.results(false); //see if results are ready
+				data = allocator.getBuffer(size);
+				if (data.get()) {
+					return data;
+				} else {
+					signal.results(true, true); //wait synchronously for one result
+					data = allocator.getBuffer(size);
+					if (data.get()) {
+						return data;
+					} else {
+						std::this_thread::yield(); //FIXME
+					}
+				}
 			}
 		}
 	}

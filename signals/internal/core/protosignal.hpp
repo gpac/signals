@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cassert>
+#include <chrono>
 #include <functional>
 #include <map>
 #include <mutex>
@@ -46,15 +47,19 @@ public:
 		return callbacks.size();
 	}
 
-	ResultValue results(bool single = false) {
+	ResultValue results(bool sync = true, bool single = false) {
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) {
 			if (cb.second) {
 				for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-					result.set(f->get());
-					f = cb.second->futures.erase(f);
-					if (single) {
-						break;
+					if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) == std::future_status::timeout)) {
+						++f;
+					} else {
+						result.set(f->get());
+						f = cb.second->futures.erase(f);
+						if (single) {
+							break;
+						}
 					}
 				}
 				cb.second->futures.clear();
