@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E89A9760-ED01-4413-915F-EE1B36F3E35E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>simplesignal</RootNamespace>
+    <RootNamespace>signals</RootNamespace>
     <ProjectName>test_modules</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

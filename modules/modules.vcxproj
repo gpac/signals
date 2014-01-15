@@ -42,7 +42,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F6843994-F116-4E68-8EF8-C88149887D4C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>simplesignal</RootNamespace>
+    <RootNamespace>signals</RootNamespace>
+	<ProjectName>modules</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
