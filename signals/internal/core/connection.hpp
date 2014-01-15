@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <future>
-#include <list>
+#include <vector>
 
 namespace Signals {
 
@@ -11,7 +11,7 @@ class ConnectionList { //TODO: write interface
 public:
 	typedef NotVoid<ResultType> FutureResultType;
 	Callback callback;
-	std::list<std::shared_future<FutureResultType>> futures;
+	std::vector<std::shared_future<FutureResultType>> futures;
 	size_t uid;
 
 	explicit ConnectionList(const Callback &callback, const size_t uid) : callback(callback), uid(uid) {
