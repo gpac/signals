@@ -23,7 +23,7 @@ public:
 	}
 
 	bool process() {
-		std::shared_ptr<Data> data(NULL);
+		std::shared_ptr<Data> data(nullptr);
 		return preprocessor->process(data);
 	}
 
