@@ -6,6 +6,7 @@
 #include <cassert>
 #include <functional>
 #include <map>
+#include <mutex>
 
 
 template<typename, typename, typename> class ProtoSignal;
@@ -23,12 +24,14 @@ private:
 
 public:
 	size_t connect(const CallbackType &cb) {
-		size_t connectionId = uid++;
+		const size_t connectionId = uid++;
+		std::lock_guard<std::mutex> lg(callbacksMutex);
 		callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		return connectionId;
 	}
 
 	bool disconnect(size_t connectionId) {
+		std::lock_guard<std::mutex> lg(callbacksMutex);
 		if (callbacks[connectionId] != nullptr) {
 			delete callbacks[connectionId];
 			callbacks[connectionId] = nullptr;
@@ -40,6 +43,7 @@ public:
 
 	size_t emit(Args... args) {
 		result.clear();
+		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) {
 			if (cb.second) {
 				cb.second->futures.push(caller(cb.second->callback, args...));
@@ -49,6 +53,7 @@ public:
 	}
 
 	ResultValue results(bool single = false) {
+		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) {
 			if (cb.second) {
 				for (;;) {
@@ -72,6 +77,7 @@ protected:
 	ProtoSignal(const CallbackType &cb) : uid(0) {
 		if (cb != nullptr) {
 			size_t connectionId = uid++;
+			std::lock_guard<std::mutex> lg(callbacksMutex);
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		}
 	}
@@ -79,12 +85,14 @@ protected:
 	ProtoSignal(Caller &caller, const CallbackType &cb) : uid(0), caller(caller) {
 		if (cb != nullptr) {
 			size_t connectionId = uid++;
+			std::lock_guard<std::mutex> lg(callbacksMutex);
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		}
 	}
 
 	~ProtoSignal() {
 		Result result;
+		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) { //delete still connected callbacks
 			if (cb.second) {
 				for (;;) {
@@ -106,7 +114,8 @@ private:
 	ProtoSignal& operator= (const ProtoSignal&) = delete;
 
 	ConnectionManager callbacks;
-	std::atomic<size_t> uid;
+	std::mutex callbacksMutex;
+	std::atomic<size_t> uid; //TODO: could be non atomic and protected by callbacksMutex
 	Caller caller;
 	Result result;
 };
