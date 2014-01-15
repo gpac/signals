@@ -50,12 +50,13 @@ TARGETS+=$(OUTDIR)/mm.exe
 $(OUTDIR)/mm.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm.o
 DEPS+=$(OUTDIR)/mm.deps
 
-run: unit
-	PROGRAM=$(realpath $(OUTDIR)/modules_demux.exe) && cd $(ProjectName) && $$PROGRAM
-	$(OUTDIR)/signals_unit_result.exe
-	$(OUTDIR)/signals_simple.exe
-	$(OUTDIR)/signals_perf.exe
-	$(OUTDIR)/signals_module.exe
-	$(OUTDIR)/signals_async.exe
-	PROGRAM=$(realpath $(OUTDIR)/mm_simple.exe) && cd $(ProjectName) && $$PROGRAM
+run_from = PROGRAM=$(realpath $(2)) && cd $(1) && $$PROGRAM
 
+run: unit
+	$(call run_from,$(ProjectName), $(OUTDIR)/modules_demux.exe)
+	$(call run_from,$(ProjectName), $(OUTDIR)/mm_simple.exe)
+	$(call run_from,$(ProjectName), $(OUTDIR)/signals_unit_result.exe)
+	$(call run_from,$(ProjectName), $(OUTDIR)/signals_simple.exe)
+	$(call run_from,$(ProjectName), $(OUTDIR)/signals_perf.exe)
+	$(call run_from,$(ProjectName), $(OUTDIR)/signals_module.exe)
+	$(call run_from,$(ProjectName), $(OUTDIR)/signals_async.exe)
