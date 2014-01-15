@@ -15,24 +15,6 @@ private:
 	typedef CallerTemplate<SignalSignature> Caller;
 	typedef typename ProtoSignal<Result, SignalSignature, Caller>::CallbackType Callback;
 
-	class Connector {
-	public:
-		size_t connect(const Callback &cb) {
-			return signal.connect(cb);
-		}
-
-		bool disconnect(size_t connectionId) {
-			return signal.disconnect(connectionId);
-		}
-
-	private:
-		Connector& operator= (const Connector&) = delete;
-		explicit Connector(Signal &signal) : signal(signal) {
-		}
-
-		Signal &signal;
-	};
-
 public:
 	Signal(const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature, Caller>(callback) {
 	}
