@@ -2,23 +2,21 @@
 
 #include "../../internal/config.hpp"
 #include "internal/module.hpp"
-#include "internal/param.hpp"
+#include <../modules/modules.hpp> //FIXME: for Data, etc.
 #include <string>
 
-namespace Modules {
+namespace MM {
 
-class MODULES_EXPORT File : public Module {
+class MM_EXPORT File : public Modules::Module {//FIXME
 public:
 	static File* create(std::string const& path);
 	~File();
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
-
-	void push();
+	bool process(std::shared_ptr<Data> data);
 
 private:
 	File(FILE *file);
-	bool process(std::shared_ptr<Data> data);
 
 	FILE *file;
 };

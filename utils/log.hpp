@@ -5,8 +5,6 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace Modules {
-
 template<typename T>
 std::string ToString(T const& val)
 {
@@ -50,7 +48,7 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 	return r;
 }
 
-class EXPORT Log {
+class UTILS_EXPORT Log {
 public:
 	enum Level {
 		Error = 0,
@@ -71,5 +69,3 @@ private:
 	static Level globalLevel;
 	static std::ostream& get(Level level);
 };
-
-}

@@ -7,13 +7,14 @@ DEPS+=$(TEST_COMMON_OBJ:%.o=%.deps)
 
 $(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
 $(BIN)/tests/modules_%.o: CFLAGS+=-DUNIT
+$(BIN)/tests/mm_%.o: CFLAGS+=-DUNIT
 
 TARGETS+=$(OUTDIR)/signals_simple.exe
 $(OUTDIR)/signals_simple.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_simple.o
 DEPS+=$(OUTDIR)/signals_simple.deps
 
 TARGETS+=$(OUTDIR)/modules_demux.exe
-MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS) $(UTILS_OBJS)
+MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS) $(UTILS_OBJS) 
 $(OUTDIR)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
 DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
 
@@ -33,6 +34,10 @@ TARGETS+=$(OUTDIR)/signals_unit_result.exe
 $(OUTDIR)/signals_unit_result.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_unit_result.o
 DEPS+=$(OUTDIR)/signals_unit_result.deps
 
+TARGETS+=$(OUTDIR)/mm_simple.exe
+$(OUTDIR)/mm_simple.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_simple.o
+DEPS+=$(OUTDIR)/mm_simple.deps
+
 TARGETS+=$(OUTDIR)/signals.exe
 $(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
 DEPS+=$(OUTDIR)/signals.deps
@@ -41,6 +46,10 @@ TARGETS+=$(OUTDIR)/modules.exe
 $(OUTDIR)/modules.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(OUTDIR)/modules.o
 DEPS+=$(OUTDIR)/modules.deps
 
+TARGETS+=$(OUTDIR)/mm.exe
+$(OUTDIR)/mm.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm.o
+DEPS+=$(OUTDIR)/mm.deps
+
 run: unit
 	PROGRAM=$(realpath $(OUTDIR)/modules_demux.exe) && cd $(ProjectName) && $$PROGRAM
 	$(OUTDIR)/signals_unit_result.exe
@@ -48,4 +57,6 @@ run: unit
 	$(OUTDIR)/signals_perf.exe
 	$(OUTDIR)/signals_module.exe
 	$(OUTDIR)/signals_async.exe
+	$(OUTDIR)/modules_demux.exe
+	$(OUTDIR)/mm_simple.exe
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../internal/config.hpp"
+#include "internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <cstdint>
@@ -11,7 +11,7 @@ using namespace Modules;
 typedef struct __tag_isom GF_ISOFile;
 class ISOFileReader;
 
-class MODULES_EXPORT GPAC_MP4_Simple : public Module {
+class EXPORT GPAC_MP4_Simple : public Module {
 public:
 	static GPAC_MP4_Simple* create(std::string const& path);
 	~GPAC_MP4_Simple();

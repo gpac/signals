@@ -1,11 +1,11 @@
 #pragma once
 
 #ifdef WIN32
-#ifdef DLL_COMPILATION
-#define EXPORT __declspec(dllexport)
+#ifdef UTILS_COMPILATION
+#define UTILS_EXPORT __declspec(dllexport)
 #else
-#define EXPORT __declspec(dllimport)
+#define UTILS_EXPORT __declspec(dllimport)
 #endif
 #else
-#define EXPORT
+#define UTILS_EXPORT
 #endif

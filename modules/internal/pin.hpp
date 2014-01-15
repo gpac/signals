@@ -13,8 +13,8 @@ using namespace Signals;
 //TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
 //      The other option is to invalidate all the data by calling
 //TODO: the pin could check the bool result and retry on failure (but is it its role?)
-template<typename Allocator = AllocatorPacket>
-class EXPORT Pin {
+template<typename Allocator = AllocatorPacket, typename Signal = Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>/*<bool(std::shared_ptr<Data>)>*/>
+class MODULES_EXPORT Pin {
 public:
 	~Pin() {
 		destroy();
@@ -55,11 +55,12 @@ public:
 		}
 	}
 
-	//Signal<bool(std::shared_ptr<Data>)> signal;
-	Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync> signal;
+	Signal signal;
 
 private:
 	Allocator allocator;
 };
+
+typedef Pin<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>> PinSync;
 
 }

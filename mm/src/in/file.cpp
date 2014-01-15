@@ -1,10 +1,10 @@
-#include "../utils/log.hpp"
 #include "file.hpp"
+#include "../../../utils/log.hpp"
 
 
 #define IOSIZE 65536
 
-namespace Modules {
+namespace MM {
 
 File::File(FILE *file)
 	: file(file) {
@@ -27,23 +27,17 @@ File* File::create(std::string const& fn) {
 }
 
 bool File::process(std::shared_ptr<Data> /*data*/) {
-	assert(false); // this module has no input
-	return false;
-}
-
-void File::push() {
-	for(;;) {
-		std::shared_ptr<Data> out(signals[0]->getBuffer(IOSIZE));
-		size_t read = fread(out->data(), 1, IOSIZE, file);
-		if (read < IOSIZE) {
-			if (read == 0) {
-				break;
-			}
-			out->resize(read);
+	std::shared_ptr<Data> out(signals[0]->getBuffer(IOSIZE));
+	size_t read = fread(out->data(), 1, IOSIZE, file);
+	if (read < IOSIZE) {
+		if (read == 0) {
+			return false;
 		}
-
-		signals[0]->emit(out);
+		out->resize(read);
 	}
+
+	signals[0]->emit(out);
+	return true;
 }
 
 bool File::handles(const std::string &url) {

@@ -9,7 +9,7 @@
 namespace Modules {
 
 //TODO: separate sync and async?
-class EXPORT IModule {
+class MODULES_EXPORT IModule {
 public:
 	virtual bool process(std::shared_ptr<Data> data) = 0;
 	virtual bool handles(const std::string &url) = 0;
@@ -17,8 +17,11 @@ public:
 };
 
 //specialization
-class EXPORT Module {
+class MODULES_EXPORT Module : public IModule {
 public:
+	virtual ~Module() {
+	}
+
 	virtual bool process(std::shared_ptr<Data> data) = 0;
 	virtual bool handles(const std::string &url) = 0;
 
@@ -32,6 +35,23 @@ public:
 	}
 
 	std::vector<Pin<>*> signals; //TODO: evaluate how public this needs to be
+};
+
+class MODULES_EXPORT ModuleSync : public IModule {
+public:
+	virtual bool process(std::shared_ptr<Data> data) = 0;
+	virtual bool handles(const std::string &url) = 0;
+
+	/**
+	* Must be called before the destructor.
+	*/
+	virtual void destroy() {
+		for (auto &signal : signals) {
+			signal->destroy();
+		}
+	}
+
+	std::vector<PinSync*> signals; //TODO: evaluate how public this needs to be
 };
 
 }
