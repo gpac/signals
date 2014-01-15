@@ -2,6 +2,7 @@
 
 #include <../modules/modules.hpp>
 #include "submodule.hpp"
+#include <memory>
 
 namespace MM {
 
@@ -15,8 +16,6 @@ public:
 	}
 
 	virtual ~Module() {
-		delete preprocessor;
-		delete module;
 		for (size_t i = 0; i < signals.size(); ++i) {
 			delete signals[i];
 		}
@@ -47,8 +46,8 @@ private:
 			CONNECT(module, signals[i]->signal, this, &MM::Module::reemit);
 		}
 	}
-	Submodule *preprocessor;
-	Modules::Module *module;
+	std::unique_ptr<Submodule> preprocessor;
+	std::unique_ptr<Modules::Module> module;
 };
 
 }
