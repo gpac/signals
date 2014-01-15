@@ -1,5 +1,6 @@
 #pragma once
 
+#include "config.hpp"
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
@@ -49,7 +50,7 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 	return r;
 }
 
-class Log {
+class EXPORT Log {
 public:
 	enum Level {
 		Error = 0,

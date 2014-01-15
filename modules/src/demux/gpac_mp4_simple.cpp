@@ -1,5 +1,5 @@
 #include "gpac_mp4_simple.hpp"
-#include "internal/log.hpp"
+#include "../utils/log.hpp"
 #include <string>
 
 extern "C" {

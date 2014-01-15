@@ -31,6 +31,10 @@ all: targets
 TARGETS:=
 DEPS:=
 
+ProjectName:=utils
+include $(ProjectName)/project.mk
+CFLAGS+=-I$(ProjectName)
+
 ProjectName:=modules
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)

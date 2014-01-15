@@ -1,6 +1,6 @@
 #pragma once
 
-#include "internal/config.hpp"
+#include "../utils/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <string>

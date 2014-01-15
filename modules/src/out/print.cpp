@@ -1,5 +1,5 @@
 #include "print.hpp"
-#include "internal/log.hpp"
+#include "../utils/log.hpp"
 
 
 Print* Print::create(std::ostream &os) {
