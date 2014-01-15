@@ -6,6 +6,10 @@
 #include <thread>
 
 
+namespace Modules {
+
+using namespace Signals;
+
 //TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
 //      The other option is to invalidate all the data by calling
 //TODO: the pin could check the bool result and retry on failure (but is it its role?)
@@ -57,3 +61,5 @@ public:
 private:
 	Allocator allocator;
 };
+
+}

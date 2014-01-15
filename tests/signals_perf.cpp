@@ -4,6 +4,7 @@
 #include <vector>
 
 using namespace Tests;
+using namespace Signals;
 
 namespace {
 	template<typename SignalSignature, typename Result, template<typename> class CallerTemplate, typename ValType>

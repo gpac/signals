@@ -4,6 +4,8 @@
 #include <vector>
 #include <stdlib.h>
 
+namespace Modules {
+
 
 /**
  * A generic data container.
@@ -42,3 +44,5 @@ public:
 private:
 	std::vector<uint8_t> ptr;
 };
+
+}

@@ -6,6 +6,8 @@
 #include <future>
 
 
+namespace Signals {
+
 template<typename> class CallerSync;
 template<typename> class CallerLazy;
 template<typename> class CallerAsync;
@@ -79,17 +81,17 @@ public:
 	}
 
 private:
-	Tests::ThreadPool threadPool;
+	ThreadPool threadPool;
 };
 
 //tasks occur in the pool
 template<typename R, typename... Args>
 class CallerThreadPool<R(Args...)> {
 public:
-	CallerThreadPool() : threadPool(std::shared_ptr<Tests::ThreadPool>(new Tests::ThreadPool)) {
+	CallerThreadPool() : threadPool(std::shared_ptr<ThreadPool>(new ThreadPool)) {
 	}
 
-	CallerThreadPool(std::shared_ptr<Tests::ThreadPool> threadPool) : threadPool(threadPool) {
+	CallerThreadPool(std::shared_ptr<ThreadPool> threadPool) : threadPool(threadPool) {
 	}
 
 	std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &callback, Args... args) {
@@ -97,6 +99,7 @@ public:
 	}
 
 private:
-	std::shared_ptr<Tests::ThreadPool> threadPool;
+	std::shared_ptr<ThreadPool> threadPool;
 };
 
+}

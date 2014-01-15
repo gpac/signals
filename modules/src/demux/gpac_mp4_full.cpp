@@ -11,7 +11,6 @@ extern "C" {
 
 #include "gpacpp.hpp"
 
-
 //TODO: set appropriate CCO credits
 //see http://sourceforge.net/p/gpac/code/HEAD/tree/trunk/gpac/applications/testapps/fmp4demux/main.c
 class ISOProgressiveReader {

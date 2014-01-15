@@ -4,6 +4,7 @@
 #include <vector>
 
 using namespace Tests;
+using namespace Signals;
 
 namespace {
 

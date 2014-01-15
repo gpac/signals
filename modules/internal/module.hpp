@@ -6,6 +6,8 @@
 #include <string>
 
 
+namespace Modules {
+
 //TODO: separate sync and async?
 class EXPORT IModule {
 public:
@@ -31,3 +33,5 @@ public:
 
 	std::vector<Pin<>*> signals; //TODO: evaluate how public this needs to be
 };
+
+}

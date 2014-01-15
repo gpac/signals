@@ -3,6 +3,7 @@
 #include <memory>
 
 using namespace Tests;
+using namespace Modules;
 
 unittest("empty param test: File") {
 	std::unique_ptr<File> f(File::create(""));

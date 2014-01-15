@@ -2,6 +2,7 @@
 #include "signals.hpp"
 
 using namespace Tests;
+using namespace Signals;
 
 namespace {
 	int dummy2(int a) {

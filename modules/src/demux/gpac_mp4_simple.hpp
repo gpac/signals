@@ -6,10 +6,10 @@
 #include <cstdint>
 #include <string>
 
+using namespace Modules;
 
 typedef struct __tag_isom GF_ISOFile;
 class ISOFileReader;
-
 
 class EXPORT GPAC_MP4_Simple : public Module {
 public:
