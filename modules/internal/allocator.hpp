@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config.hpp"
+#include "../../utils/config.hpp"
 #include "data.hpp"
 #include <algorithm>
 #include <list>

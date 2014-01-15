@@ -27,9 +27,6 @@
     <ClInclude Include="src\demux\gpac_mp4_simple.hpp">
       <Filter>src\demux</Filter>
     </ClInclude>
-    <ClInclude Include="internal\log.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\module.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
@@ -40,9 +37,6 @@
       <Filter>src\out</Filter>
     </ClInclude>
     <ClInclude Include="internal\param.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\config.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
     <ClInclude Include="internal\data.hpp">
@@ -67,9 +61,6 @@
     </ClCompile>
     <ClCompile Include="src\out\print.cpp">
       <Filter>src\out</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\log.cpp">
-      <Filter>includes\internal</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\gpac_mp4_full.cpp">
       <Filter>src\demux</Filter>

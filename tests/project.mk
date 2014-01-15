@@ -13,7 +13,7 @@ $(OUTDIR)/signals_simple.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_simple.o
 DEPS+=$(OUTDIR)/signals_simple.deps
 
 TARGETS+=$(OUTDIR)/modules_demux.exe
-MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS)
+MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS) $(UTILS_OBJS)
 $(OUTDIR)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
 DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
 
@@ -38,7 +38,7 @@ $(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
 DEPS+=$(OUTDIR)/signals.deps
 
 TARGETS+=$(OUTDIR)/modules.exe
-$(OUTDIR)/modules.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(OUTDIR)/modules.o
+$(OUTDIR)/modules.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(OUTDIR)/modules.o
 DEPS+=$(OUTDIR)/modules.deps
 
 run: unit

@@ -1,8 +1,6 @@
 #ifndef _MODULES_HPP_
 #define _MODULES_HPP_
 
-#include "internal/config.hpp"
-#include "internal/log.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 
