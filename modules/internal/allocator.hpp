@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../utils/config.hpp"
+#include "config.hpp"
 #include "data.hpp"
 #include <algorithm>
 #include <list>
@@ -11,7 +11,7 @@ namespace Modules {
 //TODO: this is an allocator by packets - write a more generalist one
 //TODO: to be blocking, we need to write our own event-based shared_ptr
 //FIXME: not thread-safe
-class EXPORT AllocatorPacket {
+class MODULES_EXPORT AllocatorPacket {
 public:
 	AllocatorPacket(size_t numBlocks = 10)
 		: numBlocks(numBlocks) {

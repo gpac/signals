@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../internal/config.hpp"
+#include "internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <cstdint>
@@ -10,7 +10,7 @@ using namespace Modules;
 
 class ISOProgressiveReader;
 
-class MODULES_EXPORT GPAC_MP4_Full : public Module {
+class EXPORT GPAC_MP4_Full : public Module {
 public:
 	static GPAC_MP4_Full* create();
 	~GPAC_MP4_Full();
