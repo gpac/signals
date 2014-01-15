@@ -57,6 +57,5 @@ run: unit
 	$(OUTDIR)/signals_perf.exe
 	$(OUTDIR)/signals_module.exe
 	$(OUTDIR)/signals_async.exe
-	$(OUTDIR)/modules_demux.exe
-	$(OUTDIR)/mm_simple.exe
+	PROGRAM=$(realpath $(OUTDIR)/mm_simple.exe) && cd $(ProjectName) && $$PROGRAM
 
