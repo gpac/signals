@@ -6,9 +6,9 @@
 #include <cstdint>
 #include <string>
 
+using namespace Modules;
 
 class ISOProgressiveReader;
-
 
 class EXPORT GPAC_MP4_Full : public Module {
 public:

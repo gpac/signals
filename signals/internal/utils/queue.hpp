@@ -7,6 +7,8 @@
 #include <queue>
 
 
+namespace Signals {
+
 template<typename T>
 class IQueue {
 	virtual std::shared_ptr<T> tryPop() = 0;
@@ -103,3 +105,5 @@ class Queue : public IQueue<T>, public std::queue<T> {
 		return res;
 	}
 };
+
+}

@@ -1,6 +1,8 @@
 #pragma once
 
 
+namespace Signals {
+
 /* member function helper */
 
 #define CONNECT(ObjectSig, MemberFunctionSig, ObjectSlot, MemberFunctionSlot) \
@@ -39,3 +41,5 @@ struct NotVoidStruct<void> {
 };
 
 template <typename T> using NotVoid = typename NotVoidStruct<T>::Type;
+
+}

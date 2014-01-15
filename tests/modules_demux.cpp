@@ -3,6 +3,7 @@
 #include <memory>
 
 using namespace Tests;
+using namespace Modules;
 
 namespace {
 

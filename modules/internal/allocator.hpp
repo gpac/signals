@@ -6,6 +6,7 @@
 #include <list>
 #include <memory>
 
+namespace Modules {
 
 //TODO: this is an allocator by packets - write a more generalist one
 //TODO: to be blocking, we need to write our own event-based shared_ptr
@@ -38,3 +39,5 @@ private:
 	const size_t numBlocks;
 	std::list<std::weak_ptr<Data>> usedBlocks;
 };
+
+}

@@ -4,6 +4,8 @@
 #include <sstream>
 #include <stdexcept>
 
+namespace Modules {
+
 template<typename T>
 std::string ToString(T const& val)
 {
@@ -68,3 +70,5 @@ private:
 	static Level globalLevel;
 	static std::ostream& get(Level level);
 };
+
+}

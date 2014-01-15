@@ -5,6 +5,8 @@
 #include "../utils/queue.hpp"
 
 
+namespace Signals {
+
 class IResult {
 };
 
@@ -96,3 +98,5 @@ public:
 	void clear() {
 	}
 };
+
+}

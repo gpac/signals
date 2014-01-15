@@ -5,6 +5,8 @@
 #include "protosignal.hpp"
 
 
+namespace Signals {
+
 template <typename SignalSignature, 
 					typename Result = ResultQueueThreadSafe<typename std::function<SignalSignature>::result_type>, 
 					template<typename> class CallerTemplate = CallerAsync>
@@ -37,3 +39,5 @@ public:
 	Signal(Caller &caller, const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature, Caller>(caller, callback) {
 	}
 };
+
+}

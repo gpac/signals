@@ -10,6 +10,8 @@
 #include <mutex>
 
 
+namespace Signals {
+
 template<typename, typename, typename> class ProtoSignal;
 
 template<typename Result, typename Callback, typename... Args, typename Caller>
@@ -120,3 +122,5 @@ private:
 	Caller caller;
 	Result result;
 };
+
+}

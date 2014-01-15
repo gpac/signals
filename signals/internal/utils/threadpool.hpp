@@ -7,7 +7,8 @@
 #include "queue.hpp"
 
 
-namespace Tests { //TODO: create a util namespace?
+namespace Signals {
+
 	class ThreadPool {
 	public:
 		ThreadPool(const unsigned threadCount = std::thread::hardware_concurrency()) {

@@ -5,6 +5,7 @@
 #include "internal/param.hpp"
 #include <string>
 
+using namespace Modules;
 
 class EXPORT Print : public Module {
 public:

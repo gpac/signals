@@ -3,6 +3,7 @@
 #include "internal/core/result.hpp"
 
 using namespace Tests;
+using namespace Signals;
 
 namespace {
 	template<typename T>

@@ -4,6 +4,8 @@
 #include <future>
 #include <list>
 
+namespace Signals {
+
 template<typename Callback, typename ResultType>
 class ConnectionList { //TODO: write interface
 public:
@@ -16,3 +18,4 @@ public:
 	}
 };
 
+}
