@@ -19,7 +19,7 @@ protected:
 private:
 	typedef typename Result::ResultValue ResultValue;
 	typedef typename CallbackType::result_type ResultType;
-	typedef ConnectionQueueThreadSafe<CallbackType, ResultType> ConnectionType;
+	typedef ConnectionList<CallbackType, ResultType> ConnectionType;
 	typedef std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
@@ -32,13 +32,7 @@ public:
 
 	bool disconnect(size_t connectionId) {
 		std::lock_guard<std::mutex> lg(callbacksMutex);
-		if (callbacks[connectionId] != nullptr) {
-			delete callbacks[connectionId];
-			callbacks[connectionId] = nullptr;
-			return true;
-		} else {
-			return false;
-		}
+		return disconnectUnsafe(connectionId);
 	}
 
 	size_t emit(Args... args) {
@@ -46,7 +40,7 @@ public:
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) {
 			if (cb.second) {
-				cb.second->futures.push(caller(cb.second->callback, args...));
+				cb.second->futures.push_back(caller(cb.second->callback, args...));
 			}
 		}
 		return callbacks.size();
@@ -56,14 +50,10 @@ public:
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) {
 			if (cb.second) {
-				for (;;) {
-					auto f = cb.second->futures.tryPop();
-					if (f) {
-						result.set(std::move(f)->get());
-						if (single) {
-							break;
-						}
-					} else {
+				for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
+					result.set(f->get());
+					f = cb.second->futures.erase(f);
+					if (single) {
 						break;
 					}
 				}
@@ -95,15 +85,11 @@ protected:
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) { //delete still connected callbacks
 			if (cb.second) {
-				for (;;) {
-					auto f = cb.second->futures.tryPop();
-					if (f) {
-						result.set(std::move(f)->get()); //sync on destroy
-					} else {
-						break;
-					}
+				for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
+					result.set(f->get());
+					f = cb.second->futures.erase(f);
 				}
-				bool res = disconnect(cb.first);
+				bool res = disconnectUnsafe(cb.first);
 				assert(res);
 			}
 		}
@@ -112,6 +98,16 @@ protected:
 private:
 	ProtoSignal(const ProtoSignal&) = delete;
 	ProtoSignal& operator= (const ProtoSignal&) = delete;
+
+	bool disconnectUnsafe(size_t connectionId) {
+		if (callbacks[connectionId] != nullptr) {
+			delete callbacks[connectionId];
+			callbacks[connectionId] = nullptr;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	ConnectionManager callbacks;
 	std::mutex callbacksMutex;
