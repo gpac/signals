@@ -2,8 +2,8 @@
 #include "internal/log.hpp"
 
 
-Print* Print::create() {
-	return new Print();
+Print* Print::create(std::ostream &os) {
+	return new Print(os);
 }
 
 bool Print::process(std::shared_ptr<Data> data) {
@@ -19,5 +19,5 @@ bool Print::canHandle(const std::string &url) {
 	return true;
 }
 
-Print::Print() {
+Print::Print(std::ostream &os) : os(os) {
 }
