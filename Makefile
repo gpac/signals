@@ -8,11 +8,11 @@ SRC=.
 DEBUG?=1
 
 ifeq ($(DEBUG), 1)
-  CFLAGS += -Werror
+  CFLAGS += -Werror -Wno-deprecated-declarations
   CFLAGS += -g3
   LDFLAGS += -g
 else
-  CFLAGS += -O3 -DNDEBUG -Wno-unused-variable
+  CFLAGS += -O3 -DNDEBUG -Wno-unused-variable -Wno-deprecated-declarations
 endif
 
 CFLAGS += -I$(SRC)/signals
