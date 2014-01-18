@@ -13,6 +13,8 @@
 #include "src/demux/libavformat_55.hpp"
 #include "src/decode/libavcodec_55.hpp"
 #include "src/in/file.hpp"
+#include "src/out/null.hpp"
 #include "src/out/print.hpp"
+#include "src/render/sdl.hpp"
 
 #endif

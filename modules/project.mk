@@ -5,7 +5,9 @@ MODULES_SRCS:=\
   $(ProjectName)/src/demux/gpac_mp4_full.cpp\
   $(ProjectName)/src/demux/libavformat_55.cpp\
   $(ProjectName)/src/in/file.cpp\
+  $(ProjectName)/src/out/null.cpp\
   $(ProjectName)/src/out/print.cpp\
+  $(ProjectName)/src/render/sdl.cpp\
 
 MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
 

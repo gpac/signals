@@ -104,7 +104,18 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 	if (got_picture) {
 		const int frameSize = (codecCtx->width * codecCtx->height * 3) / 2;
 		std::shared_ptr<Data> out(new Data(frameSize));
-		memcpy(out.get()->data(), frame->data[0], frameSize);
+		//TODO: YUV specific + wrap the frame output size
+		for (int h = 0; h < codecCtx->height; ++h) {
+			memcpy(out.get()->data() + h*codecCtx->width, frame->data[0] + h*frame->linesize[0], codecCtx->width);
+		}
+		uint8_t *UPlane = out.get()->data() + codecCtx->width * codecCtx->height;
+		for (int h = 0; h < codecCtx->height / 2; ++h) {
+			memcpy((void*)(UPlane + h*codecCtx->width / 2), frame->data[1] + h*frame->linesize[1], codecCtx->width / 2);
+		}
+		uint8_t *VPlane = out.get()->data() + (codecCtx->width * codecCtx->height * 5) / 4;
+		for (int h = 0; h < codecCtx->height / 2; ++h) {
+			memcpy((void*)(VPlane + h*codecCtx->width / 2), frame->data[2] + h*frame->linesize[2], codecCtx->width / 2);
+		}
 		signals[0]->emit(out);
 	}
 	return true;

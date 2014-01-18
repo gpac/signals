@@ -25,6 +25,9 @@
     <Filter Include="src\common">
       <UniqueIdentifier>{7b279ce3-3778-402b-b35c-baf5278f3f13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\render">
+      <UniqueIdentifier>{314ce482-d82e-42a3-ae9c-a57026a2ebe2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
@@ -72,6 +75,12 @@
     <ClInclude Include="src\common\libav.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
+    <ClInclude Include="src\render\sdl.hpp">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\out\null.hpp">
+      <Filter>src\out</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
@@ -94,6 +103,12 @@
     </ClCompile>
     <ClCompile Include="src\common\libav.cpp">
       <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\sdl.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\out\null.cpp">
+      <Filter>src\out</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

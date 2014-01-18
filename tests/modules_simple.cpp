@@ -9,7 +9,7 @@ using namespace Modules;
 unittest("empty param test: File") {
 	bool thrown = false;
 	try {
-		std::unique_ptr<File> f(File::create(""));
+		std::unique_ptr<In::File> f(In::File::create(""));
 	}
 	catch(std::runtime_error const& e) {
 		thrown = true;
@@ -34,12 +34,12 @@ unittest("empty param test: Out::Print") {
 }
 
 unittest("simple param test") {
-	std::unique_ptr<File> f(File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	std::unique_ptr<In::File> f(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	ASSERT(f != nullptr);
 }
 
 unittest("print packets size from file: File -> Out::Print") {
-	std::unique_ptr<File> f(File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	std::unique_ptr<In::File> f(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	ASSERT(f != nullptr);
 
 	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
