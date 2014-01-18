@@ -17,6 +17,7 @@
     <ClCompile Include="signals_unit_result.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests.hpp">
