@@ -19,6 +19,12 @@
     <Filter Include="src\out">
       <UniqueIdentifier>{c0fba10d-1043-4ef0-a075-207627a0576e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\decode">
+      <UniqueIdentifier>{4642fa78-d96d-4584-a1ad-36ce4e4aa4f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{7b279ce3-3778-402b-b35c-baf5278f3f13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
@@ -54,6 +60,18 @@
     <ClInclude Include="internal\config.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
+    <ClInclude Include="src\decode\libavcodec_55.hpp">
+      <Filter>src\decode</Filter>
+    </ClInclude>
+    <ClInclude Include="src\demux\libavformat_55.hpp">
+      <Filter>src\demux</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\props.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\libav.hpp">
+      <Filter>src\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
@@ -67,6 +85,15 @@
     </ClCompile>
     <ClCompile Include="src\demux\gpac_mp4_full.cpp">
       <Filter>src\demux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\decode\libavcodec_55.cpp">
+      <Filter>src\decode</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demux\libavformat_55.cpp">
+      <Filter>src\demux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\libav.cpp">
+      <Filter>src\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

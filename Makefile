@@ -1,5 +1,5 @@
 CFLAGS := -I/usr/local/include -std=c++11 -Wall
-LDFLAGS := -L/usr/local/lib -lpthread -lgpac
+LDFLAGS := -L/usr/local/lib -lpthread -lgpac -lavcodec -lavformat -lavutil
 
 BIN=bin/make
 SRC=.
