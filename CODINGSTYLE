@@ -2,7 +2,7 @@ AStyle
 ======
 
 AStyle is a code beautifier tool. Code should be compliant with the following pattern provided by AStyle :
-AStyle -r --indent=tab --indent-namespaces --indent-col1-comments --style=attach --keep-one-line-statements *.hpp *.cpp
+AStyle -r --indent=tab --indent-col1-comments --style=attach --keep-one-line-statements *.hpp *.cpp
 
 
 Example

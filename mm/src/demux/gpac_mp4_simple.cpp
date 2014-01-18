@@ -58,13 +58,13 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 		std::unique_ptr<gpacpp::IsoSample> iso_sample;
 		iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
 
-		Log::msg(Log::Error, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s", 
-				reader->sample_index,
-				reader->sample_count,
-			 	iso_sample->dataLength,
-			 	iso_sample->IsRAP,
-			 	iso_sample->DTS,
-				iso_sample->DTS + iso_sample->CTS_Offset);
+		Log::msg(Log::Error, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
+		         reader->sample_index,
+		         reader->sample_count,
+		         iso_sample->dataLength,
+		         iso_sample->IsRAP,
+		         iso_sample->DTS,
+		         iso_sample->DTS + iso_sample->CTS_Offset);
 		reader->sample_index++;
 
 		std::shared_ptr<Data> out(signals[0]->getBuffer(iso_sample->dataLength));

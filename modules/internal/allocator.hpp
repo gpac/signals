@@ -31,7 +31,7 @@ public:
 private:
 	void updateUsedBlocks() {
 		usedBlocks.erase(std::remove_if(usedBlocks.begin(), usedBlocks.end(),
-			[](std::weak_ptr<Data> data) -> bool {
+		[](std::weak_ptr<Data> data) -> bool {
 			return data.expired();
 		}), usedBlocks.end());
 	}
