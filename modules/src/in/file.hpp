@@ -7,6 +7,8 @@
 
 namespace Modules {
 
+namespace In {
+
 class MODULES_EXPORT File : public Module {
 public:
 	static File* create(std::string const& path);
@@ -22,5 +24,7 @@ private:
 
 	FILE *file;
 };
+
+}
 
 }

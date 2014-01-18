@@ -10,6 +10,7 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+namespace Demux {
 
 Libavformat_55* Libavformat_55::create(const std::string &url) {
 	struct AVFormatContext *formatCtx = NULL;
@@ -108,4 +109,6 @@ bool Libavformat_55::canHandle(const std::string &url) {
 		return false;
 	else
 		return true;
+}
+
 }

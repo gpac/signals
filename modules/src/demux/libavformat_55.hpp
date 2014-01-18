@@ -9,6 +9,8 @@ struct AVFormatContext;
 
 using namespace Modules;
 
+namespace Demux {
+
 class MODULES_EXPORT Libavformat_55 : public Module {
 public:
 	static Libavformat_55* create(const std::string &url);
@@ -22,3 +24,5 @@ private:
 
 	struct AVFormatContext *formatCtx;
 };
+
+}

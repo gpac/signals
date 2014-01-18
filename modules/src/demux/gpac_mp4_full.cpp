@@ -11,6 +11,8 @@ extern "C" {
 
 #include "gpacpp.hpp"
 
+namespace Demux {
+
 //TODO: set appropriate CCO credits
 //see http://sourceforge.net/p/gpac/code/HEAD/tree/trunk/gpac/applications/testapps/fmp4demux/main.c
 class ISOProgressiveReader {
@@ -206,4 +208,6 @@ bool GPAC_MP4_Full::canHandle(const std::string &url) {
 	} else {
 		return false;
 	}
+}
+
 }
