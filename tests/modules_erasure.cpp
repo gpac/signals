@@ -2,7 +2,7 @@
 #include "modules.hpp"
 #include <memory>
 
-#include "extra_lib/include/libavcodec/avcodec.h" //FIXME
+#include "libavcodec/avcodec.h"
 
 using namespace Tests;
 using namespace Modules;
