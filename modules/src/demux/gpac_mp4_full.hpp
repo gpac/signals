@@ -8,6 +8,8 @@
 
 using namespace Modules;
 
+namespace Demux {
+
 class ISOProgressiveReader;
 
 class MODULES_EXPORT GPAC_MP4_Full : public Module {
@@ -27,3 +29,5 @@ private:
 
 	std::unique_ptr<ISOProgressiveReader> reader;
 };
+
+}

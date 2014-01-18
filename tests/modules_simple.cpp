@@ -20,7 +20,7 @@ unittest("empty param test: File") {
 unittest("empty param test: Demux") {
 	bool thrown = false;
 	try {
-	std::unique_ptr<GPAC_MP4_Simple> mp4Demux(GPAC_MP4_Simple::create(""));
+	std::unique_ptr<Demux::GPAC_MP4_Simple> mp4Demux(Demux::GPAC_MP4_Simple::create(""));
 	}
 	catch(std::runtime_error const& e) {
 		thrown = true;
@@ -28,8 +28,8 @@ unittest("empty param test: Demux") {
 	ASSERT(thrown);
 }
 
-unittest("empty param test: Print") {
-	std::unique_ptr<Print> p(Print::create(std::cout));
+unittest("empty param test: Out::Print") {
+	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 	ASSERT(p != nullptr);
 }
 
@@ -38,14 +38,14 @@ unittest("simple param test") {
 	ASSERT(f != nullptr);
 }
 
-unittest("print packets size from file: File -> Print") {
+unittest("print packets size from file: File -> Out::Print") {
 	std::unique_ptr<File> f(File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	ASSERT(f != nullptr);
 
-	std::unique_ptr<Print> p(Print::create(std::cout));
+	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 	ASSERT(p != nullptr);
 
-	CONNECT(f.get(), signals[0]->signal, p.get(), &Print::process);
+	CONNECT(f.get(), signals[0]->signal, p.get(), &Out::Print::process);
 	f->push();
 
 	f->destroy();

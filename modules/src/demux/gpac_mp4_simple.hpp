@@ -6,9 +6,12 @@
 #include <cstdint>
 #include <string>
 
+typedef struct __tag_isom GF_ISOFile;
+
 using namespace Modules;
 
-typedef struct __tag_isom GF_ISOFile;
+namespace Demux {
+
 class ISOFileReader;
 
 class MODULES_EXPORT GPAC_MP4_Simple : public Module {
@@ -24,3 +27,5 @@ private:
 
 	std::unique_ptr<ISOFileReader> reader;
 };
+
+}

@@ -10,6 +10,7 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+namespace Decode {
 
 Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 	struct AVCodecContext *codecCtx = props.getAVCodecContext();
@@ -102,7 +103,7 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 	}
 	if (got_picture) {
 		const int frameSize = (codecCtx->width * codecCtx->height * 3) / 2;
-		std::shared_ptr<Data> out(new DataVector(frameSize));
+		std::shared_ptr<Data> out(new Data(frameSize));
 		memcpy(out.get()->data(), frame->data[0], frameSize);
 		signals[0]->emit(out);
 	}
@@ -129,4 +130,6 @@ bool Libavcodec_55::handles(const std::string &url) {
 
 bool Libavcodec_55::canHandle(const std::string &url) {
 	return true; //TODO
+}
+
 }

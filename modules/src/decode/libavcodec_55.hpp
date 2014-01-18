@@ -11,6 +11,8 @@ struct AVFrame;
 
 using namespace Modules;
 
+namespace Decode {
+
 class MODULES_EXPORT Libavcodec_55 : public Module {
 public:
 	static Libavcodec_55* create(const PropsDecoder &props);
@@ -27,3 +29,5 @@ private:
 	struct AVCodecContext *codecCtx;
 	struct AVFrame *frame;
 };
+
+}

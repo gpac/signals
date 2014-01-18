@@ -2,6 +2,8 @@
 #include "../utils/log.hpp"
 
 
+namespace Out {
+
 Print* Print::create(std::ostream &os) {
 	return new Print(os);
 }
@@ -20,4 +22,6 @@ bool Print::canHandle(const std::string &url) {
 }
 
 Print::Print(std::ostream &os) : os(os) {
+}
+
 }

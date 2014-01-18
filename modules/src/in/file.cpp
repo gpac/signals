@@ -5,6 +5,7 @@
 #define IOSIZE 65536
 
 namespace Modules {
+namespace In {
 
 File::File(FILE *file)
 	: file(file) {
@@ -53,4 +54,5 @@ bool File::canHandle(const std::string &url) {
 	return true;
 }
 
+}
 }

@@ -9,6 +9,8 @@ extern "C" {
 
 #include "gpacpp.hpp"
 
+namespace Demux {
+
 class ISOFileReader {
 public:
 
@@ -92,4 +94,6 @@ bool GPAC_MP4_Simple::canHandle(const std::string &url) {
 	} else {
 		return false;
 	}
+}
+
 }

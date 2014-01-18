@@ -7,6 +7,8 @@
 
 using namespace Modules;
 
+namespace Out {
+
 class MODULES_EXPORT Print : public Module {
 public:
 	static Print* create(std::ostream &os);
@@ -20,3 +22,4 @@ private:
 	std::ostream &os;
 };
 
+}
