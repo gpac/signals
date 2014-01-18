@@ -36,7 +36,7 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(std::string const& fn) {
 	GF_Err e = gf_isom_open_progressive(fn.c_str(), 0, 0, &movie, &missing_bytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || movie == NULL) {
 		Log::msg(Log::Error, "Could not open file %s for reading (%s).", fn, gf_error_to_string(e));
-		return NULL;
+		throw std::runtime_error("File not found");
 	}
 
 	return new GPAC_MP4_Simple(movie);
