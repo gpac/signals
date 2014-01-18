@@ -1,7 +1,9 @@
 #pragma once
 
+#include "config.hpp"
 #include "allocator.hpp"
 #include "data.hpp"
+#include "props.hpp"
 #include <../signals/signals.hpp>
 #include <thread>
 
@@ -16,6 +18,10 @@ using namespace Signals;
 template<typename Allocator = AllocatorPacket, typename Signal = Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>/*<bool(std::shared_ptr<Data>)>*/>
 class MODULES_EXPORT Pin {
 public:
+	Pin(Props *props = nullptr)
+	: props(props) {		
+	}
+
 	~Pin() {
 		destroy();
 	}
@@ -55,10 +61,17 @@ public:
 		}
 	}
 
+	//FIXME: this doesn't compile!!!
+	/*Props* getProps() const {
+		return props.get();
+	}*/
+	std::unique_ptr<Props> props;
+
 	Signal signal;
 
 private:
 	Allocator allocator;
+	//FIXME: std::unique_ptr<Props> props;
 };
 
 typedef Pin<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>> PinSync;

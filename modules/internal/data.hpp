@@ -1,17 +1,17 @@
 #pragma once
 
+#include "config.hpp"
+
 #include <cstdint>
 #include <vector>
 #include <stdlib.h>
 
 namespace Modules {
 
-
 /**
  * A generic data container.
- * Ownership is transferred to this container.
  */
-class IData {
+class MODULES_EXPORT IData {
 public:
 	IData() {
 	}
@@ -23,10 +23,13 @@ public:
 };
 
 //TODO: we should do get() et use the future
-class Data : public IData {
+class MODULES_EXPORT Data : public IData {
 public:
 	Data(size_t size)
 		: ptr(size) {
+	}
+
+	virtual ~Data() {
 	}
 
 	uint8_t* data() {
