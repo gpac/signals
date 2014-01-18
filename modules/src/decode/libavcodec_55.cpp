@@ -101,7 +101,9 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 		return true;
 	}
 	if (got_picture) {
-		std::shared_ptr<Data> out(new Data((codecCtx->width * codecCtx->height * 3) / 2));
+		const int frameSize = (codecCtx->width * codecCtx->height * 3) / 2;
+		std::shared_ptr<Data> out(new DataVector(frameSize));
+		memcpy(out.get()->data(), frame->data[0], frameSize);
 		signals[0]->emit(out);
 	}
 	return true;
