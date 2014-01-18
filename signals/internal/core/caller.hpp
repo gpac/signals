@@ -24,9 +24,9 @@ std::function<R(Args...)> NotVoidFunction(std::function<R(Args...)> fn) {
 template<typename... Args>
 std::function<int(Args...)> NotVoidFunction(std::function<void(Args...)> fn) {
 	auto closure = [=](Args... args) -> int {
-	 	fn(args...);
-	 	return 0;
- 	};
+		fn(args...);
+		return 0;
+	};
 	return closure;
 }
 

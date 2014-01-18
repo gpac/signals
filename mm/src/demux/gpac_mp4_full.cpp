@@ -56,7 +56,7 @@ bool GPAC_MP4_Full::openData() {
 	GF_Err e = gf_isom_open_progressive(reader->data_url.c_str(), 0, 0, &movie, &missing_bytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
 		Log::msg(Log::Warning, "Error opening fragmented mp4 in progressive mode: %s (missing %s bytes)",
-				gf_error_to_string(e), missing_bytes);
+		         gf_error_to_string(e), missing_bytes);
 
 		return false;
 	}
@@ -83,8 +83,8 @@ bool GPAC_MP4_Full::processSample() {
 			if (new_sample_count > reader->sample_count) {
 				/* New samples have been added to the file */
 				Log::msg(Log::Info, "Found %s new samples (total: %s)",
-						new_sample_count - reader->sample_count,
-						new_sample_count);
+				         new_sample_count - reader->sample_count,
+				         new_sample_count);
 				if (reader->sample_count == 0) {
 					reader->sample_count = new_sample_count;
 				}
@@ -108,14 +108,14 @@ bool GPAC_MP4_Full::processSample() {
 					reader->samples_processed++;
 					/*here we dump some sample info: samp->data, samp->dataLength, samp->isRAP, samp->DTS, samp->CTS_Offset */
 					Log::msg(Log::Info,
-						 	"Found sample #%s(#%s) of length %s , RAP: %s, DTS : %s, CTS : %s",
-							reader->sample_index,
-							reader->samples_processed,
-							iso_sample->dataLength,
-							iso_sample->IsRAP,
-							iso_sample->DTS,
-							iso_sample->DTS + iso_sample->CTS_Offset
-							);
+					         "Found sample #%s(#%s) of length %s , RAP: %s, DTS : %s, CTS : %s",
+					         reader->sample_index,
+					         reader->samples_processed,
+					         iso_sample->dataLength,
+					         iso_sample->IsRAP,
+					         iso_sample->DTS,
+					         iso_sample->DTS + iso_sample->CTS_Offset
+					        );
 					reader->sample_index++;
 
 					std::shared_ptr<Data> out(signals[0]->getBuffer(iso_sample->dataLength));
