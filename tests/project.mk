@@ -19,7 +19,7 @@ $(OUTDIR)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
 DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/modules_erasure.exe
-MODULES_ERASURE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS) $(UTILS_OBJS) 
+MODULES_ERASURE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_erasure.o $(MODULES_OBJS) $(UTILS_OBJS) 
 $(OUTDIR)/modules_erasure.exe: $(MODULES_ERASURE_OBJS)
 DEPS+=$(MODULES_ERASURE_OBJS:%.o=%.deps)
 
