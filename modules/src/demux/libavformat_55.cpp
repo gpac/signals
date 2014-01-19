@@ -65,7 +65,7 @@ Libavformat_55::~Libavformat_55() {
 }
 
 bool Libavformat_55::process(std::shared_ptr<Data> data) {
-	std::shared_ptr<DataDecoder> out(new DataDecoder);
+	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
 	AVPacket *pkt = out->getPacket();
 	int status = av_read_frame(formatCtx, pkt);
 	if (status < 0) {
