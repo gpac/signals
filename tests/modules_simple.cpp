@@ -22,7 +22,7 @@ unittest("empty param test: Demux") {
 	try {
 		std::unique_ptr<Demux::GPAC_MP4_Simple> mp4Demux(Demux::GPAC_MP4_Simple::create(""));
 	}
-	catch(std::runtime_error const& e) {
+	catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
 	ASSERT(thrown);
