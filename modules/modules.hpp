@@ -17,6 +17,7 @@
 #include "src/mux/libav_mux.hpp"
 #include "src/out/null.hpp"
 #include "src/out/print.hpp"
-#include "src/render/sdl.hpp"
+#include "src/render/sdl_audio.hpp"
+#include "src/render/sdl_video.hpp"
 
 #endif

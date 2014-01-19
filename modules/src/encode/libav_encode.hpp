@@ -15,7 +15,13 @@ namespace Encode {
 
 class MODULES_EXPORT LibavEncode : public Module {
 public:
-	static LibavEncode* create(const PropsMuxer &props);
+	enum Type {
+		Video,
+		Audio,
+		unknown
+	};
+
+	static LibavEncode* create(const PropsMuxer &props, Type type);
 	~LibavEncode();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);

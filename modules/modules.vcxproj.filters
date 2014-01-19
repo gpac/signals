@@ -75,9 +75,6 @@
     <ClInclude Include="src\common\libav.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="src\render\sdl.hpp">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="src\out\null.hpp">
       <Filter>src\out</Filter>
     </ClInclude>
@@ -92,6 +89,12 @@
     </ClInclude>
     <ClInclude Include="src\mux\libav_mux.hpp">
       <Filter>src\mux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\sdl_audio.hpp">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\sdl_video.hpp">
+      <Filter>src\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,9 +113,6 @@
     <ClCompile Include="src\common\libav.cpp">
       <Filter>src\common</Filter>
     </ClCompile>
-    <ClCompile Include="src\render\sdl.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="src\out\null.cpp">
       <Filter>src\out</Filter>
     </ClCompile>
@@ -127,6 +127,12 @@
     </ClCompile>
     <ClCompile Include="src\mux\libav_mux.cpp">
       <Filter>src\mux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\sdl_audio.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\sdl_video.cpp">
+      <Filter>src\render</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
