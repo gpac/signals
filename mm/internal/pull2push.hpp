@@ -16,7 +16,7 @@ public:
 	}
 
 	bool process(std::shared_ptr<Data> data) {
-		while (1) {
+		for (;;) {
 			std::shared_ptr<Data> out(signals[0]->getBuffer(0));
 			signals[0]->emit(out);
 			auto res = signals[0]->signal.results(false, true); //this code also works with async, why not use it?
@@ -27,7 +27,7 @@ public:
 		return true;
 	}
 
-	bool handles(const std::string &url) {
+	bool handles(const std::string &/*url*/) {
 		return true;
 	}
 

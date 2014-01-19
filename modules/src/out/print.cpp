@@ -17,7 +17,7 @@ bool Print::handles(const std::string &url) {
 	return Print::canHandle(url);
 }
 
-bool Print::canHandle(const std::string &url) {
+bool Print::canHandle(const std::string &/*url*/) {
 	return true;
 }
 

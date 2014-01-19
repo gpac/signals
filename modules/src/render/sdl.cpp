@@ -94,7 +94,7 @@ bool SDL::handles(const std::string &url) {
 	return SDL::canHandle(url);
 }
 
-bool SDL::canHandle(const std::string &url) {
+bool SDL::canHandle(const std::string &/*url*/) {
 	return true;
 }
 

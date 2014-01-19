@@ -29,6 +29,8 @@ public:
 	}
 
 private:
+	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
+
 	void updateUsedBlocks() {
 		usedBlocks.erase(std::remove_if(usedBlocks.begin(), usedBlocks.end(),
 		[](std::weak_ptr<Data> data) -> bool {

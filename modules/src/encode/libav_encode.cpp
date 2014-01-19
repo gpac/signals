@@ -222,7 +222,7 @@ bool LibavEncode::handles(const std::string &url) {
 	return LibavEncode::canHandle(url);
 }
 
-bool LibavEncode::canHandle(const std::string &url) {
+bool LibavEncode::canHandle(const std::string &/*url*/) {
 	return true; //TODO
 }
 

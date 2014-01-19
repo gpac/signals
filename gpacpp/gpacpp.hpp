@@ -31,6 +31,9 @@ public:
 
 	std::string msg_;
 	const GF_Err error_;
+
+private:
+	Error& operator= (const Error&) = delete;
 };
 
 //------------------------------------------------

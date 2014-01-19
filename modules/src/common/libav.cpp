@@ -78,7 +78,7 @@ AVPacket* DataAVPacket::getPacket() const {
 	return pkt;
 }
 
-void DataAVPacket::resize(size_t size) {
+void DataAVPacket::resize(size_t /*size*/) {
 	assert(0);
 }
 

@@ -44,7 +44,7 @@ bool File::handles(const std::string &url) {
 	return File::canHandle(url);
 }
 
-bool File::canHandle(const std::string &url) {
+bool File::canHandle(const std::string &/*url*/) {
 	return true;
 }
 
