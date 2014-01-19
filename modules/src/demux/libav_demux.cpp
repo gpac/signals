@@ -15,13 +15,12 @@ extern "C" {
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
+auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 }
 
 namespace Demux {
 
 LibavDemux* LibavDemux::create(const std::string &url) {
-	av_log_set_callback(avLog);
-
 	struct AVFormatContext *formatCtx = NULL;
 	if (!(formatCtx = avformat_alloc_context())) {
 		Log::msg(Log::Warning, "Module LibavDemux: Can't allocate format context");
