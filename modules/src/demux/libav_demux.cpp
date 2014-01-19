@@ -51,14 +51,11 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 LibavDemux::LibavDemux(struct AVFormatContext *formatCtx, std::vector<Pin<>*> signals)
 : formatCtx(formatCtx) {
 	for (size_t i = 0; i < signals.size(); ++i) {
-		this->signals.push_back(signals[i]);
+		this->signals.push_back(uptr(signals[i]));
 	}
 }
 
 LibavDemux::~LibavDemux() {
-	for (unsigned i = 0; i < formatCtx->nb_streams; i++) {
-		delete signals[i];
-	}
 	avformat_close_input(&formatCtx);
 }
 

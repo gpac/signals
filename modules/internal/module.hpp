@@ -34,7 +34,7 @@ public:
 		}
 	}
 
-	std::vector<Pin<>*> signals; //TODO: evaluate how public this needs to be
+	std::vector<std::unique_ptr<Pin<>>> signals; //TODO: evaluate how public this needs to be
 };
 
 class MODULES_EXPORT ModuleSync : public IModule {
