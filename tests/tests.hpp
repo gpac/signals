@@ -129,6 +129,8 @@ public:
 	}
 
 private:
+	Profiler& operator= (const Profiler&) = delete;
+
 	std::string name;
 #ifdef _MSC_VER
 	LARGE_INTEGER startTime;

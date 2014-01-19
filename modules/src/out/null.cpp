@@ -19,7 +19,7 @@ bool Null::handles(const std::string &url) {
 	return Null::canHandle(url);
 }
 
-bool Null::canHandle(const std::string &url) {
+bool Null::canHandle(const std::string &/*url*/) {
 	return true;
 }
 

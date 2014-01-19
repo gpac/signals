@@ -123,7 +123,7 @@ bool LibavMux::handles(const std::string &url) {
 	return LibavMux::canHandle(url);
 }
 
-bool LibavMux::canHandle(const std::string &url) {
+bool LibavMux::canHandle(const std::string &/*url*/) {
 	return true; //TODO
 }
 

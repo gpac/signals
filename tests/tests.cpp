@@ -31,7 +31,7 @@ void RunAll() {
 }
 }
 
-int main(int argc, char **argv) {
+int main(int /*argc*/, char ** /*argv*/) {
 	Tests::Util::Profiler p("TESTS TOTAL TIME");
 	Tests::RunAll();
 	return 0;

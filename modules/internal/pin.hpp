@@ -39,7 +39,7 @@ public:
 	}
 
 	std::shared_ptr<Data> getBuffer(size_t size) {
-		while (1) {
+		for(;;) {
 			std::shared_ptr<Data> data(allocator.getBuffer(size));
 			if (data.get()) {
 				return data;

@@ -145,7 +145,7 @@ bool LibavDecode::handles(const std::string &url) {
 	return LibavDecode::canHandle(url);
 }
 
-bool LibavDecode::canHandle(const std::string &url) {
+bool LibavDecode::canHandle(const std::string &/*url*/) {
 	return true; //TODO
 }
 

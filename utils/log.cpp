@@ -5,6 +5,6 @@
 Log::Level Log::globalLevel = Log::Error;
 
 
-std::ostream& Log::get(Level level) {
+std::ostream& Log::get(Level /*level*/) {
 	return std::cerr;
 }

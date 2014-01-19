@@ -17,6 +17,7 @@ public:
 	static bool canHandle(const std::string &url);
 
 private:
+	Print& operator= (const Print&) = delete;
 	Print(std::ostream &os);
 
 	std::ostream &os;
