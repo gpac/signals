@@ -11,7 +11,7 @@ unittest("empty param test: File") {
 	try {
 		std::unique_ptr<In::File> f(In::File::create(""));
 	}
-	catch(std::runtime_error const& e) {
+	catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
 	ASSERT(thrown);
