@@ -22,7 +22,9 @@ namespace Decode {
 	LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	auto codecCtx = props.getAVCodecContext();
 
-	//TODO: custom log: av_log_set_callback(avlog);
+	avcodec_register_all();
+	av_register_all();
+	av_log_set_callback(avLog);
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:

@@ -3,6 +3,7 @@
 #include "../../internal/data.hpp"
 #include "../../internal/props.hpp"
 #include <string>
+#include <cstdarg>
 
 struct AVCodecContext;
 struct AVFormatContext;
@@ -38,7 +39,7 @@ namespace Modules {
 		}
 
 		AVFormatContext* getAVFormatContext() const {
-			return formatCtx; //Romain: add an interface to push the streams from here?
+			return formatCtx;
 		}
 
 	private:
@@ -59,4 +60,6 @@ namespace Modules {
 	};
 
 	void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
+
+	void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl);
 }

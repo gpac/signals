@@ -20,10 +20,11 @@ auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 namespace Demux {
 
 LibavDemux* LibavDemux::create(const std::string &url) {
+	avcodec_register_all();
+	av_register_all();
+	av_log_set_callback(avLog);
+
 	struct AVFormatContext *formatCtx = NULL;
-
-	//TODO: custom log: av_log_set_callback(avlog);
-
 	if (!(formatCtx = avformat_alloc_context())) {
 		Log::msg(Log::Warning, "Module LibavDemux: Can't allocate format context");
 		return NULL;

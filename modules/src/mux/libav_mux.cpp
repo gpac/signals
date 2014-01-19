@@ -10,40 +10,17 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
-namespace {
-	//Romain: remove
-void clear(AVFormatContext *formatCtx, AVStream *videoStream, AVFrame *frame, AVPacket *pkt) {
-	if (videoStream && videoStream->codec) {
-		avcodec_close(videoStream->codec);
-	}
-	if (frame) {
-		avcodec_free_frame(&frame);
-	}
-	if (formatCtx && !(formatCtx->flags & AVFMT_NOFILE)) {
-		avio_close(formatCtx->pb); //close output file
-	}
-	if (formatCtx) {
-		avformat_free_context(formatCtx);
-	}
-	delete pkt;
-}
-}
-
 namespace Mux {
 
 LibavMux* LibavMux::create(const std::string &baseName) {
 	AVFormatContext *formatCtx = NULL;
-	AVStream *videoStream = NULL; //Romain: useless
-	AVFrame *avFrame = NULL;
-	AVPacket *avPkt = NULL;
-	uint8_t *avOutputBuffer = NULL;
 
 	av_register_all();
 	avformat_network_init();
-	//TODO: custom log: av_log_set_callback(avlog);
+	av_log_set_callback(avLog);
 
 	/* parse the format optionsDict */
-	std::string optionsStr = "-format mp4"; //Romain TODO
+	std::string optionsStr = "-format mp4"; //TODO
 	AVDictionary *optionsDict = NULL;
 	buildAVDictionary("[libav_mux]", &optionsDict, optionsStr.c_str(), "format");
 
@@ -52,8 +29,6 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	if (!of) {
 		Log::msg(Log::Warning, "[libav_mux] couldn't guess container from file extension");
 		av_dict_free(&optionsDict);
-		delete[] avOutputBuffer;
-		clear(formatCtx, videoStream, avFrame, avPkt);
 		return NULL;
 	}
 	av_dict_free(&optionsDict);
@@ -62,8 +37,6 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	formatCtx = avformat_alloc_context();
 	if (!formatCtx) {
 		Log::msg(Log::Warning, "[libav_mux] format context couldn't be allocated.");
-		delete[] avOutputBuffer;
-		clear(formatCtx, videoStream, avFrame, avPkt);
 		return NULL;
 	}
 	formatCtx->oformat = of;
@@ -79,8 +52,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	if (!(formatCtx->flags & AVFMT_NOFILE)) {
 		if (avio_open(&formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
 			Log::msg(Log::Warning, "[libav_mux] could not open %s, disable output.", baseName);
-			delete[] avOutputBuffer;
-			clear(formatCtx, videoStream, avFrame, avPkt);
+			avformat_free_context(formatCtx);
 			return NULL;
 		}
 		strncpy(formatCtx->filename, fileName.str().c_str(), sizeof(formatCtx->filename));
@@ -91,6 +63,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 
 LibavMux::LibavMux(struct AVFormatContext *formatCtx)
 : formatCtx(formatCtx), headerWritten(false) {
+	signals.push_back(new Pin<>(new PropsMuxer(formatCtx))); //FIXME: we create the pin only for the props...
 }
 
 LibavMux::~LibavMux() {
@@ -103,6 +76,7 @@ LibavMux::~LibavMux() {
 	if (formatCtx) {
 		avformat_free_context(formatCtx);
 	}
+	delete signals[0];
 }
 
 void LibavMux::ensureHeader() {
@@ -120,19 +94,28 @@ void LibavMux::ensureHeader() {
 }
 
 bool LibavMux::process(std::shared_ptr<Data> data) {
-	ensureHeader();
-	assert(0); //Romain: TODO
-	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
-	AVPacket *pkt = out->getPacket();
-	int status = av_read_frame(formatCtx, pkt);
-	if (status < 0) {
-		if (status == (int)AVERROR_EOF || (formatCtx->pb && formatCtx->pb->eof_reached)) {
-		} else if (formatCtx->pb && formatCtx->pb->error) {
-			Log::msg(Log::Warning, "[Libavcodec_55] Stream contains an irrecoverable error - leaving");
-		}
+	DataAVPacket *encoderData = dynamic_cast<DataAVPacket*>(data.get());
+	if (!encoderData) {
 		return false;
 	}
-	signals[pkt->stream_index]->emit(out);
+	AVPacket *pkt = encoderData->getPacket();
+
+	ensureHeader();
+	
+	/* Timestamps */
+	assert(pkt->pts != (int64_t)AV_NOPTS_VALUE);
+	AVStream *avStream = formatCtx->streams[0]; //FIXME: fixed '0' for stream num: this is not a mux yet ;)
+	pkt->dts = av_rescale_q(pkt->dts, avStream->codec->time_base, avStream->time_base);
+	pkt->pts = av_rescale_q(pkt->pts, avStream->codec->time_base, avStream->time_base);
+	pkt->duration = (int)av_rescale_q(pkt->duration, avStream->codec->time_base, avStream->time_base);
+
+	/* write the compressed frame to the container output file */
+	pkt->stream_index = avStream->index;
+	if (av_interleaved_write_frame(formatCtx, pkt) != 0) {
+		Log::msg(Log::Warning, "[libav_mux] can't write video frame.");
+		return false;
+	}
+
 	return true;
 }
 

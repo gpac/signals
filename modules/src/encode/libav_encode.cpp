@@ -41,17 +41,17 @@ namespace Encode {
 LibavEncode* LibavEncode::create(const PropsMuxer &props) {
 	av_register_all();
 	avcodec_register_all();
-	//TODO: custom log: av_log_set_callback(avlog);
+	av_log_set_callback(avLog);
 
 	/* parse the codec optionsDict */
 	AVDictionary *dcodec = NULL;
-	std::string clcodec = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //Romain
+	std::string clcodec = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
 	buildAVDictionary("[libav_encode]", &dcodec, clcodec.c_str(), "codec");
 	av_dict_set(&dcodec, "threads", "auto", 0);
 
 	/* parse other optionsDict*/
 	AVDictionary *dother = NULL;
-	std::string clother = "-vcodec mpeg2video -r 25 -pass 1"; //Romain
+	std::string clother = "-vcodec mpeg2video -r 25 -pass 1"; //TODO
 	buildAVDictionary("[libav_encode]", &dother, clother.c_str(), "other");
 
 	/* find the video encoder */
@@ -79,8 +79,8 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props) {
 	}
 
 	/* parameters */
-	const int width  = 1280; //Romain
-	const int height = 720;
+	const int width  = 1280; //TODO
+	const int height = 720; //TODO
 	avStream->codec->width = width;
 	avStream->codec->height = height;
 	if (strcmp(av_dict_get(dother, "vcodec", NULL, 0)->value, "mjpeg")) {
@@ -90,7 +90,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props) {
 	}
 
 	/* set other optionsDict*/
-#if 0 //Romain
+#if 0 //TODO
 	if (avCodec == "h264") {
 		av_opt_set(avStream->codec->priv_data, "preset", "superfast", 0);
 		av_opt_set(avStream->codec->priv_data, "rc-lookahead", "0", 0);
@@ -105,7 +105,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props) {
 	fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
 	avStream->codec->time_base = fps;
 
-#if 0 //Romain: look for [libav_encode]
+#if 0 //TODO
 	/* user extra params */
 	std::string extraParams;
 	if (Parse::populateString("LibavOutputWriter", config, "extra_params", extraParams, false) == Parse::PopulateResult_Ok) {
@@ -195,7 +195,10 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding frame %d.", frameNum);
 		return false;
 	} else {
-		signals[0]->emit(out);
+		if (gotPkt) {
+			assert(pkt->size);
+			signals[0]->emit(out);
+		}
 	}
 
 	return true;
