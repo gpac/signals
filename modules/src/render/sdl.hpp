@@ -28,7 +28,6 @@ private:
 	SDL_Texture *texture;
 	std::unique_ptr<SDL_Rect> displayrect;
 	int width, height;
-	const unsigned pixelFormat;
 };
 
 }

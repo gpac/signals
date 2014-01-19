@@ -36,8 +36,8 @@ SDL* SDL::create() {
 	return new SDL(renderer, texture, width, height, pixelFormat);
 }
 
-SDL::SDL(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned pixelFormat)
-: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height), pixelFormat(pixelFormat) {/* Ignore key up events, they don't even get filtered */
+SDL::SDL(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned /*pixelFormat*/)
+: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height) {/* Ignore key up events, they don't even get filtered */
 	SDL_EventState(SDL_KEYUP, SDL_IGNORE);
 
 	displayrect->x = 0;
