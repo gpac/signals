@@ -149,3 +149,10 @@ $RECYCLE.BIN/
 
 # Mac crap
 .DS_Store
+
+# Vim swap file
+*.swp
+
+# ctags file
+tags
+
