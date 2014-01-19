@@ -1,4 +1,4 @@
-#include "libavformat_55.hpp"
+#include "libav_mux.hpp"
 #include "../utils/log.hpp"
 #include "../common/libav.hpp"
 #include <cassert>
@@ -31,7 +31,7 @@ void clear(AVFormatContext *formatCtx, AVStream *videoStream, AVFrame *frame, AV
 
 namespace Mux {
 
-Libavformat_55* Libavformat_55::create(const std::string &baseName) {
+LibavMux* LibavMux::create(const std::string &baseName) {
 	AVFormatContext *formatCtx = NULL;
 	AVStream *videoStream = NULL; //Romain: useless
 	AVFrame *avFrame = NULL;
@@ -45,12 +45,12 @@ Libavformat_55* Libavformat_55::create(const std::string &baseName) {
 	/* parse the format optionsDict */
 	std::string optionsStr = "-format mp4"; //Romain TODO
 	AVDictionary *optionsDict = NULL;
-	buildAVDictionary(&optionsDict, optionsStr.c_str(), "format");
+	buildAVDictionary("[libav_mux]", &optionsDict, optionsStr.c_str(), "format");
 
 	/* setup container */
 	AVOutputFormat *of = av_guess_format(av_dict_get(optionsDict, "format", NULL, 0)->value, NULL, NULL);
 	if (!of) {
-		Log::msg(Log::Warning, "[libavoutput] couldn't guess container from file extension");
+		Log::msg(Log::Warning, "[libav_mux] couldn't guess container from file extension");
 		av_dict_free(&optionsDict);
 		delete[] avOutputBuffer;
 		clear(formatCtx, videoStream, avFrame, avPkt);
@@ -61,7 +61,7 @@ Libavformat_55* Libavformat_55::create(const std::string &baseName) {
 	/* output format context */
 	formatCtx = avformat_alloc_context();
 	if (!formatCtx) {
-		Log::msg(Log::Warning, "[libavoutput] format context couldn't be allocated.");
+		Log::msg(Log::Warning, "[libav_mux] format context couldn't be allocated.");
 		delete[] avOutputBuffer;
 		clear(formatCtx, videoStream, avFrame, avPkt);
 		return NULL;
@@ -78,7 +78,7 @@ Libavformat_55* Libavformat_55::create(const std::string &baseName) {
 	/* open the output file, if needed */
 	if (!(formatCtx->flags & AVFMT_NOFILE)) {
 		if (avio_open(&formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
-			Log::msg(Log::Warning, "[libavoutput] could not open %s, disable output.", baseName);
+			Log::msg(Log::Warning, "[libav_mux] could not open %s, disable output.", baseName);
 			delete[] avOutputBuffer;
 			clear(formatCtx, videoStream, avFrame, avPkt);
 			return NULL;
@@ -86,14 +86,14 @@ Libavformat_55* Libavformat_55::create(const std::string &baseName) {
 		strncpy(formatCtx->filename, fileName.str().c_str(), sizeof(formatCtx->filename));
 	}
 
-	return new Libavformat_55(formatCtx);
+	return new LibavMux(formatCtx);
 }
 
-Libavformat_55::Libavformat_55(struct AVFormatContext *formatCtx)
+LibavMux::LibavMux(struct AVFormatContext *formatCtx)
 : formatCtx(formatCtx), headerWritten(false) {
 }
 
-Libavformat_55::~Libavformat_55() {
+LibavMux::~LibavMux() {
 	if (formatCtx) {
 		av_write_trailer(formatCtx); //write the trailer if any
 	}
@@ -105,13 +105,13 @@ Libavformat_55::~Libavformat_55() {
 	}
 }
 
-void Libavformat_55::ensureHeader() {
+void LibavMux::ensureHeader() {
 	if (!headerWritten) {
 		if (avformat_write_header(formatCtx, NULL) != 0) {
-			Log::msg(Log::Warning, "[libavoutput] fatal error: can't write the container header");
+			Log::msg(Log::Warning, "[libav_mux] fatal error: can't write the container header");
 			for (unsigned i = 0; i < formatCtx->nb_streams; i++) {
 				if (formatCtx->streams[i]->codec && formatCtx->streams[i]->codec->codec) {
-					Log::msg(Log::Debug, "[libavoutput] codec[%u] is \"%s\" (%s)", i, formatCtx->streams[i]->codec->codec->name, formatCtx->streams[i]->codec->codec->long_name);
+					Log::msg(Log::Debug, "[libav_mux] codec[%u] is \"%s\" (%s)", i, formatCtx->streams[i]->codec->codec->name, formatCtx->streams[i]->codec->codec->long_name);
 				}
 			}
 		}
@@ -119,7 +119,7 @@ void Libavformat_55::ensureHeader() {
 	}
 }
 
-bool Libavformat_55::process(std::shared_ptr<Data> data) {
+bool LibavMux::process(std::shared_ptr<Data> data) {
 	ensureHeader();
 	assert(0); //Romain: TODO
 	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
@@ -136,11 +136,11 @@ bool Libavformat_55::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool Libavformat_55::handles(const std::string &url) {
-	return Libavformat_55::canHandle(url);
+bool LibavMux::handles(const std::string &url) {
+	return LibavMux::canHandle(url);
 }
 
-bool Libavformat_55::canHandle(const std::string &url) {
+bool LibavMux::canHandle(const std::string &url) {
 	return true; //TODO
 }
 

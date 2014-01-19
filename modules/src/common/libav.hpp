@@ -2,6 +2,7 @@
 
 #include "../../internal/data.hpp"
 #include "../../internal/props.hpp"
+#include <string>
 
 struct AVCodecContext;
 struct AVFormatContext;
@@ -57,5 +58,5 @@ namespace Modules {
 		AVPacket *pkt;
 	};
 
-	void buildAVDictionary(AVDictionary **dict, const char *options, const char *type);
+	void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 }

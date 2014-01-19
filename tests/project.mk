@@ -24,14 +24,14 @@ $(OUTDIR)/modules_erasure.exe: $(MODULES_ERASURE_OBJS)
 DEPS+=$(MODULES_ERASURE_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/modules_player.exe
-MODULES_ERASURE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_erasure.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_erasure.exe: $(MODULES_ERASURE_OBJS)
-DEPS+=$(MODULES_ERASURE_OBJS:%.o=%.deps)
+MODULES_PLAYER_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_player.o $(MODULES_OBJS) $(UTILS_OBJS) 
+$(OUTDIR)/modules_player.exe: $(MODULES_PLAYER_OBJS)
+DEPS+=$(MODULES_PLAYER_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/modules_transcoder.exe
-MODULES_ERASURE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_erasure.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_erasure.exe: $(MODULES_ERASURE_OBJS)
-DEPS+=$(MODULES_ERASURE_OBJS:%.o=%.deps)
+MODULES_TRANSCODER_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_transcoder.o $(MODULES_OBJS) $(UTILS_OBJS) 
+$(OUTDIR)/modules_transcoder.exe: $(MODULES_TRANSCODER_OBJS)
+DEPS+=$(MODULES_TRANSCODER_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/signals_perf.exe
 $(OUTDIR)/signals_perf.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_perf.o

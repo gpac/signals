@@ -1,5 +1,5 @@
 #define __STDC_CONSTANT_MACROS
-#include "libavcodec_55.hpp"
+#include "libav_decode.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include <cassert>
@@ -19,7 +19,7 @@ auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 
 namespace Decode {
 
-Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
+	LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	auto codecCtx = props.getAVCodecContext();
 
 	//TODO: custom log: av_log_set_callback(avlog);
@@ -29,14 +29,14 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 	case AVMEDIA_TYPE_AUDIO:
 		break;
 	default:
-		Log::msg(Log::Warning, "Module Libavcodec_55: codec_type not supported. Must be audio or video.");
+		Log::msg(Log::Warning, "Module LibavDecode: codec_type not supported. Must be audio or video.");
 		return NULL;
 	}
 
 	//find an appropriate decoder
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec) {
-		Log::msg(Log::Warning, "Module Libavcodec_55: Codec not found");
+		Log::msg(Log::Warning, "Module LibavDecode: Codec not found");
 		return NULL;
 	}
 
@@ -46,7 +46,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 
 	//open the codec
 	if (avcodec_open2(codecCtx, codec, &th_opt) < 0) {
-		Log::msg(Log::Warning, "Module Libavcodec_55: Couldn't open stream");
+		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
 		return NULL;
 	}
 
@@ -55,7 +55,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 		//check colorspace
 		if ((codecCtx->pix_fmt != PIX_FMT_YUV420P) && (codecCtx->pix_fmt != PIX_FMT_YUVJ420P)) {
 			const char *codecName = codecCtx->codec_name ? codecCtx->codec_name : "[unknown]";
-			Log::msg(Log::Warning, "Module Libavcodec_55: Unsupported colorspace for codec \"%s\". Only planar YUV 4:2:0 is supported.", codecName);
+			Log::msg(Log::Warning, "Module LibavDecode: Unsupported colorspace for codec \"%s\". Only planar YUV 4:2:0 is supported.", codecName);
 			return NULL;
 		}
 		break;
@@ -68,33 +68,33 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 
 	auto avFrame = avcodec_alloc_frame();
 	if (!avFrame) {
-		Log::msg(Log::Warning, "Module Libavcodec_55: Can't allocate frame");
+		Log::msg(Log::Warning, "Module LibavDecode: Can't allocate frame");
 		avcodec_close(codecCtx);
 		return NULL;
 	}
 
 	av_dict_free(&th_opt);
 
-	return new Libavcodec_55(codecCtx, avFrame);
+	return new LibavDecode(codecCtx, avFrame);
 }
 
-Libavcodec_55::Libavcodec_55(AVCodecContext *codecCtx, AVFrame *avFrame)
+LibavDecode::LibavDecode(AVCodecContext *codecCtx, AVFrame *avFrame)
 : codecCtx(codecCtx), avFrame(avFrame) {
 	signals.push_back(new Pin<>());
 }
 
-Libavcodec_55::~Libavcodec_55() {
+LibavDecode::~LibavDecode() {
 	av_free(avFrame);
 	avcodec_close(codecCtx);
 	delete signals[0];
 }
 
-bool Libavcodec_55::processAudio(std::shared_ptr<Data> data) {
+bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 	//TODO
 	return true;
 }
 
-bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
+bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
 		return false;
@@ -102,7 +102,7 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame, &gotPicture, pkt) < 0) {
-		Log::msg(Log::Warning, "[Libavcodec_55] Error encoutered while decoding.");
+		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding.");
 		return true;
 	}
 	if (gotPicture) {
@@ -125,7 +125,7 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool Libavcodec_55::process(std::shared_ptr<Data> data) {
+bool LibavDecode::process(std::shared_ptr<Data> data) {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
 		return processVideo(data);
@@ -139,11 +139,11 @@ bool Libavcodec_55::process(std::shared_ptr<Data> data) {
 	}
 }
 
-bool Libavcodec_55::handles(const std::string &url) {
-	return Libavcodec_55::canHandle(url);
+bool LibavDecode::handles(const std::string &url) {
+	return LibavDecode::canHandle(url);
 }
 
-bool Libavcodec_55::canHandle(const std::string &url) {
+bool LibavDecode::canHandle(const std::string &url) {
 	return true; //TODO
 }
 

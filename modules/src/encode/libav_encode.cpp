@@ -1,4 +1,4 @@
-#include "libavcodec_55.hpp"
+#include "libav_encode.hpp"
 #include "../utils/log.hpp"
 #include <cassert>
 #include <string>
@@ -31,14 +31,14 @@ void fps2NumDen(const double fps, int &num, int &den) {
 	} else {
 		num = (int)fps;
 		den = 1;
-		Log::msg(Log::Warning, "[libavoutput] Frame rate '%lf' was not recognized. Truncating to '%d'.", fps, num);
+		Log::msg(Log::Warning, "[libav_encode] Frame rate '%lf' was not recognized. Truncating to '%d'.", fps, num);
 	}
 }
 }
 
 namespace Encode {
 
-Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
+LibavEncode* LibavEncode::create(const PropsMuxer &props) {
 	av_register_all();
 	avcodec_register_all();
 	//TODO: custom log: av_log_set_callback(avlog);
@@ -46,18 +46,18 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 	/* parse the codec optionsDict */
 	AVDictionary *dcodec = NULL;
 	std::string clcodec = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //Romain
-	buildAVDictionary(&dcodec, clcodec.c_str(), "codec");
+	buildAVDictionary("[libav_encode]", &dcodec, clcodec.c_str(), "codec");
 	av_dict_set(&dcodec, "threads", "auto", 0);
 
 	/* parse other optionsDict*/
 	AVDictionary *dother = NULL;
 	std::string clother = "-vcodec mpeg2video -r 25 -pass 1"; //Romain
-	buildAVDictionary(&dother, clother.c_str(), "other");
+	buildAVDictionary("[libav_encode]", &dother, clother.c_str(), "other");
 
 	/* find the video encoder */
 	AVCodec *codec = avcodec_find_encoder_by_name(av_dict_get(dother, "vcodec", NULL, 0)->value);
 	if (!codec) {
-		Log::msg(Log::Warning, "[libavoutput] codec not found, disable output.");
+		Log::msg(Log::Warning, "[libav_encode] codec not found, disable output.");
 		av_dict_free(&dother);
 		av_dict_free(&dcodec);
 		return NULL;
@@ -68,7 +68,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 		AVFormatContext *formatCtx = props.getAVFormatContext();
 		avStream = avformat_new_stream(formatCtx, codec);
 		if (!avStream) {
-			Log::msg(Log::Warning, "[libavoutput] could not create the video stream, disable output.");
+			Log::msg(Log::Warning, "[libav_encode] could not create the video stream, disable output.");
 			av_dict_free(&dother);
 			av_dict_free(&dcodec);
 			return NULL;
@@ -105,11 +105,11 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 	fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
 	avStream->codec->time_base = fps;
 
-#if 0 //Romain: look for [libavoutput]
+#if 0 //Romain: look for [libav_encode]
 	/* user extra params */
 	std::string extraParams;
 	if (Parse::populateString("LibavOutputWriter", config, "extra_params", extraParams, false) == Parse::PopulateResult_Ok) {
-		Log::msg(Log::Debug, "[libavoutput] extra_params : " << extraParams.c_str());
+		Log::msg(Log::Debug, "[libav_encode] extra_params : " << extraParams.c_str());
 		std::vector<std::string> paramList;
 		Util::split(extraParams.c_str(), ',', &paramList);
 		auto param = paramList.begin();
@@ -117,9 +117,9 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 			std::vector<std::string> paramValue;
 			Util::split(param->c_str(), '=', &paramValue);
 			if (paramValue.size() != 2) {
-				Log::msg(Log::Warning, "[libavoutput] extra_params :   wrong param (" << paramValue.size() << " value detected, 2 expected) in " << param->c_str());
+				Log::msg(Log::Warning, "[libav_encode] extra_params :   wrong param (" << paramValue.size() << " value detected, 2 expected) in " << param->c_str());
 			} else {
-				Log::msg(Log::Debug, "[libavoutput] extra_params :   detected param " << paramValue[0].c_str() << " with value " << paramValue[1].c_str() << " [" << param->c_str() << "]");
+				Log::msg(Log::Debug, "[libav_encode] extra_params :   detected param " << paramValue[0].c_str() << " with value " << paramValue[1].c_str() << " [" << param->c_str() << "]");
 				av_dict_set(&dcodec, paramValue[0].c_str(), paramValue[1].c_str(), 0);
 			}
 		}
@@ -130,7 +130,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 
 	/* open it */
 	if (avcodec_open2(avStream->codec, codec, &dcodec) < 0) {
-		Log::msg(Log::Warning, "[libavoutput] could not open codec, disable output.");
+		Log::msg(Log::Warning, "[libav_encode] could not open codec, disable output.");
 		av_dict_free(&dcodec);
 		return NULL;
 	}
@@ -141,7 +141,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 	char *tok = strtok(opt, "- ");
 	while (tok && strtok(NULL, "- ")) {
 		if ((avde = av_dict_get(dcodec, tok, avde, 0))) {
-			Log::msg(Log::Warning, "[libavoutput] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
+			Log::msg(Log::Warning, "[libav_encode] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
 		}
 		tok = strtok(NULL, "- ");
 	}
@@ -150,7 +150,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 
 	AVFrame *avFrame = avcodec_alloc_frame();
 	if (!avFrame) {
-		Log::msg(Log::Warning, "[libavoutput] could not create the AVFrame, disable output.");
+		Log::msg(Log::Warning, "[libav_encode] could not create the AVFrame, disable output.");
 		avcodec_close(avStream->codec);
 		return NULL;
 	}
@@ -158,15 +158,15 @@ Libavcodec_55* Libavcodec_55::create(const PropsMuxer &props) {
 	avFrame->linesize[1] = (avStream->codec->width + 1) / 2;
 	avFrame->linesize[2] = (avStream->codec->width + 1) / 2;
 
-	return new Libavcodec_55(avStream, avFrame);
+	return new LibavEncode(avStream, avFrame);
 }
 
-Libavcodec_55::Libavcodec_55(AVStream *avStream, AVFrame *avFrame)
+LibavEncode::LibavEncode(AVStream *avStream, AVFrame *avFrame)
 : avStream(avStream), avFrame(avFrame), frameNum(-1) {
 	signals.push_back(new Pin<>());
 }
 
-Libavcodec_55::~Libavcodec_55() {
+LibavEncode::~LibavEncode() {
 	if (avStream && avStream->codec) {
 		avcodec_close(avStream->codec);
 	}
@@ -177,12 +177,12 @@ Libavcodec_55::~Libavcodec_55() {
 	delete signals[0];
 }
 
-bool Libavcodec_55::processAudio(std::shared_ptr<Data> data) {
+bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	assert(0); //TODO
 	return true;
 }
 
-bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
+bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
 	AVPacket *pkt = out->getPacket();
 
@@ -192,7 +192,7 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
 	if (avcodec_encode_video2(avStream->codec, pkt, avFrame, &gotPkt)) {
-		Log::msg(Log::Warning, "[libavoutput] error encountered while encoding frame %d.", frameNum);
+		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding frame %d.", frameNum);
 		return false;
 	} else {
 		signals[0]->emit(out);
@@ -201,7 +201,7 @@ bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool Libavcodec_55::process(std::shared_ptr<Data> data) {
+bool LibavEncode::process(std::shared_ptr<Data> data) {
 	switch (avStream->codec->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
 		return processVideo(data);
@@ -215,11 +215,11 @@ bool Libavcodec_55::process(std::shared_ptr<Data> data) {
 	}
 }
 
-bool Libavcodec_55::handles(const std::string &url) {
-	return Libavcodec_55::canHandle(url);
+bool LibavEncode::handles(const std::string &url) {
+	return LibavEncode::canHandle(url);
 }
 
-bool Libavcodec_55::canHandle(const std::string &url) {
+bool LibavEncode::canHandle(const std::string &url) {
 	return true; //TODO
 }
 

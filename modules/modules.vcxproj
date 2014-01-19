@@ -28,34 +28,26 @@
     <ClInclude Include="internal\props.hpp" />
     <ClInclude Include="modules.hpp" />
     <ClInclude Include="src\common\libav.hpp" />
-    <ClInclude Include="src\decode\libavcodec_55.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="src\decode\libav_decode.hpp" />
     <ClInclude Include="src\demux\gpac_mp4_full.hpp" />
     <ClInclude Include="src\demux\gpac_mp4_simple.hpp" />
-    <ClInclude Include="src\demux\libavformat_55.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="src\encode\libavcodec_55.hpp" />
+    <ClInclude Include="src\demux\libav_demux.hpp" />
+    <ClInclude Include="src\encode\libav_encode.hpp" />
     <ClInclude Include="src\in\file.hpp" />
-    <ClInclude Include="src\mux\libavformat_55.hpp" />
+    <ClInclude Include="src\mux\libav_mux.hpp" />
     <ClInclude Include="src\out\null.hpp" />
     <ClInclude Include="src\out\print.hpp" />
     <ClInclude Include="src\render\sdl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\common\libav.cpp" />
-    <ClCompile Include="src\decode\libavcodec_55.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="src\decode\libav_decode.cpp" />
     <ClCompile Include="src\demux\gpac_mp4_full.cpp" />
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp" />
-    <ClCompile Include="src\demux\libavformat_55.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="src\encode\libavcodec_55.cpp" />
+    <ClCompile Include="src\demux\libav_demux.cpp" />
+    <ClCompile Include="src\encode\libav_encode.cpp" />
     <ClCompile Include="src\in\file.cpp" />
-    <ClCompile Include="src\mux\libavformat_55.cpp" />
+    <ClCompile Include="src\mux\libav_mux.cpp" />
     <ClCompile Include="src\out\null.cpp" />
     <ClCompile Include="src\out\print.cpp" />
     <ClCompile Include="src\render\sdl.cpp" />

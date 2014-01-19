@@ -69,12 +69,6 @@
     <ClInclude Include="internal\config.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
-    <ClInclude Include="src\decode\libavcodec_55.hpp">
-      <Filter>src\decode</Filter>
-    </ClInclude>
-    <ClInclude Include="src\demux\libavformat_55.hpp">
-      <Filter>src\demux</Filter>
-    </ClInclude>
     <ClInclude Include="internal\props.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
@@ -87,10 +81,16 @@
     <ClInclude Include="src\out\null.hpp">
       <Filter>src\out</Filter>
     </ClInclude>
-    <ClInclude Include="src\encode\libavcodec_55.hpp">
+    <ClInclude Include="src\decode\libav_decode.hpp">
+      <Filter>src\decode</Filter>
+    </ClInclude>
+    <ClInclude Include="src\demux\libav_demux.hpp">
+      <Filter>src\demux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\encode\libav_encode.hpp">
       <Filter>src\encode</Filter>
     </ClInclude>
-    <ClInclude Include="src\mux\libavformat_55.hpp">
+    <ClInclude Include="src\mux\libav_mux.hpp">
       <Filter>src\mux</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,12 +107,6 @@
     <ClCompile Include="src\demux\gpac_mp4_full.cpp">
       <Filter>src\demux</Filter>
     </ClCompile>
-    <ClCompile Include="src\decode\libavcodec_55.cpp">
-      <Filter>src\decode</Filter>
-    </ClCompile>
-    <ClCompile Include="src\demux\libavformat_55.cpp">
-      <Filter>src\demux</Filter>
-    </ClCompile>
     <ClCompile Include="src\common\libav.cpp">
       <Filter>src\common</Filter>
     </ClCompile>
@@ -122,10 +116,16 @@
     <ClCompile Include="src\out\null.cpp">
       <Filter>src\out</Filter>
     </ClCompile>
-    <ClCompile Include="src\encode\libavcodec_55.cpp">
+    <ClCompile Include="src\decode\libav_decode.cpp">
+      <Filter>src\decode</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demux\libav_demux.cpp">
+      <Filter>src\demux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\encode\libav_encode.cpp">
       <Filter>src\encode</Filter>
     </ClCompile>
-    <ClCompile Include="src\mux\libavformat_55.cpp">
+    <ClCompile Include="src\mux\libav_mux.cpp">
       <Filter>src\mux</Filter>
     </ClCompile>
   </ItemGroup>
