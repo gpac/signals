@@ -15,16 +15,13 @@ extern "C" {
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
+av_log_set_callback(avLog);
 }
 
 namespace Decode {
 
-	LibavDecode* LibavDecode::create(const PropsDecoder &props) {
+LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	auto codecCtx = props.getAVCodecContext();
-
-	avcodec_register_all();
-	av_register_all();
-	av_log_set_callback(avLog);
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:

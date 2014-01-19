@@ -1,6 +1,7 @@
 #define __STDC_CONSTANT_MACROS
 #include "libav_mux.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include "../common/libav.hpp"
 #include <cassert>
 #include <string>
@@ -11,14 +12,16 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+namespace {
+auto g_InitAv = runAtStartup(&av_register_all);
+auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
+auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
+}
+
 namespace Mux {
 
 LibavMux* LibavMux::create(const std::string &baseName) {
 	AVFormatContext *formatCtx = NULL;
-
-	av_register_all();
-	avformat_network_init();
-	av_log_set_callback(avLog);
 
 	/* parse the format optionsDict */
 	std::string optionsStr = "-format mp4"; //TODO

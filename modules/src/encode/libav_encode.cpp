@@ -1,6 +1,7 @@
 #define __STDC_CONSTANT_MACROS
 #include "libav_encode.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include <cassert>
 #include <string>
 
@@ -35,15 +36,15 @@ void fps2NumDen(const double fps, int &num, int &den) {
 		Log::msg(Log::Warning, "[libav_encode] Frame rate '%lf' was not recognized. Truncating to '%d'.", fps, num);
 	}
 }
+
+auto g_InitAv = runAtStartup(&av_register_all);
+auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
+auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 }
 
 namespace Encode {
 
 LibavEncode* LibavEncode::create(const PropsMuxer &props) {
-	av_register_all();
-	avcodec_register_all();
-	av_log_set_callback(avLog);
-
 	/* parse the codec optionsDict */
 	AVDictionary *dcodec = NULL;
 	std::string clcodec = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
