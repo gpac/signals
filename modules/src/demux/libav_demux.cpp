@@ -20,8 +20,6 @@ auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 namespace Demux {
 
 LibavDemux* LibavDemux::create(const std::string &url) {
-	avcodec_register_all();
-	av_register_all();
 	av_log_set_callback(avLog);
 
 	struct AVFormatContext *formatCtx = NULL;
