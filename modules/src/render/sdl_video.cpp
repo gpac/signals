@@ -1,27 +1,28 @@
-#include "sdl.hpp"
+#include "sdl_video.hpp"
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
 
 namespace Modules {
 namespace Render {
 
-SDL* SDL::create() {
+SDLVideo* SDLVideo::create() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
-		Log::msg(Log::Error, "[SDL render] Couldn't initialize: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
 		return nullptr;
 	}
 
 	const int width = 1280; //FIXME hardcoded
 	const int height = 720; //FIXME hardcoded
-	SDL_Window *window = SDL_CreateWindow("Signals SDL renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_Window *window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
-		Log::msg(Log::Error, "Couldn't set create window: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
 		return nullptr;
 	}
 
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
-		Log::msg(Log::Error, "Couldn't set create renderer: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create renderer: %s", SDL_GetError());
+		SDL_DestroyWindow(window);
 		return nullptr;
 	}
 
@@ -29,16 +30,17 @@ SDL* SDL::create() {
 	//SDL_Texture *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
 	SDL_Texture *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, width, height);
 	if (!texture) {
-		Log::msg(Log::Error, "Couldn't set create texture: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
+		SDL_DestroyRenderer(renderer);
 		return nullptr;
 	}
 
-	return new SDL(renderer, texture, width, height, pixelFormat);
+	return new SDLVideo(renderer, texture, width, height, pixelFormat);
 }
 
-SDL::SDL(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned /*pixelFormat*/)
-: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height) {/* Ignore key up events, they don't even get filtered */
-	SDL_EventState(SDL_KEYUP, SDL_IGNORE);
+SDLVideo::SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned /*pixelFormat*/)
+: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height) {
+	SDL_EventState(SDL_KEYUP, SDL_IGNORE); //ignore key up events, they don't even get filtered
 
 	displayrect->x = 0;
 	displayrect->y = 0;
@@ -46,11 +48,11 @@ SDL::SDL(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, un
 	displayrect->h = height;
 }
 
-SDL::~SDL() {
+SDLVideo::~SDLVideo() {
 	SDL_DestroyRenderer(renderer);
 }
 
-bool SDL::process(std::shared_ptr<Data> data) {
+bool SDLVideo::process(std::shared_ptr<Data> data) {
 	/* Loop, waiting for QUIT or RESIZE */
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -77,12 +79,6 @@ bool SDL::process(std::shared_ptr<Data> data) {
 		}
 	}
 
-#if 0
-	SDL_UpdateTexture(texture, NULL, data->data(), width*SDL_BYTESPERPIXEL(pixelFormat));
-	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
-	SDL_RenderPresent(renderer);
-#endif
 	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
 	SDL_RenderPresent(renderer);
@@ -90,11 +86,11 @@ bool SDL::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool SDL::handles(const std::string &url) {
-	return SDL::canHandle(url);
+bool SDLVideo::handles(const std::string &url) {
+	return SDLVideo::canHandle(url);
 }
 
-bool SDL::canHandle(const std::string &/*url*/) {
+bool SDLVideo::canHandle(const std::string &/*url*/) {
 	return true;
 }
 

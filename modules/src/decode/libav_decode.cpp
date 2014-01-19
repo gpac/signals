@@ -89,7 +89,33 @@ LibavDecode::~LibavDecode() {
 }
 
 bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
-	//TODO
+	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
+	if (!decoderData) {
+		return false;
+	}
+	AVPacket *pkt = decoderData->getPacket();
+	int gotFrame;
+	if (avcodec_decode_audio4(codecCtx, avFrame, &gotFrame, pkt) < 0) {
+		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
+		return true;
+	}
+	if (gotFrame) {
+		std::shared_ptr<Data> out(new Data(avFrame->linesize[0]));
+		memcpy(out.get()->data(), avFrame->data[0], avFrame->linesize[0]);
+#if 0 //Romain TODO
+		if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
+			for (int i = 0; i < numPlanes; ++i) {
+				memcpy(out.get()->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
+			}
+		} else {
+			assert(0);
+			memcpy(out.get()->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
+			return false;
+		}
+#endif
+		signals[0]->emit(out);
+	}
+
 	return true;
 }
 
@@ -101,7 +127,7 @@ bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame, &gotPicture, pkt) < 0) {
-		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding.");
+		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return true;
 	}
 	if (gotPicture) {

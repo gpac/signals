@@ -9,7 +9,8 @@ MODULES_SRCS:=\
   $(ProjectName)/src/mux/libav_mux.cpp\
   $(ProjectName)/src/out/null.cpp\
   $(ProjectName)/src/out/print.cpp\
-  $(ProjectName)/src/render/sdl.cpp\
+  $(ProjectName)/src/render/sdl_audio.cpp\
+  $(ProjectName)/src/render/sdl_video.cpp\
 
 MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
 

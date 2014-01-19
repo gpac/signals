@@ -46,7 +46,7 @@ namespace {
 		//create the encoder
 		props = mux->signals[0]->props.get();
 		PropsMuxer *muxerProps = dynamic_cast<PropsMuxer*>(props);
-		std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(*muxerProps));
+		std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(*muxerProps, Encode::LibavEncode::Video));
 		ASSERT(encode != nullptr);
 
 		Connect(demux.get()->signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
