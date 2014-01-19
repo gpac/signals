@@ -5,9 +5,6 @@ namespace Signals {
 
 /* member function helper */
 
-#define CONNECT(ObjectSig, MemberFunctionSig, ObjectSlot, MemberFunctionSlot) \
-	(ObjectSig)->MemberFunctionSig.connect(MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot))
-
 template<typename Result, typename Class, typename MemberFunction>
 class MemberFunctor {
 public:
@@ -28,6 +25,13 @@ template<typename Result, typename Class, typename... Args>
 MemberFunctor<Result, Class, Result (Class::*)(Args...)>
 MEMBER_FUNCTOR(Class* ObjectPtr, Result (Class::*MemberFunction) (Args...)) {
 	return MemberFunctor<Result, Class, Result (Class::*)(Args...)>(ObjectPtr, MemberFunction);
+}
+
+template<typename B, typename C, typename D>
+void Connect(B& Sig, C ObjectSlot, D MemberFunctionSlot)
+{
+  auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+	Sig.connect(functor);
 }
 
 template<typename T>

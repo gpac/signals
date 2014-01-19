@@ -13,7 +13,7 @@ unittest("Pull2Push sub module: print packets size from file: File -> Out::Print
 	std::unique_ptr<MM::Module> m(MM::Module::create(p2p, f));
 	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 
-	CONNECT(m.get(), signals[0]->signal, p.get(), &Out::Print::process);
+	Connect(m->signals[0]->signal, p.get(), &Out::Print::process);
 
 	bool res = m->process();
 	ASSERT(res);

@@ -12,7 +12,7 @@ unittest("demux one track: Demux::GPAC_MP4_Simple -> Out::Print")
 	std::unique_ptr<Demux::GPAC_MP4_Simple> mp4Demux(Demux::GPAC_MP4_Simple::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 
-	CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Out::Print::process);
+	Connect(mp4Demux->signals[0]->signal, p.get(), &Out::Print::process);
 
 	while (mp4Demux->process(nullptr)) {
 	}
@@ -25,8 +25,8 @@ unittest("demux one track: File -> Demux::GPAC_MP4_Full -> Out::Print")
 	std::unique_ptr<Demux::GPAC_MP4_Full> mp4Demux(Demux::GPAC_MP4_Full::create());
 	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 
-	CONNECT(f.get(), signals[0]->signal, mp4Demux.get(), &Demux::GPAC_MP4_Full::process);
-	CONNECT(mp4Demux.get(), signals[0]->signal, p.get(), &Out::Print::process);
+	Connect(f->signals[0]->signal, mp4Demux.get(), &Demux::GPAC_MP4_Full::process);
+	Connect(mp4Demux->signals[0]->signal, p.get(), &Out::Print::process);
 
 	f->push();
 
