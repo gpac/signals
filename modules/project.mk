@@ -11,6 +11,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/out/print.cpp\
   $(ProjectName)/src/render/sdl_audio.cpp\
   $(ProjectName)/src/render/sdl_video.cpp\
+  $(ProjectName)/src/transform/audio_convert.cpp\
 
 MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
 

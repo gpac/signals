@@ -19,5 +19,6 @@
 #include "src/out/print.hpp"
 #include "src/render/sdl_audio.hpp"
 #include "src/render/sdl_video.hpp"
+#include "src/transform/audio_convert.hpp"
 
 #endif

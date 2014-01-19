@@ -39,6 +39,7 @@
     <ClInclude Include="src\out\print.hpp" />
     <ClInclude Include="src\render\sdl_audio.hpp" />
     <ClInclude Include="src\render\sdl_video.hpp" />
+    <ClInclude Include="src\transform\audio_convert.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\common\libav.cpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="src\out\print.cpp" />
     <ClCompile Include="src\render\sdl_audio.cpp" />
     <ClCompile Include="src\render\sdl_video.cpp" />
+    <ClCompile Include="src\transform\audio_convert.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\utils\utils.vcxproj">
