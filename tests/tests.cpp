@@ -32,6 +32,7 @@ void RunAll() {
 }
 
 int main(int argc, char **argv) {
+	std::cout << "Romain\n" << std::endl;
 	Tests::Util::Profiler p("TESTS TOTAL TIME");
 	Tests::RunAll();
 	return 0;
