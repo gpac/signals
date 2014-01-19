@@ -29,14 +29,14 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 		break;
 	default:
 		Log::msg(Log::Warning, "Module LibavDecode: codec_type not supported. Must be audio or video.");
-		return NULL;
+		throw std::runtime_error("Unknown decoder type. Failed.");
 	}
 
 	//find an appropriate decoder
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec) {
 		Log::msg(Log::Warning, "Module LibavDecode: Codec not found");
-		return NULL;
+		throw std::runtime_error("Decoder not found.");
 	}
 
 	//TODO: test: force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
@@ -46,7 +46,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	//open the codec
 	if (avcodec_open2(codecCtx, codec, &th_opt) < 0) {
 		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
-		return NULL;
+		throw std::runtime_error("Couldn't open stream.");
 	}
 
 	switch (codecCtx->codec_type) {
@@ -55,21 +55,21 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 		if ((codecCtx->pix_fmt != PIX_FMT_YUV420P) && (codecCtx->pix_fmt != PIX_FMT_YUVJ420P)) {
 			const char *codecName = codecCtx->codec_name ? codecCtx->codec_name : "[unknown]";
 			Log::msg(Log::Warning, "Module LibavDecode: Unsupported colorspace for codec \"%s\". Only planar YUV 4:2:0 is supported.", codecName);
-			return NULL;
+			throw std::runtime_error("unsupported colorspace.");
 		}
 		break;
 	case AVMEDIA_TYPE_AUDIO:
 		break;
 	default:
 		assert(0);
-		return NULL;
+		throw std::runtime_error("Unknown decoder type. Failed.");
 	}
 
 	auto avFrame = avcodec_alloc_frame();
 	if (!avFrame) {
 		Log::msg(Log::Warning, "Module LibavDecode: Can't allocate frame");
 		avcodec_close(codecCtx);
-		return NULL;
+		throw std::runtime_error("Frame allocation failed.");
 	}
 
 	av_dict_free(&th_opt);

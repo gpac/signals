@@ -24,20 +24,20 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 	struct AVFormatContext *formatCtx = NULL;
 	if (!(formatCtx = avformat_alloc_context())) {
 		Log::msg(Log::Warning, "Module LibavDemux: Can't allocate format context");
-		return NULL;
+		throw std::runtime_error("Format Context allocation failed.");
 	}
 
 	if (avformat_open_input(&formatCtx, url.c_str(), NULL, NULL))  {
 		Log::msg(Log::Warning, "Module LibavDemux: Error when initializing the format context");
 		avformat_close_input(&formatCtx);
-		return NULL;
+		throw std::runtime_error("Format Context init failed.");
 	}
 
 	//if you don't call you may miss the first frames
 	if (avformat_find_stream_info(formatCtx, NULL) < 0) {
 		Log::msg(Log::Warning, "Module LibavDemux: Couldn't get additional video stream info");
 		avformat_close_input(&formatCtx);
-		return NULL;
+		throw std::runtime_error("Couldn't find stream info.");
 	}
 
 	std::vector<Pin<>*> signals;

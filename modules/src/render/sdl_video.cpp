@@ -8,7 +8,7 @@ namespace Render {
 SDLVideo* SDLVideo::create() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
-		return nullptr;
+		throw std::runtime_error("Init failed");
 	}
 
 	const int width = 1280; //FIXME hardcoded
@@ -16,14 +16,14 @@ SDLVideo* SDLVideo::create() {
 	SDL_Window *window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
-		return nullptr;
+		throw std::runtime_error("Window creation failed");
 	}
 
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create renderer: %s", SDL_GetError());
 		SDL_DestroyWindow(window);
-		return nullptr;
+		throw std::runtime_error("Renderer creation failed");
 	}
 
 	Uint32 pixelFormat = SDL_PIXELFORMAT_IYUV; //FIXME hardcoded
@@ -32,7 +32,7 @@ SDLVideo* SDLVideo::create() {
 	if (!texture) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
 		SDL_DestroyRenderer(renderer);
-		return nullptr;
+		throw std::runtime_error("Texture creation failed");
 	}
 
 	return new SDLVideo(renderer, texture, width, height, pixelFormat);

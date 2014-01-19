@@ -14,7 +14,7 @@ std::vector<uint8_t> SDLAudio::audioData;
 SDLAudio* SDLAudio::create() {
 	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't initialize: %s", SDL_GetError());
-		return nullptr;
+		throw std::runtime_error("Init failed");
 	}
 	
 	SDL_AudioSpec audioSpec;
@@ -26,7 +26,7 @@ SDLAudio* SDLAudio::create() {
 	audioSpec.userdata = NULL;
 	if (SDL_OpenAudio(&audioSpec, NULL) < 0) {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't open audio: %s", SDL_GetError());
-		return nullptr;
+		throw std::runtime_error("Audio output creation failed");
 	}
 
 	return new SDLAudio();
