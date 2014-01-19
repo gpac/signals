@@ -50,10 +50,12 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
 		generalOptions = "-vcodec mpeg2video -r 25 -pass 1"; //TODO
-		codecType = "video";
+		codecType = "vcodec";
 		break;
 	case Audio:
-		codecType = "audio";
+		codecOptions = "-b 192000"; //TODO
+		generalOptions = "-acodec libvo_aacenc"; //TODO
+		codecType = "acodec";
 		break;
 	default:
 		return nullptr;
@@ -129,6 +131,10 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 		break;
 	case Audio:
 		codecType = "audio";
+		avStream->codec->sample_fmt = AV_SAMPLE_FMT_S16;
+		avStream->codec->sample_rate = 44100;
+		avStream->codec->channels = 2;
+		avStream->codec->channel_layout = AV_CH_LAYOUT_STEREO;
 		break;
 	default:
 		return nullptr;
@@ -183,9 +189,22 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 		avcodec_close(avStream->codec);
 		return NULL;
 	}
-	avFrame->linesize[0] = linesize[0];
-	avFrame->linesize[1] = linesize[1];
-	avFrame->linesize[2] = linesize[2];
+
+	/* AVFrame parameters */
+	switch (type) {
+	case Video:
+		avFrame->linesize[0] = linesize[0];
+		avFrame->linesize[1] = linesize[1];
+		avFrame->linesize[2] = linesize[2];
+		break;
+	case Audio:
+		avFrame->sample_rate = avStream->codec->sample_rate;
+		avFrame->nb_samples = avStream->codec->frame_size;
+		avFrame->channel_layout = avStream->codec->channel_layout;
+		break;
+	default:
+		return nullptr;
+	}
 
 	return new LibavEncode(avStream, avFrame);
 }
@@ -211,11 +230,10 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	AVPacket *pkt = out->getPacket();
 
 	avFrame->data[0] = (uint8_t*)data->data();
-	avFrame->data[1] = avFrame->data[0] + avStream->codec->width * avStream->codec->height;
-	avFrame->data[2] = avFrame->data[1] + (avStream->codec->width / 2) * (avStream->codec->height / 2);
+	avFrame->linesize[0] = (int)data->size();
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_video2(avStream->codec, pkt, avFrame, &gotPkt)) {
+	if (avcodec_encode_audio2(avStream->codec, pkt, avFrame, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
 		return false;
 	} else {
