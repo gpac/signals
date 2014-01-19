@@ -58,8 +58,8 @@ bool SDL::process(std::shared_ptr<Data> data) {
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				SDL_RenderSetViewport(renderer, NULL);
-				displayrect->w = width  = event.window.data1;
-				displayrect->h = height = event.window.data2;
+			//displayrect->w = width  = event.window.data1;
+			//displayrect->h = height = event.window.data2;
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
