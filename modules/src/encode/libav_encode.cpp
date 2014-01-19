@@ -229,8 +229,11 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
 	AVPacket *pkt = out->getPacket();
 
+	//FIXME: audio are only 2 planes right now...
 	avFrame->data[0] = (uint8_t*)data->data();
-	avFrame->linesize[0] = (int)data->size();
+	avFrame->data[1] = (uint8_t*)data->data() + data->size() / 2;
+	avFrame->linesize[0] = (int)data->size() / 2;
+	avFrame->linesize[1] = (int)data->size() / 2;
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
 	if (avcodec_encode_audio2(avStream->codec, pkt, avFrame, &gotPkt)) {
@@ -238,6 +241,7 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 		return false;
 	} else {
 		if (gotPkt) {
+			pkt->pts = pkt->dts = avFrame->pts * pkt->duration;
 			assert(pkt->size);
 			signals[0]->emit(out);
 		}

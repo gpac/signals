@@ -34,6 +34,9 @@
     <Filter Include="src\mux">
       <UniqueIdentifier>{3de33cfa-90b5-4be0-ba73-dc2b10db1970}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\transform">
+      <UniqueIdentifier>{ae8eabc9-587b-4dbf-868c-b02d323ccdfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
@@ -96,6 +99,9 @@
     <ClInclude Include="src\render\sdl_video.hpp">
       <Filter>src\render</Filter>
     </ClInclude>
+    <ClInclude Include="src\transform\audio_convert.hpp">
+      <Filter>src\transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
@@ -133,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="src\render\sdl_video.cpp">
       <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\transform\audio_convert.cpp">
+      <Filter>src\transform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

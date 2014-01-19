@@ -100,19 +100,18 @@ bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 		return true;
 	}
 	if (gotFrame) {
-		std::shared_ptr<Data> out(new Data(avFrame->linesize[0]));
-		memcpy(out.get()->data(), avFrame->data[0], avFrame->linesize[0]);
-#if 0 //Romain TODO
+		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+		std::shared_ptr<Data> out(new Data(bufferSize));
 		if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
-			for (int i = 0; i < numPlanes; ++i) {
-				memcpy(out.get()->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
+			size_t index = 0;
+			for (int i = 0; i < codecCtx->channels; ++i) {
+				const int channelSize = av_samples_get_buffer_size(nullptr, 1, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+				memcpy(out->data() + index, avFrame->data[i], channelSize);
+				index += channelSize;
 			}
 		} else {
-			assert(0);
-			memcpy(out.get()->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
-			return false;
+			memcpy(out->data(), avFrame->data[0], bufferSize);
 		}
-#endif
 		signals[0]->emit(out);
 	}
 
@@ -135,13 +134,13 @@ bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 		std::shared_ptr<Data> out(new Data(frameSize));
 		//TODO: YUV specific + wrap the avFrame output size
 		for (int h = 0; h < codecCtx->height; ++h) {
-			memcpy(out.get()->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
+			memcpy(out->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
 		}
-		uint8_t *UPlane = out.get()->data() + codecCtx->width * codecCtx->height;
+		uint8_t *UPlane = out->data() + codecCtx->width * codecCtx->height;
 		for (int h = 0; h < codecCtx->height / 2; ++h) {
 			memcpy((void*)(UPlane + h*codecCtx->width / 2), avFrame->data[1] + h*avFrame->linesize[1], codecCtx->width / 2);
 		}
-		uint8_t *VPlane = out.get()->data() + (codecCtx->width * codecCtx->height * 5) / 4;
+		uint8_t *VPlane = out->data() + (codecCtx->width * codecCtx->height * 5) / 4;
 		for (int h = 0; h < codecCtx->height / 2; ++h) {
 			memcpy((void*)(VPlane + h*codecCtx->width / 2), avFrame->data[2] + h*avFrame->linesize[2], codecCtx->width / 2);
 		}
