@@ -1,6 +1,7 @@
 #include "libav.hpp"
 #include "../utils/log.hpp"
 #include <cassert>
+#include <string.h>
 
 extern "C" {
 	#include <libavcodec/avcodec.h>
