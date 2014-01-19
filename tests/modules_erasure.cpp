@@ -26,8 +26,8 @@ namespace {
 			std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 			ASSERT(p != nullptr);
 
-			CONNECT(demux.get(), signals[i]->signal, decode.get(), &Decode::Libavcodec_55::process);
-			CONNECT(decode.get(), signals[0]->signal, p.get(), &Out::Print::process);
+			Connect(demux->signals[i]->signal, decode.get(), &Decode::Libavcodec_55::process);
+			Connect(decode->signals[0]->signal, p.get(), &Out::Print::process);
 
 			decoders.push_back(std::move(decode));
 			printers.push_back(std::move(p));
@@ -58,7 +58,7 @@ namespace {
 				videoIndex = i;
 			} else {
 				//FIXME: we have to set Print output to avoid asserts. Should be remove once the framework is more tested.
-				CONNECT(demux.get(), signals[i]->signal, null.get(), &Out::Null::process);
+				Connect(demux->signals[i]->signal, null.get(), &Out::Null::process);
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -70,8 +70,8 @@ namespace {
 		std::unique_ptr<Render::SDL> render(Render::SDL::create());
 		ASSERT(render != nullptr);
 
-		CONNECT(demux.get(), signals[videoIndex]->signal, decode.get(), &Decode::Libavcodec_55::process);
-		CONNECT(decode.get(), signals[0]->signal, render.get(), &Render::SDL::process);
+		Connect(demux->signals[videoIndex]->signal, decode.get(), &Decode::Libavcodec_55::process);
+		Connect(decode->signals[0]->signal, render.get(), &Render::SDL::process);
 
 		while (demux->process(nullptr)) {
 		}

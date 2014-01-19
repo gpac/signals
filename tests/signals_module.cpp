@@ -24,11 +24,11 @@ unittest("basic module connection tests") {
 	Slot receiver;
 	Slot &receiverRef = receiver;
 	Slot *receiverPtr = &receiver;
-	CONNECT(&sender, signal, &receiver, &Slot::slot);
-	CONNECT(&senderRef, signal, &receiver, &Slot::slot);
-	CONNECT(senderPtr, signal, &receiver, &Slot::slot);
-	CONNECT(senderPtr, signal, &receiverRef, &Slot::slot);
-	CONNECT(senderPtr, signal, receiverPtr, &Slot::slot);
+	Connect(sender.signal, &receiver, &Slot::slot);
+	Connect(senderRef.signal, &receiver, &Slot::slot);
+	Connect(senderPtr->signal, &receiver, &Slot::slot);
+	Connect(senderPtr->signal, &receiverRef, &Slot::slot);
+	Connect(senderPtr->signal, receiverPtr, &Slot::slot);
 
 	sender.signal.emit(100);
 	auto res = sender.signal.results();

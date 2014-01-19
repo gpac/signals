@@ -45,7 +45,7 @@ unittest("print packets size from file: File -> Out::Print") {
 	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 	ASSERT(p != nullptr);
 
-	CONNECT(f.get(), signals[0]->signal, p.get(), &Out::Print::process);
+	Connect(f->signals[0]->signal, p.get(), &Out::Print::process);
 	f->push();
 
 	f->destroy();
