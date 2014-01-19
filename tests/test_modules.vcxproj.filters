@@ -12,6 +12,12 @@
     <ClCompile Include="modules_erasure.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="modules_player.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="modules_transcoder.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tests">
