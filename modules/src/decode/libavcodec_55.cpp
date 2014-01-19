@@ -1,3 +1,4 @@
+#define __STDC_CONSTANT_MACROS
 #include "libavcodec_55.hpp"
 #include "../utils/log.hpp"
 #include <cassert>
