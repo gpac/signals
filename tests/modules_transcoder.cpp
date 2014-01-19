@@ -28,7 +28,7 @@ namespace {
 				videoIndex = i;
 			} else {
 				//FIXME: we have to set Print output to avoid asserts. Should be remove once the framework is more tested.
-				CONNECT(demux.get(), signals[i]->signal, null.get(), &Out::Null::process);
+				Connect(demux->signals[i]->signal, null.get(), &Out::Null::process);
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -49,9 +49,9 @@ namespace {
 		std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(*muxerProps));
 		ASSERT(encode != nullptr);
 
-		CONNECT(demux.get(), signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
-		CONNECT(decode.get(), signals[0]->signal, encode.get(), &Encode::LibavEncode::process);
-		CONNECT(encode.get(), signals[0]->signal, mux.get(), &Mux::LibavMux::process);
+		Connect(demux.get()->signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
+		Connect(decode.get()->signals[0]->signal, encode.get(), &Encode::LibavEncode::process);
+		Connect(encode.get()->signals[0]->signal, mux.get(), &Mux::LibavMux::process);
 
 		while (demux->process(nullptr)) {
 		}
