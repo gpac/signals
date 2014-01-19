@@ -1,5 +1,5 @@
 #define __STDC_CONSTANT_MACROS
-#include "libavformat_55.hpp"
+#include "libav_demux.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include "../common/libav.hpp"
@@ -19,25 +19,25 @@ auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 
 namespace Demux {
 
-Libavformat_55* Libavformat_55::create(const std::string &url) {
+LibavDemux* LibavDemux::create(const std::string &url) {
 	struct AVFormatContext *formatCtx = NULL;
 
 	//TODO: custom log: av_log_set_callback(avlog);
 
 	if (!(formatCtx = avformat_alloc_context())) {
-		Log::msg(Log::Warning, "Module Libavformat_55: Can't allocate format context");
+		Log::msg(Log::Warning, "Module LibavDemux: Can't allocate format context");
 		return NULL;
 	}
 
 	if (avformat_open_input(&formatCtx, url.c_str(), NULL, NULL))  {
-		Log::msg(Log::Warning, "Module Libavformat_55: Error when initializing the format context");
+		Log::msg(Log::Warning, "Module LibavDemux: Error when initializing the format context");
 		avformat_close_input(&formatCtx);
 		return NULL;
 	}
 
 	//if you don't call you may miss the first frames
 	if (avformat_find_stream_info(formatCtx, NULL) < 0) {
-		Log::msg(Log::Warning, "Module Libavformat_55: Couldn't get additional video stream info");
+		Log::msg(Log::Warning, "Module LibavDemux: Couldn't get additional video stream info");
 		avformat_close_input(&formatCtx);
 		return NULL;
 	}
@@ -47,24 +47,24 @@ Libavformat_55* Libavformat_55::create(const std::string &url) {
 		signals.push_back(new Pin<>(new PropsDecoder(formatCtx->streams[i]->codec)));
 	}
 
-	return new Libavformat_55(formatCtx, signals);
+	return new LibavDemux(formatCtx, signals);
 }
 
-Libavformat_55::Libavformat_55(struct AVFormatContext *formatCtx, std::vector<Pin<>*> signals)
+LibavDemux::LibavDemux(struct AVFormatContext *formatCtx, std::vector<Pin<>*> signals)
 : formatCtx(formatCtx) {
 	for (size_t i = 0; i < signals.size(); ++i) {
 		this->signals.push_back(signals[i]);
 	}
 }
 
-Libavformat_55::~Libavformat_55() {
+LibavDemux::~LibavDemux() {
 	for (unsigned i = 0; i < formatCtx->nb_streams; i++) {
 		delete signals[i];
 	}
 	avformat_close_input(&formatCtx);
 }
 
-bool Libavformat_55::process(std::shared_ptr<Data> data) {
+bool LibavDemux::process(std::shared_ptr<Data> data) {
 	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
 	AVPacket *pkt = out->getPacket();
 	int status = av_read_frame(formatCtx, pkt);
@@ -79,11 +79,11 @@ bool Libavformat_55::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool Libavformat_55::handles(const std::string &url) {
-	return Libavformat_55::canHandle(url);
+bool LibavDemux::handles(const std::string &url) {
+	return LibavDemux::canHandle(url);
 }
 
-bool Libavformat_55::canHandle(const std::string &url) {
+bool LibavDemux::canHandle(const std::string &url) {
 	//FIXME: only works for files
 	AVProbeData pd;
 	const size_t size = 1024;
@@ -92,7 +92,7 @@ bool Libavformat_55::canHandle(const std::string &url) {
 
 	FILE *f = fopen(url.c_str(), "rb");
 	if (!f) {
-		Log::msg(Log::Info, "[Libavformat_55] Couldn't open file %s for probing. Aborting.", url.c_str());
+		Log::msg(Log::Info, "[LibavDemux] Couldn't open file %s for probing. Aborting.", url.c_str());
 		delete[] pd.buf;
 		return false;
 	}
@@ -100,7 +100,7 @@ bool Libavformat_55::canHandle(const std::string &url) {
 	pd.buf_size = (int)bytesRead;
 	fclose(f);
 	if (bytesRead < size) {
-		Log::msg(Log::Warning, "[Libavformat_55] Could only read %lu bytes (instead of %lu) for probing format.", (unsigned long)bytesRead, (unsigned long)size);
+		Log::msg(Log::Warning, "[LibavDemux] Could only read %lu bytes (instead of %lu) for probing format.", (unsigned long)bytesRead, (unsigned long)size);
 	}
 	memset(pd.buf + bytesRead, 0, AVPROBE_PADDING_SIZE);
 

@@ -10,7 +10,7 @@ using namespace Modules;
 namespace {
 
 	unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
-		std::unique_ptr<Demux::Libavformat_55> demux(Demux::Libavformat_55::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+		std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 		ASSERT(demux != nullptr);
 		std::unique_ptr<Out::Null> null(Out::Null::create());
 		ASSERT(null != nullptr);
@@ -30,13 +30,13 @@ namespace {
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 		Props *props = demux->signals[videoIndex]->props.get();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		std::unique_ptr<Decode::Libavcodec_55> decode(Decode::Libavcodec_55::create(*decoderProps));
+		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
 		ASSERT(decode != nullptr);
 
 		std::unique_ptr<Render::SDL> render(Render::SDL::create());
 		ASSERT(render != nullptr);
 
-		Connect(demux->signals[videoIndex]->signal, decode.get(), &Decode::Libavcodec_55::process);
+		Connect(demux->signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
 		Connect(decode->signals[0]->signal, render.get(), &Render::SDL::process);
 
 		while (demux->process(nullptr)) {

@@ -1,4 +1,4 @@
-CFLAGS := -I/usr/local/include -std=c++11 -Wall
+CFLAGS := -I/usr/local/include -std=gnu++11 -Wall
 LDFLAGS := -L/usr/local/lib -lpthread -lSDL2 -lgpac -lavcodec -lavformat -lavutil
 
 BIN=bin/make
