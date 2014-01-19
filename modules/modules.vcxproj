@@ -36,7 +36,9 @@
     <ClInclude Include="src\demux\libavformat_55.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="src\encode\libavcodec_55.hpp" />
     <ClInclude Include="src\in\file.hpp" />
+    <ClInclude Include="src\mux\libavformat_55.hpp" />
     <ClInclude Include="src\out\null.hpp" />
     <ClInclude Include="src\out\print.hpp" />
     <ClInclude Include="src\render\sdl.hpp" />
@@ -51,7 +53,9 @@
     <ClCompile Include="src\demux\libavformat_55.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\encode\libavcodec_55.cpp" />
     <ClCompile Include="src\in\file.cpp" />
+    <ClCompile Include="src\mux\libavformat_55.cpp" />
     <ClCompile Include="src\out\null.cpp" />
     <ClCompile Include="src\out\print.cpp" />
     <ClCompile Include="src\render\sdl.cpp" />

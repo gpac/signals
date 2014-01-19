@@ -28,6 +28,12 @@
     <Filter Include="src\render">
       <UniqueIdentifier>{314ce482-d82e-42a3-ae9c-a57026a2ebe2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\encode">
+      <UniqueIdentifier>{b775b346-d3d6-4233-a42d-4d3ce6b3e5e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\mux">
+      <UniqueIdentifier>{3de33cfa-90b5-4be0-ba73-dc2b10db1970}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
@@ -81,6 +87,12 @@
     <ClInclude Include="src\out\null.hpp">
       <Filter>src\out</Filter>
     </ClInclude>
+    <ClInclude Include="src\encode\libavcodec_55.hpp">
+      <Filter>src\encode</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mux\libavformat_55.hpp">
+      <Filter>src\mux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
@@ -109,6 +121,12 @@
     </ClCompile>
     <ClCompile Include="src\out\null.cpp">
       <Filter>src\out</Filter>
+    </ClCompile>
+    <ClCompile Include="src\encode\libavcodec_55.cpp">
+      <Filter>src\encode</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mux\libavformat_55.cpp">
+      <Filter>src\mux</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

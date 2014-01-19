@@ -66,8 +66,8 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 		return NULL;
 	}
 
-	auto frame = avcodec_alloc_frame();
-	if (!frame) {
+	auto avFrame = avcodec_alloc_frame();
+	if (!avFrame) {
 		Log::msg(Log::Warning, "Module Libavcodec_55: Can't allocate frame");
 		avcodec_close(codecCtx);
 		return NULL;
@@ -75,16 +75,16 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 
 	av_dict_free(&th_opt);
 
-	return new Libavcodec_55(codecCtx, frame);
+	return new Libavcodec_55(codecCtx, avFrame);
 }
 
-Libavcodec_55::Libavcodec_55(AVCodecContext *codecCtx, AVFrame *frame)
-: codecCtx(codecCtx), frame(frame) {
+Libavcodec_55::Libavcodec_55(AVCodecContext *codecCtx, AVFrame *avFrame)
+: codecCtx(codecCtx), avFrame(avFrame) {
 	signals.push_back(new Pin<>());
 }
 
 Libavcodec_55::~Libavcodec_55() {
-	av_free(frame);
+	av_free(avFrame);
 	avcodec_close(codecCtx);
 	delete signals[0];
 }
@@ -95,30 +95,30 @@ bool Libavcodec_55::processAudio(std::shared_ptr<Data> data) {
 }
 
 bool Libavcodec_55::processVideo(std::shared_ptr<Data> data) {
-	DataDecoder *decoderData = dynamic_cast<DataDecoder*>(data.get());
+	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
 		return false;
 	}
 	AVPacket *pkt = decoderData->getPacket();
-	int got_picture;
-	if (avcodec_decode_video2(codecCtx, frame, &got_picture, pkt) < 0) {
+	int gotPicture;
+	if (avcodec_decode_video2(codecCtx, avFrame, &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[Libavcodec_55] Error encoutered while decoding.");
 		return true;
 	}
-	if (got_picture) {
+	if (gotPicture) {
 		const int frameSize = (codecCtx->width * codecCtx->height * 3) / 2;
 		std::shared_ptr<Data> out(new Data(frameSize));
-		//TODO: YUV specific + wrap the frame output size
+		//TODO: YUV specific + wrap the avFrame output size
 		for (int h = 0; h < codecCtx->height; ++h) {
-			memcpy(out.get()->data() + h*codecCtx->width, frame->data[0] + h*frame->linesize[0], codecCtx->width);
+			memcpy(out.get()->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
 		}
 		uint8_t *UPlane = out.get()->data() + codecCtx->width * codecCtx->height;
 		for (int h = 0; h < codecCtx->height / 2; ++h) {
-			memcpy((void*)(UPlane + h*codecCtx->width / 2), frame->data[1] + h*frame->linesize[1], codecCtx->width / 2);
+			memcpy((void*)(UPlane + h*codecCtx->width / 2), avFrame->data[1] + h*avFrame->linesize[1], codecCtx->width / 2);
 		}
 		uint8_t *VPlane = out.get()->data() + (codecCtx->width * codecCtx->height * 5) / 4;
 		for (int h = 0; h < codecCtx->height / 2; ++h) {
-			memcpy((void*)(VPlane + h*codecCtx->width / 2), frame->data[2] + h*frame->linesize[2], codecCtx->width / 2);
+			memcpy((void*)(VPlane + h*codecCtx->width / 2), avFrame->data[2] + h*avFrame->linesize[2], codecCtx->width / 2);
 		}
 		signals[0]->emit(out);
 	}

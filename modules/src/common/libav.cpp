@@ -1,4 +1,5 @@
 #include "libav.hpp"
+#include "../utils/log.hpp"
 #include <cassert>
 
 extern "C" {
@@ -7,32 +8,45 @@ extern "C" {
 
 namespace Modules {
 
-DataDecoder::DataDecoder()
+DataAVPacket::DataAVPacket()
 	: Data(0) {
 	pkt = new AVPacket;
 	av_init_packet(pkt);
 	av_free_packet(pkt);
 }
 
-DataDecoder::~DataDecoder() {
+DataAVPacket::~DataAVPacket() {
 	av_free_packet(pkt);
 	delete pkt;
 }
 
-uint8_t* DataDecoder::data() {
+uint8_t* DataAVPacket::data() {
 	return pkt->data;
 }
 
-uint64_t DataDecoder::size() const {
+uint64_t DataAVPacket::size() const {
 	return pkt->size;
 }
 
-AVPacket* DataDecoder::getPacket() const {
+AVPacket* DataAVPacket::getPacket() const {
 	return pkt;
 }
 
-void DataDecoder::resize(size_t size) {
+void DataAVPacket::resize(size_t size) {
 	assert(0);
+}
+
+void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
+	char* opt = strdup(options);
+	char *tok = strtok(opt, "- ");
+	char *tokval = NULL;
+	while (tok && (tokval = strtok(NULL, "- "))) {
+		if (av_dict_set(dict, tok, tokval, 0) < 0) { //Romain: replace ffmpeg by module name
+			Log::msg(Log::Warning, "[%s] unknown %s option \"%s\" with value \"%s\"", moduleName.c_str(), type, tok, tokval);
+		}
+		tok = strtok(NULL, "- ");
+	}
+	free(opt);
 }
 
 }
