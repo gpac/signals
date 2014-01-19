@@ -59,7 +59,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 		codecType = "acodec";
 		break;
 	default:
-		return nullptr;
+		throw std::runtime_error("Unknown encoder type. Failed.");
 	}
 
 	/* parse the codec optionsDict */
@@ -77,7 +77,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 		Log::msg(Log::Warning, "[libav_encode] codec not found, disable output.");
 		av_dict_free(&generalDict);
 		av_dict_free(&codecDict);
-		return NULL;
+		throw std::runtime_error("Codec not found.");
 	}
 
 	AVStream *avStream;
@@ -88,7 +88,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 			Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
 			av_dict_free(&generalDict);
 			av_dict_free(&codecDict);
-			return NULL;
+			throw std::runtime_error("Stream creation failed.");
 		}
 		if (formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
 			avStream->codec->flags |= CODEC_FLAG_GLOBAL_HEADER; //write the stream header, if any
@@ -168,7 +168,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 	if (avcodec_open2(avStream->codec, codec, &codecDict) < 0) {
 		Log::msg(Log::Warning, "[libav_encode] could not open codec, disable output.");
 		av_dict_free(&codecDict);
-		return NULL;
+		throw std::runtime_error("Codec creation failed.");
 	}
 
 	/* check all optionsDict have been consumed */
@@ -188,7 +188,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 	if (!avFrame) {
 		Log::msg(Log::Warning, "[libav_encode] could not create the AVFrame, disable output.");
 		avcodec_close(avStream->codec);
-		return NULL;
+		throw std::runtime_error("Frame allocation failed.");
 	}
 
 	/* AVFrame parameters */

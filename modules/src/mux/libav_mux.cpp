@@ -33,7 +33,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	if (!of) {
 		Log::msg(Log::Warning, "[libav_mux] couldn't guess container from file extension");
 		av_dict_free(&optionsDict);
-		return NULL;
+		throw std::runtime_error("Container format guess failed");
 	}
 	av_dict_free(&optionsDict);
 
@@ -41,7 +41,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	formatCtx = avformat_alloc_context();
 	if (!formatCtx) {
 		Log::msg(Log::Warning, "[libav_mux] format context couldn't be allocated.");
-		return NULL;
+		throw std::runtime_error("Format Context allocation failed");
 	}
 	formatCtx->oformat = of;
 
@@ -57,7 +57,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 		if (avio_open(&formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
 			Log::msg(Log::Warning, "[libav_mux] could not open %s, disable output.", baseName);
 			avformat_free_context(formatCtx);
-			return NULL;
+			throw std::runtime_error("Output open failed");
 		}
 		strncpy(formatCtx->filename, fileName.str().c_str(), sizeof(formatCtx->filename));
 	}
