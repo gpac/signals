@@ -1,6 +1,7 @@
 #define __STDC_CONSTANT_MACROS
 #include "libavcodec_55.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include <cassert>
 #include <string>
 
@@ -11,15 +12,16 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+namespace {
+auto g_InitAv = runAtStartup(&av_register_all);
+auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
+}
+
 namespace Decode {
 
 Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
-	struct AVCodecContext *codecCtx = props.getAVCodecContext();
-	struct AVCodec *codec = NULL;
-	struct AVFrame *frame = NULL;
+	auto codecCtx = props.getAVCodecContext();
 
-	avcodec_register_all();
-	av_register_all();
 	//TODO: custom log: av_log_set_callback(avlog);
 
 	switch (codecCtx->codec_type) {
@@ -32,7 +34,7 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 	}
 
 	//find an appropriate decoder
-	codec = avcodec_find_decoder(codecCtx->codec_id);
+	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec) {
 		Log::msg(Log::Warning, "Module Libavcodec_55: Codec not found");
 		return NULL;
@@ -64,7 +66,8 @@ Libavcodec_55* Libavcodec_55::create(const PropsDecoder &props) {
 		return NULL;
 	}
 
-	if (!(frame = avcodec_alloc_frame())) {
+	auto frame = avcodec_alloc_frame();
+	if (!frame) {
 		Log::msg(Log::Warning, "Module Libavcodec_55: Can't allocate frame");
 		avcodec_close(codecCtx);
 		return NULL;

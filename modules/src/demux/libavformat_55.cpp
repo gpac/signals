@@ -1,6 +1,7 @@
 #define __STDC_CONSTANT_MACROS
 #include "libavformat_55.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include "../common/libav.hpp"
 #include <cassert>
 #include <string>
@@ -11,13 +12,16 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+namespace {
+auto g_InitAv = runAtStartup(&av_register_all);
+auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
+}
+
 namespace Demux {
 
 Libavformat_55* Libavformat_55::create(const std::string &url) {
 	struct AVFormatContext *formatCtx = NULL;
 
-	avcodec_register_all();
-	av_register_all();
 	//TODO: custom log: av_log_set_callback(avlog);
 
 	if (!(formatCtx = avformat_alloc_context())) {
