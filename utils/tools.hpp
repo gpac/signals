@@ -13,3 +13,9 @@ DummyStruct runAtStartup(R f(Args...), Args... argVal)
 	f(argVal...);
 	return DummyStruct();
 }
+
+template<typename T>
+std::unique_ptr<T> uptr(T* p)
+{
+	return std::unique_ptr<T>(p);
+}
