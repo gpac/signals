@@ -1,3 +1,4 @@
+#define __STDC_CONSTANT_MACROS
 #include "libav_mux.hpp"
 #include "../utils/log.hpp"
 #include "../common/libav.hpp"
