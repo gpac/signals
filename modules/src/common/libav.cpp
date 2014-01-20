@@ -96,7 +96,7 @@ void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const
 }
 
 void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
-	static char buffer[1024];
+	char buffer[1024];
 	vsnprintf(buffer, sizeof(buffer)-1, fmt, vl);
 	Log::msg(avLogLevel(level), "[libav-log::%s] %s", avlogLevelName(level), buffer);
 }
