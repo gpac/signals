@@ -1,4 +1,3 @@
-#define __STDC_CONSTANT_MACROS
 #include "libav_decode.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
