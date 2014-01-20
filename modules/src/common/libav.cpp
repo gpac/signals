@@ -1,5 +1,6 @@
 #include "libav.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include <cassert>
 #include <string.h>
 
@@ -84,8 +85,8 @@ void DataAVPacket::resize(size_t /*size*/) {
 }
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
-	char* opt = strdup(options);
-	char *tok = strtok(opt, "- ");
+	auto opt = string_dup(options);
+	char *tok = strtok(opt.data(), "- ");
 	char *tokval = NULL;
 	while (tok && (tokval = strtok(NULL, "- "))) {
 		if (av_dict_set(dict, tok, tokval, 0) < 0) {
@@ -93,7 +94,6 @@ void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const
 		}
 		tok = strtok(NULL, "- ");
 	}
-	free(opt);
 }
 
 void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
