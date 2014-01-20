@@ -172,15 +172,14 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 
 	/* check all optionsDict have been consumed */
 	AVDictionaryEntry *avde = NULL;
-	char *opt = strdup(codecOptions.c_str());
-	char *tok = strtok(opt, "- ");
+	auto opt = string_dup(codecOptions.c_str());
+	char *tok = strtok(opt.data(), "- ");
 	while (tok && strtok(NULL, "- ")) {
 		if ((avde = av_dict_get(codecDict, tok, avde, 0))) {
 			Log::msg(Log::Warning, "[libav_encode] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
 		}
 		tok = strtok(NULL, "- ");
 	}
-	free(opt);
 	av_dict_free(&codecDict);
 
 	AVFrame *avFrame = avcodec_alloc_frame();

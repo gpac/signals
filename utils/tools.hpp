@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 // Runs a function at instanciation:
 // Use to initialize C libraries at program startup.
@@ -20,4 +21,11 @@ template<typename T>
 std::unique_ptr<T> uptr(T* p)
 {
 	return std::unique_ptr<T>(p);
+}
+
+inline
+std::vector<char> string_dup(const char* src)
+{
+	std::string s(src);
+	return std::vector<char>(s.begin(), s.end());
 }
