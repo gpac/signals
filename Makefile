@@ -1,5 +1,7 @@
-CFLAGS := -std=gnu++11 -Wall
+CFLAGS := -std=c++11 -Wall
 LDFLAGS := -lpthread -lSDL2 -lgpac -lavcodec -lavformat -lavutil -lz
+
+CFLAGS+=-D__STDC_CONSTANT_MACROS
 
 BIN=bin/make
 SRC=.
