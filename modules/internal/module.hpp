@@ -22,6 +22,10 @@ public:
 	virtual ~Module() {
 	}
 
+	Module() = default;
+	Module(Module const&) = delete;
+	Module const& operator=(Module const&) = delete;
+
 	virtual bool process(std::shared_ptr<Data> data) = 0;
 	virtual bool handles(const std::string &url) = 0;
 
