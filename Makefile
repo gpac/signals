@@ -12,7 +12,8 @@ ifeq ($(DEBUG), 1)
   CFLAGS += -g3
   LDFLAGS += -g
 else
-  CFLAGS += -O3 -DNDEBUG -Wno-unused-variable -Wno-deprecated-declarations
+  CFLAGS += -s -O3 -DNDEBUG -Wno-unused-variable -Wno-deprecated-declarations
+  LDFLAGS += -s
 endif
 
 CFLAGS += -I$(SRC)/signals
