@@ -1,5 +1,5 @@
-CFLAGS := -I/usr/local/include -std=gnu++11 -Wall
-LDFLAGS := -L/usr/local/lib -lpthread -lSDL2 -lgpac -lavcodec -lavformat -lavutil
+CFLAGS := -std=gnu++11 -Wall
+LDFLAGS := -lpthread -lSDL2 -lgpac -lavcodec -lavformat -lavutil -lz
 
 BIN=bin/make
 SRC=.
@@ -17,6 +17,9 @@ endif
 
 CFLAGS += -I$(SRC)/signals
 CFLAGS += -I$(SRC)/gpacpp
+
+CFLAGS += -I$(SRC)/extra/include
+LDFLAGS += -L$(SRC)/extra/lib
 
 ifeq ($(CXX),clang++)
   CFLAGS += -stdlib=libc++
@@ -55,6 +58,8 @@ debug:
 targets: $(TARGETS)
 
 unit: $(TARGETS)
+
+include extra.mak
 
 #------------------------------------------------------------------------------
 
