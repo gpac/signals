@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 // Runs a function at instanciation:
 // Use to initialize C libraries at program startup.
 // Example:
