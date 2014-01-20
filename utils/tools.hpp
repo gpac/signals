@@ -11,21 +11,18 @@ struct DummyStruct {
 };
 
 template<class R, class... Args>
-DummyStruct runAtStartup(R f(Args...), Args... argVal)
-{
+DummyStruct runAtStartup(R f(Args...), Args... argVal) {
 	f(argVal...);
 	return DummyStruct();
 }
 
 template<typename T>
-std::unique_ptr<T> uptr(T* p)
-{
+std::unique_ptr<T> uptr(T* p) {
 	return std::unique_ptr<T>(p);
 }
 
 inline
-std::vector<char> string_dup(const char* src)
-{
+std::vector<char> string_dup(const char* src) {
 	std::string s(src);
 	return std::vector<char>(s.begin(), s.end());
 }
