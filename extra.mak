@@ -20,6 +20,7 @@ extra-build-ffmpeg:
 # GPAC
 
 extra-fetch-gpac:
+	@rm -rf extra/src/gpac
 	@mkdir -p extra/src
 	svn checkout svn://svn.code.sf.net/p/gpac/code/trunk/gpac -r 4992 extra/src/gpac
 
