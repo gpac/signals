@@ -58,14 +58,13 @@ namespace Modules {
 
 DataAVPacket::DataAVPacket()
 	: Data(0) {
-	pkt = new AVPacket;
-	av_init_packet(pkt);
-	av_free_packet(pkt);
+	pkt.reset(new AVPacket);
+	av_init_packet(pkt.get());
+	av_free_packet(pkt.get());
 }
 
 DataAVPacket::~DataAVPacket() {
-	av_free_packet(pkt);
-	delete pkt;
+	av_free_packet(pkt.get());
 }
 
 uint8_t* DataAVPacket::data() {
@@ -77,7 +76,7 @@ uint64_t DataAVPacket::size() const {
 }
 
 AVPacket* DataAVPacket::getPacket() const {
-	return pkt;
+	return pkt.get();
 }
 
 void DataAVPacket::resize(size_t /*size*/) {
