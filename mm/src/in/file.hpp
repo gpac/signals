@@ -7,7 +7,7 @@
 
 namespace MM {
 
-class MM_EXPORT File : public Modules::Module {//FIXME
+class MM_EXPORT File : public Modules::Module { //FIXME: this is a duplicate of Modules::In::File
 public:
 	static File* create(std::string const& path);
 	~File();

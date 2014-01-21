@@ -19,7 +19,7 @@ public:
 		for (;;) {
 			std::shared_ptr<Data> out(signals[0]->getBuffer(0));
 			signals[0]->emit(out);
-			auto res = signals[0]->signal.results(false, true); //this code also works with async, why not use it?
+			auto res = getSignal(0).results(false, true); //this code also works with async, why not use it?
 			if (res->size() && ((*res)[0] == false)) {
 				break;
 			}

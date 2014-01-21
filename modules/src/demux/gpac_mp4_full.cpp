@@ -44,7 +44,7 @@ GPAC_MP4_Full* GPAC_MP4_Full::create() {
 
 GPAC_MP4_Full::GPAC_MP4_Full()
 	: reader(new ISOProgressiveReader) {
-	signals.push_back(new Pin<>);
+	signals.push_back(new Pin);
 }
 
 GPAC_MP4_Full::~GPAC_MP4_Full() {
