@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClInclude Include="config.hpp" />
     <ClInclude Include="log.hpp" />
+    <ClInclude Include="tools.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BBD0B4EB-5070-4ECF-B626-DA78ED6C8725}</ProjectGuid>
