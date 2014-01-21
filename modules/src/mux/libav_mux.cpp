@@ -66,7 +66,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 
 LibavMux::LibavMux(struct AVFormatContext *formatCtx)
 : formatCtx(formatCtx), headerWritten(false) {
-	signals.push_back(uptr(new Pin<>(new PropsMuxer(formatCtx)))); //FIXME: we create the pin only for the props...
+	signals.push_back(new Pin<>(new PropsMuxer(formatCtx))); //FIXME: we create the pin only for the props...
 }
 
 LibavMux::~LibavMux() {
@@ -79,6 +79,7 @@ LibavMux::~LibavMux() {
 	if (formatCtx) {
 		avformat_free_context(formatCtx);
 	}
+	delete signals[0];
 }
 
 void LibavMux::ensureHeader() {

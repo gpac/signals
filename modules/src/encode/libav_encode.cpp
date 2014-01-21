@@ -210,7 +210,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 
 LibavEncode::LibavEncode(AVStream *avStream, AVFrame *avFrame)
 : avStream(avStream), avFrame(avFrame), frameNum(-1) {
-	signals.push_back(uptr(new Pin<>()));
+	signals.push_back(new Pin<>());
 }
 
 LibavEncode::~LibavEncode() {
@@ -220,6 +220,8 @@ LibavEncode::~LibavEncode() {
 	if (avFrame) {
 		avcodec_free_frame(&avFrame);
 	}
+
+	delete signals[0];
 }
 
 bool LibavEncode::processAudio(std::shared_ptr<Data> data) {

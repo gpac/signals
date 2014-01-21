@@ -1,6 +1,5 @@
 #include "gpac_mp4_simple.hpp"
 #include "../utils/log.hpp"
-#include "../utils/tools.hpp"
 #include <string>
 
 extern "C" {
@@ -48,10 +47,11 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(std::string const& fn) {
 GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
-	signals.push_back(uptr(new Pin<>));
+	signals.push_back(new Pin<>);
 }
 
 GPAC_MP4_Simple::~GPAC_MP4_Simple() {
+	delete signals[0];
 }
 
 bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
