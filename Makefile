@@ -1,5 +1,5 @@
 CFLAGS := -std=c++11 -Wall
-LDFLAGS := -lpthread -lSDL2 -lgpac -lavcodec -lavformat -lavutil -lz
+LDFLAGS := -lpthread -lgpac -lavcodec -lavformat -lavutil -lz -L/usr/local/lib -lSDL2
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
