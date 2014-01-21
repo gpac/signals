@@ -39,8 +39,8 @@ public:
 	}
 
 	size_t emit(Args... args) {
-		result.clear();
 		std::lock_guard<std::mutex> lg(callbacksMutex);
+		result.clear();
 		for (auto &cb : callbacks) {
 			if (cb.second) {
 				cb.second->futures.push_back(caller(cb.second->callback, args...));
@@ -60,11 +60,10 @@ public:
 						result.set(f->get());
 						f = cb.second->futures.erase(f);
 						if (single) {
-							break;
+							return result.get();
 						}
 					}
 				}
-				cb.second->futures.clear();
 			}
 		}
 		return result.get();
@@ -116,11 +115,11 @@ private:
 		}
 	}
 
-	ConnectionManager callbacks;
 	std::mutex callbacksMutex;
+	ConnectionManager callbacks; //protected by callbacksMutex
+	Result result; //protected by callbacksMutex
 	std::atomic<size_t> uid; //TODO: could be non atomic and protected by callbacksMutex
 	Caller caller;
-	Result result;
 };
 
 }
