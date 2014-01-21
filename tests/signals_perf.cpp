@@ -114,7 +114,7 @@ unittest("unsafe emit dummy  on  lazy") {
 
 //dummy safe
 unittest("safe emit dummy  on async") {
-	emitTest<int(int), ResultVector<int>, CallerAsync, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueueThreadSafe<int>, CallerAsync, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on auto") {
 	emitTest<int(int), ResultQueueThreadSafe<int>, CallerAuto, int>(Util::dummy, 1789);
