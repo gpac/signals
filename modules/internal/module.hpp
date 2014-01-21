@@ -8,7 +8,6 @@
 
 namespace Modules {
 
-//TODO: separate sync and async?
 class MODULES_EXPORT IModule {
 public:
 	virtual bool process(std::shared_ptr<Data> data) = 0;
@@ -16,15 +15,11 @@ public:
 	virtual void destroy() = 0; /* required for async, otherwise we still have callback/futures on an object being destroyed */
 };
 
-//specialization
-class MODULES_EXPORT Module : public IModule {
+template<typename PinType>
+class ModuleT : public IModule {
 public:
-	virtual ~Module() {
+	virtual ~ModuleT() {
 	}
-
-	Module() = default;
-	Module(Module const&) = delete;
-	Module const& operator=(Module const&) = delete;
 
 	virtual bool process(std::shared_ptr<Data> data) = 0;
 	virtual bool handles(const std::string &url) = 0;
@@ -38,24 +33,27 @@ public:
 		}
 	}
 
-	std::vector<Pin<>*> signals; //TODO: evaluate how public this needs to be
-};
-
-class MODULES_EXPORT ModuleSync : public IModule {
-public:
-	virtual bool process(std::shared_ptr<Data> data) = 0;
-	virtual bool handles(const std::string &url) = 0;
-
-	/**
-	* Must be called before the destructor.
-	*/
-	virtual void destroy() {
-		for (auto &signal : signals) {
-			signal->destroy();
-		}
+	Pin::SignalType& getSignal(size_t i) {
+		return signals[i]->getSignal();
 	}
 
-	std::vector<PinSync*> signals; //TODO: evaluate how public this needs to be
+	size_t getNumPin() const {
+		return signals.size();
+	}
+
+	const Pin* getPin(size_t i) {
+		return signals[i];
+	}
+
+protected:
+	ModuleT() = default;
+	ModuleT(ModuleT const&) = delete;
+	ModuleT const& operator=(ModuleT const&) = delete;
+
+	std::vector<PinType*> signals;
 };
+
+typedef MODULES_EXPORT ModuleT<Pin> Module;
+typedef MODULES_EXPORT ModuleT<PinSync> ModuleSync;
 
 }

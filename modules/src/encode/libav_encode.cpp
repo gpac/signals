@@ -210,7 +210,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 
 LibavEncode::LibavEncode(AVStream *avStream, AVFrame *avFrame)
 : avStream(avStream), avFrame(avFrame), frameNum(-1) {
-	signals.push_back(new Pin<>());
+	signals.push_back(new Pin());
 }
 
 LibavEncode::~LibavEncode() {

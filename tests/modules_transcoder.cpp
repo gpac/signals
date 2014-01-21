@@ -20,21 +20,20 @@ namespace {
 
 		//find video signal from demux
 		size_t videoIndex = std::numeric_limits<size_t>::max();
-		for (size_t i = 0; i < demux->signals.size(); ++i) {
-			Props *props = demux->signals[i]->props.get();
+		for (size_t i = 0; i < demux->getNumPin(); ++i) {
+			Props *props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 				videoIndex = i;
 			} else {
-				//FIXME: we have to set Print output to avoid asserts. Should be remove once the framework is more tested.
-				Connect(demux->signals[i]->signal, null.get(), &Out::Null::process);
+				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 
 		//create the video decoder
-		Props *props = demux->signals[videoIndex]->props.get();
+		Props *props = demux->getPin(videoIndex)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
 		ASSERT(decode != nullptr);
@@ -44,14 +43,14 @@ namespace {
 		ASSERT(mux != nullptr);
 
 		//create the encoder
-		props = mux->signals[0]->props.get();
+		props = mux->getPin(0)->getProps();
 		PropsMuxer *muxerProps = dynamic_cast<PropsMuxer*>(props);
 		std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(*muxerProps, Encode::LibavEncode::Video));
 		ASSERT(encode != nullptr);
 
-		Connect(demux->signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->signals[0]->signal, encode.get(), &Encode::LibavEncode::process);
-		Connect(encode->signals[0]->signal, mux.get(), &Mux::LibavMux::process);
+		Connect(demux->getSignal(videoIndex), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getSignal(0), encode.get(), &Encode::LibavEncode::process);
+		Connect(encode->getSignal(0), mux.get(), &Mux::LibavMux::process);
 
 		while (demux->process(nullptr)) {
 		}
@@ -73,21 +72,20 @@ namespace {
 
 		//find video signal from demux
 		size_t audioIndex = std::numeric_limits<size_t>::max();
-		for (size_t i = 0; i < demux->signals.size(); ++i) {
-			Props *props = demux->signals[i]->props.get();
+		for (size_t i = 0; i < demux->getNumPin(); ++i) {
+			Props *props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 				audioIndex = i;
 			} else {
-				//FIXME: we have to set Print output to avoid asserts. Should be remove once the framework is more tested.
-				Connect(demux->signals[i]->signal, null.get(), &Out::Null::process);
+				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(audioIndex != std::numeric_limits<size_t>::max());
 
 		//create the video decoder
-		Props *props = demux->signals[audioIndex]->props.get();
+		Props *props = demux->getPin(audioIndex)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
 		ASSERT(decode != nullptr);
@@ -97,7 +95,7 @@ namespace {
 		ASSERT(mux != nullptr);
 
 		//create the encoder
-		props = mux->signals[0]->props.get();
+		props = mux->getPin(0)->getProps();
 		PropsMuxer *muxerProps = dynamic_cast<PropsMuxer*>(props);
 		std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(*muxerProps, Encode::LibavEncode::Audio));
 		ASSERT(encode != nullptr);
@@ -106,10 +104,10 @@ namespace {
 		std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());
 		ASSERT(audioConverter != nullptr);
 
-		Connect(demux->signals[audioIndex]->signal, decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->signals[0]->signal, audioConverter.get(), &Transform::AudioConvert::process);
-		Connect(audioConverter->signals[0]->signal, encode.get(), &Encode::LibavEncode::process);
-		Connect(encode->signals[0]->signal, mux.get(), &Mux::LibavMux::process);
+		Connect(demux->getSignal(audioIndex), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getSignal(0), audioConverter.get(), &Transform::AudioConvert::process);
+		Connect(audioConverter->getSignal(0), encode.get(), &Encode::LibavEncode::process);
+		Connect(encode->getSignal(0), mux.get(), &Mux::LibavMux::process);
 
 		while (demux->process(nullptr)) {
 		}

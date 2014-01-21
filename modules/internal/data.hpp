@@ -22,11 +22,9 @@ public:
 	virtual void resize(size_t size) = 0;
 };
 
-//TODO: we should do get() et use the future
 class MODULES_EXPORT Data : public IData {
 public:
-	Data(size_t size)
-		: ptr(size) {
+	Data(size_t size) : ptr(size) {
 	}
 
 	virtual ~Data() {

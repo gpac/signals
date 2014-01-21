@@ -27,23 +27,26 @@ public:
 	}
 
 	bool reemit(std::shared_ptr<Data> data) {
-		signals[0]->signal.emit(data);
+		getSignal(0).emit(data);
 		return true;
 	}
 
-	std::vector<Pin<>*> signals;
+	Pin::SignalType& getSignal(size_t i) {
+		return signals[i]->getSignal();
+	}
+
+protected:
+	std::vector<Pin*> signals;
 
 private:
 	/**
 	* Take ownership of preprocessor and module
 	*/
 	Module(Submodule *preprocessor, Modules::Module *module) : preprocessor(preprocessor), module(module) {
-		Connect(preprocessor->signals[0]->signal, module, &Modules::Module::process);
-		assert(module->signals.size() == 1); //TODO: in reemit(), we must choose the right pin
-		signals.resize(module->signals.size());
-		for (size_t i = 0; i < module->signals.size(); ++i) {
-			signals[i] = new Pin<>;// module->signals[i];
-			Connect(module->signals[i]->signal, this, &MM::Module::reemit);
+		Connect(preprocessor->getSignal(0), module, &Modules::Module::process);
+		for (size_t i = 0; i < module->getNumPin(); ++i) { //TODO: in reemit(), we must choose the right pin
+			signals.push_back(new Pin); //module->getPin(i);
+			Connect(module->getSignal(i), this, &MM::Module::reemit);
 		}
 	}
 	std::unique_ptr<Submodule> preprocessor;

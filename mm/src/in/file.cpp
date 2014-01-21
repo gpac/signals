@@ -8,12 +8,12 @@ namespace MM {
 
 File::File(FILE *file)
 	: file(file) {
-	signals.push_back(new Pin<>());
+	signals.push_back(new Pin());
 }
 
 File::~File() {
 	fclose(file);
-	delete signals[0];//FIXME: use unique_ptr
+	delete signals[0];
 }
 
 File* File::create(std::string const& fn) {

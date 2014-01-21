@@ -5,11 +5,11 @@ namespace Modules {
 namespace Transform {
 
 AudioConvert::AudioConvert() {
-	signals.push_back(new Pin<>());
+	signals.push_back(new Pin());
 }
 
 AudioConvert::~AudioConvert() {
-	delete signals[0];//FIXME: use unique_ptr
+	delete signals[0];
 }
 
 AudioConvert* AudioConvert::create() {

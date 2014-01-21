@@ -16,19 +16,18 @@ namespace {
 		ASSERT(null != nullptr);
 
 		size_t videoIndex = std::numeric_limits<size_t>::max();
-		for (size_t i = 0; i < demux->signals.size(); ++i) {
-			Props *props = demux->signals[i]->props.get();
+		for (size_t i = 0; i < demux->getNumPin(); ++i) {
+			Props *props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 				videoIndex = i;
 			} else {
-				//FIXME: we have to set Print output to avoid asserts. Should be remove once the framework is more tested.
-				Connect(demux->signals[i]->signal, null.get(), &Out::Null::process);
+				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-		Props *props = demux->signals[videoIndex]->props.get();
+		Props *props = demux->getPin(videoIndex)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
 		ASSERT(decode != nullptr);
@@ -36,8 +35,8 @@ namespace {
 		std::unique_ptr<Render::SDLVideo> render(Render::SDLVideo::create());
 		ASSERT(render != nullptr);
 
-		Connect(demux->signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->signals[0]->signal, render.get(), &Render::SDLVideo::process);
+		Connect(demux->getSignal(videoIndex), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getSignal(0), render.get(), &Render::SDLVideo::process);
 
 		while (demux->process(nullptr)) {
 		}
@@ -53,19 +52,18 @@ namespace {
 		ASSERT(null != nullptr);
 
 		size_t videoIndex = std::numeric_limits<size_t>::max();
-		for (size_t i = 0; i < demux->signals.size(); ++i) {
-			Props *props = demux->signals[i]->props.get();
+		for (size_t i = 0; i < demux->getNumPin(); ++i) {
+			Props *props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 				videoIndex = i;
 			} else {
-				//FIXME: we have to set Print output to avoid asserts. Should be remove once the framework is more tested.
-				Connect(demux->signals[i]->signal, null.get(), &Out::Null::process);
+				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-		Props *props = demux->signals[videoIndex]->props.get();
+		Props *props = demux->getPin(videoIndex)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
 		ASSERT(decode != nullptr);
@@ -73,8 +71,8 @@ namespace {
 		std::unique_ptr<Render::SDLAudio> render(Render::SDLAudio::create());
 		ASSERT(render != nullptr);
 
-		Connect(demux->signals[videoIndex]->signal, decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->signals[0]->signal, render.get(), &Render::SDLAudio::process);
+		Connect(demux->getSignal(videoIndex), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getSignal(0), render.get(), &Render::SDLAudio::process);
 
 		while (demux->process(nullptr)) {
 		}

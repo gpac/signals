@@ -13,9 +13,8 @@ namespace {
 
 		std::vector<std::unique_ptr<Decode::LibavDecode>> decoders;
 		std::vector<std::unique_ptr<Out::Print>> printers;
-		for (size_t i = 0; i < demux->signals.size(); ++i) {
-			//FIXME: const Props *props = demux->signals[i]->getProps();
-			Props *props = demux->signals[i]->props.get();
+		for (size_t i = 0; i < demux->getNumPin(); ++i) {
+			Props *props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 			std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
@@ -24,8 +23,8 @@ namespace {
 			std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 			ASSERT(p != nullptr);
 
-			Connect(demux->signals[i]->signal, decode.get(), &Decode::LibavDecode::process);
-			Connect(decode->signals[0]->signal, p.get(), &Out::Print::process);
+			Connect(demux->getSignal(i), decode.get(), &Decode::LibavDecode::process);
+			Connect(decode->getSignal(0), p.get(), &Out::Print::process);
 
 			decoders.push_back(std::move(decode));
 			printers.push_back(std::move(p));
@@ -36,7 +35,7 @@ namespace {
 		}
 
 		demux->destroy();
-		for (size_t i = 0; i < demux->signals.size(); ++i) {
+		for (size_t i = 0; i < demux->getNumPin(); ++i) {
 			decoders[i]->destroy();
 		}
 	}

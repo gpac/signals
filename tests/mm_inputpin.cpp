@@ -12,13 +12,13 @@ namespace {
 	class Osc : public Modules::ModuleSync {
 	public:
 		Osc() : seqNumber(0) {
-			signals.push_back(new Pin<>);
+			signals.push_back(new Pin);
 		}
 		bool process(std::shared_ptr<Data> /*sample*/) {
 			seqNumber = (seqNumber + 1) % 256;
 			std::shared_ptr<Data> out(signals[0]->getBuffer(32));
 			out->data()[0] = seqNumber;
-			signals[0]->signal.emit(out);
+			getSignal(0).emit(out);
 			return true;
 		}
 		bool handles(const std::string &url) {
@@ -42,7 +42,7 @@ namespace {
 	class Amp : public Modules::ModuleSync { //making it sync for perf (avoid spawning one more time when forwarding the output pin)
 	public:
 		Amp() : seqNumber(0) {
-			signals.push_back(new Pin<>);
+			signals.push_back(new Pin);
 		}
 		bool handles(const std::string &url) {
 			return false;
@@ -57,7 +57,7 @@ namespace {
 				}
 			}
 			seqNumber = idx;
-			signals[0]->signal.emit(sample);
+			getSignal(0).emit(sample);
 			return true;
 		}
 		void waitForCompletion() { //unnecessary - just in case you want to try without the AmpReordered
@@ -101,11 +101,11 @@ namespace {
 	class AmpReordered : public Modules::Module {
 	public:
 		AmpReordered(Modules::ModuleSync *module) : delegate(module) {
-			signals.push_back(new Pin<>); //this super module should copy the structure from the delegate
+			signals.push_back(new Pin); //TODO: this super module should copy the structure from the delegate
 			Connect(synchronizerSignal, this, &AmpReordered::reflector);
 			//TODO: connect to lambdas: Connect(synchronizerSignal, this, [](std::shared_ptr<Data> sample)->std::shared_ptr<Data> { return sample; });
 			Connect(internalSignal, this, &AmpReordered::processInOrder);
-			Connect(delegate->signals[0]->signal, this, &AmpReordered::reemit); //delegate output to this output ; faster is delegate output signal is sync
+			Connect(delegate->getSignal(0), this, &AmpReordered::reemit); //delegate output to this output ; faster is delegate output signal is sync
 		}
 		void waitForCompletion() {
 			delegate->destroy();
@@ -126,7 +126,7 @@ namespace {
 			return delegate->process(res);
 		}
 		bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-			signals[0]->signal.emit(data);
+			getSignal(0).emit(data);
 			return true;
 		}
 		std::shared_ptr<Data> reflector(std::shared_ptr<Data> sample) {
@@ -144,10 +144,10 @@ namespace {
 		std::unique_ptr<Sink> sink1(new Sink);
 		std::unique_ptr<Sink> sink2(new Sink);
 
-		Connect(osc->signals[0]->signal, amp1.get(), &AmpReordered::process);
-		Connect(osc->signals[0]->signal, amp2.get(), &AmpReordered::process);
-		Connect(amp1->signals[0]->signal, sink1.get(), &Sink::process);
-		Connect(amp2->signals[0]->signal, sink2.get(), &Sink::process);
+		Connect(osc->getSignal(0), amp1.get(), &AmpReordered::process);
+		Connect(osc->getSignal(0), amp2.get(), &AmpReordered::process);
+		Connect(amp1->getSignal(0), sink1.get(), &Sink::process);
+		Connect(amp2->getSignal(0), sink2.get(), &Sink::process);
 
 		for (int i = 0; i < 10000; ++i) { //this is bigger than the default allocator size (100), so they will be contention
 			osc->process(nullptr);

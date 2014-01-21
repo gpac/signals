@@ -12,17 +12,17 @@ namespace Modules {
 
 using namespace Signals;
 
-//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
-//      The other option is to invalidate all the data by calling
-//TODO: the pin could check the bool result and retry on failure (but is it its role?)
-template<typename Allocator = AllocatorPacket, typename Signal = Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>/*<bool(std::shared_ptr<Data>)>*/>
-class MODULES_EXPORT Pin {
+//TODO: the pin could check the bool result (currently done by the allocator) and retry on failure (but is it its role?)
+template<typename Allocator, typename Signal>
+class PinT {
 public:
-	Pin(Props *props = nullptr)
+	typedef Signal SignalType;
+
+	PinT(Props *props = nullptr)
 	: props(props) {		
 	}
 
-	~Pin() {
+	~PinT() {
 		destroy();
 	}
 
@@ -33,11 +33,11 @@ public:
 	}
 
 	void destroy() {
-		//getting the result release the shared_ptr, hence the data
-		//FIXME: we should lock since emit could be called from any thread
-		signal.results();
+		signal.results(); //getting the result release the shared_ptr
 	}
 
+	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
+	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
 		for(;;) {
 			std::shared_ptr<Data> data(allocator.getBuffer(size));
@@ -61,19 +61,22 @@ public:
 		}
 	}
 
-	//FIXME: this doesn't compile!!!
-	/*Props* getProps() const {
-		return props.get();
-	}*/
-	std::unique_ptr<Props> props;
+	Signal& getSignal() {
+		return signal;
+	}
 
-	Signal signal;
+	Props* getProps() const {
+		return props.get();
+	}
 
 private:
 	Allocator allocator;
-	//FIXME: std::unique_ptr<Props> props;
+	Signal signal;
+	std::unique_ptr<Props> props;
 };
 
-typedef Pin<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>> PinSync;
+typedef MODULES_EXPORT PinT<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<int>, CallerAsync>> PinAsync;
+typedef MODULES_EXPORT PinT<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>> PinSync;
+typedef MODULES_EXPORT PinSync Pin; //FIXME: all pins are sync right now...
 
 }
