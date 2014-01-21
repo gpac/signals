@@ -53,6 +53,10 @@ TARGETS+=$(OUTDIR)/mm_simple.exe
 $(OUTDIR)/mm_simple.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_simple.o
 DEPS+=$(OUTDIR)/mm_simple.deps
 
+TARGETS+=$(OUTDIR)/mm_inputpin.exe
+$(OUTDIR)/mm_inputpin.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_inputpin.o
+DEPS+=$(OUTDIR)/mm_inputpin.deps
+
 TARGETS+=$(OUTDIR)/signals.exe
 $(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
 DEPS+=$(OUTDIR)/signals.deps

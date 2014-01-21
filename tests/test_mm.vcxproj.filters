@@ -11,6 +11,9 @@
     <ClCompile Include="mm_simple.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="mm_inputpin.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests.hpp">
