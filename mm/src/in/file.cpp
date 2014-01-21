@@ -1,6 +1,5 @@
 #include "file.hpp"
 #include "../../../utils/log.hpp"
-#include "../../../utils/tools.hpp"
 
 
 #define IOSIZE 65536
@@ -9,11 +8,12 @@ namespace MM {
 
 File::File(FILE *file)
 	: file(file) {
-	signals.push_back(uptr(new Pin<>()));
+	signals.push_back(new Pin<>());
 }
 
 File::~File() {
 	fclose(file);
+	delete signals[0];//FIXME: use unique_ptr
 }
 
 File* File::create(std::string const& fn) {
