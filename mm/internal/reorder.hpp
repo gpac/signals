@@ -19,12 +19,15 @@ public:
 		Connect(internalSignal, this, &Reorder::processInOrder);
 		Connect(delegate->getSignal(0), this, &Reorder::reemit); //delegate output to this output ; faster is delegate output signal is sync
 	}
+	~Reorder() {
+		delete signals[0];
+	}
 	void waitForCompletion() {
 		delegate->destroy();
 		destroy();
 	}
 	bool handles(const std::string &url) {
-		return false;
+		return delegate->handles(url);
 	}
 	bool process(std::shared_ptr<Data> sample) {
 		synchronizerSignal.emit(sample);
