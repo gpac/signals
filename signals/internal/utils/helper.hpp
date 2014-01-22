@@ -30,7 +30,7 @@ MEMBER_FUNCTOR(Class* ObjectPtr, Result (Class::*MemberFunction) (Args...)) {
 template<typename B, typename C, typename D>
 void Connect(B& Sig, C ObjectSlot, D MemberFunctionSlot)
 {
-  auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
 	Sig.connect(functor);
 }
 
