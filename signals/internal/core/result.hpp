@@ -99,4 +99,28 @@ public:
 	}
 };
 
+/**
+ * A class which gets a copy from the last result. We don't want a shared_ptr to result in somes cases,
+ * because emit() (which reset results) an results() are called in different threads. Thus would
+ * require an external lock to protect the result.
+ */
+template<typename ResultType>
+class ResultLast : public IResult {
+public:
+	typedef ResultType ResultValue;
+	explicit ResultLast() {
+	}
+	void set(ResultType r) {
+		last = r;
+	}
+	ResultValue& get() {
+		return last;
+	}
+	void clear() {
+	}
+
+private:
+	ResultType last;
+};
+
 }

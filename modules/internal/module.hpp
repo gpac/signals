@@ -55,5 +55,6 @@ protected:
 
 typedef MODULES_EXPORT ModuleT<Pin> Module;
 typedef MODULES_EXPORT ModuleT<PinSync> ModuleSync;
+typedef MODULES_EXPORT ModuleT<PinAsync> ModuleAsync;
 
 }
