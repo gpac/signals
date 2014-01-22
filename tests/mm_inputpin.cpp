@@ -68,84 +68,15 @@ namespace {
 		int seqNumber;
 	};
 
-	/**
-	 * A class which gets a copy from the last result. We don't want a shared_ptr to result in this case,
-	 * because emit() (which reset results) an results() are called in different threads. Thus would
-	 * require an external lock to protect the result.
-	 */
-	template<typename ResultType>
-	class ResultLast : public IResult {
-	public:
-		typedef ResultType ResultValue;
-		explicit ResultLast() {
-		}
-		void set(ResultType r) {
-			last = r;
-		}
-		ResultValue& get() {
-			return last;
-		}
-		void clear() {
-		}
-
-	private:
-		ResultType last;
-	};
-
-	/**
-	 * A module, containing a delegate module.
-	 * This is the same principle as the current MM:Module preprocessor, but the relation between the input pin
-	 *  and the delegate is async but guarantees the packet order.
-	 * Therefore you should connect to this module synchronously.
-	 */
-	class AmpReordered : public Modules::Module {
-	public:
-		AmpReordered(Modules::ModuleSync *module) : delegate(module) {
-			signals.push_back(new Pin); //TODO: this super module should copy the structure from the delegate
-			Connect(synchronizerSignal, this, &AmpReordered::reflector);
-			//TODO: connect to lambdas: Connect(synchronizerSignal, this, [](std::shared_ptr<Data> sample)->std::shared_ptr<Data> { return sample; });
-			Connect(internalSignal, this, &AmpReordered::processInOrder);
-			Connect(delegate->getSignal(0), this, &AmpReordered::reemit); //delegate output to this output ; faster is delegate output signal is sync
-		}
-		void waitForCompletion() {
-			delegate->destroy();
-			destroy();
-		}
-		bool handles(const std::string &url) {
-			return false;
-		}
-		bool process(std::shared_ptr<Data> sample) {
-			synchronizerSignal.emit(sample);
-			internalSignal.emit();
-			return true;
-		}
-
-	private:
-		bool processInOrder() {
-			auto res = synchronizerSignal.results(true, true); //wait synchronously for the next
-			return delegate->process(res);
-		}
-		bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-			getSignal(0).emit(data);
-			return true;
-		}
-		std::shared_ptr<Data> reflector(std::shared_ptr<Data> sample) {
-			return sample;
-		}
-		std::unique_ptr<Modules::ModuleSync> delegate;
-		Signal<std::shared_ptr<Data>(std::shared_ptr<Data>), ResultLast<std::shared_ptr<Data>>> synchronizerSignal;
-		Signal<bool(void), ResultQueueThreadSafe<bool>, CallerThread> internalSignal;
-	};
-
 	unittest("Simple synth") {
 		std::unique_ptr<Osc> osc(new Osc);
-		std::unique_ptr<AmpReordered> amp1(new AmpReordered(new Amp));
-		std::unique_ptr<AmpReordered> amp2(new AmpReordered(new Amp));
+		std::unique_ptr<Reorder> amp1(new Reorder(new Amp));
+		std::unique_ptr<Reorder> amp2(new Reorder(new Amp));
 		std::unique_ptr<Sink> sink1(new Sink);
 		std::unique_ptr<Sink> sink2(new Sink);
 
-		Connect(osc->getSignal(0), amp1.get(), &AmpReordered::process);
-		Connect(osc->getSignal(0), amp2.get(), &AmpReordered::process);
+		Connect(osc->getSignal(0), amp1.get(), &Reorder::process);
+		Connect(osc->getSignal(0), amp2.get(), &Reorder::process);
 		Connect(amp1->getSignal(0), sink1.get(), &Sink::process);
 		Connect(amp2->getSignal(0), sink2.get(), &Sink::process);
 
