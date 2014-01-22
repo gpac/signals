@@ -4,12 +4,6 @@
     <Filter Include="internal">
       <UniqueIdentifier>{65d3e5f2-b6e4-46a1-a7d8-1f19048acc0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{7da5c1b7-83b4-4d3a-a6bc-960bc535654a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\in">
-      <UniqueIdentifier>{aacd2f42-3ed6-4a4c-8f13-67d5e3099a2f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="internal\reorder.hpp">
@@ -25,16 +19,8 @@
     <ClInclude Include="internal\module.hpp">
       <Filter>internal</Filter>
     </ClInclude>
-    <ClInclude Include="src\in\file.hpp">
-      <Filter>src\in</Filter>
-    </ClInclude>
     <ClInclude Include="internal\config.hpp">
       <Filter>internal</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\in\file.cpp">
-      <Filter>src\in</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
