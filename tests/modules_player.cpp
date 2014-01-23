@@ -23,7 +23,7 @@ namespace {
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 				videoIndex = i;
 			} else {
-				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+				Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -35,8 +35,8 @@ namespace {
 		std::unique_ptr<Render::SDLVideo> render(Render::SDLVideo::create());
 		ASSERT(render != nullptr);
 
-		Connect(demux->getSignal(videoIndex), decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->getSignal(0), render.get(), &Render::SDLVideo::process);
+		Connect(demux->getPin(videoIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getPin(0)->getSignal(), render.get(), &Render::SDLVideo::process);
 
 		while (demux->process(nullptr)) {
 		}
@@ -59,7 +59,7 @@ namespace {
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 				videoIndex = i;
 			} else {
-				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+				Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -71,8 +71,8 @@ namespace {
 		std::unique_ptr<Render::SDLAudio> render(Render::SDLAudio::create());
 		ASSERT(render != nullptr);
 
-		Connect(demux->getSignal(videoIndex), decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->getSignal(0), render.get(), &Render::SDLAudio::process);
+		Connect(demux->getPin(videoIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getPin(0)->getSignal(), render.get(), &Render::SDLAudio::process);
 
 		while (demux->process(nullptr)) {
 		}

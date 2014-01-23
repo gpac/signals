@@ -27,7 +27,7 @@ namespace {
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 				videoIndex = i;
 			} else {
-				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+				Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -48,9 +48,9 @@ namespace {
 		std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(*muxerProps, Encode::LibavEncode::Video));
 		ASSERT(encode != nullptr);
 
-		Connect(demux->getSignal(videoIndex), decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->getSignal(0), encode.get(), &Encode::LibavEncode::process);
-		Connect(encode->getSignal(0), mux.get(), &Mux::LibavMux::process);
+		Connect(demux->getPin(videoIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getPin(0)->getSignal(), encode.get(), &Encode::LibavEncode::process);
+		Connect(encode->getPin(0)->getSignal(), mux.get(), &Mux::LibavMux::process);
 
 		while (demux->process(nullptr)) {
 		}
@@ -79,7 +79,7 @@ namespace {
 			if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 				audioIndex = i;
 			} else {
-				Connect(demux->getSignal(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+				Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 			}
 		}
 		ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -104,10 +104,10 @@ namespace {
 		std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());
 		ASSERT(audioConverter != nullptr);
 
-		Connect(demux->getSignal(audioIndex), decode.get(), &Decode::LibavDecode::process);
-		Connect(decode->getSignal(0), audioConverter.get(), &Transform::AudioConvert::process);
-		Connect(audioConverter->getSignal(0), encode.get(), &Encode::LibavEncode::process);
-		Connect(encode->getSignal(0), mux.get(), &Mux::LibavMux::process);
+		Connect(demux->getPin(audioIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
+		Connect(decode->getPin(0)->getSignal(), audioConverter.get(), &Transform::AudioConvert::process);
+		Connect(audioConverter->getPin(0)->getSignal(), encode.get(), &Encode::LibavEncode::process);
+		Connect(encode->getPin(0)->getSignal(), mux.get(), &Mux::LibavMux::process);
 
 		while (demux->process(nullptr)) {
 		}

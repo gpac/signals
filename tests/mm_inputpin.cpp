@@ -75,10 +75,10 @@ namespace {
 		std::unique_ptr<Sink> sink1(new Sink);
 		std::unique_ptr<Sink> sink2(new Sink);
 
-		Connect(osc->getSignal(0), amp1.get(), &Reorder::process);
-		Connect(osc->getSignal(0), amp2.get(), &Reorder::process);
-		Connect(amp1->getSignal(0), sink1.get(), &Sink::process);
-		Connect(amp2->getSignal(0), sink2.get(), &Sink::process);
+		Connect(osc->getPin(0)->getSignal(), amp1.get(), &Reorder::process);
+		Connect(osc->getPin(0)->getSignal(), amp2.get(), &Reorder::process);
+		Connect(amp1->getPin(0)->getSignal(), sink1.get(), &Sink::process);
+		Connect(amp2->getPin(0)->getSignal(), sink2.get(), &Sink::process);
 
 		for (int i = 0; i < 10000; ++i) { //this is bigger than the default allocator size (100), so they will be contention
 			osc->process(nullptr);

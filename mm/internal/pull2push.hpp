@@ -9,7 +9,7 @@ class Pull2Push : public Modules::Module {
 public:
 	Pull2Push(Modules::Module *module) : delegate(module) {
 		signals.push_back(new Pin); //TODO: this super module should copy the structure from the delegate, see Reorder
-		Connect(getSignal(0), delegate.get(), &Modules::Module::process); //delegate output to this output ; faster is delegate output signal is sync
+		Connect(getPin(0)->getSignal(), delegate.get(), &Modules::Module::process); //delegate output to this output ; faster is delegate output signal is sync
 	}
 	~Pull2Push() {
 		delete signals[0];
@@ -18,7 +18,7 @@ public:
 		for (;;) {
 			std::shared_ptr<Data> out(signals[0]->getBuffer(0));
 			signals[0]->emit(out);
-			auto res = getSignal(0).results(false, true);
+			auto res = getPin(0)->getSignal().results(false, true);
 			if (res->size() && ((*res)[0] == false)) {
 				break;
 			}

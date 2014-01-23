@@ -181,9 +181,6 @@
     <ClInclude Include="tests.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mm\mm.vcxproj">
-      <Project>{398b2581-9bd0-4aed-b705-090a510f4e91}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\modules\modules.vcxproj">
       <Project>{f6843994-f116-4e68-8ef8-c88149887d4c}</Project>
     </ProjectReference>

@@ -17,7 +17,7 @@ public:
 		Connect(synchronizerSignal, this, &Reorder::reflector);
 		//TODO: connect to lambdas: Connect(synchronizerSignal, this, [](std::shared_ptr<Data> sample)->std::shared_ptr<Data> { return sample; });
 		Connect(internalSignal, this, &Reorder::processInOrder);
-		Connect(delegate->getSignal(0), this, &Reorder::reemit); //delegate output to this output ; faster is delegate output signal is sync
+		Connect(delegate->getPin(0)->getSignal(), this, &Reorder::reemit); //delegate output to this output ; faster is delegate output signal is sync
 	}
 	~Reorder() {
 		delete signals[0];
@@ -41,7 +41,7 @@ private:
 		return delegate->process(res);
 	}
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-		getSignal(0).emit(data);
+		getPin(0)->getSignal().emit(data);
 		return true;
 	}
 	std::shared_ptr<Data> reflector(std::shared_ptr<Data> sample) {
