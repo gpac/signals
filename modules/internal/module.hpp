@@ -33,15 +33,11 @@ public:
 		}
 	}
 
-	Pin::SignalType& getSignal(size_t i) {
-		return signals[i]->getSignal();
-	}
-
 	size_t getNumPin() const {
 		return signals.size();
 	}
 
-	const Pin* getPin(size_t i) {
+	PinType* getPin(size_t i) {
 		return signals[i];
 	}
 

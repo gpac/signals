@@ -43,10 +43,10 @@ private:
 	* Take ownership of preprocessor and module
 	*/
 	Module(Submodule *preprocessor, Modules::Module *module) : preprocessor(preprocessor), module(module) {
-		Connect(preprocessor->getSignal(0), module, &Modules::Module::process);
+		Connect(preprocessor->getPin(0)->getSignal(), module, &Modules::Module::process);
 		for (size_t i = 0; i < module->getNumPin(); ++i) { //TODO: in reemit(), we must choose the right pin
 			signals.push_back(new Pin); //module->getPin(i);
-			Connect(module->getSignal(i), this, &MM::Module::reemit);
+			Connect(module->getPin(i)->getSignal(), this, &MM::Module::reemit);
 		}
 	}
 	std::unique_ptr<Submodule> preprocessor;
