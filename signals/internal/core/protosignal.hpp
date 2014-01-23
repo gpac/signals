@@ -57,6 +57,7 @@ public:
 					if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) == std::future_status::timeout)) {
 						++f;
 					} else {
+						assert(f->valid());
 						result.set(f->get());
 						f = cb.second->futures.erase(f);
 						if (single) {
@@ -92,7 +93,6 @@ protected:
 		for (auto &cb : callbacks) { //delete still connected callbacks
 			if (cb.second) {
 				for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-					result.set(f->get());
 					f = cb.second->futures.erase(f);
 				}
 				bool res = disconnectUnsafe(cb.first);

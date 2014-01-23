@@ -30,8 +30,8 @@ public:
 		return true;
 	}
 	void waitForCompletion() {
-		delegate->destroy();
-		destroy();
+		delegate->waitForCompletion();
+		Modules::Module::waitForCompletion();
 	}
 	bool handles(const std::string &url) {
 		return delegate->handles(url);
@@ -39,8 +39,8 @@ public:
 
 private:
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-		//auto res = delegate->getPin(0)->getSignal().results(false); //delegate may be async, so we must flush
-		//std::cout << "Pull2Push::reemit (res->size() == " << res->size() << ")" << std::endl;
+		//delegate->getPin(0)->getSignal().results(); //Romain: make it sync...
+		//getPin(0)->getSignal().results(); //Romain: make it sync...
 		getPin(0)->getSignal().emit(data);
 		return true;
 	}

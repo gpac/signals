@@ -28,6 +28,12 @@ public:
 		}
 	}
 
+	void reset() {
+		for (auto &block : usedBlocks) {
+			block.reset();
+		}
+	}
+
 private:
 	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
 
