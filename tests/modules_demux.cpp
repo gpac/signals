@@ -28,7 +28,8 @@ unittest("demux one track: File -> Demux::GPAC_MP4_Full -> Out::Print")
 	Connect(f->getPin(0)->getSignal(), mp4Demux.get(), &Demux::GPAC_MP4_Full::process);
 	Connect(mp4Demux->getPin(0)->getSignal(), p.get(), &Out::Print::process);
 
-	f->push();
+	while (f->process(nullptr)) {
+	}
 
 	f->destroy();
 	mp4Demux->destroy();

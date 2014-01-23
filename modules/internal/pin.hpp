@@ -75,7 +75,7 @@ private:
 	std::unique_ptr<Props> props;
 };
 
-typedef MODULES_EXPORT PinT<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<int>, CallerAsync>> PinAsync;
+typedef MODULES_EXPORT PinT<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>, CallerAsync>> PinAsync;
 typedef MODULES_EXPORT PinT<AllocatorPacket, Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync>> PinSync;
 typedef MODULES_EXPORT PinSync Pin; //FIXME: all pins are sync right now...
 

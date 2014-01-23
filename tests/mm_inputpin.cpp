@@ -12,13 +12,13 @@ namespace {
 	class Osc : public Modules::ModuleSync {
 	public:
 		Osc() : seqNumber(0) {
-			signals.push_back(new Pin);
+			signals.push_back(new PinSync);
 		}
 		bool process(std::shared_ptr<Data> /*sample*/) {
 			seqNumber = (seqNumber + 1) % 256;
 			std::shared_ptr<Data> out(signals[0]->getBuffer(32));
 			out->data()[0] = seqNumber;
-			getSignal(0).emit(out);
+			getPin(0)->getSignal().emit(out);
 			return true;
 		}
 		bool handles(const std::string &url) {
@@ -42,7 +42,7 @@ namespace {
 	class Amp : public Modules::ModuleSync { //making it sync for perf (avoid spawning one more time when forwarding the output pin)
 	public:
 		Amp() : seqNumber(0) {
-			signals.push_back(new Pin);
+			signals.push_back(new PinSync);
 		}
 		bool handles(const std::string &url) {
 			return false;
@@ -55,9 +55,10 @@ namespace {
 				if (idx != expectedIdx) {
 					std::cout << "Amp ERROR: expected " << expectedIdx << " received " << idx << std::endl;
 				}
+				std::cout << "Amp ERROR: expected " << expectedIdx << " received " << idx << std::endl;
 			}
 			seqNumber = idx;
-			getSignal(0).emit(sample);
+			getPin(0)->getSignal().emit(sample);
 			return true;
 		}
 		void waitForCompletion() { //unnecessary - just in case you want to try without the AmpReordered
