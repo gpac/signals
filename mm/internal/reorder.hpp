@@ -1,6 +1,6 @@
 #pragma once
 
-#include "submodule.hpp"
+#include <../modules/modules.hpp>
 
 namespace MM {
 
