@@ -55,14 +55,13 @@ namespace {
 				if (idx != expectedIdx) {
 					std::cout << "Amp ERROR: expected " << expectedIdx << " received " << idx << std::endl;
 				}
-				std::cout << "Amp ERROR: expected " << expectedIdx << " received " << idx << std::endl;
 			}
 			seqNumber = idx;
 			getPin(0)->getSignal().emit(sample);
 			return true;
 		}
 		void waitForCompletion() { //unnecessary - just in case you want to try without the AmpReordered
-			destroy();
+			Modules::ModuleSync::waitForCompletion();
 		}
 
 	private:
@@ -85,7 +84,7 @@ namespace {
 			osc->process(nullptr);
 		}
 
-		//osc->destroy(); //not mandatory since later filters (Amp and Sink) use data from the same allocator
+		//osc->waitForCompletion(); //not mandatory since later filters (Amp and Sink) use data from the same allocator
 		amp1->waitForCompletion();
 		amp2->waitForCompletion();
 	}

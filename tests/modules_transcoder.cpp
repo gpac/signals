@@ -55,10 +55,10 @@ namespace {
 		while (demux->process(nullptr)) {
 		}
 
-		demux->destroy();
-		decode->destroy();
-		mux->destroy();
-		encode->destroy();
+		demux->waitForCompletion();
+		decode->waitForCompletion();
+		mux->waitForCompletion();
+		encode->waitForCompletion();
 	}
 
 	unittest("transcoder: audio simple") {
@@ -112,10 +112,10 @@ namespace {
 		while (demux->process(nullptr)) {
 		}
 
-		demux->destroy();
-		decode->destroy();
-		mux->destroy();
-		encode->destroy();
+		demux->waitForCompletion();
+		decode->waitForCompletion();
+		mux->waitForCompletion();
+		encode->waitForCompletion();
 	}
 
 }

@@ -4,6 +4,7 @@
 #include "allocator.hpp"
 #include "data.hpp"
 #include "props.hpp"
+#include "../utils/log.hpp"
 #include <../signals/signals.hpp>
 #include <thread>
 
@@ -23,7 +24,7 @@ public:
 	}
 
 	~PinT() {
-		destroy();
+		waitForCompletion();
 	}
 
 	size_t emit(std::shared_ptr<Data> data) {
@@ -32,7 +33,7 @@ public:
 		return numReceivers;
 	}
 
-	void destroy() {
+	void waitForCompletion() {
 		signal.results(); //getting the result release the shared_ptr
 	}
 
@@ -54,7 +55,11 @@ public:
 					if (data.get()) {
 						return data;
 					} else {
-						std::this_thread::yield(); //FIXME
+						Log::msg(Log::Error, "The allocator failed to wait for available data. Reset the whole allocator.");
+						allocator.reset();
+						data = allocator.getBuffer(size);
+						assert(data.get());
+						return data;
 					}
 				}
 			}

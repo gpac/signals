@@ -50,6 +50,6 @@ unittest("print packets size from file: File -> Out::Print") {
 	while (f->process(nullptr)) {
 	}
 
-	f->destroy();
+	f->waitForCompletion();
 }
 

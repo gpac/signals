@@ -23,8 +23,8 @@ public:
 		delete signals[0];
 	}
 	void waitForCompletion() {
-		delegate->destroy();
-		destroy();
+		delegate->waitForCompletion();
+		Modules::Module::waitForCompletion();
 	}
 	bool handles(const std::string &url) {
 		return delegate->handles(url);
@@ -41,6 +41,8 @@ private:
 		return delegate->process(res);
 	}
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
+		//delegate->getPin(0)->getSignal().results(); //Romain: make it sync...
+		//getPin(0)->getSignal().results(); //Romain: make it sync...
 		getPin(0)->getSignal().emit(data);
 		return true;
 	}

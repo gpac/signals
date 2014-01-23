@@ -16,7 +16,7 @@ unittest("demux one track: Demux::GPAC_MP4_Simple -> Out::Print")
 
 	while (mp4Demux->process(nullptr)) {
 	}
-	mp4Demux->destroy();
+	mp4Demux->waitForCompletion();
 }
 
 unittest("demux one track: File -> Demux::GPAC_MP4_Full -> Out::Print")
@@ -31,8 +31,8 @@ unittest("demux one track: File -> Demux::GPAC_MP4_Full -> Out::Print")
 	while (f->process(nullptr)) {
 	}
 
-	f->destroy();
-	mp4Demux->destroy();
+	f->waitForCompletion();
+	mp4Demux->waitForCompletion();
 }
 
 }

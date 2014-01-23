@@ -34,9 +34,9 @@ namespace {
 		while (demux->process(nullptr)) {
 		}
 
-		demux->destroy();
+		demux->waitForCompletion();
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
-			decoders[i]->destroy();
+			decoders[i]->waitForCompletion();
 		}
 	}
 

@@ -41,8 +41,8 @@ namespace {
 		while (demux->process(nullptr)) {
 		}
 
-		demux->destroy();
-		decode->destroy();
+		demux->waitForCompletion();
+		decode->waitForCompletion();
 	}
 
 	unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
@@ -77,8 +77,8 @@ namespace {
 		while (demux->process(nullptr)) {
 		}
 
-		demux->destroy();
-		decode->destroy();
+		demux->waitForCompletion();
+		decode->waitForCompletion();
 	}
 
 }
