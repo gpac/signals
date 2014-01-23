@@ -4,8 +4,8 @@
 #error Please include tests.hpp before signals.hpp
 #endif
 
-#ifdef _MSC_VER
-#include <Windows.h>
+#ifdef _WIN32
+#include <windows.h>
 #else
 #include <unistd.h>
 #include <sys/time.h>
@@ -103,7 +103,7 @@ inline bool isPow2(int i) {
 class Profiler {
 public:
 	Profiler(const std::string &name) : name(name) {
-#ifdef _MSC_VER
+#ifdef _WIN32
 		QueryPerformanceCounter(&startTime);
 #else
 		gettimeofday(&startTime, nullptr);
@@ -115,7 +115,7 @@ public:
 	}
 
 	uint64_t elapsedInUs() {
-#ifdef _MSC_VER
+#ifdef _WIN32
 		LARGE_INTEGER stopTime;
 		QueryPerformanceCounter(&stopTime);
 		LARGE_INTEGER countsPerSecond;
@@ -132,7 +132,7 @@ private:
 	Profiler& operator= (const Profiler&) = delete;
 
 	std::string name;
-#ifdef _MSC_VER
+#ifdef _WIN32
 	LARGE_INTEGER startTime;
 #else
 	struct timeval startTime;
