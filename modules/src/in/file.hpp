@@ -9,18 +9,16 @@ namespace Modules {
 
 namespace In {
 
-class MODULES_EXPORT File : public Module {
+class MODULES_EXPORT File : public ModuleSync {
 public:
 	static File* create(std::string const& path);
 	~File();
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
-
-	void push();
+	bool process(std::shared_ptr<Data> data);
 
 private:
 	File(FILE *file);
-	bool process(std::shared_ptr<Data> data);
 
 	FILE *file;
 };

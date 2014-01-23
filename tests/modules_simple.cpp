@@ -46,7 +46,9 @@ unittest("print packets size from file: File -> Out::Print") {
 	ASSERT(p != nullptr);
 
 	Connect(f->getPin(0)->getSignal(), p.get(), &Out::Print::process);
-	f->push();
+
+	while (f->process(nullptr)) {
+	}
 
 	f->destroy();
 }

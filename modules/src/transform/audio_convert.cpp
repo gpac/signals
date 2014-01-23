@@ -5,7 +5,7 @@ namespace Modules {
 namespace Transform {
 
 AudioConvert::AudioConvert() {
-	signals.push_back(new Pin());
+	signals.push_back(new Pin);
 }
 
 AudioConvert::~AudioConvert() {

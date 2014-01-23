@@ -6,14 +6,26 @@
 using namespace Tests;
 using namespace MM;
 
-unittest("Pull2Push sub module: print packets size from file: File -> Out::Print") {
-	MM::File *f = MM::File::create("data/BatmanHD_1000kbit_mpeg.mp4");
-	Pull2Push *p2p = Pull2Push::create();
-	std::unique_ptr<MM::Module> m(MM::Module::create(p2p, f));
+#if 0 //FIXME: duplicate test
+unittest("File module async: File -> Out::Print") {
+	std::unique_ptr<In::File> f(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 
-	Connect(m->getSignal(0), p.get(), &Out::Print::process);
+	Connect(f->getPin(0)->getSignal(), p.get(), &Out::Print::process);
 
-	bool res = m->process();
+	while (f->process(nullptr)) {
+	}
+}
+#endif
+
+unittest("Pull2Push the File module: File -> Out::Print") {
+	std::unique_ptr<MM::Pull2Push> f(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
+	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
+
+	Connect(f->getPin(0)->getSignal(), p.get(), &Out::Print::process);
+
+	bool res = f->process(nullptr); //here we call only once
 	ASSERT(res);
+
+	f->waitForCompletion();
 }
