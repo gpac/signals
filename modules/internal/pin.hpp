@@ -55,9 +55,14 @@ public:
 					if (data.get()) {
 						return data;
 					} else {
+#if 0
 						Log::msg(Log::Error, "The allocator failed to wait for available data. Reset the whole allocator.");
 						allocator.reset();
 						data = allocator.getBuffer(size);
+#else
+						Log::msg(Log::Error, "The allocator failed to wait for available data. Add a new buffer.");
+						data = allocator.getBuffer(size, true);
+#endif
 						assert(data.get());
 						return data;
 					}

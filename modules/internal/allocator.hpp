@@ -17,14 +17,21 @@ public:
 		: numBlocks(numBlocks) {
 	}
 
-	std::shared_ptr<Data> getBuffer(size_t size) {
+	std::shared_ptr<Data> getBuffer(size_t size, bool forceNew = false) {
 		updateUsedBlocks();
 		if (usedBlocks.size() < numBlocks) {
 			std::shared_ptr<Data> data(new Data(size));
 			usedBlocks.push_back(std::weak_ptr<Data>(data));
-			return (data);
+			return data;
 		} else {
-			return std::shared_ptr<Data>();
+			if (forceNew) {
+				numBlocks++;
+				std::shared_ptr<Data> data(new Data(size));
+				usedBlocks.push_back(std::weak_ptr<Data>(data));
+				return data;
+			} else {
+				return std::shared_ptr<Data>();
+			}
 		}
 	}
 
@@ -44,7 +51,7 @@ private:
 		}), usedBlocks.end());
 	}
 
-	const size_t numBlocks;
+	size_t numBlocks;
 	std::list<std::weak_ptr<Data>> usedBlocks;
 };
 
