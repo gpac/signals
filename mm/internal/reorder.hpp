@@ -41,8 +41,7 @@ private:
 		return delegate->process(res);
 	}
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-		//delegate->getPin(0)->getSignal().results(); //Romain: make it sync...
-		//getPin(0)->getSignal().results(); //Romain: make it sync...
+		getPin(0)->getSignal().results(false);
 		getPin(0)->getSignal().emit(data);
 		return true;
 	}
