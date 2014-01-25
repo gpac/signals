@@ -9,10 +9,10 @@ using namespace MM;
 
 namespace {
 
-	class Osc : public Modules::ModuleSync {
+	class Osc : public Modules::Module {
 	public:
 		Osc() : seqNumber(0) {
-			signals.push_back(new PinSync);
+			signals.push_back(pinFactory->createPin());
 		}
 		bool process(std::shared_ptr<Data> /*sample*/) {
 			seqNumber = (seqNumber + 1) % 256;
@@ -39,10 +39,10 @@ namespace {
 		}
 	};
 
-	class Amp : public Modules::ModuleSync { //making it sync for perf (avoid spawning one more time when forwarding the output pin)
+	class Amp : public Modules::Module { //making it sync for perf (avoid spawning one more time when forwarding the output pin)
 	public:
 		Amp() : seqNumber(0) {
-			signals.push_back(new PinSync);
+			signals.push_back(pinFactory->createPin());
 		}
 		bool handles(const std::string &url) {
 			return false;
@@ -61,7 +61,7 @@ namespace {
 			return true;
 		}
 		void waitForCompletion() { //unnecessary - just in case you want to try without the AmpReordered
-			Modules::ModuleSync::waitForCompletion();
+			Modules::Module::waitForCompletion();
 		}
 
 	private:

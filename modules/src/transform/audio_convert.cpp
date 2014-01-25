@@ -5,11 +5,10 @@ namespace Modules {
 namespace Transform {
 
 AudioConvert::AudioConvert() {
-	signals.push_back(new Pin);
+	signals.push_back(pinFactory->createPin());
 }
 
 AudioConvert::~AudioConvert() {
-	delete signals[0];
 }
 
 AudioConvert* AudioConvert::create() {

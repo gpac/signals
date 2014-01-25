@@ -44,11 +44,10 @@ GPAC_MP4_Full* GPAC_MP4_Full::create() {
 
 GPAC_MP4_Full::GPAC_MP4_Full()
 	: reader(new ISOProgressiveReader) {
-	signals.push_back(new Pin);
+	signals.push_back(pinFactory->createPin());
 }
 
 GPAC_MP4_Full::~GPAC_MP4_Full() {
-	delete signals[0];
 }
 
 bool GPAC_MP4_Full::openData() {

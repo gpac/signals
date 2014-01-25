@@ -39,25 +39,18 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 		throw std::runtime_error("Couldn't find stream info.");
 	}
 
-	std::vector<Pin*> signals;
-	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
-		signals.push_back(new Pin(new PropsDecoder(formatCtx->streams[i]->codec)));
-	}
-
-	return new LibavDemux(formatCtx, signals);
+	return new LibavDemux(formatCtx);
 }
 
-LibavDemux::LibavDemux(struct AVFormatContext *formatCtx, std::vector<Pin*> signals)
+LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
 : formatCtx(formatCtx) {
-	for (size_t i = 0; i < signals.size(); ++i) {
-		this->signals.push_back(signals[i]);
+	std::vector<Pin*> signals;
+	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
+		signals.push_back(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec)));
 	}
 }
 
 LibavDemux::~LibavDemux() {
-	for (unsigned i = 0; i < formatCtx->nb_streams; i++) {
-		delete signals[i];
-	}
 	avformat_close_input(&formatCtx);
 }
 
