@@ -10,6 +10,7 @@ Tasks (from higher to lower priority):
 - handle clocks (first: real-time to play audio)
 - SDL and renderers should be able to run in thread 0
 - be able to draw the graph of connections (and allocator states?)
+- @samurai: connect signals with lambda (see TODO)
 
 Questions (from higher to lower priority):
 - how to dynamically connect filters
