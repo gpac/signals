@@ -87,7 +87,7 @@ protected:
 		}
 	}
 
-	~ProtoSignal() {
+	virtual ~ProtoSignal() {
 		Result result;
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) { //delete still connected callbacks
