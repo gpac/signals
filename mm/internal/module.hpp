@@ -45,7 +45,7 @@ private:
 	Module(Submodule *preprocessor, Modules::Module *module) : preprocessor(preprocessor), module(module) {
 		Connect(preprocessor->getPin(0)->getSignal(), module, &Modules::Module::process);
 		for (size_t i = 0; i < module->getNumPin(); ++i) { //TODO: in reemit(), we must choose the right pin
-			signals.push_back(new Pin); //module->getPin(i);
+			signals.push_back(pinFactory->createPin()); //module->getPin(i);
 			Connect(module->getPin(i)->getSignal(), this, &MM::Module::reemit);
 		}
 	}

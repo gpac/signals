@@ -143,5 +143,8 @@
     <ClCompile Include="src\transform\audio_convert.cpp">
       <Filter>src\transform</Filter>
     </ClCompile>
+    <ClCompile Include="internal\pin.cpp">
+      <Filter>includes\internal</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,12 +10,11 @@ namespace In {
 
 File::File(FILE *file)
 	: file(file) {
-	signals.push_back(new PinSync);
+	signals.push_back(pinFactory->createPin());
 }
 
 File::~File() {
 	fclose(file);
-	delete signals[0];
 }
 
 File* File::create(std::string const& fn) {

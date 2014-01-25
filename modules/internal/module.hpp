@@ -15,10 +15,17 @@ public:
 	virtual void waitForCompletion() = 0; /* required for async, otherwise we still have callback/futures on an object being destroyed */
 };
 
-template<typename PinType>
-class ModuleT : public IModule {
+class MODULES_EXPORT Module : public IModule {
 public:
-	virtual ~ModuleT() {
+	Module(PinFactory *pinFactory) : pinFactory(pinFactory) {
+	}
+	Module() : pinFactory(new PinDefaultFactory) {
+	}
+
+	virtual ~Module() {
+		for (auto signal : signals) {
+			delete signal;
+		}
 	}
 
 	virtual bool process(std::shared_ptr<Data> data) = 0;
@@ -37,20 +44,16 @@ public:
 		return signals.size();
 	}
 
-	PinType* getPin(size_t i) {
+	Pin* getPin(size_t i) {
 		return signals[i];
 	}
 
 protected:
-	ModuleT() = default;
-	ModuleT(ModuleT const&) = delete;
-	ModuleT const& operator=(ModuleT const&) = delete;
+	Module(Module const&) = delete;
+	Module const& operator=(Module const&) = delete;
 
-	std::vector<PinType*> signals;
+	std::unique_ptr<PinFactory> pinFactory;
+	std::vector<Pin*> signals; //Romain: remove PinType
 };
-
-typedef MODULES_EXPORT ModuleT<Pin> Module;
-typedef MODULES_EXPORT ModuleT<PinSync> ModuleSync;
-typedef MODULES_EXPORT ModuleT<PinAsync> ModuleAsync;
 
 }

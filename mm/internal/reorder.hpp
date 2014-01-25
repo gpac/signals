@@ -12,8 +12,8 @@ namespace MM {
  */
 class Reorder : public Modules::Module {
 public:
-	Reorder(Modules::ModuleSync *module) : delegate(module) {
-		signals.push_back(new Pin); //TODO: this super module should copy the structure from the delegate
+	Reorder(Modules::Module *module) : delegate(module) {
+		signals.push_back(pinFactory->createPin()); //TODO: this super module should copy the structure from the delegate
 		Connect(synchronizerSignal, this, &Reorder::reflector);
 		//TODO: connect to lambdas: Connect(synchronizerSignal, this, [](std::shared_ptr<Data> sample)->std::shared_ptr<Data> { return sample; });
 		Connect(internalSignal, this, &Reorder::processInOrder);
@@ -41,14 +41,14 @@ private:
 		return delegate->process(res);
 	}
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-		getPin(0)->getSignal().results(false);
+		getPin(0)->getSignal().flush();
 		getPin(0)->getSignal().emit(data);
 		return true;
 	}
 	std::shared_ptr<Data> reflector(std::shared_ptr<Data> sample) {
 		return sample;
 	}
-	std::unique_ptr<Modules::ModuleSync> delegate;
+	std::unique_ptr<Modules::Module> delegate;
 	Signal<std::shared_ptr<Data>(std::shared_ptr<Data>), ResultLast<std::shared_ptr<Data>>> synchronizerSignal;
 	Signal<bool(void), ResultQueueThreadSafe<bool>, CallerThread> internalSignal;
 };
