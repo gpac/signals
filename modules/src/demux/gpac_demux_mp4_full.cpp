@@ -1,4 +1,4 @@
-#include "gpac_mp4_full.hpp"
+#include "gpac_demux_mp4_full.hpp"
 #include "../utils/log.hpp"
 #include <string>
 #include <sstream>
@@ -38,19 +38,19 @@ public:
 	int track_number; //TODO: multi-tracks
 };
 
-GPAC_MP4_Full* GPAC_MP4_Full::create() {
-	return new GPAC_MP4_Full();
+GPACDemuxMP4Full* GPACDemuxMP4Full::create() {
+	return new GPACDemuxMP4Full();
 }
 
-GPAC_MP4_Full::GPAC_MP4_Full()
+GPACDemuxMP4Full::GPACDemuxMP4Full()
 	: reader(new ISOProgressiveReader) {
 	signals.push_back(pinFactory->createPin());
 }
 
-GPAC_MP4_Full::~GPAC_MP4_Full() {
+GPACDemuxMP4Full::~GPACDemuxMP4Full() {
 }
 
-bool GPAC_MP4_Full::openData() {
+bool GPACDemuxMP4Full::openData() {
 	/* if the file is not yet opened (no movie), open it in progressive mode (to update its data later on) */
 	u64 missing_bytes;
 	GF_ISOFile *movie;
@@ -66,14 +66,14 @@ bool GPAC_MP4_Full::openData() {
 	return true;
 }
 
-bool GPAC_MP4_Full::updateData() {
+bool GPACDemuxMP4Full::updateData() {
 	/* let inform the parser that the buffer has been updated with new data */
 	uint64_t missing_bytes;
 	reader->movie->refreshFragmented(missing_bytes, reader->data_url);
 	return true;
 }
 
-bool GPAC_MP4_Full::processSample() {
+bool GPACDemuxMP4Full::processSample() {
 	try {
 		/* only if we have the track number can we try to get the sample data */
 		if (reader->track_number != 0) {
@@ -161,7 +161,7 @@ bool GPAC_MP4_Full::processSample() {
 	}
 }
 
-bool GPAC_MP4_Full::processData() {
+bool GPACDemuxMP4Full::processData() {
 	bool res = processSample();
 	if (!res) {
 		return false;
@@ -171,7 +171,7 @@ bool GPAC_MP4_Full::processData() {
 	return true;
 }
 
-bool GPAC_MP4_Full::process(std::shared_ptr<Data> data) {
+bool GPACDemuxMP4Full::process(std::shared_ptr<Data> data) {
 #if 0 //TODO: zero copy mode, or at least improve the current system
 	reader->valid_data_size = reader->dataSize = data->size();
 	reader->data.data() = data->data();
@@ -197,11 +197,11 @@ bool GPAC_MP4_Full::process(std::shared_ptr<Data> data) {
 	return processData();
 }
 
-bool GPAC_MP4_Full::handles(const std::string &url) {
-	return GPAC_MP4_Full::canHandle(url);
+bool GPACDemuxMP4Full::handles(const std::string &url) {
+	return GPACDemuxMP4Full::canHandle(url);
 }
 
-bool GPAC_MP4_Full::canHandle(const std::string &url) {
+bool GPACDemuxMP4Full::canHandle(const std::string &url) {
 	if (url.find_last_of("mp4") + 1 == url.size()) {
 		return true;
 	} else {

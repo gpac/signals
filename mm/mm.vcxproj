@@ -20,10 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="internal\config.hpp" />
-    <ClInclude Include="internal\module.hpp" />
     <ClInclude Include="internal\pull2push.hpp" />
     <ClInclude Include="internal\reorder.hpp" />
-    <ClInclude Include="internal\submodule.hpp" />
     <ClInclude Include="mm.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -12,16 +12,16 @@ namespace Demux {
 
 class ISOProgressiveReader;
 
-class MODULES_EXPORT GPAC_MP4_Full : public Module {
+class MODULES_EXPORT GPACDemuxMP4Full : public Module {
 public:
-	static GPAC_MP4_Full* create();
-	~GPAC_MP4_Full();
+	static GPACDemuxMP4Full* create();
+	~GPACDemuxMP4Full();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url); //FIXME: useless for memory-based module...
 	static bool canHandle(const std::string &url); //FIXME: useless for memory-based module...
 
 private:
-	GPAC_MP4_Full();
+	GPACDemuxMP4Full();
 	bool openData();
 	bool updateData();
 	bool processSample();

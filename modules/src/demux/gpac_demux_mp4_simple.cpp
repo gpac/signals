@@ -1,4 +1,4 @@
-#include "gpac_mp4_simple.hpp"
+#include "gpac_demux_mp4_simple.hpp"
 #include "../utils/log.hpp"
 #include <string>
 
@@ -28,7 +28,7 @@ public:
 };
 
 
-GPAC_MP4_Simple* GPAC_MP4_Simple::create(std::string const& fn) {
+GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
 
 	/* The ISO progressive reader */
 	GF_ISOFile *movie;
@@ -41,19 +41,19 @@ GPAC_MP4_Simple* GPAC_MP4_Simple::create(std::string const& fn) {
 		throw std::runtime_error("File not found");
 	}
 
-	return new GPAC_MP4_Simple(movie);
+	return new GPACDemuxMP4Simple(movie);
 }
 
-GPAC_MP4_Simple::GPAC_MP4_Simple(GF_ISOFile *movie)
+GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
 	signals.push_back(pinFactory->createPin());
 }
 
-GPAC_MP4_Simple::~GPAC_MP4_Simple() {
+GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {
 }
 
-bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
+bool GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
 	try {
 		int sample_description_index;
 		std::unique_ptr<gpacpp::IsoSample> iso_sample;
@@ -83,11 +83,11 @@ bool GPAC_MP4_Simple::process(std::shared_ptr<Data> /*data*/) {
 	return true;
 }
 
-bool GPAC_MP4_Simple::handles(const std::string &url) {
-	return GPAC_MP4_Simple::canHandle(url);
+bool GPACDemuxMP4Simple::handles(const std::string &url) {
+	return GPACDemuxMP4Simple::canHandle(url);
 }
 
-bool GPAC_MP4_Simple::canHandle(const std::string &url) {
+bool GPACDemuxMP4Simple::canHandle(const std::string &url) {
 	if (url.find_last_of("mp4") + 1 == url.size()) {
 		return true;
 	} else {
