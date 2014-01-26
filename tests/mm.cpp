@@ -1,8 +1,8 @@
 #include "tests.hpp"
 #include <mm.hpp>
 
-#include "mm_simple.cpp"
-#include "mm_inputpin.cpp"
+#include "mm_pull2push.cpp"
+#include "mm_reorder.cpp"
 
 using namespace Tests;
 

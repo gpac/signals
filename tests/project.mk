@@ -49,13 +49,13 @@ TARGETS+=$(OUTDIR)/signals_unit_result.exe
 $(OUTDIR)/signals_unit_result.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_unit_result.o
 DEPS+=$(OUTDIR)/signals_unit_result.deps
 
-TARGETS+=$(OUTDIR)/mm_simple.exe
-$(OUTDIR)/mm_simple.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_simple.o
-DEPS+=$(OUTDIR)/mm_simple.deps
+TARGETS+=$(OUTDIR)/mm_pull2push.exe
+$(OUTDIR)/mm_pull2push.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_pull2push.o
+DEPS+=$(OUTDIR)/mm_pull2push.deps
 
-TARGETS+=$(OUTDIR)/mm_inputpin.exe
-$(OUTDIR)/mm_inputpin.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_inputpin.o
-DEPS+=$(OUTDIR)/mm_inputpin.deps
+TARGETS+=$(OUTDIR)/mm_reorder.exe
+$(OUTDIR)/mm_reorder.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_reorder.o
+DEPS+=$(OUTDIR)/mm_reorder.deps
 
 TARGETS+=$(OUTDIR)/signals.exe
 $(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
