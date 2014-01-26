@@ -20,7 +20,14 @@ public:
 	virtual size_t connect(const std::function<Callback(Args...)> &cb) = 0;
 	virtual bool disconnect(size_t connectionId) = 0;
 	virtual size_t emit(Args... args) = 0;
-	virtual void flush() = 0;
+
+	//TODO write test based on the shared_ptr reflector
+	/**
+	 * Some implementations (such as MSVC std::launch) don't destroy the copy of
+	 * 'Args... args' they hold. When using reference counted Args, they'only be
+	 / released when calling this function or when getting the results().
+	 */
+	virtual void flushAvailableResults() = 0;
 };
 
 template<typename, typename, typename> class ProtoSignal;
@@ -60,7 +67,7 @@ public:
 		return callbacks.size();
 	}
 
-	void flush() {
+	void flushAvailableResults() {
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		fillResultsUnsafe(false, false);
 	}
