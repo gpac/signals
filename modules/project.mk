@@ -2,8 +2,8 @@ MODULES_SRCS:=\
   $(ProjectName)/internal/pin.cpp\
   $(ProjectName)/src/common/libav.cpp\
   $(ProjectName)/src/decode/libav_decode.cpp\
-  $(ProjectName)/src/demux/gpac_mp4_simple.cpp\
-  $(ProjectName)/src/demux/gpac_mp4_full.cpp\
+  $(ProjectName)/src/demux/gpac_demux_mp4_simple.cpp\
+  $(ProjectName)/src/demux/gpac_demux_mp4_full.cpp\
   $(ProjectName)/src/demux/libav_demux.cpp\
   $(ProjectName)/src/encode/libav_encode.cpp\
   $(ProjectName)/src/in/file.cpp\

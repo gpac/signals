@@ -8,8 +8,8 @@
 
 //TODO: move elsewhere
 #include "src/common/libav.hpp"
-#include "src/demux/gpac_mp4_simple.hpp"
-#include "src/demux/gpac_mp4_full.hpp"
+#include "src/demux/gpac_demux_mp4_simple.hpp"
+#include "src/demux/gpac_demux_mp4_full.hpp"
 #include "src/demux/libav_demux.hpp"
 #include "src/decode/libav_decode.hpp"
 #include "src/encode/libav_encode.hpp"

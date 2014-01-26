@@ -42,9 +42,6 @@
     <ClInclude Include="modules.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="src\demux\gpac_mp4_simple.hpp">
-      <Filter>src\demux</Filter>
-    </ClInclude>
     <ClInclude Include="internal\module.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
@@ -62,9 +59,6 @@
     </ClInclude>
     <ClInclude Include="internal\pin.hpp">
       <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="src\demux\gpac_mp4_full.hpp">
-      <Filter>src\demux</Filter>
     </ClInclude>
     <ClInclude Include="internal\allocator.hpp">
       <Filter>includes\internal</Filter>
@@ -102,19 +96,19 @@
     <ClInclude Include="src\transform\audio_convert.hpp">
       <Filter>src\transform</Filter>
     </ClInclude>
+    <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp">
+      <Filter>src\demux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp">
+      <Filter>src\demux</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\demux\gpac_mp4_simple.cpp">
-      <Filter>src\demux</Filter>
-    </ClCompile>
     <ClCompile Include="src\in\file.cpp">
       <Filter>src\in</Filter>
     </ClCompile>
     <ClCompile Include="src\out\print.cpp">
       <Filter>src\out</Filter>
-    </ClCompile>
-    <ClCompile Include="src\demux\gpac_mp4_full.cpp">
-      <Filter>src\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\common\libav.cpp">
       <Filter>src\common</Filter>
@@ -145,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="internal\pin.cpp">
       <Filter>includes\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp">
+      <Filter>src\demux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp">
+      <Filter>src\demux</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

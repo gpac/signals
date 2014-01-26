@@ -9,16 +9,10 @@
     <ClInclude Include="internal\reorder.hpp">
       <Filter>internal</Filter>
     </ClInclude>
-    <ClInclude Include="internal\submodule.hpp">
-      <Filter>internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\pull2push.hpp">
       <Filter>internal</Filter>
     </ClInclude>
     <ClInclude Include="mm.hpp" />
-    <ClInclude Include="internal\module.hpp">
-      <Filter>internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\config.hpp">
       <Filter>internal</Filter>
     </ClInclude>

@@ -14,16 +14,16 @@ namespace Demux {
 
 class ISOFileReader;
 
-class MODULES_EXPORT GPAC_MP4_Simple : public Module {
+class MODULES_EXPORT GPACDemuxMP4Simple : public Module {
 public:
-	static GPAC_MP4_Simple* create(std::string const& path);
-	~GPAC_MP4_Simple();
+	static GPACDemuxMP4Simple* create(std::string const& path);
+	~GPACDemuxMP4Simple();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 
 private:
-	GPAC_MP4_Simple(GF_ISOFile *movie);
+	GPACDemuxMP4Simple(GF_ISOFile *movie);
 
 	std::unique_ptr<ISOFileReader> reader;
 };
