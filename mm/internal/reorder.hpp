@@ -41,7 +41,7 @@ private:
 		return delegate->process(res);
 	}
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
-		getPin(0)->getSignal().flush();
+		getPin(0)->getSignal().flushAvailableResults();
 		getPin(0)->getSignal().emit(data);
 		return true;
 	}
