@@ -8,10 +8,10 @@
   <ItemGroup>
     <ClCompile Include="mm.cpp" />
     <ClCompile Include="tests.cpp" />
-    <ClCompile Include="mm_simple.cpp">
+    <ClCompile Include="mm_reorder.cpp">
       <Filter>tests</Filter>
     </ClCompile>
-    <ClCompile Include="mm_inputpin.cpp">
+    <ClCompile Include="mm_pull2push.cpp">
       <Filter>tests</Filter>
     </ClCompile>
   </ItemGroup>
