@@ -41,12 +41,18 @@ private:
 //------------------------------------------------
 class IsoSample : public GF_ISOSample {
 public:
+	IsoSample() {
+		data = NULL;
+		dataLength = 0;
+		DTS = 0;
+		CTS_Offset = 0;
+		IsRAP = 0;
+	}
 	IsoSample(GF_ISOSample* pOther) {
 		GF_ISOSample* pMe = this;
 		memcpy(pMe, pOther, sizeof(*pOther));
 		gf_free(pOther);
 	}
-
 	~IsoSample() {
 		gf_free(data);
 	}

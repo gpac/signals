@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="log.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.hpp" />
+    <ClInclude Include="log.hpp" />
+    <ClInclude Include="tools.hpp" />
+    <ClInclude Include="..\gpacpp\gpacpp.hpp">
+      <Filter>gpacpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="gpacpp">
+      <UniqueIdentifier>{cf981576-0bb6-42e4-8dbb-b7d685990b45}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

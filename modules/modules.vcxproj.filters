@@ -102,6 +102,12 @@
     <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp">
       <Filter>src\demux</Filter>
     </ClInclude>
+    <ClInclude Include="src\mux\gpac_mux_mp4.hpp">
+      <Filter>src\mux</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\mm.hpp">
+      <Filter>src\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
@@ -145,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp">
       <Filter>src\demux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mux\gpac_mux_mp4.cpp">
+      <Filter>src\mux</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

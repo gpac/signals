@@ -28,12 +28,14 @@
     <ClInclude Include="internal\props.hpp" />
     <ClInclude Include="modules.hpp" />
     <ClInclude Include="src\common\libav.hpp" />
+    <ClInclude Include="src\common\mm.hpp" />
     <ClInclude Include="src\decode\libav_decode.hpp" />
     <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp" />
     <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp" />
     <ClInclude Include="src\demux\libav_demux.hpp" />
     <ClInclude Include="src\encode\libav_encode.hpp" />
     <ClInclude Include="src\in\file.hpp" />
+    <ClInclude Include="src\mux\gpac_mux_mp4.hpp" />
     <ClInclude Include="src\mux\libav_mux.hpp" />
     <ClInclude Include="src\out\null.hpp" />
     <ClInclude Include="src\out\print.hpp" />
@@ -50,6 +52,7 @@
     <ClCompile Include="src\demux\libav_demux.cpp" />
     <ClCompile Include="src\encode\libav_encode.cpp" />
     <ClCompile Include="src\in\file.cpp" />
+    <ClCompile Include="src\mux\gpac_mux_mp4.cpp" />
     <ClCompile Include="src\mux\libav_mux.cpp" />
     <ClCompile Include="src\out\null.cpp" />
     <ClCompile Include="src\out\print.cpp" />
