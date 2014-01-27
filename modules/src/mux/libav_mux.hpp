@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../internal/config.hpp"
+#include "../common/mm.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <string>
@@ -18,6 +19,8 @@ public:
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
+
+	void declareStream(std::shared_ptr<StreamVideo> stream);
 
 private:
 	LibavMux(struct AVFormatContext *formatCtx);
