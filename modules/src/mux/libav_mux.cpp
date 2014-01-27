@@ -81,7 +81,6 @@ LibavMux::~LibavMux() {
 }
 
 void LibavMux::declareStream(std::shared_ptr<StreamVideo> stream) {
-	AVCodecContext *a = stream->codecCtx; //Romain
 	AVStream *avStream = avformat_new_stream(formatCtx, stream->codecCtx->codec);
 	if (!avStream) {
 		Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
@@ -93,7 +92,7 @@ void LibavMux::declareStream(std::shared_ptr<StreamVideo> stream) {
 		formatCtx->streams[0]->codec->height = stream->codecCtx->height;
 	}
 	if (formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
-		formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER; //write the stream header, if any
+		formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
 	}
 }
 

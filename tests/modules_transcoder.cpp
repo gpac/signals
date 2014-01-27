@@ -63,7 +63,6 @@ unittest("transcoder: video simple (libav mux)") {
 	encode->waitForCompletion();
 }
 
-#if 0
 unittest("transcoder: video simple (gpac mux)") {
 	//create demux
 	std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
@@ -117,7 +116,6 @@ unittest("transcoder: video simple (gpac mux)") {
 	mux->waitForCompletion();
 	encode->waitForCompletion();
 }
-#endif
 
 #if 0
 unittest("transcoder: audio simple (libav mux)") {

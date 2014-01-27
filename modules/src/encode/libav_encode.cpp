@@ -54,7 +54,7 @@ LibavEncode::LibavEncode(Type type)
 	switch (type) {
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
-		generalOptions = "-vcodec mpeg2video -r 25 -pass 1"; //TODO //Romain: test
+		generalOptions = "-vcodec libx264 -r 25 -pass 1"; //TODO //Romain: test
 		codecType = "vcodec";
 		break;
 	case Audio:
@@ -162,6 +162,7 @@ LibavEncode::LibavEncode(Type type)
 	av_dict_free(&generalDict);
 
 	/* open it */
+	codecCtx->flags |= CODEC_FLAG_GLOBAL_HEADER; //gives access to the extradata (e.g. H264 SPS/PPS, etc.)
 	if (avcodec_open2(codecCtx, codec, &codecDict) < 0) {
 		Log::msg(Log::Warning, "[libav_encode] could not open codec, disable output.");
 		av_dict_free(&codecDict);
@@ -219,7 +220,8 @@ void LibavEncode::sendOutputPinsInfo() {
 	std::shared_ptr<StreamVideo> videoStream(new StreamVideo);
 	videoStream->width = codecCtx->width;
 	videoStream->height = codecCtx->height;
-	videoStream->timeScale = codecCtx->time_base.num / codecCtx->time_base.den;
+	videoStream->timeScale = codecCtx->time_base.den / codecCtx->time_base.num;
+	assert(codecCtx->time_base.num == 1); //FIXME
 	videoStream->extradata = codecCtx->extradata;
 	videoStream->extradataSize = codecCtx->extradata_size;
 	videoStream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
