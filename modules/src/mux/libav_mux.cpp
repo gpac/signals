@@ -66,7 +66,6 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 
 LibavMux::LibavMux(struct AVFormatContext *formatCtx)
 : formatCtx(formatCtx), headerWritten(false) {
-	signals.push_back(pinFactory->createPin(new PropsMuxer(formatCtx))); //FIXME: we create the pin only for the props...
 }
 
 LibavMux::~LibavMux() {
@@ -81,6 +80,23 @@ LibavMux::~LibavMux() {
 	}
 }
 
+void LibavMux::declareStream(std::shared_ptr<StreamVideo> stream) {
+	AVCodecContext *a = stream->codecCtx; //Romain
+	AVStream *avStream = avformat_new_stream(formatCtx, stream->codecCtx->codec);
+	if (!avStream) {
+		Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
+		throw std::runtime_error("Stream creation failed.");
+	}
+	if (stream->codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
+		formatCtx->streams[0]->codec->time_base = stream->codecCtx->time_base; //FIXME: [0]: not a mux yet...
+		formatCtx->streams[0]->codec->width = stream->codecCtx->width;
+		formatCtx->streams[0]->codec->height = stream->codecCtx->height;
+	}
+	if (formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
+		formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER; //write the stream header, if any
+	}
+}
+
 void LibavMux::ensureHeader() {
 	if (!headerWritten) {
 		if (avformat_write_header(formatCtx, NULL) != 0) {
@@ -90,8 +106,9 @@ void LibavMux::ensureHeader() {
 					Log::msg(Log::Debug, "[libav_mux] codec[%u] is \"%s\" (%s)", i, formatCtx->streams[i]->codec->codec->name, formatCtx->streams[i]->codec->codec->long_name);
 				}
 			}
+		} else {
+			headerWritten = true;
 		}
-		headerWritten = true;
 	}
 }
 

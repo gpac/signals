@@ -53,7 +53,7 @@ protected:
 	Module const& operator=(Module const&) = delete;
 
 	std::unique_ptr<PinFactory> pinFactory;
-	std::vector<Pin*> signals; //Romain: remove PinType
+	std::vector<Pin*> signals;
 };
 
 }

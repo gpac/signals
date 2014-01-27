@@ -4,6 +4,7 @@
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include "../common/libav.hpp"
+#include "../common/mm.hpp"
 #include <string>
 
 struct AVStream;
@@ -21,20 +22,24 @@ public:
 		unknown
 	};
 
-	static LibavEncode* create(const PropsMuxer &props, Type type);
+	static LibavEncode* create(Type type);
 	~LibavEncode();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 
+	void sendOutputPinsInfo(); //FIXME: temporary until modules have a manager
+	Signal<void(std::shared_ptr<StreamVideo>)> declareStream; //FIXME: temporary until modules have a type 'mux'
+
 private:
-	LibavEncode(AVStream *videoStream, AVFrame *avFrame);
+	LibavEncode(Type type);
 	bool processAudio(std::shared_ptr<Data> data);
 	bool processVideo(std::shared_ptr<Data> data);
 
-	struct AVStream *avStream;
+	AVCodecContext *codecCtx;
 	struct AVFrame *avFrame;
 	int frameNum;
+
 };
 
 }

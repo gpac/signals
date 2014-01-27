@@ -30,23 +30,6 @@ namespace Modules {
 		AVCodecContext *codecCtx;
 	};
 
-	class MODULES_EXPORT PropsMuxer : public Props {
-	public:
-		/**
-		* Doesn't take the ownership
-		*/
-		PropsMuxer(AVFormatContext *formatCtx)
-			: formatCtx(formatCtx) {
-		}
-
-		AVFormatContext* getAVFormatContext() const {
-			return formatCtx;
-		}
-
-	private:
-		AVFormatContext *formatCtx;
-	};
-
 	class MODULES_EXPORT DataAVPacket : public Data {
 	public:
 		DataAVPacket();		

@@ -44,12 +44,17 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Encode {
 
-LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
+LibavEncode* LibavEncode::create(Type type) {
+	return new LibavEncode(type);
+}
+
+LibavEncode::LibavEncode(Type type)
+	: frameNum(-1) {
 	std::string codecOptions, generalOptions, codecType;
 	switch (type) {
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
-		generalOptions = "-vcodec mpeg2video -r 25 -pass 1"; //TODO
+		generalOptions = "-vcodec mpeg2video -r 25 -pass 1"; //TODO //Romain: test
 		codecType = "vcodec";
 		break;
 	case Audio:
@@ -79,65 +84,58 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 		throw std::runtime_error("Codec not found.");
 	}
 
-	AVStream *avStream;
-	{
-		AVFormatContext *formatCtx = props.getAVFormatContext();
-		avStream = avformat_new_stream(formatCtx, codec);
-		if (!avStream) {
-			Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
-			av_dict_free(&generalDict);
-			av_dict_free(&codecDict);
-			throw std::runtime_error("Stream creation failed.");
-		}
-		if (formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
-			avStream->codec->flags |= CODEC_FLAG_GLOBAL_HEADER; //write the stream header, if any
-		}
+	codecCtx = avcodec_alloc_context3(codec);
+	if (!codecCtx) {
+		Log::msg(Log::Warning, "[libav_encode] could not allocate the codec context.");
+		av_dict_free(&generalDict);
+		av_dict_free(&codecDict);
+		throw std::runtime_error("Codec context allocation failed.");
 	}
 
 	/* parameters */
 	int linesize[8];
 	switch (type) {
-	case Video: 
-		{
-			const int width = 1280; //TODO
-			const int height = 720; //TODO
-			avStream->codec->width = width;
-			avStream->codec->height = height;
-			linesize[0] = avStream->codec->width;
-			linesize[1] = avStream->codec->width / 2;
-			linesize[2] = avStream->codec->width / 2;
-			if (strcmp(av_dict_get(generalDict, "vcodec", NULL, 0)->value, "mjpeg")) {
-				avStream->codec->pix_fmt = PIX_FMT_YUV420P;
-			} else {
-				avStream->codec->pix_fmt = PIX_FMT_YUVJ420P;
-			}
+	case Video:
+	{
+					const int width = 1280; //TODO
+					const int height = 720; //TODO
+					codecCtx->width = width;
+					codecCtx->height = height;
+					linesize[0] = codecCtx->width;
+					linesize[1] = codecCtx->width / 2;
+					linesize[2] = codecCtx->width / 2;
+					if (strcmp(av_dict_get(generalDict, "vcodec", NULL, 0)->value, "mjpeg")) {
+						codecCtx->pix_fmt = PIX_FMT_YUV420P;
+					} else {
+						codecCtx->pix_fmt = PIX_FMT_YUVJ420P;
+					}
 
-			/* set other optionsDict*/
+					/* set other optionsDict*/
 #if 0 //TODO
-			if (avCodec == "h264") {
-				av_opt_set(avStream->codec->priv_data, "preset", "superfast", 0);
-				av_opt_set(avStream->codec->priv_data, "rc-lookahead", "0", 0);
-			}
-			avStream->codec->flags |= CODEC_FLAG_PASS1;
-			if (atoi(av_dict_get(generalDict, "pass", NULL, 0)->value) == 2) {
-				avStream->codec->flags |= CODEC_FLAG_PASS2;
-			}
+					if (avCodec == "h264") {
+						av_opt_set(codecCtx->priv_data, "preset", "superfast", 0);
+						av_opt_set(codecCtx->priv_data, "rc-lookahead", "0", 0);
+					}
+					codecCtx->flags |= CODEC_FLAG_PASS1;
+					if (atoi(av_dict_get(generalDict, "pass", NULL, 0)->value) == 2) {
+						codecCtx->flags |= CODEC_FLAG_PASS2;
+					}
 #endif
-			double fr = atof(av_dict_get(generalDict, "r", NULL, 0)->value);
-			AVRational fps;
-			fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
-			avStream->codec->time_base = fps;
-		}
+					double fr = atof(av_dict_get(generalDict, "r", NULL, 0)->value);
+					AVRational fps;
+					fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
+					codecCtx->time_base = fps;
+	}
 		break;
 	case Audio:
 		codecType = "audio";
-		avStream->codec->sample_fmt = AV_SAMPLE_FMT_S16;
-		avStream->codec->sample_rate = 44100;
-		avStream->codec->channels = 2;
-		avStream->codec->channel_layout = AV_CH_LAYOUT_STEREO;
+		codecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
+		codecCtx->sample_rate = 44100;
+		codecCtx->channels = 2;
+		codecCtx->channel_layout = AV_CH_LAYOUT_STEREO;
 		break;
 	default:
-		return nullptr;
+		assert(0);
 	}
 
 #if 0 //TODO
@@ -164,7 +162,7 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 	av_dict_free(&generalDict);
 
 	/* open it */
-	if (avcodec_open2(avStream->codec, codec, &codecDict) < 0) {
+	if (avcodec_open2(codecCtx, codec, &codecDict) < 0) {
 		Log::msg(Log::Warning, "[libav_encode] could not open codec, disable output.");
 		av_dict_free(&codecDict);
 		throw std::runtime_error("Codec creation failed.");
@@ -182,10 +180,10 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 	}
 	av_dict_free(&codecDict);
 
-	AVFrame *avFrame = avcodec_alloc_frame();
+	avFrame = avcodec_alloc_frame();
 	if (!avFrame) {
 		Log::msg(Log::Warning, "[libav_encode] could not create the AVFrame, disable output.");
-		avcodec_close(avStream->codec);
+		avcodec_close(codecCtx);
 		throw std::runtime_error("Frame allocation failed.");
 	}
 
@@ -197,29 +195,35 @@ LibavEncode* LibavEncode::create(const PropsMuxer &props, Type type) {
 		avFrame->linesize[2] = linesize[2];
 		break;
 	case Audio:
-		avFrame->sample_rate = avStream->codec->sample_rate;
-		avFrame->nb_samples = avStream->codec->frame_size;
-		avFrame->channel_layout = avStream->codec->channel_layout;
+		avFrame->sample_rate = codecCtx->sample_rate;
+		avFrame->nb_samples = codecCtx->frame_size;
+		avFrame->channel_layout = codecCtx->channel_layout;
 		break;
 	default:
-		return nullptr;
+		assert(0);
 	}
 
-	return new LibavEncode(avStream, avFrame);
-}
-
-LibavEncode::LibavEncode(AVStream *avStream, AVFrame *avFrame)
-: avStream(avStream), avFrame(avFrame), frameNum(-1) {
 	signals.push_back(pinFactory->createPin());
 }
 
 LibavEncode::~LibavEncode() {
-	if (avStream && avStream->codec) {
-		avcodec_close(avStream->codec);
+	if (codecCtx) {
+		avcodec_close(codecCtx);
 	}
 	if (avFrame) {
 		avcodec_free_frame(&avFrame);
 	}
+}
+
+void LibavEncode::sendOutputPinsInfo() {
+	std::shared_ptr<StreamVideo> videoStream(new StreamVideo);
+	videoStream->width = codecCtx->width;
+	videoStream->height = codecCtx->height;
+	videoStream->timeScale = codecCtx->time_base.num / codecCtx->time_base.den;
+	videoStream->extradata = codecCtx->extradata;
+	videoStream->extradataSize = codecCtx->extradata_size;
+	videoStream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
+	declareStream.emit(videoStream);
 }
 
 bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
@@ -233,7 +237,7 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	avFrame->linesize[1] = (int)data->size() / 2;
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_audio2(avStream->codec, pkt, avFrame, &gotPkt)) {
+	if (avcodec_encode_audio2(codecCtx, pkt, avFrame, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
 		return false;
 	} else {
@@ -252,11 +256,11 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	AVPacket *pkt = out->getPacket();
 
 	avFrame->data[0] = (uint8_t*)data->data();
-	avFrame->data[1] = avFrame->data[0] + avStream->codec->width * avStream->codec->height;
-	avFrame->data[2] = avFrame->data[1] + (avStream->codec->width / 2) * (avStream->codec->height / 2);
+	avFrame->data[1] = avFrame->data[0] + codecCtx->width * codecCtx->height;
+	avFrame->data[2] = avFrame->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_video2(avStream->codec, pkt, avFrame, &gotPkt)) {
+	if (avcodec_encode_video2(codecCtx, pkt, avFrame, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %d.", frameNum);
 		return false;
 	} else {
@@ -270,7 +274,7 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 }
 
 bool LibavEncode::process(std::shared_ptr<Data> data) {
-	switch (avStream->codec->codec_type) {
+	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
 		return processVideo(data);
 		break;

@@ -44,7 +44,6 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 
 LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
 : formatCtx(formatCtx) {
-	std::vector<Pin*> signals;
 	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
 		signals.push_back(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec)));
 	}

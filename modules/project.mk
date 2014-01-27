@@ -7,6 +7,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/demux/libav_demux.cpp\
   $(ProjectName)/src/encode/libav_encode.cpp\
   $(ProjectName)/src/in/file.cpp\
+  $(ProjectName)/src/mux/gpac_mux_mp4.cpp\
   $(ProjectName)/src/mux/libav_mux.cpp\
   $(ProjectName)/src/out/null.cpp\
   $(ProjectName)/src/out/print.cpp\
