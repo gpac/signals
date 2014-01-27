@@ -16,3 +16,4 @@ Questions (from higher to lower priority):
 - how to dynamically connect filters
 - use C++ strong typing for data (would prevent from connecting dynamically, like an external DLL)
 - how to expose an interface to older compilers
+- how to expose parameters so that we can plug it with a GUI?
