@@ -3,12 +3,6 @@
 #include <string>
 #include <sstream>
 
-extern "C" {
-#include <gpac/tools.h>
-#include <gpac/isomedia.h>
-#include <gpac/thread.h>
-}
-
 #include "gpacpp.hpp"
 
 namespace Demux {

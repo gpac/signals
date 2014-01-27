@@ -2,11 +2,6 @@
 #include "../utils/log.hpp"
 #include <string>
 
-extern "C" {
-#include <gpac/tools.h>
-#include <gpac/isomedia.h>
-}
-
 #include "gpacpp.hpp"
 
 namespace Demux {
