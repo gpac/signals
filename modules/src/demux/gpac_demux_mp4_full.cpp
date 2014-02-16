@@ -1,5 +1,6 @@
 #include "gpac_demux_mp4_full.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include <string>
 #include <sstream>
 
@@ -38,7 +39,7 @@ GPACDemuxMP4Full* GPACDemuxMP4Full::create() {
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 	: reader(new ISOProgressiveReader) {
-	signals.push_back(pinFactory->createPin());
+	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 GPACDemuxMP4Full::~GPACDemuxMP4Full() {

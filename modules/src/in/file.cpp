@@ -1,4 +1,5 @@
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include "file.hpp"
 
 #define IOSIZE 65536
@@ -8,7 +9,7 @@ namespace In {
 
 File::File(FILE *file)
 	: file(file) {
-	signals.push_back(pinFactory->createPin());
+	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 File::~File() {

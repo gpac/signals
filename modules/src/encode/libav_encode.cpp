@@ -204,7 +204,7 @@ LibavEncode::LibavEncode(Type type)
 		assert(0);
 	}
 
-	signals.push_back(pinFactory->createPin());
+	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 LibavEncode::~LibavEncode() {

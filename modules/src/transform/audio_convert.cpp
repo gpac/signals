@@ -1,11 +1,12 @@
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include "audio_convert.hpp"
 
 namespace Modules {
 namespace Transform {
 
 AudioConvert::AudioConvert() {
-	signals.push_back(pinFactory->createPin());
+	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 AudioConvert::~AudioConvert() {
