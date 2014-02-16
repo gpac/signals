@@ -70,5 +70,14 @@ unittest("signals_simple") {
 		ASSERT(!res);
 	}
 }
+
+unittest("connect to lambda") {
+	Signal<int(int)> sig;
+	Connect(sig, [](int val) -> int { return val * val; });
+	sig.emit(8);
+	auto const res = sig.results();
+	ASSERT(res->size() == 1);
+	ASSERT((*res)[0] == 64);
+}
 }
 

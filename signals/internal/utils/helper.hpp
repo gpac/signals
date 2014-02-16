@@ -34,6 +34,12 @@ void Connect(B& Sig, C ObjectSlot, D MemberFunctionSlot)
 	Sig.connect(functor);
 }
 
+template<typename SignalType, typename LambdaType>
+void Connect(SignalType& Sig, LambdaType Lambda)
+{
+  Sig.connect(Lambda);
+}
+
 template<typename T>
 struct NotVoidStruct {
 	typedef T Type;
