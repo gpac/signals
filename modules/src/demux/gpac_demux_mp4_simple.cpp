@@ -1,5 +1,6 @@
 #include "gpac_demux_mp4_simple.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include <string>
 
 #include "gpacpp.hpp"
@@ -42,7 +43,7 @@ GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
 GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
-	signals.push_back(pinFactory->createPin());
+	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {

@@ -4,6 +4,7 @@
 #include "pin.hpp"
 #include <vector>
 #include <string>
+#include <memory>
 
 
 namespace Modules {
@@ -23,9 +24,6 @@ public:
 	}
 
 	virtual ~Module() {
-		for (auto signal : signals) {
-			delete signal;
-		}
 	}
 
 	virtual bool process(std::shared_ptr<Data> data) = 0;
@@ -45,7 +43,7 @@ public:
 	}
 
 	Pin* getPin(size_t i) {
-		return signals[i];
+		return signals[i].get();
 	}
 
 protected:
@@ -53,7 +51,7 @@ protected:
 	Module const& operator=(Module const&) = delete;
 
 	std::unique_ptr<PinFactory> pinFactory;
-	std::vector<Pin*> signals;
+	std::vector<std::unique_ptr<Pin>> signals;
 };
 
 }

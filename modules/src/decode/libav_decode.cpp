@@ -78,7 +78,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 
 LibavDecode::LibavDecode(AVCodecContext *codecCtx, AVFrame *avFrame)
 : codecCtx(codecCtx), avFrame(avFrame) {
-	signals.push_back(pinFactory->createPin());
+	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 LibavDecode::~LibavDecode() {

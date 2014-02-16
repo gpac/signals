@@ -12,7 +12,7 @@ namespace {
 	class Osc : public Modules::Module {
 	public:
 		Osc() : seqNumber(0) {
-			signals.push_back(pinFactory->createPin());
+			signals.push_back(uptr(pinFactory->createPin()));
 		}
 		bool process(std::shared_ptr<Data> /*sample*/) {
 			seqNumber = (seqNumber + 1) % 256;
@@ -42,7 +42,7 @@ namespace {
 	class Amp : public Modules::Module { //making it sync for perf (avoid spawning one more time when forwarding the output pin)
 	public:
 		Amp() : seqNumber(0) {
-			signals.push_back(pinFactory->createPin());
+			signals.push_back(uptr(pinFactory->createPin()));
 		}
 		bool handles(const std::string &url) {
 			return false;

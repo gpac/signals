@@ -13,14 +13,13 @@ namespace MM {
 class Reorder : public Modules::Module {
 public:
 	Reorder(Modules::Module *module) : delegate(module) {
-		signals.push_back(pinFactory->createPin()); //TODO: this super module should copy the structure from the delegate
+		signals.push_back(uptr(pinFactory->createPin())); //TODO: this super module should copy the structure from the delegate
 		Connect(synchronizerSignal, this, &Reorder::reflector);
 		//TODO: connect to lambdas: Connect(synchronizerSignal, this, [](std::shared_ptr<Data> sample)->std::shared_ptr<Data> { return sample; });
 		Connect(internalSignal, this, &Reorder::processInOrder);
 		Connect(delegate->getPin(0)->getSignal(), this, &Reorder::reemit); //delegate output to this output ; faster is delegate output signal is sync
 	}
 	~Reorder() {
-		delete signals[0];
 	}
 	void waitForCompletion() {
 		delegate->waitForCompletion();
