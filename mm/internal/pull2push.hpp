@@ -12,8 +12,6 @@ public:
 		signals.push_back(uptr(pinFactory->createPin())); //TODO: this super module should copy the structure from the delegate, see Reorder
 		Connect(delegate->getPin(0)->getSignal(), this, &Pull2Push::reemit); //delegate output to this output ; faster is delegate output signal is sync
 	}
-	~Pull2Push() {
-	}
 	bool process(std::shared_ptr<Data> data) {
 #if 0
 		for (;;) {
