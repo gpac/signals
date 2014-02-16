@@ -19,8 +19,6 @@ public:
 		Connect(internalSignal, this, &Reorder::processInOrder);
 		Connect(delegate->getPin(0)->getSignal(), this, &Reorder::reemit); //delegate output to this output ; faster is delegate output signal is sync
 	}
-	~Reorder() {
-	}
 	void waitForCompletion() {
 		delegate->waitForCompletion();
 		Modules::Module::waitForCompletion();
