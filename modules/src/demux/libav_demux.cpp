@@ -4,6 +4,7 @@
 #include "../common/libav.hpp"
 #include <cassert>
 #include <string>
+#include <fstream>
 
 extern "C" {
 #include <libavformat/avformat.h>
@@ -76,33 +77,31 @@ bool LibavDemux::canHandle(const std::string &url) {
 	//FIXME: only works for files
 	AVProbeData pd;
 	const size_t size = 1024;
-	pd.buf = new unsigned char[size + AVPROBE_PADDING_SIZE];
+	std::vector<uint8_t> buf(size + AVPROBE_PADDING_SIZE);
+	pd.buf = buf.data();
 	pd.filename = NULL;
 
-	FILE *f = fopen(url.c_str(), "rb");
-	if (!f) {
+	std::ifstream fp(url, std::ios::binary);
+	if (!fp.is_open()) {
 		Log::msg(Log::Info, "[LibavDemux] Couldn't open file %s for probing. Aborting.", url.c_str());
-		delete[] pd.buf;
 		return false;
 	}
-	size_t bytesRead = fread(pd.buf, 1, size, f);
+
+	fp.read((char*)pd.buf, size);
+	const size_t bytesRead = fp.gcount();
 	pd.buf_size = (int)bytesRead;
-	fclose(f);
 	if (bytesRead < size) {
 		Log::msg(Log::Warning, "[LibavDemux] Could only read %lu bytes (instead of %lu) for probing format.", (unsigned long)bytesRead, (unsigned long)size);
 	}
 	memset(pd.buf + bytesRead, 0, AVPROBE_PADDING_SIZE);
 
-	avcodec_register_all();
-	av_register_all();
 	avformat_network_init();
 
 	AVInputFormat *format = av_probe_input_format(&pd, 1);
-	delete[] pd.buf;
 	if (!format)
 		return false;
-	else
-		return true;
+
+	return true;
 }
 
 }
