@@ -242,12 +242,11 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	if (avcodec_encode_audio2(codecCtx, pkt, avFrame, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
 		return false;
-	} else {
-		if (gotPkt) {
-			pkt->pts = pkt->dts = avFrame->pts * pkt->duration;
-			assert(pkt->size);
-			signals[0]->emit(out);
-		}
+	}
+	if (gotPkt) {
+		pkt->pts = pkt->dts = avFrame->pts * pkt->duration;
+		assert(pkt->size);
+		signals[0]->emit(out);
 	}
 
 	return true;
