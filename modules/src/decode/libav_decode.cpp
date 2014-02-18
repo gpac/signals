@@ -88,6 +88,24 @@ LibavDecode::~LibavDecode() {
 	delete codecCtx;
 }
 
+namespace {
+	std::shared_ptr<Data> createAudioData(AVCodecContext* codecCtx, AVFrame* avFrame) {
+		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+		std::shared_ptr<Data> out(new Data(bufferSize));
+		if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
+			size_t index = 0;
+			for (int i = 0; i < codecCtx->channels; ++i) {
+				const int channelSize = av_samples_get_buffer_size(nullptr, 1, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+				memcpy(out->data() + index, avFrame->data[i], channelSize);
+				index += channelSize;
+			}
+		} else {
+			memcpy(out->data(), avFrame->data[0], bufferSize);
+		}
+		return out;
+	}
+}
+
 bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
@@ -101,18 +119,7 @@ bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 		return true;
 	}
 	if (gotFrame) {
-		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-		std::shared_ptr<Data> out(new Data(bufferSize));
-		if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
-			size_t index = 0;
-			for (int i = 0; i < codecCtx->channels; ++i) {
-				const int channelSize = av_samples_get_buffer_size(nullptr, 1, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-				memcpy(out->data() + index, avFrame->data[i], channelSize);
-				index += channelSize;
-			}
-		} else {
-			memcpy(out->data(), avFrame->data[0], bufferSize);
-		}
+		auto out = createAudioData(codecCtx, avFrame);
 		signals[0]->emit(out);
 	}
 
