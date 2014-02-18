@@ -8,17 +8,24 @@
 using namespace Tests;
 using namespace Modules;
 
+namespace {
+	Decode::LibavDecode* createMp3Decoder()
+	{
+		AVCodecContext avContext;
+		memset(&avContext, 0, sizeof avContext);
+		avContext.codec_type = AVMEDIA_TYPE_AUDIO;
+		avContext.codec_id = AV_CODEC_ID_MP3;
+		PropsDecoder props(&avContext);
+		return Decode::LibavDecode::create(props);
+	}
+}
+
 unittest("decoder: audio simple") {
 
 	auto input = uptr(In::File::create("data/sine.mp3"));
 
 	//create the audio decoder
-	AVCodecContext avContext;
-	memset(&avContext, 0, sizeof avContext);
-	avContext.codec_type = AVMEDIA_TYPE_AUDIO;
-	avContext.codec_id = AV_CODEC_ID_MP3;
-	PropsDecoder props(&avContext);
-	auto decoder = uptr(Decode::LibavDecode::create(props));
+	auto decoder = uptr(createMp3Decoder());
 	Connect(input->getPin(0)->getSignal(), decoder.get(), &Decode::LibavDecode::process);
 
 	auto null = uptr(Out::Null::create());

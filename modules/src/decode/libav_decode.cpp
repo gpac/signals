@@ -76,14 +76,16 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	return new LibavDecode(codecCtx, avFrame);
 }
 
-LibavDecode::LibavDecode(AVCodecContext *codecCtx, AVFrame *avFrame)
-: codecCtx(codecCtx), avFrame(avFrame) {
+LibavDecode::LibavDecode(AVCodecContext *codecCtx2, AVFrame *avFrame)
+: codecCtx(new AVCodecContext), avFrame(avFrame) {
+	*codecCtx = *codecCtx2;
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 LibavDecode::~LibavDecode() {
 	av_free(avFrame);
 	avcodec_close(codecCtx);
+	delete codecCtx;
 }
 
 bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
