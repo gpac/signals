@@ -122,6 +122,7 @@ bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
+		Log::msg(Log::Warning, "[LibavDecode] Invalid video packet type.");
 		return false;
 	}
 	AVPacket *pkt = decoderData->getPacket();
