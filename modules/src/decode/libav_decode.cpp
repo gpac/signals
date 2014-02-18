@@ -91,6 +91,7 @@ LibavDecode::~LibavDecode() {
 bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
+		Log::msg(Log::Warning, "[LibavDecode] Invalid audio packet type.");
 		return false;
 	}
 	AVPacket *pkt = decoderData->getPacket();
