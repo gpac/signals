@@ -23,8 +23,8 @@ namespace {
 			std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
 			ASSERT(p != nullptr);
 
-			Connect(demux->getPin(i)->getSignal(), decode.get(), &Decode::LibavDecode::process);
-			Connect(decode->getPin(0)->getSignal(), p.get(), &Out::Print::process);
+			ConnectPin(demux->getPin(i), decode.get(), &Decode::LibavDecode::process);
+			ConnectPin(decode->getPin(0), p.get(), &Out::Print::process);
 
 			decoders.push_back(std::move(decode));
 			printers.push_back(std::move(p));

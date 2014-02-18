@@ -32,6 +32,14 @@ public:
 	virtual ISignal<bool(std::shared_ptr<Data>)>& getSignal() = 0;
 };
 
+template<typename C, typename D>
+void ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot)
+{
+	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+	p->getSignal().connect(functor);
+}
+
+
 class PinFactory {
 public:
 	virtual ~PinFactory() {
