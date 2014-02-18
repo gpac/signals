@@ -40,7 +40,7 @@ namespace Modules {
 		void resize(size_t size);
 
 	private:
-		std::unique_ptr<AVPacket> pkt;
+		std::unique_ptr<AVPacket> const pkt;
 	};
 
 	void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);

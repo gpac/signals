@@ -58,8 +58,7 @@ const char* avlogLevelName(int level) {
 namespace Modules {
 
 DataAVPacket::DataAVPacket()
-	: Data(0) {
-	pkt.reset(new AVPacket);
+	: Data(0), pkt(new AVPacket) {
 	av_init_packet(pkt.get());
 	av_free_packet(pkt.get());
 }
