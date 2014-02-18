@@ -26,10 +26,10 @@ unittest("decoder: audio simple") {
 
 	//create the audio decoder
 	auto decoder = uptr(createMp3Decoder());
-	Connect(input->getPin(0)->getSignal(), decoder.get(), &Decode::LibavDecode::process);
+	ConnectPin(input->getPin(0), decoder.get(), &Decode::LibavDecode::process);
 
 	auto null = uptr(Out::Null::create());
-	Connect(decoder->getPin(0)->getSignal(), null.get(), &Out::Null::process);
+	ConnectPin(decoder->getPin(0), null.get(), &Out::Null::process);
 
 	//create an audio resampler
 	// std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());

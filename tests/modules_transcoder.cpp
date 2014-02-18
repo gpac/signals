@@ -27,7 +27,7 @@ unittest("transcoder: video simple (libav mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPin(demux->getPin(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -50,9 +50,9 @@ unittest("transcoder: video simple (libav mux)") {
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 
-	Connect(demux->getPin(videoIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
-	Connect(decode->getPin(0)->getSignal(), encode.get(), &Encode::LibavEncode::process);
-	Connect(encode->getPin(0)->getSignal(), mux.get(), &Mux::LibavMux::process);
+	ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
+	ConnectPin(decode->getPin(0), encode.get(), &Encode::LibavEncode::process);
+	ConnectPin(encode->getPin(0), mux.get(), &Mux::LibavMux::process);
 
 	while (demux->process(nullptr)) {
 	}
@@ -81,7 +81,7 @@ unittest("transcoder: video simple (gpac mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPin(demux->getPin(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -104,9 +104,9 @@ unittest("transcoder: video simple (gpac mux)") {
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
 	encode->sendOutputPinsInfo();
 
-	Connect(demux->getPin(videoIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
-	Connect(decode->getPin(0)->getSignal(), encode.get(), &Encode::LibavEncode::process);
-	Connect(encode->getPin(0)->getSignal(), mux.get(), &Mux::GPACMuxMP4::process);
+	ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
+	ConnectPin(decode->getPin(0), encode.get(), &Encode::LibavEncode::process);
+	ConnectPin(encode->getPin(0), mux.get(), &Mux::GPACMuxMP4::process);
 
 	while (demux->process(nullptr)) {
 	}
@@ -136,7 +136,7 @@ unittest("transcoder: audio simple (libav mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 			audioIndex = i;
 		} else {
-			Connect(demux->getPin(i)->getSignal(), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPin(demux->getPin(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -163,10 +163,10 @@ unittest("transcoder: audio simple (libav mux)") {
 	std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());
 	ASSERT(audioConverter != nullptr);
 
-	Connect(demux->getPin(audioIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
-	Connect(decode->getPin(0)->getSignal(), audioConverter.get(), &Transform::AudioConvert::process);
-	Connect(audioConverter->getPin(0)->getSignal(), encode.get(), &Encode::LibavEncode::process);
-	Connect(encode->getPin(0)->getSignal(), mux.get(), &Mux::LibavMux::process);
+	ConnectPin(demux->getPin(audioIndex), decode.get(), &Decode::LibavDecode::process);
+	ConnectPin(decode->getPin(0), audioConverter.get(), &Transform::AudioConvert::process);
+	ConnectPin(audioConverter->getPin(0), encode.get(), &Encode::LibavEncode::process);
+	ConnectPin(encode->getPin(0), mux.get(), &Mux::LibavMux::process);
 
 	while (demux->process(nullptr)) {
 	}
