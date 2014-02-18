@@ -54,7 +54,7 @@ LibavDemux::~LibavDemux() {
 	avformat_close_input(&formatCtx);
 }
 
-bool LibavDemux::process(std::shared_ptr<Data> data) {
+bool LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
 	AVPacket *pkt = out->getPacket();
 	int status = av_read_frame(formatCtx, pkt);
