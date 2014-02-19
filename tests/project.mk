@@ -18,10 +18,10 @@ MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS)
 $(OUTDIR)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
 DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
 
-TARGETS+=$(OUTDIR)/modules_decoder.exe
-MODULES_DECODER_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_decoder.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_decoder.exe: $(MODULES_DECODER_OBJS)
-DEPS+=$(MODULES_DECODER_OBJS:%.o=%.deps)
+TARGETS+=$(OUTDIR)/modules_decode.exe
+MODULES_DECODE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_decode.o $(MODULES_OBJS) $(UTILS_OBJS) 
+$(OUTDIR)/modules_decode.exe: $(MODULES_DECODE_OBJS)
+DEPS+=$(MODULES_DECODE_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/modules_erasure.exe
 MODULES_ERASURE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_erasure.o $(MODULES_OBJS) $(UTILS_OBJS) 
