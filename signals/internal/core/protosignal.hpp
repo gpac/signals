@@ -25,7 +25,7 @@ public:
 	/**
 	 * Some implementations (such as MSVC std::launch) don't destroy the copy of
 	 * 'Args... args' they hold. When using reference counted Args, they'only be
-	 / released when calling this function or when getting the results().
+	 * released when calling this function or when getting the results().
 	 */
 	virtual void flushAvailableResults() = 0;
 };
