@@ -18,6 +18,9 @@
     <ClCompile Include="modules_transcoder.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="modules_decode.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tests">

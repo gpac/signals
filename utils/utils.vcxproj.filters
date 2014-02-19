@@ -10,10 +10,16 @@
     <ClInclude Include="..\gpacpp\gpacpp.hpp">
       <Filter>gpacpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\ffpp\ffpp.hpp">
+      <Filter>ffpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="gpacpp">
       <UniqueIdentifier>{cf981576-0bb6-42e4-8dbb-b7d685990b45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ffpp">
+      <UniqueIdentifier>{71dea80d-96e3-424d-909a-6f45a3d39810}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
