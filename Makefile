@@ -20,6 +20,7 @@ endif
 
 CFLAGS += -I$(SRC)/signals
 CFLAGS += -I$(SRC)/gpacpp
+CFLAGS += -I$(SRC)/ffpp
 
 CFLAGS += -I$(SRC)/extra/include
 LDFLAGS += -L$(SRC)/extra/lib

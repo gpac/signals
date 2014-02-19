@@ -4,13 +4,7 @@
 #include <cassert>
 #include <string>
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/channel_layout.h>
-#include <libavutil/mathematics.h>
-#include <libavutil/opt.h>
-}
+#include "ffpp.hpp"
 
 namespace {
 void fps2NumDen(const double fps, int &num, int &den) {
