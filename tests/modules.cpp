@@ -3,6 +3,7 @@
 
 
 #include "modules_simple.cpp"
+#include "modules_decode.cpp"
 #include "modules_demux.cpp"
 #include "modules_erasure.cpp"
 #include "modules_player.cpp"
