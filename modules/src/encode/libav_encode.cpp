@@ -175,13 +175,6 @@ LibavEncode::LibavEncode(Type type)
 	}
 	av_dict_free(&codecDict);
 
-	avFrame = avcodec_alloc_frame();
-	if (!avFrame) {
-		Log::msg(Log::Warning, "[libav_encode] could not create the AVFrame, disable output.");
-		avcodec_close(codecCtx);
-		throw std::runtime_error("Frame allocation failed.");
-	}
-
 	/* AVFrame parameters */
 	switch (type) {
 	case Video:
@@ -204,9 +197,6 @@ LibavEncode::LibavEncode(Type type)
 LibavEncode::~LibavEncode() {
 	if (codecCtx) {
 		avcodec_close(codecCtx);
-	}
-	if (avFrame) {
-		avcodec_free_frame(&avFrame);
 	}
 }
 
@@ -233,7 +223,7 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	avFrame->linesize[1] = (int)data->size() / 2;
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_audio2(codecCtx, pkt, avFrame, &gotPkt)) {
+	if (avcodec_encode_audio2(codecCtx, pkt, avFrame.get(), &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
 		return false;
 	}
@@ -255,7 +245,7 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	avFrame->data[2] = avFrame->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
 	avFrame->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_video2(codecCtx, pkt, avFrame, &gotPkt)) {
+	if (avcodec_encode_video2(codecCtx, pkt, avFrame.get(), &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %d.", frameNum);
 		return false;
 	} else {

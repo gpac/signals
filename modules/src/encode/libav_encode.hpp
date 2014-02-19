@@ -6,9 +6,9 @@
 #include "../common/libav.hpp"
 #include "../common/mm.hpp"
 #include <string>
+#include "ffpp.hpp"
 
 struct AVStream;
-struct AVFrame;
 
 using namespace Modules;
 
@@ -37,7 +37,7 @@ private:
 	bool processVideo(std::shared_ptr<Data> data);
 
 	AVCodecContext *codecCtx;
-	struct AVFrame *avFrame;
+	ffpp::Frame avFrame;
 	int frameNum;
 
 };
