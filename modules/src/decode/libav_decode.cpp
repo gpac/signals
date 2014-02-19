@@ -4,12 +4,7 @@
 #include <cassert>
 #include <string>
 
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/mathematics.h>
-#include <libavutil/opt.h>
-}
+#include "ffpp.hpp"
 
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
