@@ -43,7 +43,7 @@ LibavEncode* LibavEncode::create(Type type) {
 }
 
 LibavEncode::LibavEncode(Type type)
-	: frameNum(-1) {
+: avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecType;
 	switch (type) {
 	case Video:
@@ -178,14 +178,14 @@ LibavEncode::LibavEncode(Type type)
 	/* AVFrame parameters */
 	switch (type) {
 	case Video:
-		avFrame->linesize[0] = linesize[0];
-		avFrame->linesize[1] = linesize[1];
-		avFrame->linesize[2] = linesize[2];
+		avFrame->get()->linesize[0] = linesize[0];
+		avFrame->get()->linesize[1] = linesize[1];
+		avFrame->get()->linesize[2] = linesize[2];
 		break;
 	case Audio:
-		avFrame->sample_rate = codecCtx->sample_rate;
-		avFrame->nb_samples = codecCtx->frame_size;
-		avFrame->channel_layout = codecCtx->channel_layout;
+		avFrame->get()->sample_rate = codecCtx->sample_rate;
+		avFrame->get()->nb_samples = codecCtx->frame_size;
+		avFrame->get()->channel_layout = codecCtx->channel_layout;
 		break;
 	default:
 		assert(0);
@@ -217,18 +217,18 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	AVPacket *pkt = out->getPacket();
 
 	//FIXME: audio are only 2 planes right now...
-	avFrame->data[0] = (uint8_t*)data->data();
-	avFrame->data[1] = (uint8_t*)data->data() + data->size() / 2;
-	avFrame->linesize[0] = (int)data->size() / 2;
-	avFrame->linesize[1] = (int)data->size() / 2;
-	avFrame->pts = ++frameNum;
+	avFrame->get()->data[0] = (uint8_t*)data->data();
+	avFrame->get()->data[1] = (uint8_t*)data->data() + data->size() / 2;
+	avFrame->get()->linesize[0] = (int)data->size() / 2;
+	avFrame->get()->linesize[1] = (int)data->size() / 2;
+	avFrame->get()->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_audio2(codecCtx, pkt, avFrame.get(), &gotPkt)) {
+	if (avcodec_encode_audio2(codecCtx, pkt, avFrame->get(), &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
 		return false;
 	}
 	if (gotPkt) {
-		pkt->pts = pkt->dts = avFrame->pts * pkt->duration;
+		pkt->pts = pkt->dts = avFrame->get()->pts * pkt->duration;
 		assert(pkt->size);
 		signals[0]->emit(out);
 	}
@@ -240,12 +240,12 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
 	AVPacket *pkt = out->getPacket();
 
-	avFrame->data[0] = (uint8_t*)data->data();
-	avFrame->data[1] = avFrame->data[0] + codecCtx->width * codecCtx->height;
-	avFrame->data[2] = avFrame->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
-	avFrame->pts = ++frameNum;
+	avFrame->get()->data[0] = (uint8_t*)data->data();
+	avFrame->get()->data[1] = avFrame->get()->data[0] + codecCtx->width * codecCtx->height;
+	avFrame->get()->data[2] = avFrame->get()->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
+	avFrame->get()->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_video2(codecCtx, pkt, avFrame.get(), &gotPkt)) {
+	if (avcodec_encode_video2(codecCtx, pkt, avFrame->get(), &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %d.", frameNum);
 		return false;
 	} else {
