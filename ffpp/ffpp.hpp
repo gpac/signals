@@ -22,16 +22,12 @@ namespace ffpp {
 			avcodec_free_frame(&avFrame);
 		}
 
-		AVFrame* operator->() {
-			return avFrame;
-		}
-
 		AVFrame* get() {
 			return avFrame;
 		}
 
 	private:
-		AVFrame* avFrame;
+		AVFrame *avFrame;
 	};
 }
 

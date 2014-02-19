@@ -65,7 +65,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 }
 
 LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
-: codecCtx(new AVCodecContext) {
+: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame) {
 	*codecCtx = *codecCtx2;
 	signals.push_back(uptr(pinFactory->createPin()));
 }
@@ -101,12 +101,12 @@ bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 	}
 	AVPacket *pkt = decoderData->getPacket();
 	int gotFrame;
-	if (avcodec_decode_audio4(codecCtx, avFrame.get(), &gotFrame, pkt) < 0) {
+	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return true;
 	}
 	if (gotFrame) {
-		auto out = createAudioData(codecCtx, avFrame.get());
+		auto out = createAudioData(codecCtx, avFrame->get());
 		signals[0]->emit(out);
 	}
 
@@ -121,7 +121,7 @@ bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 	}
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
-	if (avcodec_decode_video2(codecCtx, avFrame.get(), &gotPicture, pkt) < 0) {
+	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return true;
 	}
@@ -130,15 +130,15 @@ bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 		std::shared_ptr<Data> out(new Data(frameSize));
 		//TODO: YUV specific + wrap the avFrame output size
 		for (int h = 0; h < codecCtx->height; ++h) {
-			memcpy(out->data() + h*codecCtx->width, avFrame->data[0] + h*avFrame->linesize[0], codecCtx->width);
+			memcpy(out->data() + h*codecCtx->width, avFrame->get()->data[0] + h*avFrame->get()->linesize[0], codecCtx->width);
 		}
 		uint8_t *UPlane = out->data() + codecCtx->width * codecCtx->height;
 		for (int h = 0; h < codecCtx->height / 2; ++h) {
-			memcpy((void*)(UPlane + h*codecCtx->width / 2), avFrame->data[1] + h*avFrame->linesize[1], codecCtx->width / 2);
+			memcpy((void*)(UPlane + h*codecCtx->width / 2), avFrame->get()->data[1] + h*avFrame->get()->linesize[1], codecCtx->width / 2);
 		}
 		uint8_t *VPlane = out->data() + (codecCtx->width * codecCtx->height * 5) / 4;
 		for (int h = 0; h < codecCtx->height / 2; ++h) {
-			memcpy((void*)(VPlane + h*codecCtx->width / 2), avFrame->data[2] + h*avFrame->linesize[2], codecCtx->width / 2);
+			memcpy((void*)(VPlane + h*codecCtx->width / 2), avFrame->get()->data[2] + h*avFrame->get()->linesize[2], codecCtx->width / 2);
 		}
 		signals[0]->emit(out);
 	}
