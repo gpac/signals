@@ -59,26 +59,18 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 		throw std::runtime_error("Unknown decoder type. Failed.");
 	}
 
-	auto avFrame = avcodec_alloc_frame();
-	if (!avFrame) {
-		Log::msg(Log::Warning, "Module LibavDecode: Can't allocate frame");
-		avcodec_close(codecCtx);
-		throw std::runtime_error("Frame allocation failed.");
-	}
-
 	av_dict_free(&th_opt);
 
-	return new LibavDecode(codecCtx, avFrame);
+	return new LibavDecode(codecCtx);
 }
 
-LibavDecode::LibavDecode(AVCodecContext *codecCtx2, AVFrame *avFrame)
-: codecCtx(new AVCodecContext), avFrame(avFrame) {
+LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
+: codecCtx(new AVCodecContext) {
 	*codecCtx = *codecCtx2;
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 LibavDecode::~LibavDecode() {
-	av_free(avFrame);
 	avcodec_close(codecCtx);
 	delete codecCtx;
 }
@@ -109,12 +101,12 @@ bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 	}
 	AVPacket *pkt = decoderData->getPacket();
 	int gotFrame;
-	if (avcodec_decode_audio4(codecCtx, avFrame, &gotFrame, pkt) < 0) {
+	if (avcodec_decode_audio4(codecCtx, avFrame.get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return true;
 	}
 	if (gotFrame) {
-		auto out = createAudioData(codecCtx, avFrame);
+		auto out = createAudioData(codecCtx, avFrame.get());
 		signals[0]->emit(out);
 	}
 
@@ -129,7 +121,7 @@ bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 	}
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
-	if (avcodec_decode_video2(codecCtx, avFrame, &gotPicture, pkt) < 0) {
+	if (avcodec_decode_video2(codecCtx, avFrame.get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return true;
 	}

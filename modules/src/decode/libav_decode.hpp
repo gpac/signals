@@ -5,9 +5,9 @@
 #include "internal/param.hpp"
 #include "../common/libav.hpp"
 #include <string>
+#include "ffpp.hpp"
 
 struct AVCodecContext;
-struct AVFrame;
 
 using namespace Modules;
 
@@ -22,12 +22,12 @@ public:
 	static bool canHandle(const std::string &url);
 
 private:
-	LibavDecode(AVCodecContext *codecCtx, AVFrame *avFrame);
+	LibavDecode(AVCodecContext *codecCtx);
 	bool processAudio(std::shared_ptr<Data> data);
 	bool processVideo(std::shared_ptr<Data> data);
 
 	struct AVCodecContext *codecCtx;
-	struct AVFrame *avFrame;
+	ffpp::Frame avFrame;
 };
 
 }
