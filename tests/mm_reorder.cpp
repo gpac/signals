@@ -80,7 +80,7 @@ namespace {
 		Connect(amp1->getPin(0)->getSignal(), sink1.get(), &Sink::process);
 		Connect(amp2->getPin(0)->getSignal(), sink2.get(), &Sink::process);
 
-		for (int i = 0; i < 10000; ++i) { //this is bigger than the default allocator size (100), so they will be contention
+		for (int i = 0; i < 10000; ++i) { //this is bigger than the default allocator size (100), so there will be contention
 			osc->process(nullptr);
 		}
 
