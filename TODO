@@ -3,13 +3,12 @@ Mid Term apps:
 - simple player
 
 Tasks (from higher to lower priority):
-- modules should decide about their synchronicity, and integrate a serializer/reorderer in libmm
 - make audio format conversion work
-- make libav modules more independant
 - audio should run in a separate thread (like network reception etc.)
 - handle clocks (first: real-time to play audio)
 - SDL and renderers should be able to run in thread 0
 - be able to draw the graph of connections (and allocator states?)
+- remove waitForCompletion() by delegating Modules
 
 Questions (from higher to lower priority):
 - how to dynamically connect filters
