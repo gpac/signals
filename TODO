@@ -9,6 +9,7 @@ Tasks (from higher to lower priority):
 - SDL and renderers should be able to run in thread 0
 - be able to draw the graph of connections (and allocator states?)
 - remove waitForCompletion() by delegating Modules
+- allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 
 Questions (from higher to lower priority):
 - how to dynamically connect filters
