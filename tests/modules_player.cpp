@@ -2,6 +2,7 @@
 #include "modules.hpp"
 #include <memory>
 
+#include "../utils/tools.hpp"
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
 using namespace Tests;
@@ -10,10 +11,8 @@ using namespace Modules;
 namespace {
 
 	unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
-		std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-		ASSERT(demux != nullptr);
-		std::unique_ptr<Out::Null> null(Out::Null::create());
-		ASSERT(null != nullptr);
+		auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+		auto null = uptr(Out::Null::create());
 
 		size_t videoIndex = std::numeric_limits<size_t>::max();
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
@@ -29,11 +28,8 @@ namespace {
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 		Props *props = demux->getPin(videoIndex)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
-		ASSERT(decode != nullptr);
-
-		std::unique_ptr<Render::SDLVideo> render(Render::SDLVideo::create());
-		ASSERT(render != nullptr);
+		auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+		auto render = uptr(Render::SDLVideo::create());
 
 		ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
 		ConnectPin(decode->getPin(0), render.get(), &Render::SDLVideo::process);
@@ -46,10 +42,8 @@ namespace {
 	}
 
 	unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
-		std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-		ASSERT(demux != nullptr);
-		std::unique_ptr<Out::Null> null(Out::Null::create());
-		ASSERT(null != nullptr);
+		auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+		auto null = uptr(Out::Null::create());
 
 		size_t videoIndex = std::numeric_limits<size_t>::max();
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
@@ -65,11 +59,8 @@ namespace {
 		ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 		Props *props = demux->getPin(videoIndex)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
-		ASSERT(decode != nullptr);
-
-		std::unique_ptr<Render::SDLAudio> render(Render::SDLAudio::create());
-		ASSERT(render != nullptr);
+		auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+		auto render = uptr(Render::SDLAudio::create());
 
 		ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
 		ConnectPin(decode->getPin(0), render.get(), &Render::SDLAudio::process);
