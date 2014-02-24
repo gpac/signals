@@ -101,6 +101,13 @@ void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
 #else
 	char buffer[1024];
 	std::vsnprintf(buffer, sizeof(buffer)-1, fmt, vl);
+
+	// remove trailing end of line
+	{
+		auto const N = strlen(buffer);
+		if(N > 0 && buffer[N-1] == '\n')
+			buffer[N-1] = 0;
+	}
 	Log::msg(avLogLevel(level), "[libav-log::%s] %s", avlogLevelName(level), buffer);
 #endif
 }
