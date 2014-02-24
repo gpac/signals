@@ -93,12 +93,7 @@ namespace {
 	}
 }
 
-bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
-	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
-	if (!decoderData) {
-		Log::msg(Log::Warning, "[LibavDecode] Invalid audio packet type.");
-		return false;
-	}
+bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
@@ -113,12 +108,7 @@ bool LibavDecode::processAudio(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
-	DataAVPacket *decoderData = dynamic_cast<DataAVPacket*>(data.get());
-	if (!decoderData) {
-		Log::msg(Log::Warning, "[LibavDecode] Invalid video packet type.");
-		return false;
-	}
+bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
@@ -146,12 +136,17 @@ bool LibavDecode::processVideo(std::shared_ptr<Data> data) {
 }
 
 bool LibavDecode::process(std::shared_ptr<Data> data) {
+	auto decoderData = dynamic_cast<DataAVPacket*>(data.get());
+	if (!decoderData) {
+		Log::msg(Log::Warning, "[LibavDecode] Invalid packet type.");
+		return false;
+	}
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		return processVideo(data);
+		return processVideo(decoderData);
 		break;
 	case AVMEDIA_TYPE_AUDIO:
-		return processAudio(data);
+		return processAudio(decoderData);
 		break;
 	default:
 		assert(0);
