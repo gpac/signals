@@ -13,8 +13,6 @@ namespace Modules {
  */
 class MODULES_EXPORT IData {
 public:
-	IData() {
-	}
 	virtual ~IData() {
 	}
 	virtual uint8_t* data() = 0;
@@ -25,9 +23,6 @@ public:
 class MODULES_EXPORT Data : public IData {
 public:
 	Data(size_t size) : ptr(size) {
-	}
-
-	virtual ~Data() {
 	}
 
 	uint8_t* data() {
