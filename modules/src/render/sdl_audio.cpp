@@ -35,13 +35,13 @@ SDLAudio::~SDLAudio() {
 	int remaining;
 	{
 		std::lock_guard<std::mutex> lg(m_Mutex);
-		remaining = m_audioLen;
+		remaining = m_Fifo.bytesToRead();
 	}
 	if (remaining > 0) {
 		do {
 			SDL_Delay(10);
 			std::lock_guard<std::mutex> lg(m_Mutex);
-			remaining = m_audioLen;
+			remaining = m_Fifo.bytesToRead();
 		} while (remaining != 0);
 	}
 	SDL_CloseAudio();
@@ -56,13 +56,7 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 
 	{
 		std::lock_guard<std::mutex> lg(m_Mutex);
-		const size_t newAudioSize = m_audioLen + pcmData->size();
-		if (m_audioData.size() < newAudioSize) {
-			m_audioData.resize(newAudioSize);
-		}
-		m_audioPos = m_audioData.data();
-		memcpy(m_audioPos + m_audioLen, pcmData->data(), pcmData->size());
-		m_audioLen = (uint32_t)newAudioSize;
+		m_Fifo.write(pcmData->data(), pcmData->size());
 	}
 
 	return true;
@@ -70,16 +64,10 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	std::lock_guard<std::mutex> lg(m_Mutex);
-	if (m_audioLen == 0) { //only play if we have data left
-		return;
-	}
 
-	len = (len > (int)m_audioLen ? (int)m_audioLen : len);
-	SDL_MixAudio(stream, m_audioPos, len, SDL_MIX_MAXVOLUME);
-	m_audioLen -= len;
-	if (m_audioLen > 0) {
-		memmove(m_audioPos, m_audioPos + len, m_audioLen);
-	}
+	len = std::min(len, m_Fifo.bytesToRead());
+	SDL_MixAudio(stream, m_Fifo.readPointer(), len, SDL_MIX_MAXVOLUME);
+	m_Fifo.consume(len);
 }
 
 void SDLAudio::staticFillAudio(void *udata, uint8_t *stream, int len) {
