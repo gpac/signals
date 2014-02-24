@@ -12,6 +12,10 @@ uint8_t *SDLAudio::audioPos = 0;
 std::vector<uint8_t> SDLAudio::audioData;
 
 SDLAudio* SDLAudio::create() {
+	return new SDLAudio();
+}
+
+SDLAudio::SDLAudio() {
 	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't initialize: %s", SDL_GetError());
 		throw std::runtime_error("Init failed");
@@ -29,10 +33,6 @@ SDLAudio* SDLAudio::create() {
 		throw std::runtime_error("Audio output creation failed");
 	}
 
-	return new SDLAudio();
-}
-
-SDLAudio::SDLAudio() {
 	SDL_PauseAudio(0);
 }
 

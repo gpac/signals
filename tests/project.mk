@@ -87,3 +87,4 @@ run: unit
 	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_perf.exe)
 	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_module.exe)
 	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_async.exe)
+
