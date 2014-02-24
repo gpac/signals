@@ -24,12 +24,13 @@ public:
 
 private:
 	SDLAudio();
-	static void fillAudio(void *udata, uint8_t *stream, int len);
+	static void staticFillAudio(void *udata, uint8_t *stream, int len);
+	void fillAudio(uint8_t *stream, int len);
 
-	static std::mutex audioMutex;
-	static uint32_t audioLen;
-	static uint8_t *audioPos;
-	static std::vector<uint8_t> audioData;
+	std::mutex audioMutex;
+	uint32_t audioLen;
+	uint8_t *audioPos;
+	std::vector<uint8_t> audioData;
 };
 
 }
