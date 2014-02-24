@@ -27,10 +27,10 @@ private:
 	static void staticFillAudio(void *udata, uint8_t *stream, int len);
 	void fillAudio(uint8_t *stream, int len);
 
-	std::mutex audioMutex;
-	uint32_t audioLen;
-	uint8_t *audioPos;
-	std::vector<uint8_t> audioData;
+	std::mutex m_Mutex;
+	uint32_t m_audioLen;
+	uint8_t *m_audioPos;
+	std::vector<uint8_t> m_audioData;
 };
 
 }
