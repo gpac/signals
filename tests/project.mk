@@ -76,11 +76,14 @@ DEPS+=$(OUTDIR)/mm.deps
 
 run_from = PROGRAM=$(realpath $(2)) && cd $(1) && $$PROGRAM
 
+TestProjectName:=$(ProjectName)
+TestOutDir:=$(OUTDIR)
+
 run: unit
-	$(call run_from,$(ProjectName), $(OUTDIR)/modules_demux.exe)
-	$(call run_from,$(ProjectName), $(OUTDIR)/mm_simple.exe)
-	$(call run_from,$(ProjectName), $(OUTDIR)/signals_unit_result.exe)
-	$(call run_from,$(ProjectName), $(OUTDIR)/signals_simple.exe)
-	$(call run_from,$(ProjectName), $(OUTDIR)/signals_perf.exe)
-	$(call run_from,$(ProjectName), $(OUTDIR)/signals_module.exe)
-	$(call run_from,$(ProjectName), $(OUTDIR)/signals_async.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/modules_demux.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/mm_simple.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_unit_result.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_simple.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_perf.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_module.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_async.exe)
