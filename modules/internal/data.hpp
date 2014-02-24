@@ -41,4 +41,10 @@ private:
 	std::vector<uint8_t> ptr;
 };
 
+class MODULES_EXPORT PcmData : public Data {
+public:
+	PcmData(size_t size) : Data(size) {
+	}
+};
+
 }

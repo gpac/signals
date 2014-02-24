@@ -78,7 +78,7 @@ LibavDecode::~LibavDecode() {
 namespace {
 	std::shared_ptr<Data> createAudioData(AVCodecContext* codecCtx, AVFrame* avFrame) {
 		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-		std::shared_ptr<Data> out(new Data(bufferSize));
+		std::shared_ptr<Data> out(new PcmData(bufferSize));
 		if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
 			size_t index = 0;
 			for (int i = 0; i < codecCtx->channels; ++i) {

@@ -53,14 +53,20 @@ SDLAudio::~SDLAudio() {
 }
 
 bool SDLAudio::process(std::shared_ptr<Data> data) {
+	auto pcmData = dynamic_cast<PcmData*>(data.get());
+	if(!pcmData) {
+		Log::msg(Log::Warning, "[SDLAudio render] invalid packet type");
+		return false;
+	}
+
 	{
 		std::lock_guard<std::mutex> lg(audioMutex);
-		const size_t newAudioSize = audioLen + data->size();
+		const size_t newAudioSize = audioLen + pcmData->size();
 		if (audioData.size() < newAudioSize) {
 			audioData.resize(newAudioSize);
 		}
 		audioPos = audioData.data();
-		memcpy(audioPos + audioLen, data->data(), data->size());
+		memcpy(audioPos + audioLen, pcmData->data(), pcmData->size());
 		audioLen = (uint32_t)newAudioSize;
 	}
 
