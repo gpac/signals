@@ -6,11 +6,6 @@
 namespace Modules {
 namespace Render {
 
-std::mutex SDLAudio::audioMutex;
-uint32_t SDLAudio::audioLen = 0;
-uint8_t *SDLAudio::audioPos = 0;
-std::vector<uint8_t> SDLAudio::audioData;
-
 SDLAudio* SDLAudio::create() {
 	return new SDLAudio();
 }
@@ -26,8 +21,8 @@ SDLAudio::SDLAudio() {
 	audioSpec.format = AUDIO_F32SYS;
 	audioSpec.channels = 2;    /* 1 = mono, 2 = stereo */
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
-	audioSpec.callback = &SDLAudio::fillAudio;
-	audioSpec.userdata = NULL;
+	audioSpec.callback = &SDLAudio::staticFillAudio;
+	audioSpec.userdata = this;
 	if (SDL_OpenAudio(&audioSpec, NULL) < 0) {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't open audio: %s", SDL_GetError());
 		throw std::runtime_error("Audio output creation failed");
@@ -73,7 +68,7 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-void SDLAudio::fillAudio(void *udata, uint8_t *stream, int len) {
+void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	std::lock_guard<std::mutex> lg(audioMutex);
 	if (audioLen == 0) { //only play if we have data left
 		return;
@@ -85,6 +80,11 @@ void SDLAudio::fillAudio(void *udata, uint8_t *stream, int len) {
 	if (audioLen > 0) {
 		memmove(audioPos, audioPos + len, audioLen);
 	}
+}
+
+void SDLAudio::staticFillAudio(void *udata, uint8_t *stream, int len) {
+	auto pThis = (SDLAudio*)udata;
+	pThis->fillAudio(stream, len);
 }
 
 bool SDLAudio::handles(const std::string &url) {
