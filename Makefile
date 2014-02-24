@@ -54,6 +54,10 @@ ProjectName:=tests
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
+ProjectName:=apps/player
+include $(ProjectName)/project.mk
+CFLAGS+=-I$(ProjectName)
+
 debug:
 	echo "$(CFLAGS)"
 
