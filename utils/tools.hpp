@@ -28,3 +28,7 @@ std::vector<char> string_dup(const char *src) {
 	strcpy(data.data(), src);	
 	return data;
 }
+
+#define foreach(iterator, container) \
+	for(auto iterator=std::begin(container);iterator != std::end(container);++iterator)
+
