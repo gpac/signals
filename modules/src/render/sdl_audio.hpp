@@ -32,7 +32,7 @@ public:
 		return &m_data[m_readPos];
 	}
 
-	void consume(int numBytes) {
+	void consume(size_t numBytes) {
 		assert(numBytes >= 0);
 		assert(numBytes <= bytesToRead());
 		m_readPos += numBytes;
@@ -43,7 +43,7 @@ public:
 		m_readPos = 0;
 	}
 
-	int bytesToRead() const {
+	size_t bytesToRead() const {
 		return m_writePos - m_readPos;
 	}
 
