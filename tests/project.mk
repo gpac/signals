@@ -9,59 +9,6 @@ $(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
 $(BIN)/tests/modules_%.o: CFLAGS+=-DUNIT
 $(BIN)/tests/mm_%.o: CFLAGS+=-DUNIT
 
-TARGETS+=$(OUTDIR)/signals_simple.exe
-$(OUTDIR)/signals_simple.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_simple.o
-DEPS+=$(OUTDIR)/signals_simple.deps
-
-TARGETS+=$(OUTDIR)/modules_demux.exe
-MODULES_DEMUX_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_demux.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_demux.exe: $(MODULES_DEMUX_OBJS)
-DEPS+=$(MODULES_DEMUX_OBJS:%.o=%.deps)
-
-TARGETS+=$(OUTDIR)/modules_decode.exe
-MODULES_DECODE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_decode.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_decode.exe: $(MODULES_DECODE_OBJS)
-DEPS+=$(MODULES_DECODE_OBJS:%.o=%.deps)
-
-TARGETS+=$(OUTDIR)/modules_erasure.exe
-MODULES_ERASURE_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_erasure.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_erasure.exe: $(MODULES_ERASURE_OBJS)
-DEPS+=$(MODULES_ERASURE_OBJS:%.o=%.deps)
-
-TARGETS+=$(OUTDIR)/modules_player.exe
-MODULES_PLAYER_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_player.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_player.exe: $(MODULES_PLAYER_OBJS)
-DEPS+=$(MODULES_PLAYER_OBJS:%.o=%.deps)
-
-TARGETS+=$(OUTDIR)/modules_transcoder.exe
-MODULES_TRANSCODER_OBJS:=$(TEST_COMMON_OBJ) $(OUTDIR)/modules_transcoder.o $(MODULES_OBJS) $(UTILS_OBJS) 
-$(OUTDIR)/modules_transcoder.exe: $(MODULES_TRANSCODER_OBJS)
-DEPS+=$(MODULES_TRANSCODER_OBJS:%.o=%.deps)
-
-TARGETS+=$(OUTDIR)/signals_perf.exe
-$(OUTDIR)/signals_perf.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_perf.o
-DEPS+=$(OUTDIR)/signals_perf.deps
-
-TARGETS+=$(OUTDIR)/signals_module.exe
-$(OUTDIR)/signals_module.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_module.o
-DEPS+=$(OUTDIR)/signals_module.deps
-
-TARGETS+=$(OUTDIR)/signals_async.exe
-$(OUTDIR)/signals_async.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_async.o
-DEPS+=$(OUTDIR)/signals_async.deps
-
-TARGETS+=$(OUTDIR)/signals_unit_result.exe
-$(OUTDIR)/signals_unit_result.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals_unit_result.o
-DEPS+=$(OUTDIR)/signals_unit_result.deps
-
-TARGETS+=$(OUTDIR)/mm_pull2push.exe
-$(OUTDIR)/mm_pull2push.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_pull2push.o
-DEPS+=$(OUTDIR)/mm_pull2push.deps
-
-TARGETS+=$(OUTDIR)/mm_reorder.exe
-$(OUTDIR)/mm_reorder.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm_reorder.o
-DEPS+=$(OUTDIR)/mm_reorder.deps
-
 TARGETS+=$(OUTDIR)/signals.exe
 $(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
 DEPS+=$(OUTDIR)/signals.deps
