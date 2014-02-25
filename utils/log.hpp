@@ -54,6 +54,7 @@ public:
 	static void msg(Level level, const std::string& fmt, Arguments... args) {
 		if (level != Quiet) {
 			get(level) << format(fmt, args...) << std::endl;
+			get(level).flush();
 		}
 	}
 
