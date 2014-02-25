@@ -48,8 +48,8 @@ public:
 	}
 
 private:
-	int m_writePos;
-	int m_readPos;
+	size_t m_writePos;
+	size_t m_readPos;
 	std::vector<uint8_t> m_data;
 };
 

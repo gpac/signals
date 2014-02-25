@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <stdlib.h>
 #include "tests.hpp"
 
 namespace {

@@ -56,7 +56,7 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 
 	{
 		std::lock_guard<std::mutex> lg(m_Mutex);
-		m_Fifo.write(pcmData->data(), pcmData->size());
+		m_Fifo.write(pcmData->data(), (size_t)pcmData->size());
 	}
 
 	return true;
