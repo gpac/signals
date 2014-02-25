@@ -27,11 +27,7 @@ TestProjectName:=$(ProjectName)
 TestOutDir:=$(OUTDIR)
 
 run: unit
-	$(call run_from,$(TestProjectName),$(TestOutDir)/modules_demux.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/mm_simple.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_unit_result.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_simple.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_perf.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_module.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/signals_async.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/modules.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/signals.exe)
+	$(call run_from,$(TestProjectName),$(TestOutDir)/mm.exe)
 
