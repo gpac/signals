@@ -19,6 +19,9 @@ namespace Render {
 class Fifo {
 public:
 
+	Fifo() : m_writePos(0), m_readPos(0) {
+	}
+
 	void write(const uint8_t* data, size_t len) {
 		m_data.resize(m_writePos + len);
 		memcpy(&m_data[m_writePos], data, len);
@@ -30,14 +33,14 @@ public:
 	}
 
 	void consume(int numBytes) {
+		assert(numBytes >= 0);
 		assert(numBytes <= bytesToRead());
 		m_readPos += numBytes;
 
 		// shift everything to the beginning of the buffer
-		auto const remaining = bytesToRead();
-		memmove(m_data.data(), m_data.data() + m_readPos, remaining);
-		m_writePos -= remaining;
-		m_readPos -= remaining;
+		memmove(m_data.data(), m_data.data() + m_readPos, bytesToRead());
+		m_writePos -= m_readPos;
+		m_readPos = 0;
 	}
 
 	int bytesToRead() const {
