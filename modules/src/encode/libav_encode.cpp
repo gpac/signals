@@ -49,12 +49,12 @@ LibavEncode::LibavEncode(Type type)
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
 		generalOptions = "-vcodec libx264 -r 25 -pass 1"; //TODO //Romain: test
-		codecType = "vcodec";
+		codecType = "libx264";
 		break;
 	case Audio:
 		codecOptions = "-b 192000"; //TODO
 		generalOptions = "-acodec libvo_aacenc"; //TODO
-		codecType = "acodec";
+		codecType = "libvo_aacenc";
 		break;
 	default:
 		throw std::runtime_error("Unknown encoder type. Failed.");
@@ -70,12 +70,16 @@ LibavEncode::LibavEncode(Type type)
 	buildAVDictionary("[libav_encode]", &generalDict, generalOptions.c_str(), "other");
 
 	/* find the encoder */
-	AVCodec *codec = avcodec_find_encoder_by_name(av_dict_get(generalDict, codecType.c_str(), NULL, 0)->value);
+	auto entry = av_dict_get(generalDict, codecType.c_str(), NULL, 0);
+	if(!entry) {
+		throw std::runtime_error("Could not get codecType.");
+	}
+	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
 	if (!codec) {
 		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", codecType);
 		av_dict_free(&generalDict);
 		av_dict_free(&codecDict);
-		throw std::runtime_error("Codec not found.");
+		throw std::runtime_error(format("Codec '%s' not found.", codecType));
 	}
 
 	codecCtx = avcodec_alloc_context3(codec);
