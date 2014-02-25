@@ -72,7 +72,7 @@ LibavEncode::LibavEncode(Type type)
 	/* find the encoder */
 	AVCodec *codec = avcodec_find_encoder_by_name(av_dict_get(generalDict, codecType.c_str(), NULL, 0)->value);
 	if (!codec) {
-		Log::msg(Log::Warning, "[libav_encode] codec not found, disable output.");
+		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", codecType);
 		av_dict_free(&generalDict);
 		av_dict_free(&codecDict);
 		throw std::runtime_error("Codec not found.");
