@@ -172,8 +172,8 @@ bool GPACDemuxMP4Full::process(std::shared_ptr<Data> data) {
 	reader->data.data() = data->data();
 #else
 	const size_t currSize = reader->data.size();
-	reader->data.resize(reader->data.size() + data->size());
-	memcpy(reader->data.data() + currSize, data->data(), data->size());
+	reader->data.resize(reader->data.size() + (size_t)data->size());
+	memcpy(reader->data.data() + currSize, data->data(), (size_t)data->size());
 #endif
 	std::stringstream ss;
 	ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();

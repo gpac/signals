@@ -88,7 +88,7 @@ bool LibavDemux::canHandle(const std::string &url) {
 	}
 
 	fp.read((char*)pd.buf, size);
-	const size_t bytesRead = fp.gcount();
+	const size_t bytesRead = (size_t)fp.gcount();
 	pd.buf_size = (int)bytesRead;
 	if (bytesRead < size) {
 		Log::msg(Log::Warning, "[LibavDemux] Could only read %lu bytes (instead of %lu) for probing format.", (unsigned long)bytesRead, (unsigned long)size);
