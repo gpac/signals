@@ -3,11 +3,7 @@
 #include <memory>
 #include "../utils/tools.hpp"
 
-//#ifdef WIN32
-//#include "../modules/extra_lib/include/libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-//#else
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-//#endif
 
 using namespace Tests;
 using namespace Modules;
