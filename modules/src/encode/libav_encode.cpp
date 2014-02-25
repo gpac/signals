@@ -72,6 +72,8 @@ LibavEncode::LibavEncode(Type type)
 	/* find the encoder */
 	auto entry = av_dict_get(generalDict, codecType.c_str(), NULL, 0);
 	if(!entry) {
+		av_dict_free(&generalDict);
+		av_dict_free(&codecDict);
 		throw std::runtime_error("Could not get codecType.");
 	}
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
