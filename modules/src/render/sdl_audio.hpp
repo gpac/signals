@@ -6,6 +6,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <memory.h>
 
 struct SDL_Rect;
 struct SDL_Renderer;
