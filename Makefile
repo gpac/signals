@@ -58,9 +58,6 @@ ProjectName:=apps/player
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
-debug:
-	echo "$(CFLAGS)"
-
 #------------------------------------------------------------------------------
 
 targets: $(TARGETS)
