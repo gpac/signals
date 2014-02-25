@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include "tests.hpp"
 
 namespace {
@@ -22,17 +23,29 @@ int RegisterTest(void (*fn)(), const char* testName, int&) {
 	return 0;
 }
 
+void Run(int i) {
+	if(i < 0 || i >= g_NumTests)
+		throw std::runtime_error("Invalid test index");
+	std::cout << "----------------------------------------------------------------" << std::endl;
+	std::cout << "Test #" << i << ": " << g_AllTests[i].name << std::endl;
+	g_AllTests[i].fn();
+	std::cout << std::endl;
+}
+
 void RunAll() {
 	for(int i=0; i < g_NumTests; ++i) {
-		std::cout << "[ ***** " << g_AllTests[i].name << " ***** ]" << std::endl;
-		g_AllTests[i].fn();
-		std::cout << std::endl;
+		Run(i);
 	}
 }
 }
 
-int main(int /*argc*/, char ** /*argv*/) {
+int main(int argc, const char* argv[]) {
 	Tests::Util::Profiler p("TESTS TOTAL TIME");
-	Tests::RunAll();
+	if(argc == 1)
+		Tests::RunAll();
+	else if(argc == 2) {
+		int idx = atoi(argv[1]);
+		Tests::Run(idx);
+	}
 	return 0;
 }
