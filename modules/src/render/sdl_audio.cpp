@@ -32,7 +32,7 @@ SDLAudio::SDLAudio() {
 }
 
 SDLAudio::~SDLAudio() {
-	int remaining;
+	size_t remaining;
 	{
 		std::lock_guard<std::mutex> lg(m_Mutex);
 		remaining = m_Fifo.bytesToRead();
@@ -65,7 +65,7 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
-	len = std::min(len, m_Fifo.bytesToRead());
+	len = std::min(len, (int)m_Fifo.bytesToRead());
 	SDL_MixAudio(stream, m_Fifo.readPointer(), len, SDL_MIX_MAXVOLUME);
 	m_Fifo.consume(len);
 }
