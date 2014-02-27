@@ -128,7 +128,7 @@ GPACMuxMP4* GPACMuxMP4::create(const std::string &baseName) {
 }
 
 GPACMuxMP4::GPACMuxMP4(GF_ISOFile *file)
-: file(file), sample(new gpacpp::IsoSample()) {
+	: file(file), sample(new gpacpp::IsoSample()) {
 }
 
 GPACMuxMP4::~GPACMuxMP4() {
@@ -239,7 +239,7 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 	gf_bs_get_content(out_bs, &sample->data, &sample->dataLength);
 
 #if USE_SEGMENTS
-	TODO: missing open segment
+TODO: missing open segment
 	GF_Err ret = gf_isom_fragment_add_sample(file, trackId, sample.get(), 1, 1, 0, 0, GF_FALSE);
 	if (ret != GF_OK) {
 		gf_bs_del(out_bs);

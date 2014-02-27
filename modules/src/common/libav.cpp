@@ -6,7 +6,7 @@
 #include <string.h>
 
 extern "C" {
-	#include <libavcodec/avcodec.h>
+#include <libavcodec/avcodec.h>
 }
 
 namespace {

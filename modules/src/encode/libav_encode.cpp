@@ -43,7 +43,7 @@ LibavEncode* LibavEncode::create(Type type) {
 }
 
 LibavEncode::LibavEncode(Type type)
-: avFrame(new ffpp::Frame), frameNum(-1) {
+	: avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -95,38 +95,37 @@ LibavEncode::LibavEncode(Type type)
 	/* parameters */
 	int linesize[8];
 	switch (type) {
-	case Video:
-	{
-					const int width = 1280; //TODO
-					const int height = 720; //TODO
-					codecCtx->width = width;
-					codecCtx->height = height;
-					linesize[0] = codecCtx->width;
-					linesize[1] = codecCtx->width / 2;
-					linesize[2] = codecCtx->width / 2;
-					if (strcmp(av_dict_get(generalDict, "vcodec", NULL, 0)->value, "mjpeg")) {
-						codecCtx->pix_fmt = PIX_FMT_YUV420P;
-					} else {
-						codecCtx->pix_fmt = PIX_FMT_YUVJ420P;
-					}
+	case Video: {
+		const int width = 1280; //TODO
+		const int height = 720; //TODO
+		codecCtx->width = width;
+		codecCtx->height = height;
+		linesize[0] = codecCtx->width;
+		linesize[1] = codecCtx->width / 2;
+		linesize[2] = codecCtx->width / 2;
+		if (strcmp(av_dict_get(generalDict, "vcodec", NULL, 0)->value, "mjpeg")) {
+			codecCtx->pix_fmt = PIX_FMT_YUV420P;
+		} else {
+			codecCtx->pix_fmt = PIX_FMT_YUVJ420P;
+		}
 
-					/* set other optionsDict*/
+		/* set other optionsDict*/
 #if 0 //TODO
-					if (avCodec == "h264") {
-						av_opt_set(codecCtx->priv_data, "preset", "superfast", 0);
-						av_opt_set(codecCtx->priv_data, "rc-lookahead", "0", 0);
-					}
-					codecCtx->flags |= CODEC_FLAG_PASS1;
-					if (atoi(av_dict_get(generalDict, "pass", NULL, 0)->value) == 2) {
-						codecCtx->flags |= CODEC_FLAG_PASS2;
-					}
+		if (avCodec == "h264") {
+			av_opt_set(codecCtx->priv_data, "preset", "superfast", 0);
+			av_opt_set(codecCtx->priv_data, "rc-lookahead", "0", 0);
+		}
+		codecCtx->flags |= CODEC_FLAG_PASS1;
+		if (atoi(av_dict_get(generalDict, "pass", NULL, 0)->value) == 2) {
+			codecCtx->flags |= CODEC_FLAG_PASS2;
+		}
 #endif
-					double fr = atof(av_dict_get(generalDict, "r", NULL, 0)->value);
-					AVRational fps;
-					fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
-					codecCtx->time_base = fps;
+		double fr = atof(av_dict_get(generalDict, "r", NULL, 0)->value);
+		AVRational fps;
+		fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
+		codecCtx->time_base = fps;
 	}
-		break;
+	break;
 	case Audio:
 		codecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
 		codecCtx->sample_rate = 44100;

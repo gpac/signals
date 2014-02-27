@@ -10,8 +10,7 @@ unittest("empty param test: File") {
 	bool thrown = false;
 	try {
 		std::unique_ptr<In::File> f(In::File::create(""));
-	}
-	catch(std::runtime_error const& /*e*/) {
+	} catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
 	ASSERT(thrown);
@@ -21,8 +20,7 @@ unittest("empty param test: Demux") {
 	bool thrown = false;
 	try {
 		std::unique_ptr<Demux::GPACDemuxMP4Simple> mp4Demux(Demux::GPACDemuxMP4Simple::create(""));
-	}
-	catch(std::runtime_error const& /*e*/) {
+	} catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
 	ASSERT(thrown);

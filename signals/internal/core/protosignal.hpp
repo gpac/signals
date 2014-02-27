@@ -33,7 +33,7 @@ public:
 template<typename, typename, typename> class ProtoSignal;
 
 template<typename Result, typename Callback, typename... Args, typename Caller>
-class ProtoSignal<Result, Callback(Args...), Caller> : public ISignal<Callback(Args...)>{
+class ProtoSignal<Result, Callback(Args...), Caller> : public ISignal<Callback(Args...)> {
 protected:
 	typedef std::function<Callback(Args...)> CallbackType;
 

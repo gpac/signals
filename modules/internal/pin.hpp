@@ -33,8 +33,7 @@ public:
 };
 
 template<typename C, typename D>
-void ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot)
-{
+void ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
 	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
 	p->getSignal().connect(functor);
 }

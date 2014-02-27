@@ -25,7 +25,7 @@ std::unique_ptr<T> uptr(T* p) {
 inline
 std::vector<char> string_dup(const char *src) {
 	std::vector<char> data(strlen(src) + 1);
-	strcpy(data.data(), src);	
+	strcpy(data.data(), src);
 	return data;
 }
 
