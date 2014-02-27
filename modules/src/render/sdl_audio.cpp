@@ -15,7 +15,7 @@ SDLAudio::SDLAudio() {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't initialize: %s", SDL_GetError());
 		throw std::runtime_error("Init failed");
 	}
-	
+
 	SDL_AudioSpec audioSpec;
 	audioSpec.freq = 44100;
 	audioSpec.format = AUDIO_F32SYS;

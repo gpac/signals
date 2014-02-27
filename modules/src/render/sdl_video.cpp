@@ -39,7 +39,7 @@ SDLVideo* SDLVideo::create() {
 }
 
 SDLVideo::SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned /*pixelFormat*/)
-: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height) {
+	: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height) {
 	SDL_EventState(SDL_KEYUP, SDL_IGNORE); //ignore key up events, they don't even get filtered
 
 	displayrect->x = 0;
@@ -60,8 +60,8 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				SDL_RenderSetViewport(renderer, NULL);
-			//displayrect->w = width  = event.window.data1;
-			//displayrect->h = height = event.window.data2;
+				//displayrect->w = width  = event.window.data1;
+				//displayrect->h = height = event.window.data2;
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:

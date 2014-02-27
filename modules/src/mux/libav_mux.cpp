@@ -50,7 +50,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	std::string fileNameExt;
 	std::getline(formatExts, fileNameExt, ',');
 	fileName << "." << fileNameExt;
-	
+
 	/* open the output file, if needed */
 	if (!(formatCtx->flags & AVFMT_NOFILE)) {
 		if (avio_open(&formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
@@ -65,7 +65,7 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 }
 
 LibavMux::LibavMux(struct AVFormatContext *formatCtx)
-: formatCtx(formatCtx), headerWritten(false) {
+	: formatCtx(formatCtx), headerWritten(false) {
 }
 
 LibavMux::~LibavMux() {
@@ -119,7 +119,7 @@ bool LibavMux::process(std::shared_ptr<Data> data) {
 	AVPacket *pkt = encoderData->getPacket();
 
 	ensureHeader();
-	
+
 	/* Timestamps */
 	assert(pkt->pts != (int64_t)AV_NOPTS_VALUE);
 	AVStream *avStream = formatCtx->streams[0]; //FIXME: fixed '0' for stream num: this is not a mux yet ;)

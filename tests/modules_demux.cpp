@@ -8,8 +8,7 @@ using namespace Modules;
 
 namespace {
 
-unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print")
-{
+unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print") {
 	auto mp4Demux = uptr(Demux::GPACDemuxMP4Simple::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto p = uptr(Out::Print::create(std::cout));
 
@@ -20,8 +19,7 @@ unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print")
 	mp4Demux->waitForCompletion();
 }
 
-unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print")
-{
+unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print") {
 	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 	auto mp4Demux = uptr(Demux::GPACDemuxMP4Full::create());
 	auto p = uptr(Out::Print::create(std::cout));

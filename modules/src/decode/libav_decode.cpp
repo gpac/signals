@@ -65,7 +65,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 }
 
 LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
-: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame) {
+	: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame) {
 	*codecCtx = *codecCtx2;
 	signals.push_back(uptr(pinFactory->createPin()));
 }
@@ -76,21 +76,21 @@ LibavDecode::~LibavDecode() {
 }
 
 namespace {
-	std::shared_ptr<Data> createAudioData(AVCodecContext* codecCtx, AVFrame* avFrame) {
-		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-		std::shared_ptr<Data> out(new PcmData(bufferSize));
-		if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
-			size_t index = 0;
-			for (int i = 0; i < codecCtx->channels; ++i) {
-				const int channelSize = av_samples_get_buffer_size(nullptr, 1, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-				memcpy(out->data() + index, avFrame->data[i], channelSize);
-				index += channelSize;
-			}
-		} else {
-			memcpy(out->data(), avFrame->data[0], bufferSize);
+std::shared_ptr<Data> createAudioData(AVCodecContext* codecCtx, AVFrame* avFrame) {
+	const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+	std::shared_ptr<Data> out(new PcmData(bufferSize));
+	if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
+		size_t index = 0;
+		for (int i = 0; i < codecCtx->channels; ++i) {
+			const int channelSize = av_samples_get_buffer_size(nullptr, 1, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+			memcpy(out->data() + index, avFrame->data[i], channelSize);
+			index += channelSize;
 		}
-		return out;
+	} else {
+		memcpy(out->data(), avFrame->data[0], bufferSize);
 	}
+	return out;
+}
 }
 
 bool LibavDecode::processAudio(DataAVPacket *decoderData) {

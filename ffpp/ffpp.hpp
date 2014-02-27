@@ -11,23 +11,23 @@ extern "C" {
 }
 
 namespace ffpp {
-	struct Frame {
-		Frame() {
-			avFrame = avcodec_alloc_frame();
-			if(!avFrame)
-				throw std::runtime_error("Frame allocation failed");
-		}
+struct Frame {
+	Frame() {
+		avFrame = avcodec_alloc_frame();
+		if(!avFrame)
+			throw std::runtime_error("Frame allocation failed");
+	}
 
-		~Frame() {
-			avcodec_free_frame(&avFrame);
-		}
+	~Frame() {
+		avcodec_free_frame(&avFrame);
+	}
 
-		AVFrame* get() {
-			return avFrame;
-		}
+	AVFrame* get() {
+		return avFrame;
+	}
 
-	private:
-		AVFrame *avFrame;
-	};
+private:
+	AVFrame *avFrame;
+};
 }
 

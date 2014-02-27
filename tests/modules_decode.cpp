@@ -9,15 +9,14 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-	Decode::LibavDecode* createMp3Decoder()
-	{
-		AVCodecContext avContext;
-		memset(&avContext, 0, sizeof avContext);
-		avContext.codec_type = AVMEDIA_TYPE_AUDIO;
-		avContext.codec_id = AV_CODEC_ID_MP3;
-		PropsDecoder props(&avContext);
-		return Decode::LibavDecode::create(props);
-	}
+Decode::LibavDecode* createMp3Decoder() {
+	AVCodecContext avContext;
+	memset(&avContext, 0, sizeof avContext);
+	avContext.codec_type = AVMEDIA_TYPE_AUDIO;
+	avContext.codec_id = AV_CODEC_ID_MP3;
+	PropsDecoder props(&avContext);
+	return Decode::LibavDecode::create(props);
+}
 }
 
 unittest("decoder: audio simple") {

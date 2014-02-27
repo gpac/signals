@@ -16,21 +16,21 @@ using namespace Modules;
 
 namespace Mux {
 
-	class MODULES_EXPORT GPACMuxMP4 : public Module {
-	public:
-		static GPACMuxMP4* create(const std::string &baseName);
-		~GPACMuxMP4();
-		bool process(std::shared_ptr<Data> data);
-		bool handles(const std::string &url);
-		static bool canHandle(const std::string &url);
+class MODULES_EXPORT GPACMuxMP4 : public Module {
+public:
+	static GPACMuxMP4* create(const std::string &baseName);
+	~GPACMuxMP4();
+	bool process(std::shared_ptr<Data> data);
+	bool handles(const std::string &url);
+	static bool canHandle(const std::string &url);
 
-		void declareStream(std::shared_ptr<StreamVideo> stream);
+	void declareStream(std::shared_ptr<StreamVideo> stream);
 
-	private:
-		GPACMuxMP4(GF_ISOFile *file);
-		GF_ISOFile *file;
-		std::unique_ptr<gpacpp::IsoSample> sample;
-		uint32_t trackId;
-	};
+private:
+	GPACMuxMP4(GF_ISOFile *file);
+	GF_ISOFile *file;
+	std::unique_ptr<gpacpp::IsoSample> sample;
+	uint32_t trackId;
+};
 
 }
