@@ -9,7 +9,6 @@ namespace Demux {
 
 class ISOFileReader {
 public:
-
 	void init(GF_ISOFile* m) {
 		movie.reset(new gpacpp::IsoFile(m));
 		u32 track_id = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
@@ -25,7 +24,6 @@ public:
 
 
 GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
-
 	/* The ISO progressive reader */
 	GF_ISOFile *movie;
 	/* Number of bytes required to finish the current ISO Box reading */
@@ -55,7 +53,7 @@ bool GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
 		std::unique_ptr<gpacpp::IsoSample> iso_sample;
 		iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, sample_description_index);
 
-		Log::msg(Log::Error, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
+		Log::msg(Log::Debug, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
 		         reader->sample_index,
 		         reader->sample_count,
 		         iso_sample->dataLength,
