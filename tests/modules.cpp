@@ -2,6 +2,7 @@
 #include "modules.hpp"
 
 
+#include "modules_fifo.cpp"
 #include "modules_simple.cpp"
 #include "modules_decode.cpp"
 #include "modules_demux.cpp"

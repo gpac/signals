@@ -1,19 +1,21 @@
 #pragma once
 #include <stdint.h>
+#include <memory.h>
 
-class Fifo {
+template<typename T>
+class GenericFifo {
 public:
 
-	Fifo() : m_writePos(0), m_readPos(0) {
+	GenericFifo() : m_writePos(0), m_readPos(0) {
 	}
 
-	void write(const uint8_t* data, size_t len) {
+	void write(const T* data, size_t len) {
 		m_data.resize(m_writePos + len);
 		memcpy(&m_data[m_writePos], data, len);
 		m_writePos += len;
 	}
 
-	const uint8_t* readPointer() {
+	const T* readPointer() {
 		return &m_data[m_readPos];
 	}
 
@@ -35,6 +37,8 @@ public:
 private:
 	size_t m_writePos;
 	size_t m_readPos;
-	std::vector<uint8_t> m_data;
+	std::vector<T> m_data;
 };
+
+typedef GenericFifo<uint8_t> Fifo;
 
