@@ -2,6 +2,7 @@
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
 #include <cstring>
+#include <fstream>
 
 namespace Modules {
 namespace Render {
@@ -70,7 +71,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
 		len = (int)m_Fifo.bytesToRead();
 	}
-	SDL_MixAudio(stream, m_Fifo.readPointer(), len, SDL_MIX_MAXVOLUME);
+	memcpy(stream, m_Fifo.readPointer(), len);
 	m_Fifo.consume(len);
 }
 
