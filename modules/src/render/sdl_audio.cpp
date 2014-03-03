@@ -18,7 +18,7 @@ SDLAudio::SDLAudio() {
 
 	SDL_AudioSpec audioSpec;
 	audioSpec.freq = 44100;
-	audioSpec.format = AUDIO_F32SYS;
+	audioSpec.format = AUDIO_S16;
 	audioSpec.channels = 2;    /* 1 = mono, 2 = stereo */
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
@@ -65,7 +65,11 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
-	len = std::min(len, (int)m_Fifo.bytesToRead());
+	if(len > (int)m_Fifo.bytesToRead())
+	{
+		Log::msg(Log::Warning, "[SDLAudio render] underflow");
+		len = (int)m_Fifo.bytesToRead();
+	}
 	SDL_MixAudio(stream, m_Fifo.readPointer(), len, SDL_MIX_MAXVOLUME);
 	m_Fifo.consume(len);
 }
