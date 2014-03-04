@@ -48,8 +48,8 @@ LibavEncode::LibavEncode(Type type)
 	switch (type) {
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
-		generalOptions = "-vcodec libx264 -r 25 -pass 1"; //TODO //Romain: test
-		codecName = "libx264";
+		generalOptions = "-vcodec mpeg4 -r 25 -pass 1"; //TODO //Romain: test
+		codecName = "mpeg4";
 		break;
 	case Audio:
 		codecOptions = "-b 192000"; //TODO
@@ -70,7 +70,7 @@ LibavEncode::LibavEncode(Type type)
 	buildAVDictionary("[libav_encode]", &generalDict, generalOptions.c_str(), "other");
 
 	/* find the encoder */
-	auto entry = av_dict_get(generalDict, codecName.c_str(), NULL, 0);
+	auto entry = av_dict_get(generalDict, "vcodec", NULL, 0);
 	if(!entry) {
 		av_dict_free(&generalDict);
 		av_dict_free(&codecDict);
