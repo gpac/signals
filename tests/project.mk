@@ -9,17 +9,46 @@ $(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
 $(BIN)/tests/modules_%.o: CFLAGS+=-DUNIT
 $(BIN)/tests/mm_%.o: CFLAGS+=-DUNIT
 
+#---------------------------------------------------------------
+# signals.exe
+#---------------------------------------------------------------
+SIGNALS_OBJS:=\
+ 	$(TEST_COMMON_OBJ)\
+ 	$(OUTDIR)/signals.o
+DEPS+=$(SIGNALS_OBJS:%.o=%.deps)
+
 TARGETS+=$(OUTDIR)/signals.exe
-$(OUTDIR)/signals.exe: $(TEST_COMMON_OBJ) $(OUTDIR)/signals.o
-DEPS+=$(OUTDIR)/signals.deps
+$(OUTDIR)/signals.exe: $(SIGNALS_OBJS)
+
+#---------------------------------------------------------------
+# modules.exe
+#---------------------------------------------------------------
+EXE_MODULES_OBJS:=\
+ 	$(TEST_COMMON_OBJ)\
+ 	$(LIB_MODULES_OBJS)\
+ 	$(UTILS_OBJS)\
+ 	$(OUTDIR)/modules.o
+DEPS+=$(EXE_MODULES_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/modules.exe
-$(OUTDIR)/modules.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(OUTDIR)/modules.o
-DEPS+=$(OUTDIR)/modules.deps
+$(OUTDIR)/modules.exe: $(EXE_MODULES_OBJS)
 
+#---------------------------------------------------------------
+# mm.exe
+#---------------------------------------------------------------
 TARGETS+=$(OUTDIR)/mm.exe
-$(OUTDIR)/mm.exe: $(TEST_COMMON_OBJ) $(MODULES_OBJS) $(UTILS_OBJS) $(MM_OBJS) $(OUTDIR)/mm.o
+MM_OBJS:=\
+ 	$(TEST_COMMON_OBJ)\
+ 	$(LIB_MODULES_OBJS)\
+ 	$(UTILS_OBJS)\
+ 	$(MM_OBJS) $(OUTDIR)/mm.o
+$(OUTDIR)/mm.exe: $(MM_OBJS)
 DEPS+=$(OUTDIR)/mm.deps
+
+
+#---------------------------------------------------------------
+# run tests
+#---------------------------------------------------------------
 
 run_from = PROGRAM=$(realpath $(2)) && cd $(1) && $$PROGRAM
 

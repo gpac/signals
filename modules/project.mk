@@ -15,6 +15,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/render/sdl_video.cpp\
   $(ProjectName)/src/transform/audio_convert.cpp\
 
-MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
+LIB_MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
+DEPS+=$(LIB_MODULES_OBJS:%.o=%.deps)
 
 CFLAGS+=-I$(ProjectName)/internal
