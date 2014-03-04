@@ -66,26 +66,23 @@ LibavEncode::LibavEncode(Type type)
 	codecDict.set("threads", "auto");
 
 	/* parse other optionsDict*/
-	AVDictionary *generalDict = NULL;
+	ffpp::Dict generalDict;
 	buildAVDictionary("[libav_encode]", &generalDict, generalOptions.c_str(), "other");
 
 	/* find the encoder */
-	auto entry = av_dict_get(generalDict, "vcodec", NULL, 0);
+	auto entry = generalDict.get("vcodec");
 	if(!entry) {
-		av_dict_free(&generalDict);
 		throw std::runtime_error("Could not get codecName.");
 	}
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
 	if (!codec) {
 		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", codecName);
-		av_dict_free(&generalDict);
 		throw std::runtime_error(format("Codec '%s' not found.", codecName));
 	}
 
 	codecCtx = avcodec_alloc_context3(codec);
 	if (!codecCtx) {
 		Log::msg(Log::Warning, "[libav_encode] could not allocate the codec context.");
-		av_dict_free(&generalDict);
 		throw std::runtime_error("Codec context allocation failed.");
 	}
 
@@ -100,7 +97,7 @@ LibavEncode::LibavEncode(Type type)
 		linesize[0] = codecCtx->width;
 		linesize[1] = codecCtx->width / 2;
 		linesize[2] = codecCtx->width / 2;
-		if (strcmp(av_dict_get(generalDict, "vcodec", NULL, 0)->value, "mjpeg")) {
+		if (strcmp(generalDict.get("vcodec")->value, "mjpeg")) {
 			codecCtx->pix_fmt = PIX_FMT_YUV420P;
 		} else {
 			codecCtx->pix_fmt = PIX_FMT_YUVJ420P;
@@ -117,7 +114,7 @@ LibavEncode::LibavEncode(Type type)
 			codecCtx->flags |= CODEC_FLAG_PASS2;
 		}
 #endif
-		double fr = atof(av_dict_get(generalDict, "r", NULL, 0)->value);
+		double fr = atof(generalDict.get("r")->value);
 		AVRational fps;
 		fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
 		codecCtx->time_base = fps;
@@ -153,8 +150,6 @@ LibavEncode::LibavEncode(Type type)
 		}
 	}
 #endif
-
-	av_dict_free(&generalDict);
 
 	/* open it */
 	codecCtx->flags |= CODEC_FLAG_GLOBAL_HEADER; //gives access to the extradata (e.g. H264 SPS/PPS, etc.)
