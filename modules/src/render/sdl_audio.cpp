@@ -66,8 +66,7 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
-	if(len > (int)m_Fifo.bytesToRead())
-	{
+	if(len > (int)m_Fifo.bytesToRead()) {
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
 		len = (int)m_Fifo.bytesToRead();
 	}
