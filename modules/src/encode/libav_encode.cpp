@@ -61,9 +61,9 @@ LibavEncode::LibavEncode(Type type)
 	}
 
 	/* parse the codec optionsDict */
-	AVDictionary *codecDict = NULL;
+	ffpp::Dict codecDict;
 	buildAVDictionary("[libav_encode]", &codecDict, codecOptions.c_str(), "codec");
-	av_dict_set(&codecDict, "threads", "auto", 0);
+	codecDict.set("threads", "auto");
 
 	/* parse other optionsDict*/
 	AVDictionary *generalDict = NULL;
@@ -73,14 +73,12 @@ LibavEncode::LibavEncode(Type type)
 	auto entry = av_dict_get(generalDict, "vcodec", NULL, 0);
 	if(!entry) {
 		av_dict_free(&generalDict);
-		av_dict_free(&codecDict);
 		throw std::runtime_error("Could not get codecName.");
 	}
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
 	if (!codec) {
 		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", codecName);
 		av_dict_free(&generalDict);
-		av_dict_free(&codecDict);
 		throw std::runtime_error(format("Codec '%s' not found.", codecName));
 	}
 
@@ -88,7 +86,6 @@ LibavEncode::LibavEncode(Type type)
 	if (!codecCtx) {
 		Log::msg(Log::Warning, "[libav_encode] could not allocate the codec context.");
 		av_dict_free(&generalDict);
-		av_dict_free(&codecDict);
 		throw std::runtime_error("Codec context allocation failed.");
 	}
 
@@ -163,22 +160,20 @@ LibavEncode::LibavEncode(Type type)
 	codecCtx->flags |= CODEC_FLAG_GLOBAL_HEADER; //gives access to the extradata (e.g. H264 SPS/PPS, etc.)
 	if (avcodec_open2(codecCtx, codec, &codecDict) < 0) {
 		Log::msg(Log::Warning, "[libav_encode] could not open codec, disable output.");
-		av_dict_free(&codecDict);
 		throw std::runtime_error("Codec creation failed.");
 	}
 
 	/* check all optionsDict have been consumed */
-	AVDictionaryEntry *avde = NULL;
 	auto opt = string_dup(codecOptions.c_str());
 	char *tok = strtok(opt.data(), "- ");
 	while (tok && strtok(NULL, "- ")) {
-		if ((avde = av_dict_get(codecDict, tok, avde, 0))) {
+		AVDictionaryEntry *avde = nullptr;
+		avde = codecDict.get(tok, avde);
+		if (avde) {
 			Log::msg(Log::Warning, "[libav_encode] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
 		}
 		tok = strtok(NULL, "- ");
 	}
-	av_dict_free(&codecDict);
-
 	/* AVFrame parameters */
 	switch (type) {
 	case Video:
