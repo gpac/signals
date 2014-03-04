@@ -44,7 +44,7 @@ public:
 		av_dict_set(&m_AvDict, name.c_str(), val.c_str(), 0);
 	}
 
-	AVDictionaryEntry* get(std::string const name, AVDictionaryEntry* entry) {
+	AVDictionaryEntry* get(std::string const name, AVDictionaryEntry* entry = nullptr) {
 		return av_dict_get(m_AvDict, name.c_str(), entry, 0);
 	}
 
