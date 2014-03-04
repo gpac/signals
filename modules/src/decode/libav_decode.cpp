@@ -12,6 +12,49 @@ auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 }
 
+// TODO move this to its own module, when we have media types
+class AudioConverter {
+public:
+
+	AudioConverter(AVCodecContext const& src) {
+		m_Swr.setInputSampleFmt(src.sample_fmt);
+		m_Swr.setInputLayout(src.channel_layout);
+		m_Swr.setInputSampleRate(src.sample_rate);
+
+		m_Swr.setOutputSampleFmt(DST_FMT);
+		m_Swr.setOutputLayout(DST_LAYOUT);
+		m_Swr.setOutputSampleRate(DST_FREQ);
+
+		m_Swr.init();
+	}
+
+	std::shared_ptr<Data> convert(AVCodecContext* codecCtx, AVFrame* avFrame, AudioConverter& converter) {
+		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
+
+		auto const srcNumSamples = avFrame->nb_samples;
+		auto const dstNumSamples = DivUp(srcNumSamples * DST_FREQ, codecCtx->sample_rate);
+
+		std::shared_ptr<Data> out(new PcmData(bufferSize * 10)); // FIXME
+
+		uint8_t* pDst = out->data();
+		auto const numSamples = m_Swr.convert(&pDst, dstNumSamples, (const uint8_t**)avFrame->data, srcNumSamples);
+
+		auto const dstChannels = av_get_channel_layout_nb_channels(DST_LAYOUT);
+		auto const sampleSize = av_samples_get_buffer_size(nullptr, dstChannels, numSamples, DST_FMT, 1);
+
+		out->resize(sampleSize);
+
+		return out;
+	}
+
+private:
+
+	static const auto DST_FREQ = 44100;
+	static const uint64_t DST_LAYOUT = AV_CH_LAYOUT_STEREO;
+	static const auto DST_FMT = AV_SAMPLE_FMT_S16;
+	ffpp::SwResampler m_Swr;
+};
+
 namespace Decode {
 
 LibavDecode* LibavDecode::create(const PropsDecoder &props) {
@@ -72,24 +115,6 @@ LibavDecode::~LibavDecode() {
 	avcodec_close(codecCtx.get());
 }
 
-namespace {
-std::shared_ptr<Data> createAudioData(AVCodecContext* codecCtx, AVFrame* avFrame) {
-	const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-	std::shared_ptr<Data> out(new PcmData(bufferSize));
-	if (av_sample_fmt_is_planar(codecCtx->sample_fmt)) {
-		size_t index = 0;
-		for (int i = 0; i < codecCtx->channels; ++i) {
-			const int channelSize = av_samples_get_buffer_size(nullptr, 1, avFrame->nb_samples, codecCtx->sample_fmt, 0);
-			memcpy(out->data() + index, avFrame->data[i], channelSize);
-			index += channelSize;
-		}
-	} else {
-		memcpy(out->data(), avFrame->data[0], bufferSize);
-	}
-	return out;
-}
-}
-
 bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotFrame;
@@ -98,7 +123,11 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 		return true;
 	}
 	if (gotFrame) {
-		auto out = createAudioData(codecCtx.get(), avFrame->get());
+
+		if(!m_pAudioConverter)
+			m_pAudioConverter.reset(new AudioConverter(*codecCtx));
+
+		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get(), *m_pAudioConverter);
 		signals[0]->emit(out);
 	}
 
