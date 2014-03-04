@@ -29,5 +29,31 @@ struct Frame {
 private:
 	AVFrame *avFrame;
 };
+
+struct Dict {
+public:
+	Dict() {
+		m_AvDict = nullptr;
+	}
+
+	~Dict() {
+		av_dict_free(&m_AvDict);
+	}
+
+	void set(std::string const& name, std::string const& val) {
+		av_dict_set(&m_AvDict, name.c_str(), val.c_str(), 0);
+	}
+
+	AVDictionaryEntry* get(std::string const name, AVDictionaryEntry* entry) {
+		return av_dict_get(m_AvDict, name.c_str(), entry, 0);
+	}
+
+	AVDictionary** operator&() {
+		return &m_AvDict;
+	}
+private:
+	AVDictionary* m_AvDict;
+};
+
 }
 

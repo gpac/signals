@@ -34,11 +34,11 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	}
 
 	//TODO: test: force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
-	AVDictionary *th_opt = NULL;
-	av_dict_set(&th_opt, "threads", "1", 0);
+	ffpp::Dict dict;
+	dict.set("threads", "1");
 
 	//open the codec
-	if (avcodec_open2(codecCtx, codec, &th_opt) < 0) {
+	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
 		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
 		throw std::runtime_error("Couldn't open stream.");
 	}
@@ -58,8 +58,6 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 		assert(0);
 		throw std::runtime_error("Unknown decoder type. Failed.");
 	}
-
-	av_dict_free(&th_opt);
 
 	return new LibavDecode(codecCtx);
 }
