@@ -29,6 +29,11 @@ std::vector<char> string_dup(const char *src) {
 	return data;
 }
 
+template<typename T>
+T DivUp(T num, T divisor) {
+	return (num + divisor - 1) / divisor;
+}
+
 #define foreach(iterator, container) \
 	for(auto iterator=std::begin(container);iterator != std::end(container);++iterator)
 

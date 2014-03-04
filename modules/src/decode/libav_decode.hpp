@@ -12,6 +12,8 @@ namespace ffpp {
 struct Frame;
 }
 
+class AudioConverter;
+
 using namespace Modules;
 
 namespace Decode {
@@ -31,6 +33,8 @@ private:
 
 	std::unique_ptr<AVCodecContext> const codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;
+
+	std::unique_ptr<AudioConverter> m_pAudioConverter;
 };
 
 }

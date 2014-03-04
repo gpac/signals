@@ -8,6 +8,7 @@ extern "C" {
 #include <libavutil/channel_layout.h>
 #include <libavutil/mathematics.h>
 #include <libavutil/opt.h>
+#include <libswresample/swresample.h>
 }
 
 namespace ffpp {
@@ -53,6 +54,62 @@ public:
 	}
 private:
 	AVDictionary* m_AvDict;
+};
+
+struct SwResampler {
+public:
+
+	SwResampler() {
+		m_SwrContext = swr_alloc();
+	}
+
+	void setInputLayout(int64_t layout) {
+		av_opt_set_int(m_SwrContext, "in_channel_layout", layout, 0);
+	}
+
+	void setInputSampleRate(int rate) {
+		av_opt_set_int(m_SwrContext, "in_sample_rate", rate, 0);
+	}
+
+	void setInputSampleFmt(AVSampleFormat fmt) {
+		av_opt_set_sample_fmt(m_SwrContext, "in_sample_fmt", fmt, 0);
+	}
+
+	void setOutputLayout(int64_t layout) {
+		av_opt_set_int(m_SwrContext, "out_channel_layout", layout, 0);
+	}
+
+	void setOutputSampleRate(int rate) {
+		av_opt_set_int(m_SwrContext, "out_sample_rate", rate, 0);
+	}
+
+	void setOutputSampleFmt(AVSampleFormat fmt) {
+		av_opt_set_sample_fmt(m_SwrContext, "out_sample_fmt", fmt, 0);
+	}
+
+	void init() {
+		auto const ret = swr_init(m_SwrContext);
+		if(ret < 0)
+			throw std::runtime_error("SwResampler: swr_init failed");
+	}
+
+	int convert(uint8_t **out, int out_count, const uint8_t **in , int in_count) {
+		auto const ret = swr_convert(m_SwrContext, out, out_count, in, in_count);
+		if(ret < 0)
+			throw std::runtime_error("SwResampler: convert failed");
+		return ret;
+	}
+
+	int getDelay(int rate) {
+		return swr_get_delay(m_SwrContext, rate);
+	}
+
+	~SwResampler() {
+		swr_free(&m_SwrContext);
+	}
+
+private:
+	SwrContext* m_SwrContext;
 };
 
 }
