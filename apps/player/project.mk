@@ -1,5 +1,9 @@
 OUTDIR:=$(BIN)/$(ProjectName)
 
 TARGETS+=$(OUTDIR)/player.exe
-$(OUTDIR)/player.exe: $(MODULES_OBJS) $(UTILS_OBJS) $(OUTDIR)/player.o
-DEPS+=$(OUTDIR)/player.deps
+EXE_PLAYER_OBJS:=\
+	$(LIB_MODULES_OBJS)\
+	$(UTILS_OBJS)\
+ 	$(OUTDIR)/player.o
+$(OUTDIR)/player.exe:  $(EXE_PLAYER_OBJS)
+DEPS+=$(EXE_PLAYER_OBJS:%.o=%.deps)
