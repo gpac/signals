@@ -69,8 +69,7 @@ LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
 }
 
 LibavDecode::~LibavDecode() {
-	avcodec_close(codecCtx);
-	delete codecCtx;
+	avcodec_close(codecCtx.get());
 }
 
 namespace {
@@ -94,12 +93,12 @@ std::shared_ptr<Data> createAudioData(AVCodecContext* codecCtx, AVFrame* avFrame
 bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotFrame;
-	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
+	if (avcodec_decode_audio4(codecCtx.get(), avFrame->get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return true;
 	}
 	if (gotFrame) {
-		auto out = createAudioData(codecCtx, avFrame->get());
+		auto out = createAudioData(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
 	}
 
@@ -109,7 +108,7 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
-	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
+	if (avcodec_decode_video2(codecCtx.get(), avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return true;
 	}
