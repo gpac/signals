@@ -29,7 +29,7 @@ private:
 	bool processAudio(DataAVPacket*);
 	bool processVideo(DataAVPacket*);
 
-	struct AVCodecContext *codecCtx;
+	std::unique_ptr<AVCodecContext> const codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;
 };
 
