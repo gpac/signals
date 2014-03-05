@@ -49,7 +49,7 @@ public:
 
 private:
 
-	static const auto DST_FREQ = 44100;
+	static const auto DST_FREQ = AUDIO_SAMPLERATE;
 	static const uint64_t DST_LAYOUT = AV_CH_LAYOUT_STEREO;
 	static const auto DST_FMT = AV_SAMPLE_FMT_S16;
 	ffpp::SwResampler m_Swr;
