@@ -28,7 +28,7 @@ public:
 		m_Swr.init();
 	}
 
-	std::shared_ptr<Data> convert(AVCodecContext* codecCtx, AVFrame* avFrame, AudioConverter& converter) {
+	std::shared_ptr<Data> convert(AVCodecContext* codecCtx, AVFrame* avFrame) {
 		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
 
 		auto const srcNumSamples = avFrame->nb_samples;
@@ -172,7 +172,7 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 		if(!m_pAudioConverter)
 			m_pAudioConverter.reset(new AudioConverter(*codecCtx));
 
-		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get(), *m_pAudioConverter);
+		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
 	}
 
