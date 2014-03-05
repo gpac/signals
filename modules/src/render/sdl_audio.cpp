@@ -18,7 +18,7 @@ SDLAudio::SDLAudio() {
 	}
 
 	SDL_AudioSpec audioSpec;
-	audioSpec.freq = 44100;
+	audioSpec.freq = AUDIO_SAMPLERATE;
 	audioSpec.format = AUDIO_S16;
 	audioSpec.channels = 2;    /* 1 = mono, 2 = stereo */
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */

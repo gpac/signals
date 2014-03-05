@@ -120,7 +120,7 @@ LibavEncode::LibavEncode(Type type)
 	break;
 	case Audio:
 		codecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
-		codecCtx->sample_rate = 44100;
+		codecCtx->sample_rate = AUDIO_SAMPLERATE;
 		codecCtx->channels = 2;
 		codecCtx->channel_layout = AV_CH_LAYOUT_STEREO;
 		break;
