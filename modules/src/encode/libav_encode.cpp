@@ -90,10 +90,8 @@ LibavEncode::LibavEncode(Type type)
 	int linesize[8];
 	switch (type) {
 	case Video: {
-		const int width = 640; //TODO
-		const int height = 480; //TODO
-		codecCtx->width = width;
-		codecCtx->height = height;
+		codecCtx->width = VIDEO_WIDTH;
+		codecCtx->height = VIDEO_HEIGHT;
 		linesize[0] = codecCtx->width;
 		linesize[1] = codecCtx->width / 2;
 		linesize[2] = codecCtx->width / 2;

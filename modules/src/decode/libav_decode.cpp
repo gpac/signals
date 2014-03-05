@@ -94,8 +94,8 @@ public:
 
 private:
 
-	static const auto DST_WIDTH = 720;
-	static const auto DST_HEIGHT = 576;
+	static const auto DST_WIDTH = VIDEO_WIDTH;
+	static const auto DST_HEIGHT = VIDEO_HEIGHT;
 	static const auto DST_FMT = PIX_FMT_YUV420P;
 	SwsContext* m_SwContext;
 };

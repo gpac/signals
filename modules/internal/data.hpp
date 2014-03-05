@@ -47,4 +47,6 @@ public:
 	}
 };
 
+static const int VIDEO_WIDTH = 720;
+static const int VIDEO_HEIGHT = 576;
 }
