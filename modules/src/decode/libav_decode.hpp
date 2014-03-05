@@ -13,6 +13,7 @@ struct Frame;
 }
 
 class AudioConverter;
+class VideoConverter;
 
 using namespace Modules;
 
@@ -35,6 +36,7 @@ private:
 	std::unique_ptr<ffpp::Frame> const avFrame;
 
 	std::unique_ptr<AudioConverter> m_pAudioConverter;
+	std::unique_ptr<VideoConverter> m_pVideoConverter;
 };
 
 }

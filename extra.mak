@@ -13,7 +13,7 @@ extra-fetch-ffmpeg:
 
 extra-build-ffmpeg:
 	@mkdir -p extra/build/ffmpeg
-	cd extra/build/ffmpeg && ../../src/ffmpeg/configure --enable-swresample --prefix=../..
+	cd extra/build/ffmpeg && ../../src/ffmpeg/configure --enable-swresample --enable-swscale --prefix=../..
 	$(MAKE) -C extra/build/ffmpeg
 	$(MAKE) -C extra/build/ffmpeg install
 
