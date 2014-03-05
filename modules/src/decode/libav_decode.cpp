@@ -55,6 +55,51 @@ private:
 	ffpp::SwResampler m_Swr;
 };
 
+// TODO move this to its own module, when we have media types
+class VideoConverter {
+public:
+
+	VideoConverter(AVCodecContext const& codecCtx) {
+		m_SwContext = sws_getContext(
+		                  codecCtx.width, codecCtx.height, codecCtx.pix_fmt,
+		                  DST_WIDTH, DST_HEIGHT, DST_FMT,
+		                  2, nullptr, nullptr, nullptr);
+	}
+
+	std::shared_ptr<Data> convert(AVCodecContext* codecCtx, AVFrame* avFrame) {
+		const auto srcWidth = codecCtx->width;
+		const auto srcHeight = codecCtx->height;
+
+		const int dstFrameSize = (srcWidth * srcHeight * 3) / 2;
+		std::shared_ptr<Data> out(new Data(dstFrameSize));
+
+		uint8_t* pDst[3] = {
+			out->data(),
+			out->data() + DST_WIDTH * DST_HEIGHT,
+			out->data() + DST_WIDTH * DST_HEIGHT * 5/4,
+		};
+
+		int dstStride[3] = {DST_WIDTH, DST_WIDTH/2, DST_WIDTH/2};
+
+		sws_scale(m_SwContext,
+		          avFrame->data, avFrame->linesize, 0, srcHeight,
+		          pDst, dstStride);
+
+		return out;
+	}
+
+	~VideoConverter() {
+		sws_freeContext(m_SwContext);
+	}
+
+private:
+
+	static const auto DST_WIDTH = 720;
+	static const auto DST_HEIGHT = 576;
+	static const auto DST_FMT = PIX_FMT_YUV420P;
+	SwsContext* m_SwContext;
+};
+
 namespace Decode {
 
 LibavDecode* LibavDecode::create(const PropsDecoder &props) {
@@ -142,20 +187,10 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 		return true;
 	}
 	if (gotPicture) {
-		const int frameSize = (codecCtx->width * codecCtx->height * 3) / 2;
-		std::shared_ptr<Data> out(new Data(frameSize));
-		//TODO: YUV specific + wrap the avFrame output size
-		for (int h = 0; h < codecCtx->height; ++h) {
-			memcpy(out->data() + h*codecCtx->width, avFrame->get()->data[0] + h*avFrame->get()->linesize[0], codecCtx->width);
-		}
-		uint8_t *UPlane = out->data() + codecCtx->width * codecCtx->height;
-		for (int h = 0; h < codecCtx->height / 2; ++h) {
-			memcpy((void*)(UPlane + h*codecCtx->width / 2), avFrame->get()->data[1] + h*avFrame->get()->linesize[1], codecCtx->width / 2);
-		}
-		uint8_t *VPlane = out->data() + (codecCtx->width * codecCtx->height * 5) / 4;
-		for (int h = 0; h < codecCtx->height / 2; ++h) {
-			memcpy((void*)(VPlane + h*codecCtx->width / 2), avFrame->get()->data[2] + h*avFrame->get()->linesize[2], codecCtx->width / 2);
-		}
+		if(!m_pVideoConverter)
+			m_pVideoConverter.reset(new VideoConverter(*codecCtx));
+
+		auto out = m_pVideoConverter->convert(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
 	}
 	return true;

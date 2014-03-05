@@ -11,8 +11,8 @@ SDLVideo* SDLVideo::create() {
 		throw std::runtime_error("Init failed");
 	}
 
-	const int width = 1280; //FIXME hardcoded
-	const int height = 720; //FIXME hardcoded
+	const int width = 720; //FIXME hardcoded
+	const int height = 576; //FIXME hardcoded
 	SDL_Window *window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
@@ -78,6 +78,9 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 			return false;
 		}
 	}
+
+	// sanity check
+	assert((int)data->size() >= width * height * 3 / 2);
 
 	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());

@@ -9,6 +9,7 @@ extern "C" {
 #include <libavutil/mathematics.h>
 #include <libavutil/opt.h>
 #include <libswresample/swresample.h>
+#include "libswscale/swscale.h"
 }
 
 namespace ffpp {
