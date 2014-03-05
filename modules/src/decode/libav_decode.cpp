@@ -115,7 +115,7 @@ LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
 	case AVMEDIA_TYPE_AUDIO:
 		break;
 	default:
-		Log::msg(Log::Warning, "Module LibavDecode: codec_type not supported. Must be audio or video.");
+		Log::msg(Log::Warning, "Module LibavDecode: codec_type %s not supported. Must be audio or video.", codecCtx->codec_type);
 		throw std::runtime_error("Unknown decoder type. Failed.");
 	}
 
@@ -134,14 +134,6 @@ LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
 	if (avcodec_open2(codecCtx.get(), codec, &dict) < 0) {
 		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
 		throw std::runtime_error("Couldn't open stream.");
-	}
-
-	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO:
-	case AVMEDIA_TYPE_AUDIO:
-		break;
-	default:
-		throw std::runtime_error(format("Unknown decoder type: %s. Failed.", codecCtx->codec_type));
 	}
 
 	signals.push_back(uptr(pinFactory->createPin()));
