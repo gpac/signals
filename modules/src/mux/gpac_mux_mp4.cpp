@@ -134,7 +134,7 @@ GPACMuxMP4::GPACMuxMP4(GF_ISOFile *file)
 GPACMuxMP4::~GPACMuxMP4() {
 	GF_Err ret = gf_isom_close(file);
 	if (ret != GF_OK) {
-		Log::msg(Log::Error, "%s: gf_isom_close\n", gf_error_to_string(ret));
+		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(ret));
 		throw std::runtime_error("Cannot close output file.");
 	}
 }
@@ -243,14 +243,14 @@ TODO: missing open segment
 	GF_Err ret = gf_isom_fragment_add_sample(file, trackId, sample.get(), 1, 1, 0, 0, GF_FALSE);
 	if (ret != GF_OK) {
 		gf_bs_del(out_bs);
-		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample\n", gf_error_to_string(ret));
+		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(ret));
 		return false;
 	}
 #else
 	GF_Err ret = gf_isom_add_sample(file, trackId, 1, sample.get());
 	if (ret != GF_OK) {
 		gf_bs_del(out_bs);
-		Log::msg(Log::Error, "%s: gf_isom_add_sample\n", gf_error_to_string(ret));
+		Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(ret));
 		return false;
 	}
 #endif
