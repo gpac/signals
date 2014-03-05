@@ -138,18 +138,10 @@ LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		//check colorspace
-		if ((codecCtx->pix_fmt != PIX_FMT_YUV420P) && (codecCtx->pix_fmt != PIX_FMT_YUVJ420P)) {
-			const char *codecName = codecCtx->codec_name ? codecCtx->codec_name : "[unknown]";
-			Log::msg(Log::Warning, "Module LibavDecode: Unsupported colorspace for codec \"%s\". Only planar YUV 4:2:0 is supported.", codecName);
-			throw std::runtime_error("unsupported colorspace.");
-		}
-		break;
 	case AVMEDIA_TYPE_AUDIO:
 		break;
 	default:
-		assert(0);
-		throw std::runtime_error("Unknown decoder type. Failed.");
+		throw std::runtime_error(format("Unknown decoder type: %s. Failed.", codecCtx->codec_type));
 	}
 
 	signals.push_back(uptr(pinFactory->createPin()));
