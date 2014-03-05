@@ -49,12 +49,12 @@ LibavEncode::LibavEncode(Type type)
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
 		generalOptions = "-vcodec mpeg4 -r 25 -pass 1"; //TODO //Romain: test
-		codecName = "mpeg4";
+		codecName = "vcodec";
 		break;
 	case Audio:
 		codecOptions = "-b 192000"; //TODO
 		generalOptions = "-acodec libvo_aacenc"; //TODO
-		codecName = "libvo_aacenc";
+		codecName = "acodec";
 		break;
 	default:
 		throw std::runtime_error("Unknown encoder type. Failed.");
@@ -70,14 +70,14 @@ LibavEncode::LibavEncode(Type type)
 	buildAVDictionary("[libav_encode]", &generalDict, generalOptions.c_str(), "other");
 
 	/* find the encoder */
-	auto entry = generalDict.get("vcodec");
+	auto entry = generalDict.get(codecName);
 	if(!entry) {
 		throw std::runtime_error("Could not get codecName.");
 	}
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
 	if (!codec) {
-		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", codecName);
-		throw std::runtime_error(format("Codec '%s' not found.", codecName));
+		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", entry->value);
+		throw std::runtime_error(format("Codec '%s' not found.", entry->value));
 	}
 
 	codecCtx = avcodec_alloc_context3(codec);
@@ -90,8 +90,8 @@ LibavEncode::LibavEncode(Type type)
 	int linesize[8];
 	switch (type) {
 	case Video: {
-		const int width = 1280; //TODO
-		const int height = 720; //TODO
+		const int width = 640; //TODO
+		const int height = 480; //TODO
 		codecCtx->width = width;
 		codecCtx->height = height;
 		linesize[0] = codecCtx->width;
