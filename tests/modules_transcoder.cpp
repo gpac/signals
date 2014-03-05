@@ -10,13 +10,8 @@ using namespace Modules;
 namespace {
 
 unittest("transcoder: video simple (libav mux)") {
-	//create demux
-	std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	ASSERT(demux != nullptr);
-
-	//create stub output (for unused demuxer's outputs)
-	std::unique_ptr<Out::Null> null(Out::Null::create());
-	ASSERT(null != nullptr);
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto null = uptr(Out::Null::create());
 
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
@@ -35,16 +30,10 @@ unittest("transcoder: video simple (libav mux)") {
 	//create the video decoder
 	Props *props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
-	ASSERT(decode != nullptr);
 
-	//create the encoder
-	std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(Encode::LibavEncode::Video));
-	ASSERT(encode != nullptr);
-
-	//create the mux
-	std::unique_ptr<Mux::LibavMux> mux(Mux::LibavMux::create("output_video_libav"));
-	ASSERT(mux != nullptr);
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
+	auto mux = uptr(Mux::LibavMux::create("output_video_libav"));
 
 	//pass meta data between encoder an mux
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
@@ -64,13 +53,10 @@ unittest("transcoder: video simple (libav mux)") {
 }
 
 unittest("transcoder: video simple (gpac mux)") {
-	//create demux
-	std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	ASSERT(demux != nullptr);
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
 	//create stub output (for unused demuxer's outputs)
-	std::unique_ptr<Out::Null> null(Out::Null::create());
-	ASSERT(null != nullptr);
+	auto null = uptr(Out::Null::create());
 
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
@@ -89,16 +75,10 @@ unittest("transcoder: video simple (gpac mux)") {
 	//create the video decoder
 	Props *props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
-	ASSERT(decode != nullptr);
 
-	//create the encoder
-	std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(Encode::LibavEncode::Video));
-	ASSERT(encode != nullptr);
-
-	//create the mux
-	std::unique_ptr<Mux::GPACMuxMP4> mux(Mux::GPACMuxMP4::create("output_video_gpac"));
-	ASSERT(mux != nullptr);
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
+	auto mux = uptr(Mux::GPACMuxMP4::create("output_video_gpac"));
 
 	//pass meta data between encoder an mux
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
@@ -119,13 +99,10 @@ unittest("transcoder: video simple (gpac mux)") {
 
 #if 0
 unittest("transcoder: audio simple (libav mux)") {
-	//create demux
-	std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	ASSERT(demux != nullptr);
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
 	//create stub output (for unused demuxer's outputs)
-	std::unique_ptr<Out::Null> null(Out::Null::create());
-	ASSERT(null != nullptr);
+	auto null = uptr(Out::Null::create());
 
 	//find video signal from demux
 	size_t audioIndex = std::numeric_limits<size_t>::max();
@@ -144,24 +121,18 @@ unittest("transcoder: audio simple (libav mux)") {
 	//create the video decoder
 	Props *props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
-	ASSERT(decode != nullptr);
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 
 	//create the encoder
-	std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
-	ASSERT(encode != nullptr);
-
-	//create the mux
-	std::unique_ptr<Mux::LibavMux> mux(Mux::LibavMux::create("output_audio_libav"));
-	ASSERT(mux != nullptr);
+	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
+	auto mux = uptr(Mux::LibavMux::create("output_audio_libav"));
 
 	//pass meta data between encoder an mux
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 
 	//create an audio resampler
-	std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());
-	ASSERT(audioConverter != nullptr);
+	auto audioConverter = uptr(Transform::AudioConvert::create());
 
 	ConnectPin(demux->getPin(audioIndex), decode.get(), &Decode::LibavDecode::process);
 	ConnectPin(decode->getPin(0), audioConverter.get(), &Transform::AudioConvert::process);
@@ -180,13 +151,10 @@ unittest("transcoder: audio simple (libav mux)") {
 
 #if 0
 unittest("transcoder: audio simple (gpac mux)") {
-	//create demux
-	std::unique_ptr<Demux::LibavDemux> demux(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	ASSERT(demux != nullptr);
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
 	//create stub output (for unused demuxer's outputs)
-	std::unique_ptr<Out::Null> null(Out::Null::create());
-	ASSERT(null != nullptr);
+	auto null = uptr(Out::Null::create());
 
 	//find video signal from demux
 	size_t audioIndex = std::numeric_limits<size_t>::max();
@@ -205,24 +173,17 @@ unittest("transcoder: audio simple (gpac mux)") {
 	//create the video decoder
 	Props *props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
-	ASSERT(decode != nullptr);
 
-	//create the encoder
-	std::unique_ptr<Encode::LibavEncode> encode(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
-	ASSERT(encode != nullptr);
-
-	//create the mux
-	std::unique_ptr<Mux::LibavMux> mux(Mux::LibavMux::create("output_audio_gpac"));
-	ASSERT(mux != nullptr);
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
+	auto mux = uptr(Mux::LibavMux::create("output_audio_gpac"));
 
 	//pass meta data between encoder an mux
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 
 	//create an audio resampler
-	std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());
-	ASSERT(audioConverter != nullptr);
+	auto audioConverter = uptr(Transform::AudioConvert::create());
 
 	Connect(demux->getPin(audioIndex)->getSignal(), decode.get(), &Decode::LibavDecode::process);
 	Connect(decode->getPin(0)->getSignal(), audioConverter.get(), &Transform::AudioConvert::process);
