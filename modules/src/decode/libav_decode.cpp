@@ -103,7 +103,12 @@ private:
 namespace Decode {
 
 LibavDecode* LibavDecode::create(const PropsDecoder &props) {
-	auto codecCtx = props.getAVCodecContext();
+	return new LibavDecode(props.getAVCodecContext());
+}
+
+LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
+	: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame) {
+	*codecCtx = *codecCtx2;
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
@@ -126,7 +131,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 	dict.set("threads", "1");
 
 	//open the codec
-	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
+	if (avcodec_open2(codecCtx.get(), codec, &dict) < 0) {
 		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
 		throw std::runtime_error("Couldn't open stream.");
 	}
@@ -147,12 +152,6 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 		throw std::runtime_error("Unknown decoder type. Failed.");
 	}
 
-	return new LibavDecode(codecCtx);
-}
-
-LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
-	: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame) {
-	*codecCtx = *codecCtx2;
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
