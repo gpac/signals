@@ -13,7 +13,10 @@ extra-fetch-ffmpeg:
 
 extra-build-ffmpeg:
 	@mkdir -p extra/build/ffmpeg
-	cd extra/build/ffmpeg && ../../src/ffmpeg/configure --enable-swresample --enable-swscale --prefix=../..
+	cd extra/build/ffmpeg && ../../src/ffmpeg/configure \
+		--enable-swresample \
+		--enable-swscale \
+		--prefix=../..
 	$(MAKE) -C extra/build/ffmpeg
 	$(MAKE) -C extra/build/ffmpeg install
 
@@ -26,7 +29,8 @@ extra-fetch-gpac:
 
 extra-build-gpac:
 	@mkdir -p extra/build/gpac
-	cd extra/build/gpac && ../../src/gpac/configure --prefix=../..
+	cd extra/build/gpac && ../../src/gpac/configure \
+		--prefix=../..
 	$(MAKE) -C extra/build/gpac
 	$(MAKE) -C extra/build/gpac install
 	$(MAKE) -C extra/build/gpac install-lib
