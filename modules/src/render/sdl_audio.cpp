@@ -50,7 +50,7 @@ SDLAudio::~SDLAudio() {
 
 bool SDLAudio::process(std::shared_ptr<Data> data) {
 	auto pcmData = dynamic_cast<PcmData*>(data.get());
-	if(!pcmData) {
+	if (!pcmData) {
 		Log::msg(Log::Warning, "[SDLAudio render] invalid packet type");
 		return false;
 	}
@@ -66,12 +66,15 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
-	if(len > (int)m_Fifo.bytesToRead()) {
+	if (len > (int)m_Fifo.bytesToRead()) {
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
 		len = (int)m_Fifo.bytesToRead();
 	}
-	memcpy(stream, m_Fifo.readPointer(), len);
-	m_Fifo.consume(len);
+
+	if (len > 0) {
+		memcpy(stream, m_Fifo.readPointer(), len);
+		m_Fifo.consume(len);
+	}
 }
 
 void SDLAudio::staticFillAudio(void *udata, uint8_t *stream, int len) {
