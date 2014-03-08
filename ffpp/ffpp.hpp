@@ -68,7 +68,7 @@ public:
 		av_opt_set_int(m_SwrContext, "in_channel_layout", layout, 0);
 	}
 
-	void setInputSampleRate(int rate) {
+	void setInputSampleRate(int64_t rate) {
 		av_opt_set_int(m_SwrContext, "in_sample_rate", rate, 0);
 	}
 
@@ -80,7 +80,7 @@ public:
 		av_opt_set_int(m_SwrContext, "out_channel_layout", layout, 0);
 	}
 
-	void setOutputSampleRate(int rate) {
+	void setOutputSampleRate(int64_t rate) {
 		av_opt_set_int(m_SwrContext, "out_sample_rate", rate, 0);
 	}
 
@@ -101,7 +101,7 @@ public:
 		return ret;
 	}
 
-	int getDelay(int rate) {
+	int64_t getDelay(int64_t rate) {
 		return swr_get_delay(m_SwrContext, rate);
 	}
 
