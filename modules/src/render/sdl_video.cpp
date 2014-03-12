@@ -86,6 +86,9 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
 	SDL_RenderPresent(renderer);
 
+	// hack until we have timestamps
+	SDL_Delay(1);
+
 	return true;
 }
 
