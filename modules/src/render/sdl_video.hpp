@@ -30,6 +30,9 @@ private:
 	SDL_Texture *texture;
 	std::unique_ptr<SDL_Rect> displayrect;
 	int width, height;
+
+	uint32_t m_StartTime;
+	int m_NumFrames;
 };
 
 }

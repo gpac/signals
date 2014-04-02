@@ -46,6 +46,8 @@ SDLVideo::SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int 
 	displayrect->y = 0;
 	displayrect->w = width;
 	displayrect->h = height;
+
+	m_NumFrames = 0;
 }
 
 SDLVideo::~SDLVideo() {
@@ -82,12 +84,19 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	// sanity check
 	assert((int)data->size() >= width * height * 3 / 2);
 
+	// hack until we have timestamps
+	if(m_NumFrames == 0)
+		m_StartTime = SDL_GetTicks(); // TODO use clock
+
+	auto const now = SDL_GetTicks();
+	auto const frameTime = m_StartTime + m_NumFrames * 40; // FIXME: fixed framerate
+	SDL_Delay(frameTime - now);
+
 	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
 	SDL_RenderPresent(renderer);
 
-	// hack until we have timestamps
-	SDL_Delay(1);
+	m_NumFrames++;
 
 	return true;
 }
