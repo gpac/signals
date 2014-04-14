@@ -79,8 +79,9 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 		m_StartTime = SDL_GetTicks(); // TODO use clock
 
 	auto const now = SDL_GetTicks();
-	auto const frameTime = m_StartTime + m_NumFrames * 40; // FIXME: fixed framerate
-	SDL_Delay(std::max<int32_t>(0, frameTime - now));
+	auto const timestampInMs = data->getTime() / 180LL; // assume timestamps start at zero
+	auto const frameTimeInMs = m_StartTime + timestampInMs;
+	SDL_Delay(std::max<int32_t>(0, frameTimeInMs - now));
 
 	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());

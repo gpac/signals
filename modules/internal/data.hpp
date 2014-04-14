@@ -37,8 +37,17 @@ public:
 		ptr.resize(size);
 	}
 
+	void setTime(uint64_t timeIn180k) {
+		m_TimeIn180k = timeIn180k;
+	}
+
+	uint64_t getTime() const {
+		return m_TimeIn180k;
+	}
+
 private:
 	std::vector<uint8_t> ptr;
+	uint64_t m_TimeIn180k;
 };
 
 class MODULES_EXPORT PcmData : public Data {

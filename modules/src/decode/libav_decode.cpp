@@ -107,7 +107,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 }
 
 LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
-	: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame) {
+	: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame), m_numFrames(0) {
 	*codecCtx = *codecCtx2;
 
 	switch (codecCtx->codec_type) {
@@ -174,9 +174,16 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 			m_pVideoConverter.reset(new VideoConverter(*codecCtx));
 
 		auto out = m_pVideoConverter->convert(codecCtx.get(), avFrame->get());
+		setTimestamp(out);
 		signals[0]->emit(out);
+		++m_numFrames;
 	}
 	return true;
+}
+
+void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
+	auto const framePeriodInMs = 40LL;
+	s->setTime(m_numFrames * framePeriodInMs * 180LL);
 }
 
 bool LibavDecode::process(std::shared_ptr<Data> data) {
