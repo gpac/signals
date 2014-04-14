@@ -3,6 +3,7 @@ Mid Term apps:
 - simple player
 
 Tasks (from higher to lower priority):
+- timestamping
 - make audio format conversion work
 - audio should run in a separate thread (like network reception etc.)
 - handle clocks (first: real-time to play audio)
