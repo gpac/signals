@@ -108,6 +108,9 @@
     <ClInclude Include="src\common\mm.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
+    <ClInclude Include="internal\clock.hpp">
+      <Filter>includes\internal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
