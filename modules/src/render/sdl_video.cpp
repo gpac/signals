@@ -1,7 +1,6 @@
 #include "sdl_video.hpp"
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
-#include "clock.hpp"
 
 namespace Modules {
 namespace Render {
