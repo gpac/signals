@@ -1,6 +1,7 @@
 #include "sdl_video.hpp"
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
+#include "clock.h"
 
 namespace Modules {
 namespace Render {
@@ -64,16 +65,6 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 				SDL_RenderSetViewport(renderer, NULL);
 				//displayrect->w = width  = event.window.data1;
 				//displayrect->h = height = event.window.data2;
-			}
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			displayrect->x = event.button.x - width / 2;
-			displayrect->y = event.button.y - height / 2;
-			break;
-		case SDL_MOUSEMOTION:
-			if (event.motion.state) {
-				displayrect->x = event.motion.x - width / 2;
-				displayrect->y = event.motion.y - height / 2;
 			}
 			break;
 		case SDL_QUIT:
