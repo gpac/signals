@@ -68,6 +68,7 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 			}
 			break;
 		case SDL_QUIT:
+			exit(1);
 			return false;
 		}
 	}
