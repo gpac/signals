@@ -7,6 +7,7 @@
 #include "modules_decode.cpp"
 #include "modules_demux.cpp"
 #include "modules_erasure.cpp"
+#include "modules_generator.cpp"
 #include "modules_player.cpp"
 #include "modules_transcoder.cpp"
 
