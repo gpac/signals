@@ -2,7 +2,7 @@
 #include "modules.hpp"
 #include <memory>
 
-#include "src/in/sound_generator.hpp"
+#include "in/sound_generator.hpp"
 #include "../utils/tools.hpp"
 
 using namespace Tests;

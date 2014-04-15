@@ -3,6 +3,8 @@
 #include "../utils/tools.hpp"
 #include <memory>
 
+#include "demux/gpac_demux_mp4_full.hpp"
+
 using namespace Tests;
 using namespace Modules;
 

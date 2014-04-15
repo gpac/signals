@@ -5,6 +5,8 @@
 #include "../utils/tools.hpp"
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
+#include "render/sdl_video.hpp"
+
 using namespace Tests;
 using namespace Modules;
 

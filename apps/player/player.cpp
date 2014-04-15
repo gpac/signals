@@ -5,6 +5,12 @@
 #include "../utils/tools.hpp"
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
+#include "decode/libav_decode.hpp"
+#include "demux/libav_demux.hpp"
+#include "out/null.hpp"
+#include "render/sdl_audio.hpp"
+#include "render/sdl_video.hpp"
+
 using namespace Tests;
 using namespace Modules;
 

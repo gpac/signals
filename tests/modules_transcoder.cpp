@@ -3,6 +3,9 @@
 #include <memory>
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
+#include "mux/libav_mux.hpp"
+#include "mux/gpac_mux_mp4.hpp"
+#include "encode/libav_encode.hpp"
 
 using namespace Tests;
 using namespace Modules;

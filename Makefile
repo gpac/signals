@@ -19,6 +19,7 @@ else
 endif
 
 CFLAGS += -I$(SRC)/signals
+CFLAGS += -I$(SRC)/modules/src
 CFLAGS += -I$(SRC)/gpacpp
 CFLAGS += -I$(SRC)/ffpp
 
