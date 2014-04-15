@@ -17,6 +17,7 @@ public:
 	bool process(std::shared_ptr<Data> data);
 
 private:
+	double nextSample();
 	uint64_t m_numSamples;
 };
 
