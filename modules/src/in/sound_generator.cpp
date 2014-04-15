@@ -33,8 +33,10 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 }
 
 double SoundGenerator::nextSample() {
+	auto const BEEP_PERIOD = SAMPLE_RATE;
+	auto const beepPhase = m_numSamples % BEEP_PERIOD;
 	auto const phase = m_numSamples * 2.0 * SINE_FREQ * M_PI / SAMPLE_RATE;
-	auto const fVal = sin(phase);
+	auto const fVal = beepPhase < BEEP_PERIOD/2 ? sin(phase) : 0;
 	m_numSamples++;
 	return fVal;
 }
