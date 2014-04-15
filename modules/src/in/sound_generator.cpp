@@ -4,6 +4,8 @@
 #include <cmath>
 
 auto const BUFFER_SIZE = 128;
+auto const SAMPLE_RATE = 44100;
+auto const SINE_FREQ = 440.0;
 
 namespace Modules {
 namespace In {
@@ -21,17 +23,21 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
   auto const p = out->data();
 	for(int i=0;i < BUFFER_SIZE/bytesPerSample;++i)
 	{
-		auto const phase = m_numSamples * 2.0 * 440.0 * M_PI / 44100.0;
-		auto const fVal = sin(phase);
+		auto const fVal = nextSample();
 		auto const val = int(fVal * 32767.0f);
 		p[i*2+0] = (val >> 0) & 0xFF;
 		p[i*2+1] = (val >> 8) & 0xFF;
-
-		m_numSamples++;
 	}
 
 	signals[0]->emit(out);
 	return true;
+}
+
+double SoundGenerator::nextSample() {
+	auto const phase = m_numSamples * 2.0 * SINE_FREQ * M_PI / SAMPLE_RATE;
+	auto const fVal = sin(phase);
+	m_numSamples++;
+	return fVal;
 }
 
 bool SoundGenerator::handles(const std::string &url) {
