@@ -12,7 +12,7 @@ namespace Modules {
 		virtual uint64_t now() const {
 			auto const timeNow = high_resolution_clock::now();
 			auto const timeNowInMs = duration_cast<milliseconds>(timeNow - m_Start);
-			return timeNowInMs.count();
+			return timeNowInMs.count() * 180;
 		}
 	private:
 		time_point<high_resolution_clock> const m_Start;
