@@ -2,7 +2,6 @@
 #include "modules.hpp"
 #include <memory>
 
-#include "src/in/sound_generator.hpp"
 #include "../utils/tools.hpp"
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
@@ -71,19 +70,6 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	demux->waitForCompletion();
 	decode->waitForCompletion();
-}
-
-unittest("sound generator") {
-	auto soundGen = uptr(new In::SoundGenerator);
-	auto render = uptr(Render::SDLAudio::create());
-
-	ConnectPin(soundGen->getPin(0), render.get(), &Render::SDLAudio::process);
-
-	for(int i=0;i < 200;++i) {
-		soundGen->process(nullptr);
-	}
-
-	soundGen->waitForCompletion();
 }
 
 }
