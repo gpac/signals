@@ -1,6 +1,7 @@
 #include "sdl_video.hpp"
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
+#include "internal/clock.hpp"
 
 namespace Modules {
 namespace Render {
@@ -74,11 +75,7 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	// sanity check
 	assert((int)data->size() >= width * height * 3 / 2);
 
-	// hack until we have timestamps
-	if(m_NumFrames == 0)
-		m_StartTime = SDL_GetTicks(); // TODO use clock
-
-	auto const now = SDL_GetTicks();
+	auto const now = g_DefaultClock->now();
 	auto const timestampInMs = data->getTime() / 180LL; // assume timestamps start at zero
 	auto const frameTimeInMs = m_StartTime + timestampInMs;
 	SDL_Delay((Uint32)std::max<int64_t>(0, frameTimeInMs - now));
