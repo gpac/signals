@@ -65,6 +65,10 @@ bool LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 		}
 		return false;
 	}
+
+	auto const base = formatCtx->streams[pkt->stream_index]->time_base;
+	auto const time = pkt->pts * base.num * 180000LL / base.den;
+	out->setTime(time);
 	signals[pkt->stream_index]->emit(out);
 	return true;
 }
