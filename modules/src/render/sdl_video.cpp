@@ -81,7 +81,7 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	auto const now = SDL_GetTicks();
 	auto const timestampInMs = data->getTime() / 180LL; // assume timestamps start at zero
 	auto const frameTimeInMs = m_StartTime + timestampInMs;
-	SDL_Delay(std::max<int32_t>(0, frameTimeInMs - now));
+	SDL_Delay((Uint32)std::max<int64_t>(0, frameTimeInMs - now));
 
 	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
@@ -99,6 +99,5 @@ bool SDLVideo::handles(const std::string &url) {
 bool SDLVideo::canHandle(const std::string &/*url*/) {
 	return true;
 }
-
 }
 }
