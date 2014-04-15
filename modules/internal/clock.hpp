@@ -1,5 +1,6 @@
 #pragma once
 
+#include "config.hpp"
 #include <stdint.h>
 
 namespace Modules {
@@ -10,5 +11,5 @@ struct IClock {
 
 IClock* createSystemClock(); // move elsewhere
 
-extern IClock* const g_DefaultClock;
+extern MODULES_EXPORT IClock* const g_DefaultClock;
 }

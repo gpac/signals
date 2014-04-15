@@ -21,6 +21,18 @@
     <ClCompile Include="modules_decode.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="modules_clock.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="modules_fifo.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="modules_generator.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="modules_render.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tests">

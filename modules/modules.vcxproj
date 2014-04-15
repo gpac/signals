@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="internal\pin.cpp" />
+    <ClCompile Include="internal\system_clock.cpp" />
     <ClCompile Include="src\common\libav.cpp" />
     <ClCompile Include="src\decode\libav_decode.cpp" />
     <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp" />

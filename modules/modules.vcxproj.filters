@@ -170,5 +170,8 @@
     <ClCompile Include="src\in\video_generator.cpp">
       <Filter>src\in</Filter>
     </ClCompile>
+    <ClCompile Include="internal\system_clock.cpp">
+      <Filter>includes\internal</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
