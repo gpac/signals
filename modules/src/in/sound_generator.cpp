@@ -22,6 +22,8 @@ SoundGenerator::SoundGenerator()
 bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	std::shared_ptr<PcmData> out(new PcmData(BUFFER_SIZE));
 
+	out->setTime(m_numSamples * 180000LL / SAMPLE_RATE);
+
 	// generate sound
 	auto const bytesPerSample = 4;
   auto const p = out->data();
