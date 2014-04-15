@@ -37,6 +37,7 @@
     <ClInclude Include="src\encode\libav_encode.hpp" />
     <ClInclude Include="src\in\file.hpp" />
     <ClInclude Include="src\in\sound_generator.hpp" />
+    <ClInclude Include="src\in\video_generator.hpp" />
     <ClInclude Include="src\mux\gpac_mux_mp4.hpp" />
     <ClInclude Include="src\mux\libav_mux.hpp" />
     <ClInclude Include="src\out\null.hpp" />
@@ -55,6 +56,7 @@
     <ClCompile Include="src\encode\libav_encode.cpp" />
     <ClCompile Include="src\in\file.cpp" />
     <ClCompile Include="src\in\sound_generator.cpp" />
+    <ClCompile Include="src\in\video_generator.cpp" />
     <ClCompile Include="src\mux\gpac_mux_mp4.cpp" />
     <ClCompile Include="src\mux\libav_mux.cpp" />
     <ClCompile Include="src\out\null.cpp" />

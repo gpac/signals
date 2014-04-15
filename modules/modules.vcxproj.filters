@@ -114,6 +114,9 @@
     <ClInclude Include="src\in\sound_generator.hpp">
       <Filter>src\in</Filter>
     </ClInclude>
+    <ClInclude Include="src\in\video_generator.hpp">
+      <Filter>src\in</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
@@ -162,6 +165,9 @@
       <Filter>src\mux</Filter>
     </ClCompile>
     <ClCompile Include="src\in\sound_generator.cpp">
+      <Filter>src\in</Filter>
+    </ClCompile>
+    <ClCompile Include="src\in\video_generator.cpp">
       <Filter>src\in</Filter>
     </ClCompile>
   </ItemGroup>
