@@ -9,4 +9,6 @@ struct IClock {
 };
 
 IClock* createSystemClock(); // move elsewhere
+
+extern IClock* const g_DefaultClock;
 }

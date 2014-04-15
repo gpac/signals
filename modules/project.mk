@@ -1,5 +1,6 @@
 MODULES_SRCS:=\
   $(ProjectName)/internal/pin.cpp\
+  $(ProjectName)/internal/system_clock.cpp\
   $(ProjectName)/src/common/libav.cpp\
   $(ProjectName)/src/decode/libav_decode.cpp\
   $(ProjectName)/src/demux/gpac_demux_mp4_simple.cpp\
