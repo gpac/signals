@@ -111,6 +111,9 @@
     <ClInclude Include="internal\clock.hpp">
       <Filter>includes\internal</Filter>
     </ClInclude>
+    <ClInclude Include="src\in\sound_generator.hpp">
+      <Filter>src\in</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
@@ -157,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="src\mux\gpac_mux_mp4.cpp">
       <Filter>src\mux</Filter>
+    </ClCompile>
+    <ClCompile Include="src\in\sound_generator.cpp">
+      <Filter>src\in</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
