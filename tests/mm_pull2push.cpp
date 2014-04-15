@@ -3,6 +3,9 @@
 #include "../modules/modules.hpp"
 #include <memory>
 
+#include "out/print.hpp"
+#include "in/file.hpp"
+
 using namespace Tests;
 using namespace MM;
 

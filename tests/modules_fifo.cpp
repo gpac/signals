@@ -2,6 +2,8 @@
 #include "modules.hpp"
 #include <memory>
 
+#include "render/sdl_audio.hpp"
+
 using namespace Tests;
 using namespace Modules;
 

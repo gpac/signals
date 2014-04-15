@@ -3,6 +3,10 @@
 #include <memory>
 #include <stdexcept>
 
+#include "demux/gpac_demux_mp4_simple.hpp"
+#include "in/file.hpp"
+#include "out/print.hpp"
+
 using namespace Tests;
 using namespace Modules;
 

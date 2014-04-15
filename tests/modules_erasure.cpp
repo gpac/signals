@@ -2,6 +2,8 @@
 #include "modules.hpp"
 #include <memory>
 
+#include "demux/libav_demux.hpp"
+
 using namespace Tests;
 using namespace Modules;
 
