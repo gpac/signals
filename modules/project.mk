@@ -8,6 +8,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/encode/libav_encode.cpp\
   $(ProjectName)/src/in/file.cpp\
   $(ProjectName)/src/in/sound_generator.cpp\
+  $(ProjectName)/src/in/video_generator.cpp\
   $(ProjectName)/src/mux/gpac_mux_mp4.cpp\
   $(ProjectName)/src/mux/libav_mux.cpp\
   $(ProjectName)/src/out/null.cpp\

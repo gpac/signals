@@ -2,7 +2,9 @@
 #include "modules.hpp"
 #include <memory>
 
+#include "render/sdl_video.hpp"
 #include "in/sound_generator.hpp"
+#include "in/video_generator.hpp"
 #include "../utils/tools.hpp"
 
 using namespace Tests;
@@ -21,6 +23,19 @@ unittest("sound generator") {
 	}
 
 	soundGen->waitForCompletion();
+}
+
+unittest("video generator") {
+	auto videoGen = uptr(new In::VideoGenerator);
+	auto render = uptr(Render::SDLVideo::create());
+
+	ConnectPin(videoGen->getPin(0), render.get(), &Render::SDLVideo::process);
+
+	for(int i=0;i < 50;++i) {
+		videoGen->process(nullptr);
+	}
+
+	videoGen->waitForCompletion();
 }
 
 }
