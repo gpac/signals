@@ -3,6 +3,10 @@
 #include "sound_generator.hpp"
 #include <cmath>
 
+#ifndef M_PI //FIXME: Cygwin does not have maths.h extensions
+#define M_PI 3.14159265358979323846
+#endif
+
 auto const BUFFER_SIZE = 128;
 auto const SAMPLE_RATE = 44100;
 auto const SINE_FREQ = 440.0;
