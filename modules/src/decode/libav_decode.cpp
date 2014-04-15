@@ -182,8 +182,8 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 }
 
 void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
-	auto const framePeriodInMs = 40LL;
-	s->setTime(m_numFrames * framePeriodInMs * 180LL);
+	auto const framePeriodIn180k = 180000LL / 24;
+	s->setTime(m_numFrames * framePeriodIn180k);
 }
 
 bool LibavDecode::process(std::shared_ptr<Data> data) {
