@@ -35,3 +35,16 @@ extra-build-gpac:
 	$(MAKE) -C extra/build/gpac install
 	$(MAKE) -C extra/build/gpac install-lib
 
+# X264
+
+extra-fetch-x264:
+	@rm -rf extra/src
+	git clone http://git.videolan.org/git/x264.git extra/src/x264
+	cd extra/src/x264 && git checkout d6b4e63d2ed8d444b77c11b36c1d646ee5549276
+
+extra-build-x264:
+	@mkdir -p extra/build/x264
+	cd extra/build/x264 && ../../src/x264/configure \
+		--prefix=../..
+	$(MAKE) -C extra/build/x264
+	$(MAKE) -C extra/build/x264 install
