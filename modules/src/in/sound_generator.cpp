@@ -21,8 +21,7 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	// generate sound
 	auto const bytesPerSample = 2;
   auto const p = out->data();
-	for(int i=0;i < BUFFER_SIZE/bytesPerSample;++i)
-	{
+	for(int i=0;i < BUFFER_SIZE/bytesPerSample;++i) {
 		auto const fVal = nextSample();
 		auto const val = int(fVal * 32767.0f);
 		p[i*2+0] = (val >> 0) & 0xFF;
