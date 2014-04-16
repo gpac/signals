@@ -13,7 +13,7 @@ struct AVDictionary;
 
 namespace Modules {
 //FIXME: move in libmm, or add a new namespace
-class MODULES_EXPORT PropsDecoder : public Props {
+class MODULES_EXPORT PropsDecoder : public IProps {
 public:
 	/**
 	 * Doesn't take the ownership

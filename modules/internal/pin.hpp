@@ -28,7 +28,7 @@ public:
 	virtual size_t emit(std::shared_ptr<Data> data) = 0;
 	virtual void waitForCompletion() = 0;
 	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
-	virtual Props* getProps() const = 0;
+	virtual IProps* getProps() const = 0;
 	virtual ISignal<bool(std::shared_ptr<Data>)>& getSignal() = 0;
 };
 
@@ -43,13 +43,13 @@ class PinFactory {
 public:
 	virtual ~PinFactory() {
 	}
-	virtual Pin* createPin(Props *props = nullptr) = 0;
+	virtual Pin* createPin(IProps *props = nullptr) = 0;
 };
 
 class PinDefaultFactory : public PinFactory {
 public:
 	PinDefaultFactory();
-	Pin* createPin(Props *props = nullptr);
+	Pin* createPin(IProps *props = nullptr);
 };
 
 }

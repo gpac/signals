@@ -47,7 +47,7 @@ int safeMain(int argc, char const* argv[]) {
 		auto demux = uptr(Demux::LibavDemux::create(inputFile));
 
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
-			Props *props = demux->getPin(i)->getProps();
+			auto props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 

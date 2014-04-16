@@ -18,7 +18,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
-		Props *props = demux->getPin(i)->getProps();
+		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
@@ -28,7 +28,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-	Props *props = demux->getPin(videoIndex)->getProps();
+	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(Render::SDLVideo::create());
@@ -49,7 +49,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
-		Props *props = demux->getPin(i)->getProps();
+		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
@@ -59,7 +59,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-	Props *props = demux->getPin(videoIndex)->getProps();
+	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(Render::SDLAudio::create());
