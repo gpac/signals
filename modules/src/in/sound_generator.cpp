@@ -7,7 +7,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-auto const BUFFER_SIZE = 128;
 auto const SAMPLE_RATE = 44100;
 auto const SINE_FREQ = 880.0;
 
@@ -20,14 +19,16 @@ SoundGenerator::SoundGenerator()
 }
 
 bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
-	std::shared_ptr<PcmData> out(new PcmData(BUFFER_SIZE));
+	auto const bytesPerSample = 4;
+	auto const sampleDurationInMs = 40;
+	auto const bufferSize = bytesPerSample * sampleDurationInMs * SAMPLE_RATE / 1000;
+	std::shared_ptr<PcmData> out(new PcmData(bufferSize));
 
 	out->setTime(m_numSamples * 180000LL / SAMPLE_RATE);
 
 	// generate sound
-	auto const bytesPerSample = 4;
   auto const p = out->data();
-	for(int i=0;i < BUFFER_SIZE/bytesPerSample;++i) {
+	for(int i=0;i < (int)out->size()/bytesPerSample;++i) {
 		auto const fVal = nextSample();
 		auto const val = int(fVal * 32767.0f);
 
