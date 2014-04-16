@@ -4,11 +4,26 @@
 #include <ostream>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 template<typename T>
 std::string ToString(T const& val) {
 	std::stringstream ss;
 	ss << val;
+	return ss.str();
+}
+
+template<typename T>
+std::string ToString(std::vector<T> const& val) {
+	std::stringstream ss;
+	ss << "[";
+	for(size_t i=0;i < val.size();++i)
+	{
+		if(i > 0)
+			ss << ", ";
+		ss << ToString(val[i]);
+	}
+	ss << "]";
 	return ss.str();
 }
 
