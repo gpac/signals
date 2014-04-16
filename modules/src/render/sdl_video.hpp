@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 
 struct SDL_Rect;
 struct SDL_Renderer;
@@ -26,6 +27,9 @@ public:
 private:
 	SDLVideo();
 
+	void doRender();
+	void processOneFrame(std::shared_ptr<Data> data);
+
 	/* Video */
 	SDL_Window* window;
 	SDL_Renderer *renderer;
@@ -35,6 +39,9 @@ private:
 
 	uint64_t m_StartTime;
 	int64_t m_NumFrames;
+
+	QueueThreadSafe<std::shared_ptr<Data>> m_dataQueue;
+	std::thread workingThread;
 };
 
 }
