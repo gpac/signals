@@ -7,20 +7,26 @@ namespace Modules {
 namespace Render {
 
 SDLVideo* SDLVideo::create() {
+	return new SDLVideo;
+}
+
+SDLVideo::SDLVideo()
+	: displayrect(new SDL_Rect()) {
+
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
 		throw std::runtime_error("Init failed");
 	}
 
-	const int width = VIDEO_WIDTH;
-	const int height = VIDEO_HEIGHT;
-	SDL_Window *window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	width = VIDEO_WIDTH;
+	height = VIDEO_HEIGHT;
+	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
 		throw std::runtime_error("Window creation failed");
 	}
 
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create renderer: %s", SDL_GetError());
 		SDL_DestroyWindow(window);
@@ -29,18 +35,13 @@ SDLVideo* SDLVideo::create() {
 
 	Uint32 pixelFormat = SDL_PIXELFORMAT_IYUV; //FIXME hardcoded
 	//SDL_Texture *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
-	SDL_Texture *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, width, height);
+	texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, width, height);
 	if (!texture) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
 		SDL_DestroyRenderer(renderer);
 		throw std::runtime_error("Texture creation failed");
 	}
 
-	return new SDLVideo(renderer, texture, width, height, pixelFormat);
-}
-
-SDLVideo::SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned /*pixelFormat*/)
-	: renderer(renderer), texture(texture), displayrect(new SDL_Rect()), width(width), height(height) {
 	SDL_EventState(SDL_KEYUP, SDL_IGNORE); //ignore key up events, they don't even get filtered
 
 	displayrect->x = 0;
@@ -52,7 +53,9 @@ SDLVideo::SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int 
 }
 
 SDLVideo::~SDLVideo() {
+	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
