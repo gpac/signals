@@ -23,14 +23,14 @@ std::unique_ptr<T> uptr(T* p) {
 }
 
 inline
-std::vector<char> string_dup(const char *src) {
+std::vector<char> stringDup(const char *src) {
 	std::vector<char> data(strlen(src) + 1);
 	strcpy(data.data(), src);
 	return data;
 }
 
 template<typename T>
-T DivUp(T num, T divisor) {
+T divUp(T num, T divisor) {
 	return (num + divisor - 1) / divisor;
 }
 

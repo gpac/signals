@@ -84,7 +84,7 @@ void DataAVPacket::resize(size_t /*size*/) {
 }
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
-	auto opt = string_dup(options);
+	auto opt = stringDup(options);
 	char *tok = strtok(opt.data(), "- ");
 	char *tokval = NULL;
 	while (tok && (tokval = strtok(NULL, "- "))) {

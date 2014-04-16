@@ -7,20 +7,20 @@
 #include <vector>
 
 template<typename T>
-std::string ToString(T const& val) {
+std::string toString(T const& val) {
 	std::stringstream ss;
 	ss << val;
 	return ss.str();
 }
 
 template<typename T>
-std::string ToString(std::vector<T> const& val) {
+std::string toString(std::vector<T> const& val) {
 	std::stringstream ss;
 	ss << "[";
 	for(size_t i=0; i < val.size(); ++i) {
 		if(i > 0)
 			ss << ", ";
-		ss << ToString(val[i]);
+		ss << toString(val[i]);
 	}
 	ss << "]";
 	return ss.str();
@@ -43,7 +43,7 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 			if(fmt[i] == '%')
 				r += '%';
 			else if(fmt[i] == 's') {
-				r += ToString(firstArg);
+				r += toString(firstArg);
 				return r + format(fmt.substr(i+1), args...);
 			}
 		} else {
