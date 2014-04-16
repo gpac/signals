@@ -56,9 +56,9 @@ void SDLVideo::doRender()
 
 	for(;;) {
 		auto data = m_dataQueue.pop();
-		if(!*data)
+		if(!data)
 			break;
-		processOneFrame(*data);
+		processOneFrame(data);
 	}
 
 	SDL_DestroyTexture(texture);
