@@ -39,7 +39,7 @@ extra-build-gpac:
 
 extra-fetch-x264:
 	@rm -rf extra/src
-	git clone http://git.videolan.org/git/x264.git extra/src/x264
+	git clone --depth 100 git://git.videolan.org/x264.git extra/src/x264
 	cd extra/src/x264 && git checkout d6b4e63d2ed8d444b77c11b36c1d646ee5549276
 
 extra-build-x264:
