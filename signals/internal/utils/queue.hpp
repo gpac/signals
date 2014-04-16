@@ -36,7 +36,7 @@ public:
 		if (dataQueue.empty()) {
 			return nullptr;
 		}
-		auto res = dataQueue.front();
+		auto res = T(std::move(dataQueue.front()));
 		dataQueue.pop();
 		return res;
 	}
