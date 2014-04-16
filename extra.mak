@@ -23,10 +23,12 @@ extra/src/ffmpeg/ffmpeg.c:
 	git clone --depth 8000 git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
 	cd extra/src/ffmpeg && git checkout 78e39aa7ee12bb61cf34d8ca6bebd129d659d9cd 
 
-extra/build/ffmpeg/buildOk: extra/src/ffmpeg/ffmpeg.c extra-build-x264
+extra/build/ffmpeg/buildOk: extra/src/ffmpeg/ffmpeg.c extra/build/x264/buildOk
 	@mkdir -p extra/build/ffmpeg
 	cd extra/build/ffmpeg && $(EXTRA_DIR)/src/ffmpeg/configure \
 		--disable-programs \
+		--disable-shared \
+		--enable-static \
 		--enable-gpl \
 		--enable-libx264 \
 		--enable-swresample \
