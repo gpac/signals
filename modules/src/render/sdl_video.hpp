@@ -9,6 +9,7 @@
 struct SDL_Rect;
 struct SDL_Renderer;
 struct SDL_Texture;
+struct SDL_Window;
 
 namespace Modules {
 namespace Render {
@@ -23,9 +24,10 @@ public:
 	static bool canHandle(const std::string &url);
 
 private:
-	SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int height, unsigned pixelFormat);
+	SDLVideo();
 
 	/* Video */
+	SDL_Window* window;
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
 	std::unique_ptr<SDL_Rect> displayrect;
