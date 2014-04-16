@@ -67,10 +67,9 @@ public:
 	}
 
 	std::shared_ptr<Data> convert(AVCodecContext* codecCtx, AVFrame* avFrame) {
-		const auto srcWidth = codecCtx->width;
 		const auto srcHeight = codecCtx->height;
 
-		const int dstFrameSize = (srcWidth * srcHeight * 3) / 2;
+		const int dstFrameSize = (DST_WIDTH * DST_HEIGHT * 3) / 2;
 		std::shared_ptr<Data> out(new Data(dstFrameSize));
 
 		uint8_t* pDst[3] = {
