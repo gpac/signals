@@ -2,7 +2,8 @@
 OUTDIR:=$(BIN)/$(ProjectName)
 
 TEST_COMMON_OBJ:=\
-	$(OUTDIR)/tests.o
+	$(OUTDIR)/tests.o \
+	$(OUTDIR)/utils.o
 DEPS+=$(TEST_COMMON_OBJ:%.o=%.deps)
 
 $(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
