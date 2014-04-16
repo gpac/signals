@@ -38,6 +38,12 @@ void RunAll() {
 		Run(i);
 	}
 }
+
+void listAll() {
+	for(int i=0; i < g_NumTests; ++i) {
+		std::cout << "Test #" << i << ": " << g_AllTests[i].name << std::endl;
+	}
+}
 }
 
 int main(int argc, const char* argv[]) {
@@ -45,8 +51,14 @@ int main(int argc, const char* argv[]) {
 	if(argc == 1)
 		Tests::RunAll();
 	else if(argc == 2) {
-		int idx = atoi(argv[1]);
-		Tests::Run(idx);
+		auto const word = std::string(argv[1]);
+		if(word == "--list" || word == "-l") {
+			Tests::listAll();
+		}
+		else {
+			int idx = atoi(argv[1]);
+			Tests::Run(idx);
+		}
 	}
 	return 0;
 }
