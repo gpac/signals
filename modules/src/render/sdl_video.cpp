@@ -7,7 +7,7 @@ namespace Modules {
 namespace Render {
 
 SDLVideo* SDLVideo::create() {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
+	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
 		throw std::runtime_error("Init failed");
 	}
@@ -53,6 +53,7 @@ SDLVideo::SDLVideo(SDL_Renderer *renderer, SDL_Texture *texture, int width, int 
 
 SDLVideo::~SDLVideo() {
 	SDL_DestroyRenderer(renderer);
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 bool SDLVideo::process(std::shared_ptr<Data> data) {
