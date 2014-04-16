@@ -157,7 +157,7 @@ LibavEncode::LibavEncode(Type type)
 	}
 
 	/* check all optionsDict have been consumed */
-	auto opt = string_dup(codecOptions.c_str());
+	auto opt = stringDup(codecOptions.c_str());
 	char *tok = strtok(opt.data(), "- ");
 	while (tok && strtok(NULL, "- ")) {
 		AVDictionaryEntry *avde = nullptr;

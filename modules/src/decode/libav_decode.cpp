@@ -32,7 +32,7 @@ public:
 		const int bufferSize = av_samples_get_buffer_size(nullptr, codecCtx->channels, avFrame->nb_samples, codecCtx->sample_fmt, 0);
 
 		auto const srcNumSamples = avFrame->nb_samples;
-		auto const dstNumSamples = DivUp(srcNumSamples * DST_FREQ, codecCtx->sample_rate);
+		auto const dstNumSamples = divUp(srcNumSamples * DST_FREQ, codecCtx->sample_rate);
 
 		std::shared_ptr<Data> out(new PcmData(bufferSize * 10)); // FIXME
 
