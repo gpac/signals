@@ -8,7 +8,7 @@ class PinT : public Pin {
 public:
 	typedef Signal SignalType;
 
-	PinT(Props *props = nullptr)
+	PinT(IProps *props = nullptr)
 		: props(props) {
 	}
 
@@ -64,20 +64,20 @@ public:
 		return signal;
 	}
 
-	Props* getProps() const {
+	IProps* getProps() const {
 		return props.get();
 	}
 
 private:
 	Allocator allocator;
 	Signal signal;
-	std::unique_ptr<Props> props;
+	std::unique_ptr<IProps> props;
 };
 
 PinDefaultFactory::PinDefaultFactory() {
 }
 
-Pin* PinDefaultFactory::createPin(Props *props) {
+Pin* PinDefaultFactory::createPin(IProps *props) {
 	return new PinDefault(props);
 }
 

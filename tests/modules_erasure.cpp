@@ -16,7 +16,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder 
 	std::vector<std::unique_ptr<Decode::LibavDecode>> decoders;
 	std::vector<std::unique_ptr<Out::Print>> printers;
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
-		Props *props = demux->getPin(i)->getProps();
+		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
 		std::unique_ptr<Decode::LibavDecode> decode(Decode::LibavDecode::create(*decoderProps));
