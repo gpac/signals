@@ -29,7 +29,7 @@ public:
 private:
 	GPACMuxMP4(GF_ISOFile *file);
 	GF_ISOFile *file;
-	std::unique_ptr<gpacpp::IsoSample> sample;
+	uint32_t m_Dts;
 	uint32_t trackId;
 };
 
