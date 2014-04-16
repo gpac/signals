@@ -74,6 +74,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 
 	if (len > (int)m_Fifo.bytesToRead()) {
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
+		memset(stream, 0, len);
 		len = (int)m_Fifo.bytesToRead();
 	}
 
