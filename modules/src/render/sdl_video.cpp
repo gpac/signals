@@ -11,8 +11,11 @@ SDLVideo* SDLVideo::create() {
 }
 
 SDLVideo::SDLVideo()
-	: displayrect(new SDL_Rect()) {
+	: displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
+}
 
+void SDLVideo::doRender()
+{
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
 		throw std::runtime_error("Init failed");
@@ -50,16 +53,22 @@ SDLVideo::SDLVideo()
 	displayrect->h = height;
 
 	m_NumFrames = 0;
-}
 
-SDLVideo::~SDLVideo() {
+	for(;;) {
+		auto data = m_dataQueue.pop();
+		if(!*data)
+			break;
+		processOneFrame(*data);
+	}
+
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-bool SDLVideo::process(std::shared_ptr<Data> data) {
+void SDLVideo::processOneFrame(std::shared_ptr<Data> data)
+{
 	/* Loop, waiting for QUIT or RESIZE */
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -73,7 +82,7 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 			break;
 		case SDL_QUIT:
 			exit(1);
-			return false;
+			return;
 		}
 	}
 
@@ -91,7 +100,15 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	SDL_RenderPresent(renderer);
 
 	m_NumFrames++;
+}
 
+SDLVideo::~SDLVideo() {
+	m_dataQueue.push(nullptr);
+	workingThread.join();
+}
+
+bool SDLVideo::process(std::shared_ptr<Data> data) {
+	m_dataQueue.push(data);
 	return true;
 }
 

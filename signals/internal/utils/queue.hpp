@@ -46,6 +46,16 @@ public:
 		return res;
 	}
 
+	std::shared_ptr<T> pop() {
+		T p;
+		for(;;) {
+			if(tryPop(p))
+				break;
+			std::this_thread::yield();
+		}
+		return std::make_shared<T>(p);
+	}
+
 	void clear() {
 		std::lock_guard<std::mutex> lock(mutex);
 		while (!dataQueue.empty()) {
