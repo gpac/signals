@@ -46,14 +46,14 @@ public:
 		return res;
 	}
 
-	std::shared_ptr<T> pop() {
+	T pop() {
 		T p;
 		for(;;) {
 			if(tryPop(p))
 				break;
 			std::this_thread::yield();
 		}
-		return std::make_shared<T>(p);
+		return p;
 	}
 
 	void clear() {
