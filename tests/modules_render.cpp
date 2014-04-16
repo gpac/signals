@@ -30,6 +30,8 @@ unittest("A/V sync") {
 
 	videoGen->waitForCompletion();
 	soundGen->waitForCompletion();
+	videoRender->waitForCompletion();
+	soundRender->waitForCompletion();
 }
 
 }
