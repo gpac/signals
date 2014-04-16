@@ -2,6 +2,7 @@
 #include "modules.hpp"
 #include <memory>
 
+#include "render/sdl_audio.hpp"
 #include "render/sdl_video.hpp"
 #include "in/sound_generator.hpp"
 #include "in/video_generator.hpp"
