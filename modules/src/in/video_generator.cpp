@@ -21,7 +21,7 @@ bool VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	out->setTime(m_numFrames * framePeriodIn180k);
 
 	// generate video
-  auto const p = out->data();
+	auto const p = out->data();
 	auto const FLASH_PERIOD = FRAMERATE;
 	auto const flash = (m_numFrames % FLASH_PERIOD) == 0;
 	auto const val = flash ? 0xCC : 0x80;

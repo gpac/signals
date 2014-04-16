@@ -27,8 +27,8 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	out->setTime(m_numSamples * 180000LL / SAMPLE_RATE);
 
 	// generate sound
-  auto const p = out->data();
-	for(int i=0;i < (int)out->size()/bytesPerSample;++i) {
+	auto const p = out->data();
+	for(int i=0; i < (int)out->size()/bytesPerSample; ++i) {
 		auto const fVal = nextSample();
 		auto const val = int(fVal * 32767.0f);
 

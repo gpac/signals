@@ -18,7 +18,7 @@ unittest("sound generator") {
 
 	ConnectPin(soundGen->getPin(0), render.get(), &Render::SDLAudio::process);
 
-	for(int i=0;i < 200;++i) {
+	for(int i=0; i < 200; ++i) {
 		soundGen->process(nullptr);
 	}
 
@@ -31,7 +31,7 @@ unittest("video generator") {
 
 	ConnectPin(videoGen->getPin(0), render.get(), &Render::SDLVideo::process);
 
-	for(int i=0;i < 50;++i) {
+	for(int i=0; i < 50; ++i) {
 		videoGen->process(nullptr);
 	}
 

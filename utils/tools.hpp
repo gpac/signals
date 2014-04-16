@@ -51,7 +51,7 @@ std::vector<T> makeVector(T val, Arguments... args) {
 	std::vector<T> r;
 	r.push_back(val);
 	auto const tail = makeVector(args...);
-  r.insert(r.end(), tail.begin(), tail.end());
+	r.insert(r.end(), tail.begin(), tail.end());
 	return r;
 }
 
