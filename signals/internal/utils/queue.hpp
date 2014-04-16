@@ -10,12 +10,7 @@
 namespace Signals {
 
 template<typename T>
-class IQueue {
-	virtual std::shared_ptr<T> tryPop() = 0;
-};
-
-template<typename T>
-class QueueThreadSafe : public IQueue<T> {
+class QueueThreadSafe {
 public:
 	QueueThreadSafe() {
 	}
@@ -36,12 +31,12 @@ public:
 		return true;
 	}
 
-	std::shared_ptr<T> tryPop() {
+	T tryPop() {
 		std::lock_guard<std::mutex> lock(mutex);
 		if (dataQueue.empty()) {
-			return std::shared_ptr<T>();
+			return nullptr;
 		}
-		std::shared_ptr<T> res(std::make_shared<T>(std::move(dataQueue.front())));
+		auto res = dataQueue.front();
 		dataQueue.pop();
 		return res;
 	}
@@ -105,7 +100,7 @@ private:
 };
 
 template<typename T>
-class Queue : public IQueue<T>, public std::queue<T> {
+class Queue : public std::queue<T> {
 	std::shared_ptr<T> tryPop() {
 		if (std::queue<T>::empty()) {
 			return std::shared_ptr<T>();
