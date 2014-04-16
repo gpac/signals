@@ -22,7 +22,7 @@ class MODULES_EXPORT Module : public IModule {
 public:
 	Module(PinFactory *pinFactory) : pinFactory(pinFactory) {
 	}
-	Module() : pinFactory(new PinDefaultFactory) {
+	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()) {
 	}
 
 	virtual bool handles(const std::string &url) = 0;
@@ -48,7 +48,9 @@ protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
 
-	std::unique_ptr<PinFactory> pinFactory;
+
+	std::unique_ptr<PinFactory> const defaultPinFactory;
+	PinFactory* const pinFactory;
 	std::vector<std::unique_ptr<Pin>> signals;
 };
 
