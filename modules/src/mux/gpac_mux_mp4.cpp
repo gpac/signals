@@ -128,7 +128,7 @@ GPACMuxMP4* GPACMuxMP4::create(const std::string &baseName) {
 }
 
 GPACMuxMP4::GPACMuxMP4(GF_ISOFile *file)
-	: file(file), sample(new gpacpp::IsoSample()) {
+	: file(file), m_Dts(0) {
 }
 
 GPACMuxMP4::~GPACMuxMP4() {
@@ -236,18 +236,20 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 		buf_ptr += sc_size;
 	}
 
-	gf_bs_get_content(out_bs, &sample->data, &sample->dataLength);
+	gpacpp::IsoSample sample;
+	gf_bs_get_content(out_bs, &sample.data, &sample.dataLength);
+	sample.DTS = m_Dts;
 
 #if USE_SEGMENTS
 TODO: missing open segment
-	GF_Err ret = gf_isom_fragment_add_sample(file, trackId, sample.get(), 1, 1, 0, 0, GF_FALSE);
+	GF_Err ret = gf_isom_fragment_add_sample(file, trackId, &sample, 1, 1, 0, 0, GF_FALSE);
 	if (ret != GF_OK) {
 		gf_bs_del(out_bs);
 		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(ret));
 		return false;
 	}
 #else
-	GF_Err ret = gf_isom_add_sample(file, trackId, 1, sample.get());
+	GF_Err ret = gf_isom_add_sample(file, trackId, 1, &sample);
 	if (ret != GF_OK) {
 		gf_bs_del(out_bs);
 		Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(ret));
@@ -255,9 +257,8 @@ TODO: missing open segment
 	}
 #endif
 
-	sample->DTS++;
+	m_Dts++;
 
-	gf_free(sample->data); //free data but keep sample structure alive
 	gf_bs_del(out_bs);
 	return true;
 }

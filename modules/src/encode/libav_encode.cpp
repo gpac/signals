@@ -48,7 +48,7 @@ LibavEncode::LibavEncode(Type type)
 	switch (type) {
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
-		generalOptions = "-vcodec mpeg4 -r 25 -pass 1"; //TODO //Romain: test
+		generalOptions = "-vcodec libx264 -r 25 -pass 1"; //TODO //Romain: test
 		codecName = "vcodec";
 		break;
 	case Audio:
