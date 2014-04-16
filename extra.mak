@@ -69,6 +69,8 @@ extra/src/x264/x264.c:
 extra/build/x264/buildOk: extra/src/x264/x264.c
 	@mkdir -p extra/build/x264
 	cd extra/build/x264 && ../../src/x264/configure \
+		--disable-shared \
+		--enable-static \
 		--prefix=../..
 	$(MAKE) -C extra/build/x264
 	$(MAKE) -C extra/build/x264 install
