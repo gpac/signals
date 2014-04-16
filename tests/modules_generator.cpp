@@ -18,7 +18,7 @@ unittest("sound generator") {
 
 	ConnectPin(soundGen->getPin(0), render.get(), &Render::SDLAudio::process);
 
-	for(int i=0; i < 200; ++i) {
+	for(int i=0; i < 25; ++i) {
 		soundGen->process(nullptr);
 	}
 
@@ -29,13 +29,22 @@ unittest("video generator") {
 	auto videoGen = uptr(new In::VideoGenerator);
 	auto render = uptr(Render::SDLVideo::create());
 
-	ConnectPin(videoGen->getPin(0), render.get(), &Render::SDLVideo::process);
+	std::vector<int> times;
+	auto onFrame = [&](std::shared_ptr<Data> data) -> bool {
+		times.push_back(data->getTime());
+		render->process(data);
+		return true;
+	};
+
+	Connect(videoGen->getPin(0)->getSignal(), onFrame);
 
 	for(int i=0; i < 50; ++i) {
 		videoGen->process(nullptr);
 	}
 
 	videoGen->waitForCompletion();
+
+	ASSERT(times == makeVector(0, 7200, 180000, 187200));
 }
 
 }
