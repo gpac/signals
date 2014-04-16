@@ -31,7 +31,7 @@ unittest("video generator") {
 
 	std::vector<int> times;
 	auto onFrame = [&](std::shared_ptr<Data> data) -> bool {
-		times.push_back(data->getTime());
+		times.push_back((int)data->getTime());
 		render->process(data);
 		return true;
 	};

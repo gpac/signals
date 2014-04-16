@@ -80,7 +80,7 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	auto const timestamp = data->getTime(); // assume timestamps start at zero
 	auto const delay = (Uint32)std::max<int64_t>(0, timestamp - now);
 	auto const delayInMs = delay / 180LL;
-	SDL_Delay(delayInMs);
+	SDL_Delay((Uint32)delayInMs);
 
 	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
