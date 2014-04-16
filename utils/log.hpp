@@ -17,8 +17,7 @@ template<typename T>
 std::string ToString(std::vector<T> const& val) {
 	std::stringstream ss;
 	ss << "[";
-	for(size_t i=0;i < val.size();++i)
-	{
+	for(size_t i=0; i < val.size(); ++i) {
 		if(i > 0)
 			ss << ", ";
 		ss << ToString(val[i]);
@@ -58,11 +57,11 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 class UTILS_EXPORT Log {
 public:
 	enum Level {
-		Quiet = -1,
-		Error = 0,
-		Warning,
-		Info,
-		Debug
+	    Quiet = -1,
+	    Error = 0,
+	    Warning,
+	    Info,
+	    Debug
 	};
 
 	template<typename... Arguments>

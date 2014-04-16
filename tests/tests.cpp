@@ -54,8 +54,7 @@ int main(int argc, const char* argv[]) {
 		auto const word = std::string(argv[1]);
 		if(word == "--list" || word == "-l") {
 			Tests::listAll();
-		}
-		else {
+		} else {
 			int idx = atoi(argv[1]);
 			Tests::Run(idx);
 		}

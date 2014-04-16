@@ -22,7 +22,7 @@ unittest("A/V sync") {
 	auto videoRender = uptr(Render::SDLVideo::create());
 	ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
 
-	for(int i=0;i < 25*5;++i) {
+	for(int i=0; i < 25*5; ++i) {
 		soundGen->process(nullptr);
 		videoGen->process(nullptr);
 	}
