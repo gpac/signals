@@ -24,10 +24,16 @@ SDLAudio::SDLAudio() {
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
 	audioSpec.userdata = this;
-	if (SDL_OpenAudio(&audioSpec, NULL) < 0) {
+
+	SDL_AudioSpec realSpec;
+
+	if (SDL_OpenAudio(&audioSpec, &realSpec) < 0) {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't open audio: %s", SDL_GetError());
 		throw std::runtime_error("Audio output creation failed");
 	}
+
+	auto const latencyInMs = float(realSpec.samples) * 1000.0f / realSpec.freq;
+	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, latencyInMs);
 
 	SDL_PauseAudio(0);
 }
