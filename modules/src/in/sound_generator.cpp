@@ -15,7 +15,7 @@ namespace Modules {
 namespace In {
 
 SoundGenerator::SoundGenerator()
-	: m_numSamples(0) {
+	: m_numSamples(20000) {
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 

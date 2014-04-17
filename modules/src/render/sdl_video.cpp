@@ -2,6 +2,7 @@
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
 #include "internal/clock.hpp"
+#include "render_common.hpp"
 
 namespace Modules {
 namespace Render {
@@ -90,7 +91,7 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data)
 	assert((int)data->size() >= width * height * 3 / 2);
 
 	auto const now = g_DefaultClock->now();
-	auto const timestamp = data->getTime(); // assume timestamps start at zero
+	auto const timestamp = data->getTime() + PREROLL_DELAY; // assume timestamps start at zero
 	auto const delay = (Uint32)std::max<int64_t>(0, timestamp - now);
 	auto const delayInMs = (delay * 1000) / IClock::Rate;
 	SDL_Delay((Uint32)delayInMs);
