@@ -27,16 +27,19 @@ public:
 	bool handles(const std::string &url) {
 		return delegate->handles(url);
 	}
-	bool process(std::shared_ptr<Data> sample) {
-		synchronizerSignal.emit(sample);
+	bool process(std::shared_ptr<Data> data) {
+		synchronizerSignal.emit(data);
 		internalSignal.emit();
 		return true;
 	}
 
 private:
+	std::shared_ptr<Data> waitForNextData() {
+		return synchronizerSignal.results(true, true);
+	}
 	bool processInOrder() {
-		auto res = synchronizerSignal.results(true, true); //wait synchronously for the next
-		return delegate->process(res);
+		auto data = waitForNextData(); //wait synchronously for the next
+		return delegate->process(data);
 	}
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding
 		getPin(0)->getSignal().flushAvailableResults();

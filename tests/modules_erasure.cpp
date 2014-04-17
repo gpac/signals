@@ -2,7 +2,9 @@
 #include "modules.hpp"
 #include <memory>
 
+#include "decode/libav_decode.hpp"
 #include "demux/libav_demux.hpp"
+#include "out/print.hpp"
 
 using namespace Tests;
 using namespace Modules;
@@ -31,7 +33,6 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder 
 		decoders.push_back(std::move(decode));
 		printers.push_back(std::move(p));
 	}
-
 
 	while (demux->process(nullptr)) {
 	}
