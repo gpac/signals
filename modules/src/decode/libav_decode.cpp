@@ -1,4 +1,5 @@
 #include "libav_decode.hpp"
+#include "clock.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include <cassert>
@@ -181,7 +182,7 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 }
 
 void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
-	auto const framePeriodIn180k = 180000LL / 24;
+	auto const framePeriodIn180k = IClock::Rate / 24;
 	s->setTime(m_numFrames * framePeriodIn180k);
 }
 
