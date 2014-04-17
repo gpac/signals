@@ -1,5 +1,6 @@
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
+#include "clock.hpp"
 #include "sound_generator.hpp"
 #include <cmath>
 
@@ -24,7 +25,7 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * SAMPLE_RATE / 1000;
 	std::shared_ptr<PcmData> out(new PcmData(bufferSize));
 
-	out->setTime(m_numSamples * 180000LL / SAMPLE_RATE);
+	out->setTime(m_numSamples * IClock::Rate / SAMPLE_RATE);
 
 	// generate sound
 	auto const p = out->data();

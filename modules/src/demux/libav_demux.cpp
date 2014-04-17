@@ -1,4 +1,5 @@
 #include "libav_demux.hpp"
+#include "clock.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include "../common/libav.hpp"
@@ -67,7 +68,7 @@ bool LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 	}
 
 	auto const base = formatCtx->streams[pkt->stream_index]->time_base;
-	auto const time = pkt->pts * base.num * 180000LL / base.den;
+	auto const time = pkt->pts * base.num * IClock::Rate / base.den;
 	out->setTime(time);
 	signals[pkt->stream_index]->emit(out);
 	return true;
