@@ -43,6 +43,7 @@ unittest("video generator") {
 	}
 
 	videoGen->waitForCompletion();
+	render->waitForCompletion();
 
 	ASSERT(times == makeVector(0, 7200, 180000, 187200));
 }
