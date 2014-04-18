@@ -14,6 +14,9 @@
     <ClCompile Include="mm_pull2push.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="mm_transcoder.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tests.hpp">
