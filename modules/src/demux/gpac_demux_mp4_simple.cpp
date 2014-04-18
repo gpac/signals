@@ -62,7 +62,7 @@ bool GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
 		         iso_sample->DTS + iso_sample->CTS_Offset);
 		reader->sample_index++;
 
-		std::shared_ptr<Data> out(signals[0]->getBuffer(iso_sample->dataLength));
+		auto out(signals[0]->getBuffer(iso_sample->dataLength));
 		memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 		signals[0]->emit(out);
 	} catch(gpacpp::Error const& err) {

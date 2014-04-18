@@ -72,7 +72,7 @@ public:
 		const auto srcHeight = codecCtx->height;
 
 		const int dstFrameSize = (DST_WIDTH * DST_HEIGHT * 3) / 2;
-		std::shared_ptr<Data> out(signals[0]->getBuffer(dstFrameSize));
+		auto out(signals[0]->getBuffer(dstFrameSize));
 
 		uint8_t* pDst[3] = {
 			out->data(),

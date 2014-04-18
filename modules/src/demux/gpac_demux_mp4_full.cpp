@@ -114,7 +114,7 @@ bool GPACDemuxMP4Full::processSample() {
 					        );
 					reader->sample_index++;
 
-					std::shared_ptr<Data> out(signals[0]->getBuffer(iso_sample->dataLength));
+					auto out(signals[0]->getBuffer(iso_sample->dataLength));
 					memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
 					signals[0]->emit(out);
 				}
