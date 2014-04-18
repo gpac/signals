@@ -34,17 +34,17 @@ private:
 		return m_Fifo.bytesToRead() / bytesPerSample;
 	}
 
-	void fifoConsumeSamples(uint64_t n) {
+	void fifoConsumeSamples(size_t n) {
 		m_Fifo.consume(n * bytesPerSample);
 		m_FifoTime += (n * IClock::Rate) / AUDIO_SAMPLERATE;
 	}
 
-	void writeSamples(uint8_t*& dst, uint8_t const* src, uint64_t n) {
+	void writeSamples(uint8_t*& dst, uint8_t const* src, size_t n) {
 		memcpy(dst, src, n * bytesPerSample);
 		dst += n * bytesPerSample;
 	}
 
-	void silenceSamples(uint8_t*& dst, uint64_t n) {
+	void silenceSamples(uint8_t*& dst, size_t n) {
 		memset(dst, 0, n * bytesPerSample);
 		dst += n * bytesPerSample;
 	}
