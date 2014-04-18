@@ -15,7 +15,7 @@ public:
 	}
 	bool process(std::shared_ptr<Data> /*sample*/) {
 		seqNumber = (seqNumber + 1) % 256;
-		std::shared_ptr<Data> out(signals[0]->getBuffer(32));
+		auto out(signals[0]->getBuffer(32));
 		out->data()[0] = seqNumber;
 		getPin(0)->getSignal().emit(out);
 		return true;

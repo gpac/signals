@@ -17,7 +17,7 @@ public:
 	bool process(std::shared_ptr<Data> data) {
 #if 0
 		for (;;) {
-			std::shared_ptr<Data> out(signals[0]->getBuffer(0));
+			auto out(signals[0]->getBuffer(0));
 			signals[0]->emit(out);
 			auto res = getPin(0)->getSignal().results(false, true);
 			if (res->size() && ((*res)[0] == false)) {
