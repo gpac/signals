@@ -40,7 +40,7 @@ void emitTest(std::function<SignalSignature> f, ValType val) {
 				}
 			}
 			if (timeout) {
-				std::cout << "TIMEOUT: ABORT CURRENT TEST" << std::endl;
+				std::cout << "Automatic timeout: current test will be stopped (success)" << std::endl;
 				return;
 			}
 		} else {
