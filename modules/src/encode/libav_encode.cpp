@@ -39,11 +39,11 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode* LibavEncode::create(Type type) {
-	return new LibavEncode(type);
+	return new LibavEncode(type, new PinLibavFactory);
 }
 
-LibavEncode::LibavEncode(Type type)
-	: avFrame(new ffpp::Frame), frameNum(-1) {
+LibavEncode::LibavEncode(Type type, PinFactory *pinFactory)
+	: Module(pinFactory), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -205,7 +205,7 @@ void LibavEncode::sendOutputPinsInfo() {
 }
 
 bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
-	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
+	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
 	//FIXME: audio are only 2 planes right now...
@@ -229,7 +229,7 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 }
 
 bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
-	std::shared_ptr<DataAVPacket> out(new DataAVPacket);
+	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
 	avFrame->get()->data[0] = (uint8_t*)data->data();

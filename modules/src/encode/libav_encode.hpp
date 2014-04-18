@@ -35,7 +35,7 @@ public:
 	Signal<void(std::shared_ptr<StreamVideo>)> declareStream; //FIXME: temporary until modules have a type 'mux'
 
 private:
-	LibavEncode(Type type);
+	LibavEncode(Type type, PinFactory *pinFactory);
 	bool processAudio(std::shared_ptr<Data> data);
 	bool processVideo(std::shared_ptr<Data> data);
 

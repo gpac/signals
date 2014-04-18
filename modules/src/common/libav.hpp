@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../internal/data.hpp"
+#include "../../internal/pin.hpp"
 #include "../../internal/props.hpp"
 #include <string>
 #include <cstdarg>
@@ -32,7 +33,7 @@ private:
 
 class MODULES_EXPORT DataAVPacket : public Data {
 public:
-	DataAVPacket();
+	DataAVPacket(size_t size = 0);
 	~DataAVPacket();
 	uint8_t* data();
 	uint64_t size() const;
@@ -46,4 +47,13 @@ private:
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 
 void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl);
+
+typedef PinDataDefault<DataAVPacket> PinLibav;
+
+class PinLibavFactory : public PinFactory {
+public:
+	PinLibavFactory();
+	Pin* createPin(IProps *props = nullptr);
+};
+
 }

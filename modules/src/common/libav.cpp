@@ -57,8 +57,8 @@ const char* avlogLevelName(int level) {
 
 namespace Modules {
 
-DataAVPacket::DataAVPacket()
-	: Data(0), pkt(new AVPacket) {
+DataAVPacket::DataAVPacket(size_t size)
+	: Data(size), pkt(new AVPacket) {
 	av_init_packet(pkt.get());
 	av_free_packet(pkt.get());
 }
@@ -110,6 +110,13 @@ void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
 	}
 	Log::msg(avLogLevel(level), "[libav-log::%s] %s", avlogLevelName(level), buffer);
 #endif
+}
+
+PinLibavFactory::PinLibavFactory() {
+}
+
+Pin* PinLibavFactory::createPin(IProps *props) {
+	return new PinLibav(props);
 }
 
 }
