@@ -1,6 +1,5 @@
 #include "tests.hpp"
 #include "modules.hpp"
-#include <memory>
 
 #include "render/sdl_audio.hpp"
 #include "render/sdl_video.hpp"

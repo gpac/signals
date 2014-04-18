@@ -25,6 +25,9 @@ public:
 	Data(size_t size) : ptr(size) {
 	}
 
+	virtual ~Data() {
+	}
+
 	uint8_t* data() {
 		return ptr.data();
 	}

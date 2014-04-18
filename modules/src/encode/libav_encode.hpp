@@ -42,7 +42,6 @@ private:
 	AVCodecContext *codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;
 	int frameNum;
-
 };
 
 }

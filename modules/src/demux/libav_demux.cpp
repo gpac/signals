@@ -1,8 +1,7 @@
 #include "libav_demux.hpp"
-#include "clock.hpp"
+#include "internal/clock.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
-#include "../common/libav.hpp"
 #include <cassert>
 #include <string>
 #include <fstream>

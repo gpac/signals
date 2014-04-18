@@ -1,12 +1,13 @@
 #include "tests.hpp"
 #include "modules.hpp"
-#include <memory>
 #include "../utils/tools.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
 #include "decode/libav_decode.hpp"
+#include "in/file.hpp"
 #include "out/null.hpp"
+#include "transform/audio_convert.hpp"
 
 using namespace Tests;
 using namespace Modules;
@@ -34,8 +35,8 @@ unittest("decoder: audio simple") {
 	ConnectPin(decoder->getPin(0), null.get(), &Out::Null::process);
 
 	//create an audio resampler
-	// std::unique_ptr<Transform::AudioConvert> audioConverter(Transform::AudioConvert::create());
-	//Connect(audioConverter->signals[0]->signal, encode.get(), &Encode::LibavEncode::process);
+	//auto audioConverter = uptr(Transform::AudioConvert::create());
+	//Connect(audioConverter->getPin(0)->getSignal(), decoder.get(), &Encode::LibavEncode::process);
 
 	while (input->process(nullptr)) {
 	}

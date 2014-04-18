@@ -1,7 +1,6 @@
 #include "tests.hpp"
 #include <mm.hpp>
 #include "../modules/modules.hpp"
-#include <memory>
 
 #include "out/print.hpp"
 #include "in/file.hpp"
@@ -10,8 +9,8 @@ using namespace Tests;
 using namespace MM;
 
 unittest("File module async: File -> Out::Print") {
-	std::unique_ptr<In::File> f(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
-	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
+	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto p = uptr(Out::Print::create(std::cout));
 
 	Connect(f->getPin(0)->getSignal(), p.get(), &Out::Print::process);
 
@@ -20,8 +19,8 @@ unittest("File module async: File -> Out::Print") {
 }
 
 unittest("Pull2Push the File module: File -> Out::Print") {
-	std::unique_ptr<MM::Pull2Push> f(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
-	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
+	auto f = uptr(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
+	auto p = uptr(Out::Print::create(std::cout));
 
 	Connect(f->getPin(0)->getSignal(), p.get(), &Out::Print::process);
 
@@ -32,8 +31,8 @@ unittest("Pull2Push the File module: File -> Out::Print") {
 }
 
 unittest("Pull2Push the File module in a spawned thread: spawned(File) -> Out::Print") {
-	std::unique_ptr<MM::Pull2Push> f(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
-	std::unique_ptr<Out::Print> p(Out::Print::create(std::cout));
+	auto f = uptr(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
+	auto p = uptr(Out::Print::create(std::cout));
 
 	Connect(f->getPin(0)->getSignal(), p.get(), &Out::Print::process);
 

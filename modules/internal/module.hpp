@@ -4,7 +4,6 @@
 #include "pin.hpp"
 #include <vector>
 #include <string>
-#include <memory>
 
 
 namespace Modules {
@@ -47,7 +46,6 @@ public:
 protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
-
 
 	std::unique_ptr<PinFactory> const defaultPinFactory;
 	PinFactory* const pinFactory;
