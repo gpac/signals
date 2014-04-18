@@ -10,6 +10,7 @@ namespace MM {
  *  and the delegate is async but guarantees the packet order.
  * Therefore you should connect to this module synchronously.
  */
+//FIXME: does not support dynamic pin insertion //TODO: write failing test
 class Reorder : public Modules::Module {
 public:
 	Reorder(Modules::Module *module) : delegate(module) {
