@@ -36,14 +36,20 @@ public:
 		}
 	}
 
+	size_t getNumBlocks() {
+		return numBlocks;
+	}
+
+	size_t getNumUsedBlocks() {
+		return usedBlocks.size();
+	}
+
 	void reset() {
 		for (auto &block : usedBlocks) {
 			block.reset();
 		}
+		updateUsedBlocks();
 	}
-
-private:
-	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
 
 	void updateUsedBlocks() {
 		usedBlocks.erase(std::remove_if(usedBlocks.begin(), usedBlocks.end(),
@@ -51,6 +57,9 @@ private:
 			return data.expired();
 		}), usedBlocks.end());
 	}
+
+private:
+	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
 
 	size_t numBlocks;
 	std::list<std::weak_ptr<Data>> usedBlocks;
