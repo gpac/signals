@@ -1,5 +1,5 @@
 CFLAGS := -std=c++11 -Wall -Wl,-z,relro -Wl,-z,now -fvisibility=hidden -W -Wno-unused-parameter -Wno-unused-function -Wno-unused-label -Wpointer-arith -Wformat -Wreturn-type -Wsign-compare -Wmultichar -Wformat-nonliteral -Winit-self -Wuninitialized -Wno-deprecated -Wformat-security
-LDFLAGS := -lpthread -lswscale -lswresample -lgpac -lavcodec -lavformat -lavutil -lz -L/usr/local/lib -lSDL2 -lx264 -ldl
+LDLIBS := -lpthread -lswscale -lswresample -lgpac -lavcodec -lavformat -lavutil -lz -L/usr/local/lib -lSDL2 -lx264 -ldl -liconv -lbz2
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
@@ -30,6 +30,8 @@ ifeq ($(CXX),clang++)
   CFLAGS += -stdlib=libc++
   LDFLAGS += -stdlib=libc++
 endif
+
+LDFLAGS += $(LDLIBS)
 
 all: targets
 

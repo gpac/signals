@@ -2,7 +2,6 @@
 
 #include "../../internal/config.hpp"
 #include "internal/module.hpp"
-#include <memory>
 #include <mutex>
 #include <string>
 #include <thread>

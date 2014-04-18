@@ -1,7 +1,6 @@
 #include "tests.hpp"
 #include <mm.hpp>
 #include "../modules/modules.hpp"
-#include <memory>
 #include <utility>
 
 using namespace Tests;
@@ -69,11 +68,11 @@ private:
 };
 
 unittest("Simple synth") {
-	std::unique_ptr<Osc> osc(new Osc);
-	std::unique_ptr<Reorder> amp1(new Reorder(new Amp));
-	std::unique_ptr<Reorder> amp2(new Reorder(new Amp));
-	std::unique_ptr<Sink> sink1(new Sink);
-	std::unique_ptr<Sink> sink2(new Sink);
+	auto osc = uptr(new Osc);
+	auto amp1 = uptr(new Reorder(new Amp));
+	auto amp2 = uptr(new Reorder(new Amp));
+	auto sink1 = uptr(new Sink);
+	auto sink2 = uptr(new Sink);
 
 	Connect(osc->getPin(0)->getSignal(), amp1.get(), &Reorder::process);
 	Connect(osc->getPin(0)->getSignal(), amp2.get(), &Reorder::process);

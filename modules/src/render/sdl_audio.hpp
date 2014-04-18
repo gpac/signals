@@ -4,7 +4,6 @@
 #include "internal/clock.hpp"
 #include "internal/module.hpp"
 #include "fifo.hpp"
-#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>

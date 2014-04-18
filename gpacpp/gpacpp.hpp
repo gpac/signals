@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <string>
-#include <memory>
 #include <stdexcept>
 
 #include <gpac/tools.h>

@@ -1,9 +1,11 @@
 #include "tests.hpp"
 #include "modules.hpp"
 #include "../utils/tools.hpp"
-#include <memory>
 
+#include "demux/gpac_demux_mp4_simple.hpp"
 #include "demux/gpac_demux_mp4_full.hpp"
+#include "in/file.hpp"
+#include "out/print.hpp"
 
 using namespace Tests;
 using namespace Modules;

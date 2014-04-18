@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <condition_variable>
-#include <memory>
 #include <mutex>
 #include <queue>
 

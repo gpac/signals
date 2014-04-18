@@ -13,12 +13,16 @@ namespace MM {
 class Reorder : public Modules::Module {
 public:
 	Reorder(Modules::Module *module) : delegate(module) {
-		signals.push_back(uptr(pinFactory->createPin())); //TODO: this super module should copy the structure from the delegate
-		Connect(synchronizerSignal, [](std::shared_ptr<Data> sample) {
-			return sample;
+		Connect(synchronizerSignal, [](std::shared_ptr<Data> data) {
+			return data;
 		});
 		Connect(internalSignal, this, &Reorder::processInOrder);
-		Connect(delegate->getPin(0)->getSignal(), this, &Reorder::reemit); //delegate output to this output ; faster is delegate output signal is sync
+
+		//copy initial pin structure from delegate
+		for (size_t i = 0; i < delegate->getNumPin(); ++i) {
+			signals.push_back(uptr(pinFactory->createPin()));
+			Connect(delegate->getPin(0)->getSignal(), this, &Reorder::reemit); //delegate output to this output ; faster to delegate output signal is sync
+		}
 	}
 	void waitForCompletion() {
 		delegate->waitForCompletion();

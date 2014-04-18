@@ -1,11 +1,16 @@
 #include "tests.hpp"
 #include "modules.hpp"
-#include <memory>
+#include "../utils/tools.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
+
+#include "decode/libav_decode.hpp"
+#include "demux/libav_demux.hpp"
+#include "encode/libav_encode.hpp"
 #include "mux/libav_mux.hpp"
 #include "mux/gpac_mux_mp4.hpp"
-#include "encode/libav_encode.hpp"
+#include "out/null.hpp"
+
 
 using namespace Tests;
 using namespace Modules;
@@ -38,7 +43,7 @@ unittest("transcoder: video simple (libav mux)") {
 	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
 	auto mux = uptr(Mux::LibavMux::create("output_video_libav"));
 
-	//pass meta data between encoder an mux
+	//pass meta data between encoder and mux
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 
@@ -83,7 +88,7 @@ unittest("transcoder: video simple (gpac mux)") {
 	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
 	auto mux = uptr(Mux::GPACMuxMP4::create("output_video_gpac"));
 
-	//pass meta data between encoder an mux
+	//pass meta data between encoder and mux
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
 	encode->sendOutputPinsInfo();
 
@@ -130,7 +135,7 @@ unittest("transcoder: audio simple (libav mux)") {
 	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
 	auto mux = uptr(Mux::LibavMux::create("output_audio_libav"));
 
-	//pass meta data between encoder an mux
+	//pass meta data between encoder and mux
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 
@@ -181,7 +186,7 @@ unittest("transcoder: audio simple (gpac mux)") {
 	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
 	auto mux = uptr(Mux::LibavMux::create("output_audio_gpac"));
 
-	//pass meta data between encoder an mux
+	//pass meta data between encoder and mux
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 

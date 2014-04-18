@@ -1,5 +1,5 @@
 #include "libav_decode.hpp"
-#include "clock.hpp"
+#include "internal/clock.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include <cassert>
