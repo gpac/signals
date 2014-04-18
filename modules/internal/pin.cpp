@@ -3,11 +3,9 @@
 namespace Modules {
 
 //TODO: the pin could check the bool result (currently done by the allocator) and retry on failure (but is it its role?)
-template<typename Allocator, typename Signal>
+template<typename Allocator, typename Signal, typename DataType>
 class PinT : public Pin {
 public:
-	typedef Signal SignalType;
-
 	PinT(IProps *props = nullptr)
 		: props(props) {
 	}
@@ -30,7 +28,7 @@ public:
 	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
 		for (;;) {
-			std::shared_ptr<Data> data(allocator.getBuffer(size));
+			std::shared_ptr<DataType> data(allocator.getBuffer(size));
 			if (data.get()) {
 				return data;
 			} else {
