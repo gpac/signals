@@ -59,8 +59,8 @@ private:
 // TODO move this to its own module, when we have media types
 class VideoConverter {
 public:
-
-	VideoConverter(AVCodecContext const& codecCtx) {
+	VideoConverter(AVCodecContext const& codecCtx, std::vector<std::unique_ptr<Pin>> const &signals)
+	: signals(signals) {
 		m_SwContext = sws_getContext(
 		                  codecCtx.width, codecCtx.height, codecCtx.pix_fmt,
 		                  DST_WIDTH, DST_HEIGHT, DST_FMT,
@@ -71,7 +71,7 @@ public:
 		const auto srcHeight = codecCtx->height;
 
 		const int dstFrameSize = (DST_WIDTH * DST_HEIGHT * 3) / 2;
-		std::shared_ptr<Data> out(new Data(dstFrameSize));
+		std::shared_ptr<Data> out(signals[0]->getBuffer(dstFrameSize));
 
 		uint8_t* pDst[3] = {
 			out->data(),
@@ -98,6 +98,7 @@ private:
 	static const auto DST_HEIGHT = VIDEO_HEIGHT;
 	static const auto DST_FMT = PIX_FMT_YUV420P;
 	SwsContext* m_SwContext;
+	std::vector<std::unique_ptr<Pin>> const &signals;
 };
 
 namespace Decode {
@@ -171,7 +172,7 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 	}
 	if (gotPicture) {
 		if(!m_pVideoConverter)
-			m_pVideoConverter.reset(new VideoConverter(*codecCtx));
+			m_pVideoConverter.reset(new VideoConverter(*codecCtx, signals));
 
 		auto out = m_pVideoConverter->convert(codecCtx.get(), avFrame->get());
 		setTimestamp(out);
