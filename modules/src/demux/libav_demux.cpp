@@ -41,11 +41,11 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 		throw std::runtime_error("Couldn't find stream info.");
 	}
 
-	return new LibavDemux(formatCtx, new PinLibavFactory);
+	return new LibavDemux(formatCtx);
 }
 
-LibavDemux::LibavDemux(struct AVFormatContext *formatCtx, PinFactory *pinFactory)
-	: Module(pinFactory), formatCtx(formatCtx) {
+LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
+	: Module(new PinLibavFactory), formatCtx(formatCtx) {
 	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
 		signals.push_back(uptr(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec))));
 	}

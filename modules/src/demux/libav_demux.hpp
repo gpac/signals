@@ -20,7 +20,7 @@ public:
 	static bool canHandle(const std::string &url);
 
 private:
-	LibavDemux(struct AVFormatContext *formatCtx, PinFactory *pinFactory);
+	LibavDemux(struct AVFormatContext *formatCtx);
 
 	struct AVFormatContext *formatCtx;
 };
