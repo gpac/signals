@@ -21,4 +21,4 @@ MODULES_SRCS:=\
 LIB_MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
 DEPS+=$(LIB_MODULES_OBJS:%.o=%.deps)
 
-CFLAGS+=-I$(ProjectName)/internal
+CFLAGS+=
