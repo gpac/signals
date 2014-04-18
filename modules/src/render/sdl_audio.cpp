@@ -81,7 +81,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
-	auto numSamplesToProduce = len / bytesPerSample;
+	int64_t numSamplesToProduce = len / bytesPerSample;
 
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
 	auto const relativeSamplePosition = relativeTimePosition * AUDIO_SAMPLERATE / 180000LL;
@@ -89,27 +89,27 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	if(relativeSamplePosition < -100) {
 		// must drop fifo data
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
-		fifoConsumeSamples(numSamplesToDrop);
+		fifoConsumeSamples((size_t)numSamplesToDrop);
 	}
 
 	if(relativeSamplePosition > 100) {
 		// must insert silence
 		auto const numSilenceSamples = std::min<int64_t>(numSamplesToProduce, relativeSamplePosition);
-		silenceSamples(stream, numSilenceSamples);
+		silenceSamples(stream, (size_t)numSilenceSamples);
 		numSamplesToProduce -= numSilenceSamples;
 	}
 
 	auto const numSamplesToConsume = std::min<int64_t>(numSamplesToProduce, fifoSamplesToRead());
 	if (numSamplesToConsume > 0) {
-		writeSamples(stream, m_Fifo.readPointer(), numSamplesToConsume);
-		fifoConsumeSamples(numSamplesToConsume);
+		writeSamples(stream, m_Fifo.readPointer(), (size_t)numSamplesToConsume);
+		fifoConsumeSamples((size_t)numSamplesToConsume);
 		numSamplesToProduce -= numSamplesToConsume;
 	}
 
 	if(numSamplesToProduce > 0)
 	{
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
-		silenceSamples(stream, numSamplesToProduce);
+		silenceSamples(stream, (size_t)numSamplesToProduce);
 	}
 }
 
