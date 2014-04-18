@@ -2,6 +2,7 @@
 #include "../utils/tools.hpp"
 #include "internal/clock.hpp"
 #include "sound_generator.hpp"
+#include "../common/pcm.hpp"
 #include <cmath>
 
 #ifndef M_PI //FIXME: Cygwin does not have maths.h extensions
@@ -15,7 +16,7 @@ namespace Modules {
 namespace In {
 
 SoundGenerator::SoundGenerator()
-	: m_numSamples(20000) {
+	: Module(new PinPcmFactory), m_numSamples(20000) {
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
@@ -23,7 +24,7 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const bytesPerSample = 4;
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * SAMPLE_RATE / 1000;
-	std::shared_ptr<PcmData> out(new PcmData(bufferSize));
+	auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(bufferSize));
 
 	out->setTime(m_numSamples * IClock::Rate / SAMPLE_RATE);
 

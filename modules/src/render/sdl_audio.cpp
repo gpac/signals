@@ -1,5 +1,6 @@
 #include "sdl_audio.hpp"
 #include "render_common.hpp"
+#include "../common/pcm.hpp"
 #include "../utils/log.hpp"
 #include "SDL2/SDL.h"
 #include <cstring>

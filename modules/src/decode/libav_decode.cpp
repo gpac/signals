@@ -1,5 +1,6 @@
 #include "libav_decode.hpp"
 #include "internal/clock.hpp"
+#include "../common/pcm.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include <cassert>
@@ -16,8 +17,8 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 // TODO move this to its own module, when we have media types
 class AudioConverter {
 public:
-
-	AudioConverter(AVCodecContext const& src) {
+	AudioConverter(AVCodecContext const& src, std::vector<std::unique_ptr<Pin>> const &signals)
+	: signals(signals) {
 		m_Swr.setInputSampleFmt(src.sample_fmt);
 		m_Swr.setInputLayout(src.channel_layout);
 		m_Swr.setInputSampleRate(src.sample_rate);
@@ -35,7 +36,7 @@ public:
 		auto const srcNumSamples = avFrame->nb_samples;
 		auto const dstNumSamples = divUp(srcNumSamples * DST_FREQ, codecCtx->sample_rate);
 
-		std::shared_ptr<Data> out(new PcmData(bufferSize * 10)); // FIXME
+		auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(bufferSize * 10));
 
 		uint8_t* pDst = out->data();
 		auto const numSamples = m_Swr.convert(&pDst, dstNumSamples, (const uint8_t**)avFrame->data, srcNumSamples);
@@ -49,11 +50,11 @@ public:
 	}
 
 private:
-
 	static const auto DST_FREQ = AUDIO_SAMPLERATE;
 	static const uint64_t DST_LAYOUT = AV_CH_LAYOUT_STEREO;
 	static const auto DST_FMT = AV_SAMPLE_FMT_S16;
 	ffpp::SwResampler m_Swr;
+	std::vector<std::unique_ptr<Pin>> const &signals;
 };
 
 // TODO move this to its own module, when we have media types
@@ -93,7 +94,6 @@ public:
 	}
 
 private:
-
 	static const auto DST_WIDTH = VIDEO_WIDTH;
 	static const auto DST_HEIGHT = VIDEO_HEIGHT;
 	static const auto DST_FMT = PIX_FMT_YUV420P;
@@ -108,7 +108,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 }
 
 LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
-	: codecCtx(new AVCodecContext), avFrame(new ffpp::Frame), m_numFrames(0) {
+	: Module(new PinPcmFactory), codecCtx(new AVCodecContext), avFrame(new ffpp::Frame), m_numFrames(0) {
 	*codecCtx = *codecCtx2;
 
 	switch (codecCtx->codec_type) {
@@ -154,7 +154,7 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 	if (gotFrame) {
 
 		if(!m_pAudioConverter)
-			m_pAudioConverter.reset(new AudioConverter(*codecCtx));
+			m_pAudioConverter.reset(new AudioConverter(*codecCtx, signals));
 
 		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
