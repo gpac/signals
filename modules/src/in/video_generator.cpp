@@ -1,6 +1,7 @@
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include "video_generator.hpp"
+#include "../common/pcm.hpp"
 #include <cmath>
 
 auto const FRAMERATE = 25;
@@ -9,13 +10,13 @@ namespace Modules {
 namespace In {
 
 VideoGenerator::VideoGenerator()
-	: m_numFrames(0) {
+	: Module(new PinPcmFactory), m_numFrames(0) {
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 bool VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const picSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3 / 2;
-	std::shared_ptr<PcmData> out(new PcmData(picSize));
+	auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(picSize));
 
 	// generate video
 	auto const p = out->data();
