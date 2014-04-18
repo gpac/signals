@@ -53,12 +53,6 @@ private:
 	uint64_t m_TimeIn180k;
 };
 
-class MODULES_EXPORT PcmData : public Data {
-public:
-	PcmData(size_t size) : Data(size) {
-	}
-};
-
 static const int VIDEO_WIDTH = 720;
 static const int VIDEO_HEIGHT = 576;
 
