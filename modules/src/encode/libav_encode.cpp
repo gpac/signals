@@ -39,11 +39,11 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode* LibavEncode::create(Type type) {
-	return new LibavEncode(type, new PinLibavFactory);
+	return new LibavEncode(type);
 }
 
-LibavEncode::LibavEncode(Type type, PinFactory *pinFactory)
-	: Module(pinFactory), avFrame(new ffpp::Frame), frameNum(-1) {
+LibavEncode::LibavEncode(Type type)
+	: Module(new PinLibavFactory), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
