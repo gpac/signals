@@ -16,10 +16,14 @@ using namespace Signals;
 typedef Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>, CallerAsync> SignalAsync;
 typedef Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync> SignalSync;
 
-template<typename Allocator, typename Signal> class PinT;
-typedef MODULES_EXPORT PinT<AllocatorPacket, SignalAsync> PinAsync;
-typedef MODULES_EXPORT PinT<AllocatorPacket, SignalSync> PinSync;
-typedef MODULES_EXPORT PinSync PinDefault;
+template<typename Allocator, typename Signal, typename DataType> class PinT;
+template<typename DataType> using PinDataAsync = PinT<AllocatorPacket<DataType>, SignalAsync, DataType>;
+template<typename DataType> using PinDataSync = PinT<AllocatorPacket<DataType>, SignalSync, DataType>;
+template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
+
+typedef MODULES_EXPORT PinDataAsync<Data> PinAsync;
+typedef MODULES_EXPORT PinDataSync<Data> PinSync;
+typedef MODULES_EXPORT PinDataDefault<Data> PinDefault;
 
 class Pin {
 public:
