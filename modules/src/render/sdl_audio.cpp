@@ -87,15 +87,15 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
 	auto const relativeSamplePosition = relativeTimePosition * AUDIO_SAMPLERATE / 180000LL;
 
-	if(relativeSamplePosition < -100) {
-		// must drop fifo data
+	if (relativeSamplePosition < -100) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
+		Log::msg(Log::Debug, "[SDLAudio render] must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / AUDIO_SAMPLERATE);
 		fifoConsumeSamples((size_t)numSamplesToDrop);
 	}
 
-	if(relativeSamplePosition > 100) {
-		// must insert silence
+	if (relativeSamplePosition > 100) {
 		auto const numSilenceSamples = std::min<int64_t>(numSamplesToProduce, relativeSamplePosition);
+		Log::msg(Log::Debug, "[SDLAudio render] insert silence (%s ms)", numSilenceSamples * 1000.0f / AUDIO_SAMPLERATE);
 		silenceSamples(stream, (size_t)numSilenceSamples);
 		numSamplesToProduce -= numSilenceSamples;
 	}
