@@ -70,12 +70,30 @@ public:
 
 	size_t emit(std::shared_ptr<Data> data) {
 		size_t numReceivers = signal.emit(data);
-		assert(numReceivers == 1);
+		assert(numReceivers >= 1);
 		return numReceivers;
 	}
 
 	void waitForCompletion() {
-		signal.results(); //getting the result release the shared_ptr
+		//FIXME: we have to wait for all samples to be processed. Waiting can be long because the allocator doesn't signal
+		// and creates as much buffers as needed. If it waited, we could have better performance results and event-based waiting here.
+		const int sleepDurInMs = 10;
+		const std::chrono::milliseconds dur(sleepDurInMs);
+		int maxSleep = 3000;
+
+		size_t usedBlocks = tryFlushAllocator();
+		while (usedBlocks && --maxSleep > 0) {
+			std::this_thread::sleep_for(dur); //FIXME: we should set events when Data are freed
+			usedBlocks = tryFlushAllocator();
+		}
+		if (maxSleep == 0) {
+			Log::msg(Log::Warning, "Warning: force invalidating the allocator data.");
+			allocator.reset();
+#ifdef COUNT_ALLOC
+			usedBlocks = tryFlushAllocator();
+			assert(usedBlocks == 0);
+#endif
+		}
 	}
 
 	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
@@ -121,6 +139,17 @@ public:
 	}
 
 private:
+	size_t tryFlushAllocator() {
+		signal.results();                          //getting the result release the future shared_ptr
+		allocator.updateUsedBlocks();              //remove blocks only weak-referenced by the allocator
+		auto usedBlocks = allocator.getNumUsedBlocks(); //some blocks may stays if the allocator data is processed by further modules
+#ifdef COUNT_ALLOC
+		auto numAlloc = allocator.getNumAlloc();
+		Log::msg(Log::Debug, "this[%s], usedBlocks: %s/%s/%s", this, usedBlocks, allocator.getNumBlocks(), numAlloc);
+#endif
+		return usedBlocks;
+	}
+
 	Allocator allocator;
 	Signal signal;
 	std::unique_ptr<IProps> props;
