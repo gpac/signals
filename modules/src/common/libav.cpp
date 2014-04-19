@@ -64,6 +64,7 @@ DataAVPacket::DataAVPacket(size_t size)
 }
 
 DataAVPacket::~DataAVPacket() {
+	Log::msg(Log::Debug, "Freeing %s, pts=%s", this, pkt->pts);
 	av_free_packet(pkt.get());
 }
 
