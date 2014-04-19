@@ -18,9 +18,9 @@ using namespace MM;
 
 namespace {
 
-#if 0
 unittest("transcoder async: video simple (gpac mux)") {
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	//FIXME: doesn't forward decoder props: auto demux = uptr(new Reorder(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4")));
 
 	//create stub output (for unused demuxer's outputs)
 	auto null = uptr(Out::Null::create());
@@ -65,6 +65,5 @@ unittest("transcoder async: video simple (gpac mux)") {
 	encode->waitForCompletion();
 	mux->waitForCompletion();
 }
-#endif
 
 }
