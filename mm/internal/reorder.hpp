@@ -4,6 +4,27 @@
 
 namespace MM {
 
+template<typename ResultType>
+class ResultSharedLastOnce : public IResult {
+public:
+	typedef ResultType ResultValue;
+	explicit ResultSharedLastOnce() {
+	}
+	void set(ResultType r) {
+		last = r;
+	}
+	ResultValue get() {
+		auto res = last;
+		last = ResultType();
+		return res;
+	}
+	void clear() {
+	}
+
+private:
+	ResultType last;
+};
+
 /**
  * A module, containing a delegate module.
  * This is the same principle as the current MM:Module preprocessor, but the relation between the input pin
@@ -52,7 +73,7 @@ private:
 		return true;
 	}
 	std::unique_ptr<Modules::Module> delegate;
-	Signal<std::shared_ptr<Data>(std::shared_ptr<Data>), ResultLast<std::shared_ptr<Data>>> synchronizerSignal;
+	Signal<std::shared_ptr<Data>(std::shared_ptr<Data>), ResultSharedLastOnce<std::shared_ptr<Data>>> synchronizerSignal;
 	Signal<bool(void), ResultQueueThreadSafe<bool>, CallerThread> internalSignal;
 };
 
