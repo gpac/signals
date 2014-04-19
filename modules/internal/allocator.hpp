@@ -17,7 +17,7 @@ namespace Modules {
 template<typename DataType>
 class MODULES_EXPORT AllocatorPacket {
 public:
-	AllocatorPacket(size_t numBlocks = 0)
+	AllocatorPacket(size_t numBlocks = 10)
 		: numBlocks(numBlocks)
 #ifdef COUNT_ALLOC
 		, numAlloc(0)
