@@ -105,11 +105,13 @@ public:
 				return data;
 			} else {
 				signal.results(false); //see if results are ready
+				allocator.updateUsedBlocks();
 				data = allocator.getBuffer(size);
 				if (data.get()) {
 					return data;
 				} else {
 					signal.results(true, true); //wait synchronously for one result
+					allocator.updateUsedBlocks();
 					data = allocator.getBuffer(size);
 					if (data.get()) {
 						return data;
