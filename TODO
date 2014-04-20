@@ -3,12 +3,17 @@ Mid Term apps:
 - simple player
 
 Tasks (from higher to lower priority):
+- typedef shared_ptr<Data> (would allow sending signals on Data deletion for example, which is needed to remove sleep() in the pin/allocator waitforCompletion())
 - SDL and renderers should be able to run in thread 0
 - be able to draw the graph of connections (and allocator states?)
 - remove waitForCompletion() by delegating Modules
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
+- player example plugged with Qt
+- GPAC TS demux and mux (for HLS)
+- muxer example with two inputs
 
 Questions (from higher to lower priority):
+- eligibility of tasks
 - how to dynamically connect filters
 - use C++ strong typing for data (would prevent from connecting dynamically, like an external DLL)
 - how to expose an interface to older compilers
