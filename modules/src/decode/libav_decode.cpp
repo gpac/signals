@@ -18,7 +18,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 class AudioConverter {
 public:
 	AudioConverter(AVCodecContext const& src, std::vector<std::unique_ptr<Pin>> const &signals)
-	: signals(signals) {
+		: signals(signals) {
 		m_Swr.setInputSampleFmt(src.sample_fmt);
 		m_Swr.setInputLayout(src.channel_layout);
 		m_Swr.setInputSampleRate(src.sample_rate);
@@ -61,7 +61,7 @@ private:
 class VideoConverter {
 public:
 	VideoConverter(AVCodecContext const& codecCtx, std::vector<std::unique_ptr<Pin>> const &signals)
-	: signals(signals) {
+		: signals(signals) {
 		m_SwContext = sws_getContext(
 		                  codecCtx.width, codecCtx.height, codecCtx.pix_fmt,
 		                  DST_WIDTH, DST_HEIGHT, DST_FMT,

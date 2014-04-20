@@ -57,11 +57,11 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 class UTILS_EXPORT Log {
 public:
 	enum Level {
-	    Quiet = -1,
-	    Error = 0,
-	    Warning,
-	    Info,
-	    Debug
+		Quiet = -1,
+		Error = 0,
+		Warning,
+		Info,
+		Debug
 	};
 
 	template<typename... Arguments>

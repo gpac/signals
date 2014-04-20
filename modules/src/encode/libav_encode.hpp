@@ -20,9 +20,9 @@ namespace Encode {
 class MODULES_EXPORT LibavEncode : public Module {
 public:
 	enum Type {
-	    Video,
-	    Audio,
-	    unknown
+		Video,
+		Audio,
+		unknown
 	};
 
 	static LibavEncode* create(Type type);

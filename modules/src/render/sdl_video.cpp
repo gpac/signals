@@ -15,8 +15,7 @@ SDLVideo::SDLVideo()
 	: displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
 }
 
-void SDLVideo::doRender()
-{
+void SDLVideo::doRender() {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
 		throw std::runtime_error("Init failed");
@@ -68,8 +67,7 @@ void SDLVideo::doRender()
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void SDLVideo::processOneFrame(std::shared_ptr<Data> data)
-{
+void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	/* Loop, waiting for QUIT or RESIZE */
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
