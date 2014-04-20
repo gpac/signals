@@ -144,7 +144,7 @@ private:
 	size_t tryFlushAllocator() {
 		signal.results();                          //getting the result release the future shared_ptr
 		allocator.updateUsedBlocks();              //remove blocks only weak-referenced by the allocator
-		auto usedBlocks = allocator.getNumUsedBlocks(); //some blocks may stays if the allocator data is processed by further modules
+		auto usedBlocks = allocator.getNumUsedBlocks(); //some blocks may stay if the allocator data is processed by further modules
 #ifdef COUNT_ALLOC
 		auto numAlloc = allocator.getNumAlloc();
 		Log::msg(Log::Debug, "this[%s], usedBlocks: %s/%s/%s", this, usedBlocks, allocator.getNumBlocks(), numAlloc);
