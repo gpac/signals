@@ -1,6 +1,7 @@
 Mid Term apps:
-- dashcast clone
-- simple player
+1. simple player
+2. a) dashcast clone (ffmpeg input)
+   b) socket in, GPAC demux (MP4 or TS), DASH out
 
 Tasks (from higher to lower priority):
 - typedef shared_ptr<Data> (would allow sending signals on Data deletion for example, which is needed to remove sleep() in the pin/allocator waitforCompletion())
