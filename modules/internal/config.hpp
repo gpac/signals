@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef MODULES_COMPILATION
 #define MODULES_EXPORT __declspec(dllexport)
 #else
