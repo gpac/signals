@@ -34,7 +34,7 @@ extra/build/ffmpeg/buildOk: extra/src/ffmpeg/ffmpeg.c extra/build/x264/buildOk
 		--enable-swresample \
 		--enable-swscale \
 		--extra-cflags="-I$(EXTRA_DIR)/src/x264 -I$(EXTRA_DIR)/build/x264" \
-		--extra-ldflags="-L$(EXTRA_DIR)/build/x264 -ldl" \
+		--extra-ldflags="-L$(EXTRA_DIR)/build/x264" \
 		--prefix=../..
 	$(MAKE) -C extra/build/ffmpeg
 	$(MAKE) -C extra/build/ffmpeg install
