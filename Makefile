@@ -68,6 +68,8 @@ $(BIN)/config.mk:
 
 -include $(BIN)/config.mk
 
+CFLAGS+=-Umain
+
 
 
 # include sub-projects here
