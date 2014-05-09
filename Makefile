@@ -48,29 +48,8 @@ LDFLAGS += -L$(SRC)/extra/lib
 
 export PKG_CONFIG_PATH:=$(SRC)/extra/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
-CFLAGS  += $(shell pkg-config --cflags libavcodec)
-LDFLAGS += $(shell pkg-config --libs   libavcodec)
-
-CFLAGS  += $(shell pkg-config --cflags libavformat)
-LDFLAGS += $(shell pkg-config --libs   libavformat)
-
-CFLAGS  += $(shell pkg-config --cflags libswresample)
-LDFLAGS += $(shell pkg-config --libs   libswresample)
-
-CFLAGS  += $(shell pkg-config --cflags libswscale)
-LDFLAGS += $(shell pkg-config --libs   libswscale)
-
-CFLAGS  += $(shell pkg-config --cflags x264)
-LDFLAGS += $(shell pkg-config --libs   x264)
-
-CFLAGS  += $(shell pkg-config --cflags sdl2)
-LDFLAGS += $(shell pkg-config --libs   sdl2)
-
-CFLAGS  += $(shell pkg-config --cflags gpac)
-LDFLAGS += $(shell pkg-config --libs   gpac)
-
-CFLAGS:=$(sort $(CFLAGS))
-LDFLAGS:=$(sort $(LDFLAGS))
+CFLAGS  += $(shell pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 gpac)
+LDFLAGS += $(shell pkg-config --libs   libavcodec libavformat libswresample libswscale x264 sdl2 gpac)
 
 ifeq ($(CXX),clang++)
   CFLAGS += -stdlib=libc++
