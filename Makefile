@@ -46,11 +46,6 @@ CFLAGS += -I$(SRC)/ffpp
 CFLAGS += -I$(SRC)/extra/include
 LDFLAGS += -L$(SRC)/extra/lib
 
-export PKG_CONFIG_PATH:=$(SRC)/extra/lib/pkgconfig:$(PKG_CONFIG_PATH)
-
-CFLAGS  += $(shell pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 gpac)
-LDFLAGS += $(shell pkg-config --libs   libavcodec libavformat libswresample libswscale x264 sdl2 gpac)
-
 ifeq ($(CXX),clang++)
   CFLAGS += -stdlib=libc++
   LDFLAGS += -stdlib=libc++
@@ -59,6 +54,21 @@ endif
 LDFLAGS += $(LDLIBS)
 
 all: targets
+
+$(BIN)/config.mk:
+	@echo "Configuring ..."
+	@set -e ; \
+	export PKG_CONFIG_PATH=$(SRC)/extra/lib/pkgconfig:$$PKG_CONFIG_PATH ; \
+	echo '# config file' > $(BIN)/config.mk.tmp ; \
+	echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
+	pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 gpac >> $(BIN)/config.mk.tmp ; \
+	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
+	pkg-config --libs libavcodec libavformat libswresample libswscale x264 sdl2 gpac >> $(BIN)/config.mk.tmp ; \
+	mv $(BIN)/config.mk.tmp $(BIN)/config.mk
+
+-include $(BIN)/config.mk
+
+
 
 # include sub-projects here
 #
