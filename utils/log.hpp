@@ -75,6 +75,5 @@ public:
 private:
 	Log();
 	~Log();
-	static Level globalLevel;
 	static std::ostream& get(Level level);
 };

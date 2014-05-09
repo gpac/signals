@@ -43,6 +43,9 @@ CFLAGS += -I$(SRC)/modules/src
 CFLAGS += -I$(SRC)/gpacpp
 CFLAGS += -I$(SRC)/ffpp
 
+CFLAGS += -DMODULES_COMPILATION=1
+CFLAGS += -DUTILS_COMPILATION=1
+
 CFLAGS += -I$(SRC)/extra/include
 LDFLAGS += -L$(SRC)/extra/lib
 

@@ -14,8 +14,8 @@ $(BIN)/tests/mm_%.o: CFLAGS+=-DUNIT
 # signals.exe
 #---------------------------------------------------------------
 SIGNALS_OBJS:=\
- 	$(TEST_COMMON_OBJ)\
- 	$(OUTDIR)/signals.o
+ 	$(OUTDIR)/signals.o\
+ 	$(TEST_COMMON_OBJ)
 DEPS+=$(SIGNALS_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/signals.exe
@@ -25,10 +25,10 @@ $(OUTDIR)/signals.exe: $(SIGNALS_OBJS)
 # modules.exe
 #---------------------------------------------------------------
 EXE_MODULES_OBJS:=\
+ 	$(OUTDIR)/modules.o\
  	$(TEST_COMMON_OBJ)\
  	$(LIB_MODULES_OBJS)\
- 	$(UTILS_OBJS)\
- 	$(OUTDIR)/modules.o
+ 	$(UTILS_OBJS)
 DEPS+=$(EXE_MODULES_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/modules.exe
@@ -39,10 +39,11 @@ $(OUTDIR)/modules.exe: $(EXE_MODULES_OBJS)
 #---------------------------------------------------------------
 TARGETS+=$(OUTDIR)/mm.exe
 MM_OBJS:=\
+  $(OUTDIR)/mm.o\
  	$(TEST_COMMON_OBJ)\
  	$(LIB_MODULES_OBJS)\
  	$(UTILS_OBJS)\
- 	$(MM_OBJS) $(OUTDIR)/mm.o
+ 	$(MM_OBJS)
 $(OUTDIR)/mm.exe: $(MM_OBJS)
 DEPS+=$(OUTDIR)/mm.deps
 
