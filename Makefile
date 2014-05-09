@@ -1,5 +1,36 @@
-CFLAGS := -std=c++11 -Wall -Wl,-z,relro -Wl,-z,now -fvisibility=hidden -W -Wno-unused-parameter -Wno-unused-function -Wno-unused-label -Wpointer-arith -Wformat -Wreturn-type -Wsign-compare -Wmultichar -Wformat-nonliteral -Winit-self -Wuninitialized -Wno-deprecated -Wformat-security
-LDLIBS := -lpthread -lswscale -lswresample -lgpac -lavcodec -lavformat -lavutil -lz -L/usr/local/lib -lSDL2 -lx264 -ldl -liconv -lbz2
+CFLAGS+=-std=c++11
+CFLAGS+=-Wall
+CFLAGS+=-Wl,-z,relro
+CFLAGS+=-Wl,-z,now
+CFLAGS+=-fvisibility=hidden
+CFLAGS+=-W
+CFLAGS+=-Wno-unused-parameter
+CFLAGS+=-Wno-unused-function
+CFLAGS+=-Wno-unused-label
+CFLAGS+=-Wpointer-arith
+CFLAGS+=-Wformat
+CFLAGS+=-Wreturn-type
+CFLAGS+=-Wsign-compare
+CFLAGS+=-Wmultichar
+CFLAGS+=-Wformat-nonliteral
+CFLAGS+=-Winit-self
+CFLAGS+=-Wuninitialized
+CFLAGS+=-Wno-deprecated
+CFLAGS+=-Wformat-security
+
+LDLIBS+=-lpthread
+LDLIBS+=-lswscale
+LDLIBS+=-lswresample
+LDLIBS+=-lgpac
+LDLIBS+=-lavcodec
+LDLIBS+=-lavformat
+LDLIBS+=-lavutil
+LDLIBS+=-lz
+LDLIBS+=-lSDL2
+LDLIBS+=-lx264
+LDLIBS+=-ldl
+LDLIBS+=-liconv
+LDLIBS+=-lbz2
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
