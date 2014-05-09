@@ -1,3 +1,4 @@
+CFLAGS:=$(CFLAGS)
 CFLAGS+=-std=c++11
 CFLAGS+=-Wall
 CFLAGS+=-Wl,-z,relro
@@ -18,20 +19,6 @@ CFLAGS+=-Wuninitialized
 CFLAGS+=-Wno-deprecated
 CFLAGS+=-Wformat-security
 
-LDLIBS+=-lpthread
-LDLIBS+=-lswscale
-LDLIBS+=-lswresample
-LDLIBS+=-lgpac
-LDLIBS+=-lavcodec
-LDLIBS+=-lavformat
-LDLIBS+=-lavutil
-LDLIBS+=-lz
-LDLIBS+=-lSDL2
-LDLIBS+=-lx264
-LDLIBS+=-ldl
-LDLIBS+=-liconv
-LDLIBS+=-lbz2
-
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
 BIN=bin/make
@@ -50,12 +37,40 @@ else
 endif
 
 CFLAGS += -I$(SRC)/signals
+CFLAGS += -I$(SRC)/mm
+CFLAGS += -I$(SRC)/modules
 CFLAGS += -I$(SRC)/modules/src
 CFLAGS += -I$(SRC)/gpacpp
 CFLAGS += -I$(SRC)/ffpp
 
 CFLAGS += -I$(SRC)/extra/include
 LDFLAGS += -L$(SRC)/extra/lib
+
+export PKG_CONFIG_PATH:=$(SRC)/extra/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
+CFLAGS  += $(shell pkg-config --cflags libavcodec)
+LDFLAGS += $(shell pkg-config --libs   libavcodec)
+
+CFLAGS  += $(shell pkg-config --cflags libavformat)
+LDFLAGS += $(shell pkg-config --libs   libavformat)
+
+CFLAGS  += $(shell pkg-config --cflags libswresample)
+LDFLAGS += $(shell pkg-config --libs   libswresample)
+
+CFLAGS  += $(shell pkg-config --cflags libswscale)
+LDFLAGS += $(shell pkg-config --libs   libswscale)
+
+CFLAGS  += $(shell pkg-config --cflags x264)
+LDFLAGS += $(shell pkg-config --libs   x264)
+
+CFLAGS  += $(shell pkg-config --cflags sdl2)
+LDFLAGS += $(shell pkg-config --libs   sdl2)
+
+CFLAGS  += $(shell pkg-config --cflags gpac)
+LDFLAGS += $(shell pkg-config --libs   gpac)
+
+CFLAGS:=$(sort $(CFLAGS))
+LDFLAGS:=$(sort $(LDFLAGS))
 
 ifeq ($(CXX),clang++)
   CFLAGS += -stdlib=libc++
