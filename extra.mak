@@ -53,8 +53,7 @@ extra/build/gpac/buildOk: extra/src/gpac/Changelog
 	@mkdir -p extra/build/gpac
 	cd extra/build/gpac && ../../src/gpac/configure \
 		--prefix=../..
-	$(MAKE) -C extra/build/gpac
-	$(MAKE) -C extra/build/gpac install
+	$(MAKE) -C extra/build/gpac/src
 	$(MAKE) -C extra/build/gpac install-lib
 	touch "$@"
 
