@@ -93,11 +93,8 @@ then
 	mkdir -p extra/build/gpac
 	pushd extra/build/gpac
 	../../src/gpac/configure \
+		--use-ffmpeg=no \
 		--prefix=$EXTRA_DIR
-
-	# workaround gpac configure script not creating all needed directories;
-	mkdir -p applications/dashcast
-	cp ../../src/gpac/applications/dashcast/Makefile applications/dashcast
 
 	$MAKE
 	$MAKE install
