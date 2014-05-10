@@ -47,11 +47,6 @@ CFLAGS += -DUTILS_COMPILATION=1
 CFLAGS += -I$(SRC)/extra/include
 LDFLAGS += -L$(SRC)/extra/lib
 
-ifeq ($(CXX),clang++)
-  CFLAGS += -stdlib=libc++
-  LDFLAGS += -stdlib=libc++
-endif
-
 LDFLAGS += $(LDLIBS)
 
 LDFLAGS+=-Wl,-z,relro
