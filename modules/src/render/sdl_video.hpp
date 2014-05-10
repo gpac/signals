@@ -36,7 +36,6 @@ private:
 	std::unique_ptr<SDL_Rect> displayrect;
 	int width, height;
 
-	uint64_t m_StartTime;
 	int64_t m_NumFrames;
 
 	QueueThreadSafe<std::shared_ptr<Data>> m_dataQueue;
