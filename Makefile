@@ -50,9 +50,6 @@ LDFLAGS += -L$(SRC)/extra/lib
 
 LDFLAGS += $(LDLIBS)
 
-LDFLAGS+=-Wl,-z,relro
-LDFLAGS+=-Wl,-z,now
-
 all: targets
 
 $(BIN)/config.mk:
