@@ -16,6 +16,7 @@ CFLAGS+=-Winit-self
 CFLAGS+=-Wuninitialized
 CFLAGS+=-Wno-deprecated
 CFLAGS+=-Wformat-security
+CFLAGS+=-Wno-format-nonliteral
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
