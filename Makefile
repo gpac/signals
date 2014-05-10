@@ -1,8 +1,6 @@
 CFLAGS:=$(CFLAGS)
 CFLAGS+=-std=c++11
 CFLAGS+=-Wall
-CFLAGS+=-Wl,-z,relro
-CFLAGS+=-Wl,-z,now
 CFLAGS+=-fvisibility=hidden
 CFLAGS+=-W
 CFLAGS+=-Wno-unused-parameter
@@ -55,6 +53,9 @@ ifeq ($(CXX),clang++)
 endif
 
 LDFLAGS += $(LDLIBS)
+
+LDFLAGS+=-Wl,-z,relro
+LDFLAGS+=-Wl,-z,now
 
 all: targets
 
