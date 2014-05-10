@@ -5,6 +5,7 @@
 
 set -e
 EXTRA_DIR=$PWD/extra
+HOST=$(gcc -dumpmachine)
 
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
@@ -31,7 +32,7 @@ then
 	mkdir -p extra/build/x264
 	pushd extra/build/x264
  	../../src/x264/configure \
-		--disable-shared \
+		--host=$HOST \
 		--enable-static \
 		--prefix=$EXTRA_DIR
 	popd
@@ -59,6 +60,7 @@ then
 	mkdir -p extra/build/ffmpeg
 	pushd extra/build/ffmpeg
 	../../src/ffmpeg/configure \
+		--host-os=$HOST \
 		--disable-programs \
 		--disable-shared \
 		--enable-static \
