@@ -61,14 +61,14 @@ $(BIN)/config.mk:
 	export PKG_CONFIG_PATH=$(SRC)/extra/lib/pkgconfig:$$PKG_CONFIG_PATH ; \
 	echo '# config file' > $(BIN)/config.mk.tmp ; \
 	echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
-	pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 gpac >> $(BIN)/config.mk.tmp ; \
+	pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 >> $(BIN)/config.mk.tmp ; \
 	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --libs sdl2 >> $(BIN)/config.mk.tmp ; \
 	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --libs libavcodec libavformat libswresample libswscale x264 gpac >> $(BIN)/config.mk.tmp ; \
 	mv $(BIN)/config.mk.tmp $(BIN)/config.mk
 
--include $(BIN)/config.mk
+include $(BIN)/config.mk
 
 CFLAGS+=-Umain
 
@@ -106,8 +106,6 @@ targets: $(TARGETS)
 
 unit: $(TARGETS)
 
-include extra.mak
-
 #------------------------------------------------------------------------------
 
 $(BIN)/%.exe:
@@ -130,6 +128,6 @@ $(BIN)/alldeps: $(DEPS)
 
 $(BIN)/%.deps: %.cpp
 	@mkdir -p "$(dir $@)"
-	$(CXX) $(CFLAGS) -c -MM "$^" -MT "$(BIN)/$*.o" > "$@"
+	$(CXX) $(CFLAGS) -c -MG -MM "$^" -MT "$(BIN)/$*.o" > "$@"
 
 -include $(BIN)/alldeps
