@@ -66,7 +66,9 @@ $(BIN)/config.mk:
 	echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 gpac >> $(BIN)/config.mk.tmp ; \
 	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
-	pkg-config --libs libavcodec libavformat libswresample libswscale x264 sdl2 gpac >> $(BIN)/config.mk.tmp ; \
+	pkg-config --libs sdl2 >> $(BIN)/config.mk.tmp ; \
+	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
+	pkg-config --libs libavcodec libavformat libswresample libswscale x264 gpac >> $(BIN)/config.mk.tmp ; \
 	mv $(BIN)/config.mk.tmp $(BIN)/config.mk
 
 -include $(BIN)/config.mk
