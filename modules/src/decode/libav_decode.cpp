@@ -17,8 +17,8 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 // TODO move this to its own module, when we have media types
 class AudioConverter {
 public:
-	AudioConverter(AVCodecContext const& src, std::vector<std::unique_ptr<Pin>> const &signals)
-		: signals(signals) {
+	AudioConverter(AVCodecContext const& src, Pin& pin)
+		: m_Pin(pin) {
 		m_Swr.setInputSampleFmt(src.sample_fmt);
 		m_Swr.setInputLayout(src.channel_layout);
 		m_Swr.setInputSampleRate(src.sample_rate);
@@ -36,7 +36,7 @@ public:
 		auto const srcNumSamples = avFrame->nb_samples;
 		auto const dstNumSamples = divUp(srcNumSamples * DST_FREQ, codecCtx->sample_rate);
 
-		auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(bufferSize * 10));
+		auto out = std::dynamic_pointer_cast<PcmData>(m_Pin.getBuffer(bufferSize * 10));
 
 		uint8_t* pDst = out->data();
 		auto const numSamples = m_Swr.convert(&pDst, dstNumSamples, (const uint8_t**)avFrame->data, srcNumSamples);
@@ -54,14 +54,14 @@ private:
 	static const uint64_t DST_LAYOUT = AV_CH_LAYOUT_STEREO;
 	static const auto DST_FMT = AV_SAMPLE_FMT_S16;
 	ffpp::SwResampler m_Swr;
-	std::vector<std::unique_ptr<Pin>> const &signals;
+	Pin& m_Pin;
 };
 
 // TODO move this to its own module, when we have media types
 class VideoConverter {
 public:
-	VideoConverter(AVCodecContext const& codecCtx, std::vector<std::unique_ptr<Pin>> const &signals)
-		: signals(signals) {
+	VideoConverter(AVCodecContext const& codecCtx, Pin& pin)
+		: m_Pin(pin) {
 		m_SwContext = sws_getContext(
 		                  codecCtx.width, codecCtx.height, codecCtx.pix_fmt,
 		                  DST_WIDTH, DST_HEIGHT, DST_FMT,
@@ -72,7 +72,7 @@ public:
 		const auto srcHeight = codecCtx->height;
 
 		const int dstFrameSize = (DST_WIDTH * DST_HEIGHT * 3) / 2;
-		auto out(signals[0]->getBuffer(dstFrameSize));
+		auto out(m_Pin.getBuffer(dstFrameSize));
 
 		uint8_t* pDst[3] = {
 			out->data(),
@@ -98,7 +98,7 @@ private:
 	static const auto DST_HEIGHT = VIDEO_HEIGHT;
 	static const auto DST_FMT = PIX_FMT_YUV420P;
 	SwsContext* m_SwContext;
-	std::vector<std::unique_ptr<Pin>> const &signals;
+	Pin& m_Pin;
 };
 
 namespace Decode {
@@ -154,7 +154,7 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 	if (gotFrame) {
 
 		if(!m_pAudioConverter)
-			m_pAudioConverter.reset(new AudioConverter(*codecCtx, signals));
+			m_pAudioConverter.reset(new AudioConverter(*codecCtx, *signals[0]));
 
 		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
@@ -172,7 +172,7 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 	}
 	if (gotPicture) {
 		if(!m_pVideoConverter)
-			m_pVideoConverter.reset(new VideoConverter(*codecCtx, signals));
+			m_pVideoConverter.reset(new VideoConverter(*codecCtx, *signals[0]));
 
 		auto out = m_pVideoConverter->convert(codecCtx.get(), avFrame->get());
 		setTimestamp(out);
