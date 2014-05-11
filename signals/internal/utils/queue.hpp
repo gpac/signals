@@ -41,12 +41,13 @@ public:
 	}
 
 	T pop() {
+		std::unique_lock<std::mutex> lock(mutex);
+		while(dataQueue.empty())
+			dataCondition.wait(lock);
+
 		T p;
-		for(;;) {
-			if(tryPop(p))
-				break;
-			std::this_thread::yield();
-		}
+		std::swap(p, dataQueue.front());
+		dataQueue.pop();
 		return p;
 	}
 
