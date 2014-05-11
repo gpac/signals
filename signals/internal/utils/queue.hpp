@@ -53,9 +53,8 @@ public:
 
 	void clear() {
 		std::lock_guard<std::mutex> lock(mutex);
-		while (!dataQueue.empty()) {
-			dataQueue.pop();
-		}
+		std::queue<T> emptyQueue;
+		std::swap(emptyQueue, dataQueue);
 	}
 
 #ifdef TESTS
