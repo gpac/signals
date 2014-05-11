@@ -60,9 +60,7 @@ public:
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		result.clear();
 		for (auto &cb : callbacks) {
-			if (cb.second) {
-				cb.second->futures.push_back(caller(cb.second->callback, args...));
-			}
+			cb.second->futures.push_back(caller(cb.second->callback, args...));
 		}
 		return callbacks.size();
 	}
@@ -99,13 +97,11 @@ protected:
 		Result result;
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		for (auto &cb : callbacks) { //delete still connected callbacks
-			if (cb.second) {
-				for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-					f = cb.second->futures.erase(f);
-				}
-				bool res = disconnectUnsafe(cb.first);
-				assert(res);
+			for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
+				f = cb.second->futures.erase(f);
 			}
+			bool res = disconnectUnsafe(cb.first);
+			assert(res);
 		}
 	}
 
@@ -114,28 +110,25 @@ private:
 	ProtoSignal& operator= (const ProtoSignal&) = delete;
 
 	bool disconnectUnsafe(size_t connectionId) {
-		if (callbacks[connectionId] != nullptr) {
-			delete callbacks[connectionId];
-			callbacks[connectionId] = nullptr;
-			return true;
-		} else {
+		auto conn = callbacks.find(connectionId);
+		if(conn == callbacks.end())
 			return false;
-		}
+		delete conn->second;
+		callbacks.erase(connectionId);
+		return true;
 	}
 
 	void fillResultsUnsafe(bool sync = true, bool single = false) {
 		for (auto &cb : callbacks) {
-			if (cb.second) {
-				for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-					if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) == std::future_status::timeout)) {
-						++f;
-					} else {
-						assert(f->valid());
-						result.set(f->get());
-						f = cb.second->futures.erase(f);
-						if (single) {
-							return;
-						}
+			for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
+				if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) == std::future_status::timeout)) {
+					++f;
+				} else {
+					assert(f->valid());
+					result.set(f->get());
+					f = cb.second->futures.erase(f);
+					if (single) {
+						return;
 					}
 				}
 			}
