@@ -16,11 +16,6 @@ SDLVideo::SDLVideo()
 }
 
 void SDLVideo::doRender() {
-	if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
-		Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
-		throw std::runtime_error("Init failed");
-	}
-
 	width = VIDEO_WIDTH;
 	height = VIDEO_HEIGHT;
 	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -64,7 +59,6 @@ void SDLVideo::doRender() {
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {

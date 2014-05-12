@@ -15,11 +15,6 @@ SDLAudio* SDLAudio::create() {
 }
 
 SDLAudio::SDLAudio() : m_FifoTime(0) {
-	if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1) {
-		Log::msg(Log::Warning, "[SDLAudio render] Couldn't initialize: %s", SDL_GetError());
-		throw std::runtime_error("Init failed");
-	}
-
 	SDL_AudioSpec audioSpec;
 	audioSpec.freq = AUDIO_SAMPLERATE;
 	audioSpec.format = AUDIO_S16;
@@ -55,7 +50,6 @@ SDLAudio::~SDLAudio() {
 		} while (remaining != 0);
 	}
 	SDL_CloseAudio();
-	SDL_QuitSubSystem(SDL_INIT_AUDIO);
 }
 
 bool SDLAudio::process(std::shared_ptr<Data> data) {
