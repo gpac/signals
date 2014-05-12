@@ -15,6 +15,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/out/null.cpp\
   $(ProjectName)/src/out/print.cpp\
   $(ProjectName)/src/render/sdl_audio.cpp\
+  $(ProjectName)/src/render/sdl_common.cpp\
   $(ProjectName)/src/render/sdl_video.cpp\
   $(ProjectName)/src/transform/audio_convert.cpp\
 
