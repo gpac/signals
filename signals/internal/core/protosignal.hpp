@@ -95,15 +95,13 @@ protected:
 
 	virtual ~ProtoSignal() {
 		Result result;
-  	while(!callbacks.empty()) { //delete still connected callbacks
-  		auto& cb = *callbacks.begin();
+		while(!callbacks.empty()) { //delete still connected callbacks
+			auto& cb = *callbacks.begin();
 
-  		for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-  			f = cb.second->futures.erase(f);
-  		}
-  		bool res = disconnectUnsafe(cb.first);
-  		assert(res);
-  	}
+			cb.second->futures.clear();
+			bool res = disconnectUnsafe(cb.first);
+			assert(res);
+		}
 	}
 
 private:
