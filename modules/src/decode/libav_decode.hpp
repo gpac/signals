@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include "../common/libav.hpp"
@@ -19,7 +18,7 @@ using namespace Modules;
 
 namespace Decode {
 
-class MODULES_EXPORT LibavDecode : public Module {
+class LibavDecode : public Module {
 public:
 	static LibavDecode* create(const PropsDecoder &props);
 	~LibavDecode();

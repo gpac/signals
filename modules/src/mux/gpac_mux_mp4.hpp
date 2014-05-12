@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "../common/mm.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
@@ -16,7 +15,7 @@ using namespace Modules;
 
 namespace Mux {
 
-class MODULES_EXPORT GPACMuxMP4 : public Module {
+class GPACMuxMP4 : public Module {
 public:
 	static GPACMuxMP4* create(const std::string &baseName);
 	~GPACMuxMP4();

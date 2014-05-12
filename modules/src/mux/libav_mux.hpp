@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "../common/mm.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
@@ -12,7 +11,7 @@ using namespace Modules;
 
 namespace Mux {
 
-class MODULES_EXPORT LibavMux : public Module {
+class LibavMux : public Module {
 public:
 	static LibavMux* create(const std::string &baseName);
 	~LibavMux();

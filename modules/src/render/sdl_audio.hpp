@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/clock.hpp"
 #include "internal/module.hpp"
 #include "fifo.hpp"
@@ -17,7 +16,7 @@ namespace Modules {
 namespace Render {
 
 //FIXME: check it doesn't need to run in thread 0, like most render on Unix do because of X11...
-class MODULES_EXPORT SDLAudio : public Module {
+class SDLAudio : public Module {
 public:
 	static SDLAudio* create();
 	~SDLAudio();

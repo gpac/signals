@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <string>
@@ -9,7 +8,7 @@ namespace Modules {
 
 namespace In {
 
-class MODULES_EXPORT SoundGenerator : public Module {
+class SoundGenerator : public Module {
 public:
 	SoundGenerator();
 	bool handles(const std::string &url);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "config.hpp"
-
 #include <cstdint>
 #include <vector>
 #include <stdlib.h>
@@ -11,7 +9,7 @@ namespace Modules {
 /**
  * A generic data container.
  */
-class MODULES_EXPORT IData {
+class IData {
 public:
 	virtual ~IData() {
 	}
@@ -20,7 +18,7 @@ public:
 	virtual void resize(size_t size) = 0;
 };
 
-class MODULES_EXPORT Data : public IData {
+class Data : public IData {
 public:
 	Data(size_t size) : ptr(size) {
 	}

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <cstdint>
@@ -12,7 +11,7 @@ namespace Demux {
 
 class ISOProgressiveReader;
 
-class MODULES_EXPORT GPACDemuxMP4Full : public Module {
+class GPACDemuxMP4Full : public Module {
 public:
 	static GPACDemuxMP4Full* create();
 	~GPACDemuxMP4Full();

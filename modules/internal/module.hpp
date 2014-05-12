@@ -8,7 +8,7 @@
 
 namespace Modules {
 
-class MODULES_EXPORT IModule {
+class IModule {
 public:
 	virtual ~IModule() {};
 
@@ -17,7 +17,7 @@ public:
 	virtual void waitForCompletion() = 0; /* required for async, otherwise we still have callback/futures on an object being destroyed */
 };
 
-class MODULES_EXPORT Module : public IModule {
+class Module : public IModule {
 public:
 	Module(PinFactory *pinFactory) : pinFactory(pinFactory) {
 	}

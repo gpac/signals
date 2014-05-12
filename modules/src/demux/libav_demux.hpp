@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <string>
@@ -11,7 +10,7 @@ using namespace Modules;
 
 namespace Demux {
 
-class MODULES_EXPORT LibavDemux : public Module {
+class LibavDemux : public Module {
 public:
 	static LibavDemux* create(const std::string &url);
 	~LibavDemux();

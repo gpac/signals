@@ -1,6 +1,5 @@
 #pragma once
 
-#include "config.hpp"
 #include "allocator.hpp"
 #include "data.hpp"
 #include "props.hpp"
@@ -21,9 +20,9 @@ template<typename DataType> using PinDataAsync = PinT<AllocatorPacket<DataType>,
 template<typename DataType> using PinDataSync = PinT<AllocatorPacket<DataType>, SignalSync, DataType>;
 template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
 
-typedef MODULES_EXPORT PinDataAsync<Data> PinAsync;
-typedef MODULES_EXPORT PinDataSync<Data> PinSync;
-typedef MODULES_EXPORT PinDataDefault<Data> PinDefault;
+typedef PinDataAsync<Data> PinAsync;
+typedef PinDataSync<Data> PinSync;
+typedef PinDataDefault<Data> PinDefault;
 
 class Pin {
 public:

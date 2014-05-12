@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include <mutex>
 #include <string>
@@ -15,7 +14,7 @@ namespace Modules {
 namespace Render {
 
 //FIXME: check it doesn't need to run in thread 0, like most render on Unix do because of X11...
-class MODULES_EXPORT SDLVideo : public Module {
+class SDLVideo : public Module {
 public:
 	static SDLVideo* create();
 	~SDLVideo();

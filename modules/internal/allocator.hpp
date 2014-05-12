@@ -1,6 +1,5 @@
 #pragma once
 
-#include "config.hpp"
 #include "data.hpp"
 #include <algorithm>
 #include <atomic>
@@ -15,7 +14,7 @@ namespace Modules {
 //TODO: make a non-blocking one by calling reset() on the shared_ptr - may required appropriate checks in the modules
 //FIXME: not thread-safe, so cannot be shared between modules
 template<typename DataType>
-class MODULES_EXPORT AllocatorPacket {
+class AllocatorPacket {
 public:
 	AllocatorPacket(size_t numBlocks = 10)
 		: numBlocks(numBlocks)
