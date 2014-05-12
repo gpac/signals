@@ -14,7 +14,7 @@ namespace {
 
 unittest("A/V sync: one thread") {
 	auto videoGen = uptr(new In::VideoGenerator);
-	auto videoRender = uptr(Render::SDLVideo::create());
+	auto videoRender = uptr(new Render::SDLVideo);
 	ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
 
 	auto soundGen = uptr(new In::SoundGenerator);
@@ -35,7 +35,7 @@ unittest("A/V sync: one thread") {
 unittest("A/V sync: separate threads") {
 	auto f = [&]() {
 		auto videoGen = uptr(new In::VideoGenerator);
-		auto videoRender = uptr(Render::SDLVideo::create());
+		auto videoRender = uptr(new Render::SDLVideo);
 		ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
 
 		for(int i=0; i < 25*5; ++i) {

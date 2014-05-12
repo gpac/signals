@@ -27,7 +27,7 @@ unittest("sound generator") {
 
 unittest("video generator") {
 	auto videoGen = uptr(new In::VideoGenerator);
-	auto render = uptr(Render::SDLVideo::create());
+	auto render = uptr(new Render::SDLVideo);
 
 	std::vector<int> times;
 	auto onFrame = [&](std::shared_ptr<Data> data) -> bool {
