@@ -17,7 +17,7 @@ std::unique_ptr<Module> renderPin(Pin* pPin, PropsDecoder* decoderProps) {
 	auto const codec_type = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
-		auto r = uptr(Render::SDLVideo::create());
+		auto r = uptr(new Render::SDLVideo);
 		ConnectPin(pPin, r.get(), &Render::SDLVideo::process);
 		return std::move(r);
 	} else if (codec_type == AVMEDIA_TYPE_AUDIO) {

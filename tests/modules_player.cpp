@@ -35,7 +35,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
-	auto render = uptr(Render::SDLVideo::create());
+	auto render = uptr(new Render::SDLVideo);
 
 	ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
 	ConnectPin(decode->getPin(0), render.get(), &Render::SDLVideo::process);

@@ -7,10 +7,6 @@
 namespace Modules {
 namespace Render {
 
-SDLVideo* SDLVideo::create() {
-	return new SDLVideo;
-}
-
 SDLVideo::SDLVideo()
 	: displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
 }

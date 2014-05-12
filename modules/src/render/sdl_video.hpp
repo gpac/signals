@@ -16,14 +16,13 @@ namespace Render {
 //FIXME: check it doesn't need to run in thread 0, like most render on Unix do because of X11...
 class SDLVideo : public Module {
 public:
-	static SDLVideo* create();
+	SDLVideo();
 	~SDLVideo();
 	bool process(std::shared_ptr<Data> data);
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 
 private:
-	SDLVideo();
 
 	void doRender();
 	void processOneFrame(std::shared_ptr<Data> data);
