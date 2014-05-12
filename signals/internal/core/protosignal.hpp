@@ -96,13 +96,15 @@ protected:
 	virtual ~ProtoSignal() {
 		Result result;
 		std::lock_guard<std::mutex> lg(callbacksMutex);
-		for (auto &cb : callbacks) { //delete still connected callbacks
-			for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-				f = cb.second->futures.erase(f);
-			}
-			bool res = disconnectUnsafe(cb.first);
-			assert(res);
-		}
+  	while(!callbacks.empty()) { //delete still connected callbacks
+  		auto& cb = *callbacks.begin();
+
+  		for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
+  			f = cb.second->futures.erase(f);
+  		}
+  		bool res = disconnectUnsafe(cb.first);
+  		assert(res);
+  	}
 	}
 
 private:
