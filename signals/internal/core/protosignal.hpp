@@ -98,7 +98,6 @@ protected:
 		while(!callbacks.empty()) { //delete still connected callbacks
 			auto& cb = *callbacks.begin();
 
-			cb.second->futures.clear();
 			bool res = disconnectUnsafe(cb.first);
 			assert(res);
 		}
