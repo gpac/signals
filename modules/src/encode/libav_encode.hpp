@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include "../common/libav.hpp"
@@ -17,7 +16,7 @@ using namespace Modules;
 
 namespace Encode {
 
-class MODULES_EXPORT LibavEncode : public Module {
+class LibavEncode : public Module {
 public:
 	enum Type {
 		Video,

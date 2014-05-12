@@ -42,9 +42,6 @@ CFLAGS += -I$(SRC)/modules/src
 CFLAGS += -I$(SRC)/gpacpp
 CFLAGS += -I$(SRC)/ffpp
 
-CFLAGS += -DMODULES_COMPILATION=1
-CFLAGS += -DUTILS_COMPILATION=1
-
 CFLAGS += -I$(SRC)/extra/include
 LDFLAGS += -L$(SRC)/extra/lib
 
@@ -125,6 +122,6 @@ $(BIN)/alldeps: $(DEPS)
 
 $(BIN)/%.deps: %.cpp
 	@mkdir -p "$(dir $@)"
-	$(CXX) $(CFLAGS) -c -MG -MM "$^" -MT "$(BIN)/$*.o" > "$@"
+	$(CXX) $(CFLAGS) -c -MM "$^" -MT "$(BIN)/$*.o" > "$@"
 
 -include $(BIN)/alldeps

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../internal/config.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <string>
@@ -8,7 +7,7 @@
 namespace Modules {
 namespace Transform {
 
-class MODULES_EXPORT AudioConvert : public Module {
+class AudioConvert : public Module {
 public:
 	static AudioConvert* create();
 	~AudioConvert();

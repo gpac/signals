@@ -23,5 +23,5 @@ IClock* createSystemClock() {
 }
 
 static SystemClock systemClock;
-extern IClock* const MODULES_EXPORT g_DefaultClock = &systemClock;
+extern IClock* const g_DefaultClock = &systemClock;
 }
