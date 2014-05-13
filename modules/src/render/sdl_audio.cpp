@@ -81,13 +81,13 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
 	auto const relativeSamplePosition = relativeTimePosition * AUDIO_SAMPLERATE / 180000LL;
 
-	if (relativeSamplePosition < -100) {
+	if (relativeSamplePosition < -300) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
 		Log::msg(Log::Debug, "[SDLAudio render] must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / AUDIO_SAMPLERATE);
 		fifoConsumeSamples((size_t)numSamplesToDrop);
 	}
 
-	if (relativeSamplePosition > 100) {
+	if (relativeSamplePosition > 300) {
 		auto const numSilenceSamples = std::min<int64_t>(numSamplesToProduce, relativeSamplePosition);
 		Log::msg(Log::Debug, "[SDLAudio render] insert silence (%s ms)", numSilenceSamples * 1000.0f / AUDIO_SAMPLERATE);
 		silenceSamples(stream, (size_t)numSilenceSamples);
@@ -101,8 +101,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 		numSamplesToProduce -= numSamplesToConsume;
 	}
 
-	if(numSamplesToProduce > 0)
-	{
+	if(numSamplesToProduce > 0) {
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
 		silenceSamples(stream, (size_t)numSamplesToProduce);
 	}

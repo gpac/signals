@@ -176,5 +176,8 @@
     <ClCompile Include="internal\system_clock.cpp">
       <Filter>includes\internal</Filter>
     </ClCompile>
+    <ClCompile Include="src\render\sdl_common.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -38,6 +38,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "player", "apps\player\player.vcxproj", "{BB532BC0-B84B-46B3-B02E-EBE9ECFC664E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_utils", "tests\test_utils.vcxproj", "{4A14FB63-AD80-418D-A68B-0814B51F0C74}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BBD0B4EB-5070-4ECF-B626-DA78ED6C8725} = {BBD0B4EB-5070-4ECF-B626-DA78ED6C8725}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
