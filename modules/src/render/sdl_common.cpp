@@ -1,5 +1,5 @@
-#include "SDL.h"
 #include "../utils/log.hpp"
+#include "SDL2/SDL.h"
 
 class SdlInit {
 public:

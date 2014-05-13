@@ -17,6 +17,10 @@ unittest("A/V sync: one thread") {
 	auto videoRender = uptr(new Render::SDLVideo);
 	ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
 
+	const int sleepDurInMs = 1000;
+	const std::chrono::milliseconds dur(sleepDurInMs);
+	std::this_thread::sleep_for(dur); //FIXME: we should set events when Data are freed
+
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto soundRender = uptr(Render::SDLAudio::create());
 	ConnectPin(soundGen->getPin(0), soundRender.get(), &Render::SDLAudio::process);
