@@ -94,12 +94,14 @@ protected:
 	}
 
 	virtual ~ProtoSignal() {
-		Result result;
-		while(!callbacks.empty()) { //delete still connected callbacks
-			auto& cb = *callbacks.begin();
+		{
+			std::lock_guard<std::mutex> lg(callbacksMutex);
+			while (!callbacks.empty()) { //delete still connected callbacks
+				auto& cb = *callbacks.begin();
 
-			bool res = disconnectUnsafe(cb.first);
-			assert(res);
+				bool res = disconnectUnsafe(cb.first);
+				assert(res);
+			}
 		}
 	}
 
