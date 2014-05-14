@@ -94,14 +94,10 @@ protected:
 	}
 
 	virtual ~ProtoSignal() {
-		{
-			std::lock_guard<std::mutex> lg(callbacksMutex);
-			while (!callbacks.empty()) { //delete still connected callbacks
-				auto& cb = *callbacks.begin();
-
-				bool res = disconnectUnsafe(cb.first);
-				assert(res);
-			}
+		while (!callbacks.empty()) { //delete still connected callbacks
+			auto& cb = *callbacks.begin();
+			bool res = disconnectUnsafe(cb.first);
+			assert(res);
 		}
 	}
 
@@ -111,7 +107,7 @@ private:
 
 	bool disconnectUnsafe(size_t connectionId) {
 		auto conn = callbacks.find(connectionId);
-		if(conn == callbacks.end())
+		if (conn == callbacks.end())
 			return false;
 		delete conn->second;
 		callbacks.erase(connectionId);
