@@ -30,8 +30,8 @@ SDLAudio::SDLAudio() : m_FifoTime(0) {
 		throw std::runtime_error("Audio output creation failed");
 	}
 
-	auto const latencyInMs = float(realSpec.samples) * 1000.0f / realSpec.freq;
-	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, latencyInMs);
+	m_Latency = realSpec.samples * 180000LL / realSpec.freq;
+	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency/1000.0f);
 
 	SDL_PauseAudio(0);
 }
@@ -72,7 +72,7 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	// timestamp of the first sample of the buffer
-	auto const bufferTimeIn180k = g_DefaultClock->now();
+	auto const bufferTimeIn180k = g_DefaultClock->now() + m_Latency;
 
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
