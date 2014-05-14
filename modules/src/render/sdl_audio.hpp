@@ -52,6 +52,7 @@ private:
 	std::mutex m_Mutex;
 	Fifo m_Fifo;
 	uint64_t m_FifoTime;
+	uint64_t m_Latency;
 };
 
 }
