@@ -14,7 +14,7 @@ SDLAudio* SDLAudio::create() {
 	return new SDLAudio();
 }
 
-SDLAudio::SDLAudio() : m_FifoTime(0) {
+SDLAudio::SDLAudio() : m_FifoTime(0), m_Latency(0) {
 	SDL_AudioSpec audioSpec;
 	audioSpec.freq = AUDIO_SAMPLERATE;
 	audioSpec.format = AUDIO_S16;
