@@ -65,14 +65,19 @@ public:
 
 	template<typename... Arguments>
 	static void msg(Level level, const std::string& fmt, Arguments... args) {
-		if (level != Quiet) {
+		if ((level != Quiet) && (level <= globalLogLevel)) {
 			get(level) << format(fmt, args...) << std::endl;
 			get(level).flush();
 		}
 	}
 
+	void Log::setLevel(Level level);
+	Log::Level Log::getLevel();
+
 private:
 	Log();
 	~Log();
 	static std::ostream& get(Level level);
+
+	static Level globalLogLevel;
 };
