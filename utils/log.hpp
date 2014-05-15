@@ -71,8 +71,8 @@ public:
 		}
 	}
 
-	void Log::setLevel(Level level);
-	Log::Level Log::getLevel();
+	void setLevel(Level level);
+	Log::Level getLevel();
 
 private:
 	Log();
