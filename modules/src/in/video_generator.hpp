@@ -1,5 +1,6 @@
 #pragma once
 
+#include "internal/clock.hpp"
 #include "internal/module.hpp"
 #include "internal/param.hpp"
 #include <string>

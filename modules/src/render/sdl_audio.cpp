@@ -10,11 +10,13 @@
 namespace Modules {
 namespace Render {
 
+#define AUDIO_JITTER_TOLERANCE 300
+
 SDLAudio* SDLAudio::create() {
 	return new SDLAudio();
 }
 
-SDLAudio::SDLAudio() : m_FifoTime(0), m_Latency(0) {
+SDLAudio::SDLAudio() : m_FifoTime(0) {
 	SDL_AudioSpec audioSpec;
 	audioSpec.freq = AUDIO_SAMPLERATE;
 	audioSpec.format = AUDIO_S16;
@@ -30,8 +32,8 @@ SDLAudio::SDLAudio() : m_FifoTime(0), m_Latency(0) {
 		throw std::runtime_error("Audio output creation failed");
 	}
 
-	m_Latency = realSpec.samples * 180000LL / realSpec.freq;
-	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency/1000.0f);
+	m_Latency = realSpec.samples * IClock::Rate / realSpec.freq;
+	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency * 1000.0f / IClock::Rate);
 
 	SDL_PauseAudio(0);
 }
@@ -79,15 +81,15 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	int64_t numSamplesToProduce = len / bytesPerSample;
 
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
-	auto const relativeSamplePosition = relativeTimePosition * AUDIO_SAMPLERATE / 180000LL;
+	auto const relativeSamplePosition = relativeTimePosition * AUDIO_SAMPLERATE / IClock::Rate;
 
-	if (relativeSamplePosition < -300) {
+	if (relativeSamplePosition < -AUDIO_JITTER_TOLERANCE) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
 		Log::msg(Log::Debug, "[SDLAudio render] must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / AUDIO_SAMPLERATE);
 		fifoConsumeSamples((size_t)numSamplesToDrop);
 	}
 
-	if (relativeSamplePosition > 300) {
+	if (relativeSamplePosition > AUDIO_JITTER_TOLERANCE) {
 		auto const numSilenceSamples = std::min<int64_t>(numSamplesToProduce, relativeSamplePosition);
 		Log::msg(Log::Debug, "[SDLAudio render] insert silence (%s ms)", numSilenceSamples * 1000.0f / AUDIO_SAMPLERATE);
 		silenceSamples(stream, (size_t)numSilenceSamples);
@@ -101,7 +103,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 		numSamplesToProduce -= numSamplesToConsume;
 	}
 
-	if(numSamplesToProduce > 0) {
+	if (numSamplesToProduce > 0) {
 		Log::msg(Log::Warning, "[SDLAudio render] underflow");
 		silenceSamples(stream, (size_t)numSamplesToProduce);
 	}

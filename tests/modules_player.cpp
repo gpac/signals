@@ -51,24 +51,24 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 	auto null = uptr(Out::Null::create());
 
-	size_t videoIndex = std::numeric_limits<size_t>::max();
+	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
-			videoIndex = i;
+			audioIndex = i;
 		} else {
 			ConnectPin(demux->getPin(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
-	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-	auto props = demux->getPin(videoIndex)->getProps();
+	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
+	auto props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(Render::SDLAudio::create());
 
-	ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
+	ConnectPin(demux->getPin(audioIndex), decode.get(), &Decode::LibavDecode::process);
 	ConnectPin(decode->getPin(0), render.get(), &Render::SDLAudio::process);
 
 	while (demux->process(nullptr)) {

@@ -25,7 +25,7 @@ bool VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const val = flash ? 0xCC : 0x80;
 	memset(p, val, picSize);
 
-	auto const framePeriodIn180k = 180000LL / FRAMERATE;
+	auto const framePeriodIn180k = IClock::Rate / FRAMERATE;
 	out->setTime(m_numFrames * framePeriodIn180k);
 
 	if(m_numFrames % 25 < 2)

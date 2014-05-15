@@ -152,7 +152,6 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 		return true;
 	}
 	if (gotFrame) {
-
 		if(!m_pAudioConverter)
 			m_pAudioConverter.reset(new AudioConverter(*codecCtx, *signals[0]));
 
