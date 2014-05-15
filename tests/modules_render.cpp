@@ -17,9 +17,10 @@ unittest("A/V sync: one thread") {
 	auto videoRender = uptr(new Render::SDLVideo);
 	ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
 
-	const int sleepDurInMs = 1000;
+	//FIXME: avoid SDL audio and video parallel creations
+	const int sleepDurInMs = 100;
 	const std::chrono::milliseconds dur(sleepDurInMs);
-	std::this_thread::sleep_for(dur); //FIXME: we should set events when Data are freed
+	std::this_thread::sleep_for(dur);
 
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto soundRender = uptr(Render::SDLAudio::create());
@@ -62,7 +63,14 @@ unittest("A/V sync: separate threads") {
 	};
 
 	std::thread tf(f);
+
+	//FIXME: avoid SDL audio and video parallel creations
+	const int sleepDurInMs = 100;
+	const std::chrono::milliseconds dur(sleepDurInMs);
+	std::this_thread::sleep_for(dur);
+
 	std::thread tg(g);
+
 	tf.join();
 	tg.join();
 }
