@@ -49,6 +49,7 @@ private:
 	}
 
 	static auto const bytesPerSample = 4;
+	static auto const audioJitterTolerance = 300;
 	std::mutex m_Mutex;
 	Fifo m_Fifo;
 	uint64_t m_FifoTime;
