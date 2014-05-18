@@ -35,13 +35,13 @@
 #define TEST_MAX_TIME_IN_S 100
 
 // generate a file-unique identifier, based on current line
-#define unittestLine2(counter, prettyName) \
-	static void testFunction##counter(); \
-	int g_isRegistered##counter = Tests::RegisterTest(&testFunction##counter, prettyName, g_isRegistered##counter); \
-	static void testFunction##counter()
+#define unittestSuffix(suffix, prettyName) \
+	static void testFunction##suffix(); \
+	int g_isRegistered##suffix = Tests::RegisterTest(&testFunction##suffix, prettyName, g_isRegistered##suffix); \
+	static void testFunction##suffix()
 
 #define unittestLine(counter, prettyName) \
-	unittestLine2(counter, prettyName)
+	unittestSuffix(counter, prettyName)
 
 #define unittest(prettyName) \
 	unittestLine(__COUNTER__, prettyName)
