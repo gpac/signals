@@ -69,7 +69,7 @@ then
 		--enable-swresample \
 		--enable-swscale \
 		--extra-cflags="`pkg-config x264 --cflags`" \
-		--extra-ldflags="`pkg-config x264 --libs`" \
+		--extra-libs="`pkg-config x264 --libs`" \
 		--prefix=$EXTRA_DIR
 	popd
 	$MAKE -C extra/build/ffmpeg
