@@ -6,6 +6,7 @@
 set -e
 EXTRA_DIR=$PWD/extra
 HOST=$(gcc -dumpmachine)
+CFLAGS=-w
 
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
@@ -101,6 +102,35 @@ then
 	$MAKE install-lib
 	popd
 	touch extra/build/gpac/buildOk 
+fi
+
+#-------------------------------------------------------------------------------
+# SDL2
+#-------------------------------------------------------------------------------
+
+if [ ! -f extra/src/sdl2/configure ] ;
+then
+	mkdir -p extra/src
+	rm -rf extra/src/sdl2
+	pushd extra/src
+	wget http://libsdl.org/release/SDL2-2.0.3.tar.gz
+	tar xvlf SDL2-2.0.3.tar.gz
+	mv "SDL2-2.0.3" sdl2
+	popd
+fi
+
+if [ ! -f extra/build/sdl2/buildOk ] ;
+then
+
+	mkdir -p extra/build/sdl2
+	pushd extra/build/sdl2
+	../../src/sdl2/configure \
+		--prefix=$EXTRA_DIR
+
+	$MAKE
+	$MAKE install
+	popd
+	touch extra/build/sdl2/buildOk
 fi
 
 echo "Done"
