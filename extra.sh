@@ -11,7 +11,8 @@ CFLAGS=-w
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
 if [ -z "$MAKE" ]; then
-	MAKE="make -j8"
+	CORES=$(nproc)
+	MAKE="make -j$CORES"
 fi
 
 #-------------------------------------------------------------------------------
