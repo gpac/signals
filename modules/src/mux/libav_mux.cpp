@@ -81,11 +81,11 @@ LibavMux::~LibavMux() {
 }
 
 void LibavMux::declareStream(std::shared_ptr<Stream> stream_) {
-  auto stream = std::dynamic_pointer_cast<StreamVideo>(stream_);
-  if (!stream) {
-    Log::msg(Log::Warning, "[GPACMuxMP4] Invalid stream declared.");
-    return;
-  }
+	auto stream = std::dynamic_pointer_cast<StreamVideo>(stream_);
+	if (!stream) {
+		Log::msg(Log::Warning, "[GPACMuxMP4] Invalid stream declared.");
+		return;
+	}
 	AVStream *avStream = avformat_new_stream(formatCtx, stream->codecCtx->codec);
 	if (!avStream) {
 		Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
