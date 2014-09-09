@@ -10,6 +10,8 @@
 #include "render/sdl_audio.hpp"
 #include "render/sdl_video.hpp"
 
+#include "pipeline.hpp"
+
 using namespace Tests;
 using namespace Modules;
 
@@ -26,28 +28,6 @@ Module* renderPin(Pin* pPin, int codec_type) {
 		return Out::Null::create();
 	}
 }
-
-class Pipeline {
-public:
-	void add(Module* module) {
-		modules.push_back(uptr(module));
-	}
-
-	void run() {
-		auto& sourceModule = modules[0];
-		while (sourceModule->process(nullptr)) {
-		}
-	}
-
-	~Pipeline() {
-		foreach(i, modules) {
-			(*i)->waitForCompletion();
-		}
-	}
-
-private:
-	std::vector<std::unique_ptr<Module>> modules;
-};
 }
 
 int safeMain(int argc, char const* argv[]) {
@@ -91,6 +71,7 @@ int main(int argc, char const* argv[]) {
 		return safeMain(argc, argv);
 	} catch(std::exception const& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
+		return 0;
 	}
 }
 
