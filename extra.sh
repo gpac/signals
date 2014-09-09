@@ -6,7 +6,7 @@
 set -e
 EXTRA_DIR=$PWD/extra
 HOST=$(gcc -dumpmachine)
-CFLAGS=-w
+export CFLAGS=-w
 
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
