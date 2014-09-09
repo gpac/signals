@@ -140,6 +140,7 @@ GPACMuxMP4::~GPACMuxMP4() {
 }
 
 void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
+#if 0
   GF_Err ret;
   u32 di, track;
   u8 bpsample;
@@ -264,6 +265,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
     Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(ret)));
     return -1;
   }
+#endif
 #endif
 }
 
