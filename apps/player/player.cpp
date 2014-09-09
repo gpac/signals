@@ -15,8 +15,23 @@
 using namespace Tests;
 using namespace Modules;
 
-namespace {
-Module* renderPin(Pin* pPin, int codec_type) {
+//-----------------------------------------------------------------------------
+
+struct Stream {
+	Stream(Module* from) : fromModule(from) {
+		pin = nullptr;
+	}
+	std::shared_ptr<Module> fromModule;
+	Pin* pin;
+
+	Stream(Stream const& s) = delete;
+	Stream(Stream&& s) = default;
+
+	// TO BE REMOVED
+	int codec_type; 
+};
+
+Module* createRenderer(int codec_type) {
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		return new Render::SDLVideo;
@@ -28,6 +43,45 @@ Module* renderPin(Pin* pPin, int codec_type) {
 		return Out::Null::create();
 	}
 }
+
+//-----------------------------------------------------------------------------
+
+std::vector<Stream> demux(std::string filename) {
+	std::vector<Stream> r;
+	auto demux = Demux::LibavDemux::create(filename);
+
+	for (size_t i = 0; i < demux->getNumPin(); ++i) {
+		Stream s(demux);
+		s.pin = demux->getPin(i);
+		r.push_back(std::move(s));
+	}
+
+	return r;
+}
+
+Stream decode(Stream& input) {
+	auto props = input.pin->getProps();
+	auto decoderProps = dynamic_cast<PropsDecoder*>(props);
+	ASSERT(decoderProps);
+
+	auto decoder = Decode::LibavDecode::create(*decoderProps);
+	Stream r(decoder);
+	r.pin = decoder->getPin(0);
+	r.codec_type = decoderProps->getAVCodecContext()->codec_type;
+	ConnectPin(input.pin, decoder->getInput());
+
+	return r;
+}
+
+Stream render(Stream& input) {
+	Stream r(createRenderer(input.codec_type));
+	ConnectPin(input.pin, r.fromModule->getInput());
+	return r;
+}
+
+Stream waitForCompletion(Stream& stream) {
+	stream.fromModule->waitForCompletion();
+	return Stream(nullptr);
 }
 
 int safeMain(int argc, char const* argv[]) {
@@ -37,31 +91,19 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto const inputFile = argv[1];
 
-	{
-		Pipeline pipeline;
+	// construct pipeline
+	auto es = demux(inputFile);
+	auto decodedStreams = apply(&decode, es);
+	auto renderedStreams = apply(&render, decodedStreams);
 
-		auto demux = Demux::LibavDemux::create(inputFile);
-		pipeline.add(demux);
-
-		for (size_t i = 0; i < demux->getNumPin(); ++i) {
-			auto props = demux->getPin(i)->getProps();
-			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-			ASSERT(decoderProps);
-
-			auto decoder = Decode::LibavDecode::create(*decoderProps);
-			pipeline.add(decoder);
-
-			ConnectPin(demux->getPin(i), decoder->getInput());
-
-			auto const codec_type = decoderProps->getAVCodecContext()->codec_type;
-			auto renderer = renderPin(decoder->getPin(0), codec_type);
-			pipeline.add(renderer);
-
-			ConnectPin(decoder->getPin(0), renderer->getInput());
-		}
-
-		pipeline.run();
+	// pump all data
+	auto srcModule = es[0].fromModule;
+	while (srcModule->process(nullptr)) {
 	}
+
+	apply(&waitForCompletion, renderedStreams);
+	apply(&waitForCompletion, decodedStreams);
+	apply(&waitForCompletion, es);
 
 	return 0;
 }
