@@ -17,19 +17,13 @@ namespace {
 Module* renderPin(Pin* pPin, int codec_type) {
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
-		auto r = uptr(new Render::SDLVideo);
-		ConnectPin(pPin, r->getInput());
-		return r.release();
+		return new Render::SDLVideo;
 	} else if (codec_type == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
-		auto r = uptr(Render::SDLAudio::create());
-		ConnectPin(pPin, r->getInput());
-		return r.release();
+		return Render::SDLAudio::create();
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
-		auto r = uptr(Out::Null::create());
-		ConnectPin(pPin, r->getInput());
-		return r.release();
+		return Out::Null::create();
 	}
 }
 
@@ -82,6 +76,8 @@ int safeMain(int argc, char const* argv[]) {
 			auto const codec_type = decoderProps->getAVCodecContext()->codec_type;
 			auto renderer = renderPin(decoder->getPin(0), codec_type);
 			pipeline.add(renderer);
+
+			ConnectPin(decoder->getPin(0), renderer->getInput());
 		}
 
 		pipeline.run();
