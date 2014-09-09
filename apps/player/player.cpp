@@ -13,8 +13,7 @@
 using namespace Tests;
 using namespace Modules;
 
-std::unique_ptr<Module> renderPin(Pin* pPin, PropsDecoder* decoderProps) {
-	auto const codec_type = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
+std::unique_ptr<Module> renderPin(Pin* pPin, int codec_type) {
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		auto r = uptr(new Render::SDLVideo);
@@ -53,7 +52,8 @@ int safeMain(int argc, char const* argv[]) {
 			auto decoder = uptr(Decode::LibavDecode::create(*decoderProps));
 			ConnectPin(demux->getPin(i), decoder.get(), &Decode::LibavDecode::process);
 
-			auto renderer = renderPin(decoder->getPin(0), decoderProps);
+			auto const codec_type = decoderProps->getAVCodecContext()->codec_type;
+			auto renderer = renderPin(decoder->getPin(0), codec_type);
 
 			modules.push_back(std::move(decoder));
 			modules.push_back(std::move(renderer));
