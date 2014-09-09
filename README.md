@@ -9,3 +9,18 @@ $ ./extra.sh
 
 Build:
 $ make
+
+MSYS2:
+64 bits:
+$ export PATH=/mingw64/bin:$PATH
+$ export MSYSTEM=MINGW32
+$ export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig
+
+32 bits:
+$ export PATH=/mingw32/bin:$PATH
+$ export MSYSTEM=MINGW32
+$ export PKG_CONFIG_PATH=/mingw32/lib/pkgconfig
+
+Visual Studio:
+Get the dependency repository from https://github.com/rbouqueau/signals-deps.git
+Copy paste the Signals folder on the batch
