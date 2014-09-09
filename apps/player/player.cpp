@@ -18,17 +18,17 @@ Module* renderPin(Pin* pPin, int codec_type) {
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		auto r = uptr(new Render::SDLVideo);
-		ConnectPin(pPin, r.get(), &Render::SDLVideo::process);
+		ConnectPin(pPin, r->getInput());
 		return r.release();
 	} else if (codec_type == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
 		auto r = uptr(Render::SDLAudio::create());
-		ConnectPin(pPin, r.get(), &Render::SDLAudio::process);
+		ConnectPin(pPin, r->getInput());
 		return r.release();
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
 		auto r = uptr(Out::Null::create());
-		ConnectPin(pPin, r.get(), &Out::Null::process);
+		ConnectPin(pPin, r->getInput());
 		return r.release();
 	}
 }
@@ -77,7 +77,7 @@ int safeMain(int argc, char const* argv[]) {
 			auto decoder = Decode::LibavDecode::create(*decoderProps);
 			pipeline.add(decoder);
 
-			ConnectPin(demux->getPin(i), decoder, &Decode::LibavDecode::process);
+			ConnectPin(demux->getPin(i), decoder->getInput());
 
 			auto const codec_type = decoderProps->getAVCodecContext()->codec_type;
 			auto renderer = renderPin(decoder->getPin(0), codec_type);
