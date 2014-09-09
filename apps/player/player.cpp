@@ -14,24 +14,46 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-std::unique_ptr<Module> renderPin(Pin* pPin, int codec_type) {
+Module* renderPin(Pin* pPin, int codec_type) {
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		auto r = uptr(new Render::SDLVideo);
 		ConnectPin(pPin, r.get(), &Render::SDLVideo::process);
-		return std::move(r);
+		return r.release();
 	} else if (codec_type == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
 		auto r = uptr(Render::SDLAudio::create());
 		ConnectPin(pPin, r.get(), &Render::SDLAudio::process);
-		return std::move(r);
+		return r.release();
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
 		auto r = uptr(Out::Null::create());
 		ConnectPin(pPin, r.get(), &Out::Null::process);
-		return std::move(r);
+		return r.release();
 	}
 }
+
+class Pipeline {
+public:
+	void add(Module* module) {
+		modules.push_back(uptr(module));
+	}
+
+	void run() {
+		auto& sourceModule = modules[0];
+		while (sourceModule->process(nullptr)) {
+		}
+	}
+
+	~Pipeline() {
+		foreach(i, modules) {
+			(*i)->waitForCompletion();
+		}
+	}
+
+private:
+	std::vector<std::unique_ptr<Module>> modules;
+};
 }
 
 int safeMain(int argc, char const* argv[]) {
@@ -41,32 +63,28 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto const inputFile = argv[1];
 
-	std::list<std::unique_ptr<Module>> modules;
-
 	{
-		auto demux = uptr(Demux::LibavDemux::create(inputFile));
+		Pipeline pipeline;
+
+		auto demux = Demux::LibavDemux::create(inputFile);
+		pipeline.add(demux);
 
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
 			auto props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 
-			auto decoder = uptr(Decode::LibavDecode::create(*decoderProps));
-			ConnectPin(demux->getPin(i), decoder.get(), &Decode::LibavDecode::process);
+			auto decoder = Decode::LibavDecode::create(*decoderProps);
+			pipeline.add(decoder);
+
+			ConnectPin(demux->getPin(i), decoder, &Decode::LibavDecode::process);
 
 			auto const codec_type = decoderProps->getAVCodecContext()->codec_type;
 			auto renderer = renderPin(decoder->getPin(0), codec_type);
-
-			modules.push_back(std::move(decoder));
-			modules.push_back(std::move(renderer));
+			pipeline.add(renderer);
 		}
 
-		while (demux->process(nullptr)) {
-		}
-
-		foreach(i, modules) {
-			(*i)->waitForCompletion();
-		}
+		pipeline.run();
 	}
 
 	return 0;
