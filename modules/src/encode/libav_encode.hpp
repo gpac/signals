@@ -31,7 +31,7 @@ public:
 	static bool canHandle(const std::string &url);
 
 	void sendOutputPinsInfo(); //FIXME: temporary until modules have a manager
-	Signal<void(std::shared_ptr<StreamVideo>)> declareStream; //FIXME: temporary until modules have a type 'mux'
+	Signal<void(std::shared_ptr<Stream>)> declareStream; //FIXME: temporary until modules have a type 'mux'
 
 private:
 	LibavEncode(Type type);

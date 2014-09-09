@@ -139,70 +139,208 @@ GPACMuxMP4::~GPACMuxMP4() {
 	}
 }
 
-void GPACMuxMP4::declareStream(std::shared_ptr<StreamVideo> stream) {
-	GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
-	if (!avccfg) {
-		Log::msg(Log::Warning, "Cannot create AVCConfig");
-		throw std::runtime_error("Container format import failed");
-	}
+void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
+  GF_Err ret;
+  u32 di, track;
+  u8 bpsample;
+  GF_ESD *esd;
+#ifndef GPAC_DISABLE_AV_PARSERS
+  GF_M4ADecSpecInfo acfg;
+#endif
+  AVCodecContext *audio_codec_ctx = audio_output_file->codec_ctx;
 
-	GF_Err e = avc_import_ffextradata(stream->extradata, stream->extradataSize, avccfg);
-	if (e) {
-		Log::msg(Log::Warning, "Cannot parse H264 SPS/PPS");
-		gf_odf_avc_cfg_del(avccfg);
-		throw std::runtime_error("Container format import failed");
-	}
+  audio_output_file->isof = gf_isom_open(filename, GF_ISOM_OPEN_WRITE, NULL);
+  if (!audio_output_file->isof) {
+    Log::msg(Log::Warning, "Cannot open iso file %s\n", filename));
+    return -1;
+  }
 
-	u32 trackNum = gf_isom_new_track(file, 0, GF_ISOM_MEDIA_VISUAL, stream->timeScale);
-	if (!trackNum) {
-		Log::msg(Log::Warning, "Cannot create new track");
-		throw std::runtime_error("Cannot create new track");
-	}
+  esd = gf_odf_desc_esd_new(2);
+  if (!esd) {
+    Log::msg(Log::Warning, "Cannot create GF_ESD\n"));
+    return -1;
+  }
 
-	trackId = gf_isom_get_track_id(file, trackNum);
+  esd->decoderConfig = (GF_DecoderConfig *)gf_odf_desc_new(GF_ODF_DCD_TAG);
+  esd->slConfig = (GF_SLConfig *)gf_odf_desc_new(GF_ODF_SLC_TAG);
+  esd->decoderConfig->streamType = GF_STREAM_AUDIO;
+  if (!strcmp(audio_output_file->codec_ctx->codec->name, "aac")) { //TODO: find an automatic table
+    esd->decoderConfig->objectTypeIndication = GPAC_OTI_AUDIO_AAC_MPEG2_LCP;
+    esd->decoderConfig->bufferSizeDB = 20;
+    esd->slConfig->timestampResolution = audio_codec_ctx->sample_rate;
+    esd->decoderConfig->decoderSpecificInfo = (GF_DefaultDescriptor *)gf_odf_desc_new(GF_ODF_DSI_TAG);
+    esd->ESID = 1;
 
-	e = gf_isom_set_track_enabled(file, trackNum, GF_TRUE);
-	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled", gf_error_to_string(e));
-		throw std::runtime_error("Cannot enable track");
-	}
+#ifndef GPAC_DISABLE_AV_PARSERS
+    memset(&acfg, 0, sizeof(GF_M4ADecSpecInfo));
+    acfg.base_object_type = GF_M4A_AAC_LC;
+    acfg.base_sr = audio_codec_ctx->sample_rate;
+    acfg.nb_chan = audio_codec_ctx->channels;
+    acfg.sbr_object_type = 0;
+    acfg.audioPL = gf_m4a_get_profile(&acfg);
 
-	u32 di;
-	e = gf_isom_avc_config_new(file, trackNum, avccfg, NULL, NULL, &di);
-	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
-		throw std::runtime_error("Cannot create AVC config");
-	}
+    ret = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
+    assert(ret == GF_OK);
+#endif
+  } else {
+    if (strcmp(audio_output_file->codec_ctx->codec->name, "mp2")) {
+      Log::msg(Log::Warning, "Unlisted codec, setting GPAC_OTI_AUDIO_MPEG1 descriptor.\n"));
+    }
+    esd->decoderConfig->objectTypeIndication = GPAC_OTI_AUDIO_MPEG1;
+    esd->decoderConfig->bufferSizeDB = 20;
+    esd->slConfig->timestampResolution = audio_codec_ctx->sample_rate;
+    esd->decoderConfig->decoderSpecificInfo = (GF_DefaultDescriptor *)gf_odf_desc_new(GF_ODF_DSI_TAG);
+    esd->ESID = 1;
 
-	gf_odf_avc_cfg_del(avccfg);
+#ifndef GPAC_DISABLE_AV_PARSERS
+    memset(&acfg, 0, sizeof(GF_M4ADecSpecInfo));
+    acfg.base_object_type = GF_M4A_LAYER2;
+    acfg.base_sr = audio_codec_ctx->sample_rate;
+    acfg.nb_chan = audio_codec_ctx->channels;
+    acfg.sbr_object_type = 0;
+    acfg.audioPL = gf_m4a_get_profile(&acfg);
 
-	gf_isom_set_visual_info(file, trackNum, di, stream->width, stream->height);
-	gf_isom_set_sync_table(file, trackNum);
+    ret = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
+    assert(ret == GF_OK);
+#endif
+  }
 
-	//inband SPS/PPS
+  //gf_isom_store_movie_config(video_output_file->isof, 0);
+  track = gf_isom_new_track(audio_output_file->isof, esd->ESID, GF_ISOM_MEDIA_AUDIO, audio_codec_ctx->sample_rate);
+  Log::msg(Log::Warning, "TimeScale: %d \n", audio_codec_ctx->time_base.den));
+  if (!track) {
+    Log::msg(Log::Warning, "Cannot create new track\n"));
+    return -1;
+  }
+
+  ret = gf_isom_set_track_enabled(audio_output_file->isof, track, 1);
+  if (ret != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled\n", gf_error_to_string(ret)));
+    return -1;
+  }
+
+  //	if (!esd->ESID) esd->ESID = gf_isom_get_track_id(audio_output_file->isof, track);
+
+  ret = gf_isom_new_mpeg4_description(audio_output_file->isof, track, esd, NULL, NULL, &di);
+  if (ret != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_new_mpeg4_description\n", gf_error_to_string(ret)));
+    return -1;
+  }
+
+  gf_odf_desc_del((GF_Descriptor *)esd);
+  esd = NULL;
+
+  bpsample = av_get_bytes_per_sample(audio_output_file->codec_ctx->sample_fmt) * 8;
+
+  ret = gf_isom_set_audio_info(audio_output_file->isof, track, di, audio_codec_ctx->sample_rate, audio_output_file->codec_ctx->channels, bpsample);
+  if (ret != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_set_audio_info\n", gf_error_to_string(ret)));
+    return -1;
+  }
+
+#ifndef GPAC_DISABLE_AV_PARSERS
+  ret = gf_isom_set_pl_indication(audio_output_file->isof, GF_ISOM_PL_AUDIO, acfg.audioPL);
+  if (ret != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_set_pl_indication\n", gf_error_to_string(ret)));
+    return -1;
+  }
+#endif
+
+  Log::msg(Log::Warning, "time scale: %d  sample dur: %d \n", audio_codec_ctx->time_base.den, audio_output_file->codec_ctx->frame_size));
+
+#if USE_SEGMENTS
+  ret = gf_isom_setup_track_fragment(audio_output_file->isof, track, 1, audio_output_file->codec_ctx->frame_size, 0, 0, 0, 0);
+  if (ret != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_setutrack_fragment\n", gf_error_to_string(ret)));
+    return -1;
+  }
+#endif
+
+  //gf_isom_add_track_to_root_od(video_output_file->isof,1);
+
+#if USE_SEGMENTS
+  ret = gf_isom_finalize_for_fragment(audio_output_file->isof, 1);
+  if (ret != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(ret)));
+    return -1;
+  }
+#endif
+}
+
+void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
+  GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
+  if (!avccfg) {
+    Log::msg(Log::Warning, "Cannot create AVCConfig");
+    throw std::runtime_error("Container format import failed");
+  }
+
+  GF_Err e = avc_import_ffextradata(stream->extradata, stream->extradataSize, avccfg);
+  if (e) {
+    Log::msg(Log::Warning, "Cannot parse H264 SPS/PPS");
+    gf_odf_avc_cfg_del(avccfg);
+    throw std::runtime_error("Container format import failed");
+  }
+
+  u32 trackNum = gf_isom_new_track(file, 0, GF_ISOM_MEDIA_VISUAL, stream->timeScale);
+  if (!trackNum) {
+    Log::msg(Log::Warning, "Cannot create new track");
+    throw std::runtime_error("Cannot create new track");
+  }
+
+  trackId = gf_isom_get_track_id(file, trackNum);
+
+  e = gf_isom_set_track_enabled(file, trackNum, GF_TRUE);
+  if (e != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled", gf_error_to_string(e));
+    throw std::runtime_error("Cannot enable track");
+  }
+
+  u32 di;
+  e = gf_isom_avc_config_new(file, trackNum, avccfg, NULL, NULL, &di);
+  if (e != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
+    throw std::runtime_error("Cannot create AVC config");
+  }
+
+  gf_odf_avc_cfg_del(avccfg);
+
+  gf_isom_set_visual_info(file, trackNum, di, stream->width, stream->height);
+  gf_isom_set_sync_table(file, trackNum);
+
+  //inband SPS/PPS
 #if 0
-	if (video_output_file->muxer_type == GPAC_INIT_VIDEO_MUXER_AVC3) {
-		e = gf_isom_avc_set_inband_config(file, trackNum, 1);
-		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
-			throw std::runtime_error("Cannot set inband PPS/SPS for AVC track");
-		}
-	}
+  if (video_output_file->muxer_type == GPAC_INIT_VIDEO_MUXER_AVC3) {
+    e = gf_isom_avc_set_inband_config(file, trackNum, 1);
+    if (e != GF_OK) {
+      Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
+      throw std::runtime_error("Cannot set inband PPS/SPS for AVC track");
+    }
+  }
 #endif
 
 #if USE_SEGMENTS
-	e = gf_isom_setup_track_fragment(file, trackId, 1, 1, 0, 0, 0, 0);
-	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_setutrack_fragment", gf_error_to_string(e));
-		throw std::runtime_error("Cannot setup track as fragmented");
-	}
+  e = gf_isom_setup_track_fragment(file, trackId, 1, 1, 0, 0, 0, 0);
+  if (e != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_setutrack_fragment", gf_error_to_string(e));
+    throw std::runtime_error("Cannot setup track as fragmented");
+  }
 
-	e = gf_isom_finalize_for_fragment(file, 0/*no segment*/);
-	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-		throw std::runtime_error("Cannot prepare track for movie fragmentation");
-	}
+  e = gf_isom_finalize_for_fragment(file, 0/*no segment*/);
+  if (e != GF_OK) {
+    Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
+    throw std::runtime_error("Cannot prepare track for movie fragmentation");
+  }
 #endif
+}
+
+void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
+  if (std::dynamic_pointer_cast<StreamVideo>(stream)) {
+    declareStreamVideo(std::dynamic_pointer_cast<StreamVideo>(stream));
+  } else if (std::dynamic_pointer_cast<StreamAudio>(stream)) {
+    declareStreamAudio(std::dynamic_pointer_cast<StreamAudio>(stream));
+  } else {
+    Log::msg(Log::Warning, "[GPACMuxMP4] Invalid stream declared. Ignoring.");
+  }
 }
 
 bool GPACMuxMP4::process(std::shared_ptr<Data> data) {

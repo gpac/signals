@@ -23,10 +23,12 @@ public:
 	bool handles(const std::string &url);
 	static bool canHandle(const std::string &url);
 
-	void declareStream(std::shared_ptr<StreamVideo> stream);
+	void declareStream(std::shared_ptr<Stream> stream);
 
 private:
-	GPACMuxMP4(GF_ISOFile *file);
+  GPACMuxMP4(GF_ISOFile *file);
+  void declareStreamVideo(std::shared_ptr<StreamVideo> stream);
+  void declareStreamAudio(std::shared_ptr<StreamAudio> stream);
 	GF_ISOFile *file;
 	uint32_t m_Dts;
 	uint32_t trackId;

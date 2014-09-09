@@ -4,7 +4,13 @@
 
 struct AVCodecContext;
 
-typedef struct {
+class Stream {
+public:
+  virtual ~Stream() {};
+};
+
+class StreamVideo : public Stream {
+public:
 	uint32_t width;
 	uint32_t height;
 	uint32_t timeScale;
@@ -12,4 +18,8 @@ typedef struct {
 	uint64_t extradataSize;
 
 	AVCodecContext *codecCtx; //FIXME: legacy from libav
-} StreamVideo;
+};
+
+class StreamAudio : public Stream {
+};
+

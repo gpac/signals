@@ -193,15 +193,23 @@ LibavEncode::~LibavEncode() {
 }
 
 void LibavEncode::sendOutputPinsInfo() {
-	std::shared_ptr<StreamVideo> videoStream(new StreamVideo);
-	videoStream->width = codecCtx->width;
-	videoStream->height = codecCtx->height;
-	videoStream->timeScale = codecCtx->time_base.den / codecCtx->time_base.num;
-	assert(codecCtx->time_base.num == 1); //FIXME
-	videoStream->extradata = codecCtx->extradata;
-	videoStream->extradataSize = codecCtx->extradata_size;
-	videoStream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-	declareStream.emit(videoStream);
+  assert(signals.size() == 1); //FIXME: tested with 1 output pin only
+  if (codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
+    std::shared_ptr<StreamVideo> stream(new StreamVideo);
+    stream->width = codecCtx->width;
+    stream->height = codecCtx->height;
+    stream->timeScale = codecCtx->time_base.den / codecCtx->time_base.num;
+    assert(codecCtx->time_base.num == 1); //FIXME
+    stream->extradata = codecCtx->extradata;
+    stream->extradataSize = codecCtx->extradata_size;
+    stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
+    declareStream.emit(stream);
+  } else if (codecCtx->codec_type == AVMEDIA_TYPE_AUDIO) {
+    std::shared_ptr<StreamAudio> stream(new StreamAudio);
+    declareStream.emit(stream);
+  } else {
+    assert(0); //TODO test with anythng esle than audio and video
+  }
 }
 
 bool LibavEncode::processAudio(std::shared_ptr<Data> data) {

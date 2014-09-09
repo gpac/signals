@@ -13,6 +13,7 @@
 using namespace Tests;
 using namespace Modules;
 
+namespace {
 std::unique_ptr<Module> renderPin(Pin* pPin, int codec_type) {
 	if (codec_type == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
@@ -30,6 +31,7 @@ std::unique_ptr<Module> renderPin(Pin* pPin, int codec_type) {
 		ConnectPin(pPin, r.get(), &Out::Null::process);
 		return std::move(r);
 	}
+}
 }
 
 int safeMain(int argc, char const* argv[]) {
