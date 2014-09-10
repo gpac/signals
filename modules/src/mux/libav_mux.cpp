@@ -65,18 +65,18 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 }
 
 LibavMux::LibavMux(struct AVFormatContext *formatCtx)
-	: formatCtx(formatCtx), headerWritten(false) {
+	: m_formatCtx(formatCtx), m_headerWritten(false) {
 }
 
 LibavMux::~LibavMux() {
-	if (formatCtx) {
-		av_write_trailer(formatCtx); //write the trailer if any
+	if (m_formatCtx) {
+		av_write_trailer(m_formatCtx); //write the trailer if any
 	}
-	if (formatCtx && !(formatCtx->flags & AVFMT_NOFILE)) {
-		avio_close(formatCtx->pb); //close output file
+	if (m_formatCtx && !(m_formatCtx->flags & AVFMT_NOFILE)) {
+		avio_close(m_formatCtx->pb); //close output file
 	}
-	if (formatCtx) {
-		avformat_free_context(formatCtx);
+	if (m_formatCtx) {
+		avformat_free_context(m_formatCtx);
 	}
 }
 
@@ -86,32 +86,32 @@ void LibavMux::declareStream(std::shared_ptr<Stream> stream_) {
 		Log::msg(Log::Warning, "[GPACMuxMP4] Invalid stream declared.");
 		return;
 	}
-	AVStream *avStream = avformat_new_stream(formatCtx, stream->codecCtx->codec);
+	AVStream *avStream = avformat_new_stream(m_formatCtx, stream->codecCtx->codec);
 	if (!avStream) {
 		Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
 		throw std::runtime_error("Stream creation failed.");
 	}
 	if (stream->codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
-		formatCtx->streams[0]->codec->time_base = stream->codecCtx->time_base; //FIXME: [0]: not a mux yet...
-		formatCtx->streams[0]->codec->width = stream->codecCtx->width;
-		formatCtx->streams[0]->codec->height = stream->codecCtx->height;
+		m_formatCtx->streams[0]->codec->time_base = stream->codecCtx->time_base; //FIXME: [0]: not a mux yet...
+		m_formatCtx->streams[0]->codec->width = stream->codecCtx->width;
+		m_formatCtx->streams[0]->codec->height = stream->codecCtx->height;
 	}
-	if (formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
-		formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+	if (m_formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
+		m_formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
 	}
 }
 
 void LibavMux::ensureHeader() {
-	if (!headerWritten) {
-		if (avformat_write_header(formatCtx, NULL) != 0) {
+	if (!m_headerWritten) {
+		if (avformat_write_header(m_formatCtx, NULL) != 0) {
 			Log::msg(Log::Warning, "[libav_mux] fatal error: can't write the container header");
-			for (unsigned i = 0; i < formatCtx->nb_streams; i++) {
-				if (formatCtx->streams[i]->codec && formatCtx->streams[i]->codec->codec) {
-					Log::msg(Log::Debug, "[libav_mux] codec[%u] is \"%s\" (%s)", i, formatCtx->streams[i]->codec->codec->name, formatCtx->streams[i]->codec->codec->long_name);
+			for (unsigned i = 0; i < m_formatCtx->nb_streams; i++) {
+				if (m_formatCtx->streams[i]->codec && m_formatCtx->streams[i]->codec->codec) {
+					Log::msg(Log::Debug, "[libav_mux] codec[%u] is \"%s\" (%s)", i, m_formatCtx->streams[i]->codec->codec->name, m_formatCtx->streams[i]->codec->codec->long_name);
 				}
 			}
 		} else {
-			headerWritten = true;
+			m_headerWritten = true;
 		}
 	}
 }
@@ -127,14 +127,14 @@ bool LibavMux::process(std::shared_ptr<Data> data) {
 
 	/* Timestamps */
 	assert(pkt->pts != (int64_t)AV_NOPTS_VALUE);
-	AVStream *avStream = formatCtx->streams[0]; //FIXME: fixed '0' for stream num: this is not a mux yet ;)
+	AVStream *avStream = m_formatCtx->streams[0]; //FIXME: fixed '0' for stream num: this is not a mux yet ;)
 	pkt->dts = av_rescale_q(pkt->dts, avStream->codec->time_base, avStream->time_base);
 	pkt->pts = av_rescale_q(pkt->pts, avStream->codec->time_base, avStream->time_base);
 	pkt->duration = (int)av_rescale_q(pkt->duration, avStream->codec->time_base, avStream->time_base);
 
 	/* write the compressed frame to the container output file */
 	pkt->stream_index = avStream->index;
-	if (av_interleaved_write_frame(formatCtx, pkt) != 0) {
+	if (av_interleaved_write_frame(m_formatCtx, pkt) != 0) {
 		Log::msg(Log::Warning, "[libav_mux] can't write video frame.");
 		return false;
 	}

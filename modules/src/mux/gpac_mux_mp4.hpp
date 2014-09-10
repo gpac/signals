@@ -29,9 +29,9 @@ private:
 	GPACMuxMP4(GF_ISOFile *file);
 	void declareStreamVideo(std::shared_ptr<StreamVideo> stream);
 	void declareStreamAudio(std::shared_ptr<StreamAudio> stream);
-	GF_ISOFile *file;
+	GF_ISOFile *m_file;
 	uint64_t m_Dts;
-	uint32_t trackId;
+	uint32_t m_trackId;
 };
 
 }

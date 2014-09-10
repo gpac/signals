@@ -25,8 +25,8 @@ private:
 	LibavMux(struct AVFormatContext *formatCtx);
 	void ensureHeader();
 
-	struct AVFormatContext *formatCtx;
-	bool headerWritten;
+	struct AVFormatContext *m_formatCtx;
+	bool m_headerWritten;
 };
 
 }
