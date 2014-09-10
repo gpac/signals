@@ -30,7 +30,7 @@ private:
 	void declareStreamVideo(std::shared_ptr<StreamVideo> stream);
 	void declareStreamAudio(std::shared_ptr<StreamAudio> stream);
 	GF_ISOFile *file;
-	uint32_t m_Dts;
+	uint64_t m_Dts;
 	uint32_t trackId;
 };
 
