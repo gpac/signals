@@ -94,6 +94,10 @@ ProjectName:=apps/player
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
+ProjectName:=apps/dashcastx
+include $(ProjectName)/project.mk
+CFLAGS+=-I$(ProjectName)
+
 #------------------------------------------------------------------------------
 
 targets: $(TARGETS)
