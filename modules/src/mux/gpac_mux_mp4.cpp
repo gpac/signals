@@ -389,7 +389,7 @@ TODO: missing open segment
 	}
 #endif
 
-	m_Dts += 1024; /*FIXME: hardcoded*/ //= gf_isom_get_sample_dts(file, trackId, gf_isom_get_sample_count(file, trackId)); //Romain: I have the feeling we mix up trackNumber and IDs.
+	m_Dts += (data->getDuration() * gf_isom_get_media_timescale(file, trackId)) / IClock::Rate;
 
 	if (sampleDataMustBeDeleted) {
 		gf_free(sample.data);

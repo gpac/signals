@@ -1,5 +1,7 @@
 #pragma once
 
+#include "clock.hpp"
+
 #include <cstdint>
 #include <vector>
 #include <stdlib.h>
@@ -46,9 +48,22 @@ public:
 		return m_TimeIn180k;
 	}
 
+	void setDuration(uint64_t DurationIn180k) {
+		m_DurationIn180k = DurationIn180k;
+	}
+
+	void setDuration(uint64_t DurationInTimescale, uint64_t timescale) {
+		m_DurationIn180k = (DurationInTimescale * IClock::Rate + timescale / 2) / timescale;
+	}
+
+	uint64_t getDuration() const {
+		return m_DurationIn180k;
+	}
+
 private:
 	std::vector<uint8_t> ptr;
 	uint64_t m_TimeIn180k;
+	uint64_t m_DurationIn180k;
 };
 
 static const int VIDEO_WIDTH = 720;
