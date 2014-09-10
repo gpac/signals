@@ -38,6 +38,8 @@ private:
 	bool processAudio(std::shared_ptr<Data> data);
 	bool processVideo(std::shared_ptr<Data> data);
 
+	std::string getCodecName() const;
+
 	AVCodecContext *codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;
 	int frameNum;
