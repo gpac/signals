@@ -45,29 +45,29 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 }
 
 LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
-	: Module(new PinLibavFactory), formatCtx(formatCtx) {
+	: Module(new PinLibavFactory), m_formatCtx(formatCtx) {
 	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
 		signals.push_back(uptr(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec))));
 	}
 }
 
 LibavDemux::~LibavDemux() {
-	avformat_close_input(&formatCtx);
+	avformat_close_input(&m_formatCtx);
 }
 
 bool LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0/*FIXME: pkt->stream_index*/]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
-	int status = av_read_frame(formatCtx, pkt);
+	int status = av_read_frame(m_formatCtx, pkt);
 	if (status < 0) {
-		if (status == (int)AVERROR_EOF || (formatCtx->pb && formatCtx->pb->eof_reached)) {
-		} else if (formatCtx->pb && formatCtx->pb->error) {
+		if (status == (int)AVERROR_EOF || (m_formatCtx->pb && m_formatCtx->pb->eof_reached)) {
+		} else if (m_formatCtx->pb && m_formatCtx->pb->error) {
 			Log::msg(Log::Warning, "[Libavcodec_55] Stream contains an irrecoverable error - leaving");
 		}
 		return false;
 	}
 
-	auto const base = formatCtx->streams[pkt->stream_index]->time_base;
+	auto const base = m_formatCtx->streams[pkt->stream_index]->time_base;
 	auto const time = pkt->pts * base.num * IClock::Rate / base.den;
 	out->setTime(time);
 	signals[pkt->stream_index]->emit(out);

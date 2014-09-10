@@ -21,7 +21,7 @@ public:
 private:
 	LibavDemux(struct AVFormatContext *formatCtx);
 
-	struct AVFormatContext *formatCtx;
+	struct AVFormatContext *m_formatCtx;
 };
 
 }

@@ -10,7 +10,7 @@ namespace Modules {
 
 class IModule {
 public:
-	virtual ~IModule() {};
+	virtual ~IModule() noexcept(false) {};
 
 	virtual bool process(std::shared_ptr<Data> data) = 0;
 	virtual bool handles(const std::string &url) = 0;
