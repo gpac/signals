@@ -250,6 +250,7 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	}
 	if (gotPkt) {
 		pkt->pts = pkt->dts = avFrame->get()->pts * pkt->duration;
+		out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 		assert(pkt->size);
 		signals[0]->emit(out);
 	}
@@ -272,6 +273,10 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	} else {
 		if (gotPkt) {
 			assert(pkt->size);
+			if (pkt->duration <= 0) {
+				pkt->duration = codecCtx->time_base.num;
+			}
+			out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 			signals[0]->emit(out);
 		}
 	}
