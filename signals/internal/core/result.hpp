@@ -7,6 +7,7 @@
 namespace Signals {
 
 class IResult {
+	virtual ~IResult();
 };
 
 
@@ -100,7 +101,7 @@ public:
 
 /**
  * A class which gets a copy from the last result. We don't want a shared_ptr to result in somes cases,
- * because emit() (which reset results) an results() are called in different threads. Thus would
+ * because emit() (which reset results) and results() are called in different threads. Thus would
  * require an external lock to protect the result.
  */
 template<typename ResultType>
