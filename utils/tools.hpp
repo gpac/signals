@@ -62,7 +62,7 @@ template<typename Lambda, typename T>
 std::vector<T> apply(Lambda func, std::vector<T>& input) {
 	std::vector<T> r;
 	foreach(element, input)
-		r.push_back(func(*element));
+	r.push_back(func(*element));
 	return r;
 }
 
