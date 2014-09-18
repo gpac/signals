@@ -7,6 +7,7 @@
 namespace Signals {
 
 class IResult {
+public:
 	virtual ~IResult() {
 	}
 };
