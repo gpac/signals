@@ -109,6 +109,188 @@ static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSiz
 	gf_bs_del(bs);
 	return GF_OK;
 }
+
+/**
+* A function which takes FFmpeg H265 extradata (SPS/PPS) and bring them ready to be pushed to the MP4 muxer.
+* @param extradata
+* @param extradata_size
+* @param dstcfg
+* @returns GF_OK is the extradata was parsed and is valid, other values otherwise.
+*/
+static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_size, GF_HEVCConfig *dst_cfg) {
+	HEVCState hevc;
+	GF_HEVCParamArray *vpss = NULL, *spss = NULL, *ppss = NULL;
+	GF_BitStream *bs;
+	char *buffer = NULL;
+	u32 buffer_size = 0;
+	if (!extradata || (extradata_size < sizeof(u32)))
+		return GF_BAD_PARAM;
+	bs = gf_bs_new((const char*)extradata, extradata_size, GF_BITSTREAM_READ);
+	if (!bs)
+		return GF_BAD_PARAM;
+
+	memset(&hevc, 0, sizeof(HEVCState));
+	hevc.sps_active_idx = -1;
+
+	while (gf_bs_available(bs)) {
+		s32 idx;
+		GF_AVCConfigSlot *slc;
+		u8 nal_unit_type, temporal_id, layer_id;
+		u64 nal_start;
+		u32 nal_size;
+
+		if (gf_bs_read_u32(bs) != 0x00000001) {
+			gf_bs_del(bs);
+			return GF_BAD_PARAM;
+		}
+		nal_start = gf_bs_get_position(bs);
+		nal_size = gf_media_nalu_next_start_code_bs(bs);
+		if (nal_start + nal_size > extradata_size) {
+			gf_bs_del(bs);
+			return GF_BAD_PARAM;
+		}
+
+		if (nal_size > buffer_size) {
+			buffer = (char*)gf_realloc(buffer, nal_size);
+			buffer_size = nal_size;
+		}
+		gf_bs_read_data(bs, buffer, nal_size);
+		gf_bs_seek(bs, nal_start);
+
+		gf_media_hevc_parse_nalu(bs, &hevc, &nal_unit_type, &temporal_id, &layer_id);
+		if (layer_id) {
+			gf_bs_del(bs);
+			gf_free(buffer);
+			return GF_BAD_PARAM;
+		}
+
+		switch (nal_unit_type) {
+		case GF_HEVC_NALU_VID_PARAM:
+			idx = gf_media_hevc_read_vps(buffer, nal_size, &hevc);
+			if (idx < 0) {
+				gf_bs_del(bs);
+				gf_free(buffer);
+				return GF_BAD_PARAM;
+			}
+
+			assert(hevc.vps[idx].state == 1); //we don't expect multiple VPS
+			if (hevc.vps[idx].state == 1) {
+				hevc.vps[idx].state = 2;
+				hevc.vps[idx].crc = gf_crc_32(buffer, nal_size);
+
+				dst_cfg->avgFrameRate = hevc.vps[idx].rates[0].avg_pic_rate;
+				dst_cfg->constantFrameRate = hevc.vps[idx].rates[0].constand_pic_rate_idc;
+				//Romain: update GPAC for Signals: dst_cfg->numTemporalLayers = hevc.vps[idx].max_sub_layers;
+				dst_cfg->temporalIdNested = hevc.vps[idx].temporal_id_nesting;
+
+				if (!vpss) {
+					GF_SAFEALLOC(vpss, GF_HEVCParamArray);
+					vpss->nalus = gf_list_new();
+					gf_list_add(dst_cfg->param_array, vpss);
+					vpss->array_completeness = 1;
+					vpss->type = GF_HEVC_NALU_VID_PARAM;
+				}
+
+				slc = (GF_AVCConfigSlot*)gf_malloc(sizeof(GF_AVCConfigSlot));
+				slc->size = nal_size;
+				slc->id = idx;
+				slc->data = (char*)gf_malloc(sizeof(char)*slc->size);
+				memcpy(slc->data, buffer, sizeof(char)*slc->size);
+
+				gf_list_add(vpss->nalus, slc);
+			}
+			break;
+		case GF_HEVC_NALU_SEQ_PARAM:
+			idx = gf_media_hevc_read_sps(buffer, nal_size, &hevc);
+			if (idx < 0) {
+				gf_bs_del(bs);
+				gf_free(buffer);
+				return GF_BAD_PARAM;
+			}
+
+			assert(!(hevc.sps[idx].state & AVC_SPS_DECLARED)); //we don't expect multiple SPS
+			if ((hevc.sps[idx].state & AVC_SPS_PARSED) && !(hevc.sps[idx].state & AVC_SPS_DECLARED)) {
+				hevc.sps[idx].state |= AVC_SPS_DECLARED;
+				hevc.sps[idx].crc = gf_crc_32(buffer, nal_size);
+			}
+
+			dst_cfg->configurationVersion = 1;
+			dst_cfg->profile_space = hevc.sps[idx].ptl.profile_space;
+			dst_cfg->tier_flag = hevc.sps[idx].ptl.tier_flag;
+			dst_cfg->profile_idc = hevc.sps[idx].ptl.profile_idc;
+			dst_cfg->general_profile_compatibility_flags = hevc.sps[idx].ptl.profile_compatibility_flag;
+			dst_cfg->progressive_source_flag = hevc.sps[idx].ptl.general_progressive_source_flag;
+			dst_cfg->interlaced_source_flag = hevc.sps[idx].ptl.general_interlaced_source_flag;
+			dst_cfg->non_packed_constraint_flag = hevc.sps[idx].ptl.general_non_packed_constraint_flag;
+			dst_cfg->frame_only_constraint_flag = hevc.sps[idx].ptl.general_frame_only_constraint_flag;
+
+			dst_cfg->constraint_indicator_flags = hevc.sps[idx].ptl.general_reserved_44bits;
+			dst_cfg->level_idc = hevc.sps[idx].ptl.level_idc;
+
+			dst_cfg->chromaFormat = hevc.sps[idx].chroma_format_idc;
+			dst_cfg->luma_bit_depth = hevc.sps[idx].bit_depth_luma;
+			dst_cfg->chroma_bit_depth = hevc.sps[idx].bit_depth_chroma;
+
+			if (!spss) {
+				GF_SAFEALLOC(spss, GF_HEVCParamArray);
+				spss->nalus = gf_list_new();
+				gf_list_add(dst_cfg->param_array, spss);
+				spss->array_completeness = 1;
+				spss->type = GF_HEVC_NALU_SEQ_PARAM;
+			}
+
+			slc = (GF_AVCConfigSlot*)gf_malloc(sizeof(GF_AVCConfigSlot));
+			slc->size = nal_size;
+			slc->id = idx;
+			slc->data = (char*)gf_malloc(sizeof(char)*slc->size);
+			memcpy(slc->data, buffer, sizeof(char)*slc->size);
+			gf_list_add(spss->nalus, slc);
+			break;
+		case GF_HEVC_NALU_PIC_PARAM:
+			idx = gf_media_hevc_read_pps(buffer, nal_size, &hevc);
+			if (idx < 0) {
+				gf_bs_del(bs);
+				gf_free(buffer);
+				return GF_BAD_PARAM;
+			}
+
+			assert(hevc.pps[idx].state == 1); //we don't expect multiple PPS
+			if (hevc.pps[idx].state == 1) {
+				hevc.pps[idx].state = 2;
+				hevc.pps[idx].crc = gf_crc_32(buffer, nal_size);
+
+				if (!ppss) {
+					GF_SAFEALLOC(ppss, GF_HEVCParamArray);
+					ppss->nalus = gf_list_new();
+					gf_list_add(dst_cfg->param_array, ppss);
+					ppss->array_completeness = 1;
+					ppss->type = GF_HEVC_NALU_PIC_PARAM;
+				}
+
+				slc = (GF_AVCConfigSlot*)gf_malloc(sizeof(GF_AVCConfigSlot));
+				slc->size = nal_size;
+				slc->id = idx;
+				slc->data = (char*)gf_malloc(sizeof(char)*slc->size);
+				memcpy(slc->data, buffer, sizeof(char)*slc->size);
+
+				gf_list_add(ppss->nalus, slc);
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (gf_bs_seek(bs, nal_start + nal_size)) {
+			assert(nal_start + nal_size <= gf_bs_get_size(bs));
+			break;
+		}
+	}
+
+	gf_bs_del(bs);
+	gf_free(buffer);
+
+	return GF_OK;
+}
 }
 
 namespace Mux {
