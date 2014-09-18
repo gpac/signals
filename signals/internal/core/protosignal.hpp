@@ -45,8 +45,8 @@ private:
 
 public:
 	size_t connect(const CallbackType &cb) {
-		const size_t connectionId = uid++;
 		std::lock_guard<std::mutex> lg(callbacksMutex);
+		const size_t connectionId = uid++;
 		callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		return connectionId;
 	}
@@ -79,16 +79,16 @@ public:
 protected:
 	ProtoSignal(const CallbackType &cb) : uid(0) {
 		if (cb != nullptr) {
-			size_t connectionId = uid++;
 			std::lock_guard<std::mutex> lg(callbacksMutex);
+			size_t connectionId = uid++;
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		}
 	}
 
 	ProtoSignal(Caller &caller, const CallbackType &cb) : uid(0), caller(caller) {
 		if (cb != nullptr) {
-			size_t connectionId = uid++;
 			std::lock_guard<std::mutex> lg(callbacksMutex);
+			size_t connectionId = uid++;
 			callbacks[connectionId] = new ConnectionType(cb, connectionId);
 		}
 	}
@@ -134,7 +134,7 @@ private:
 	std::mutex callbacksMutex;
 	ConnectionManager callbacks; //protected by callbacksMutex
 	Result result; //protected by callbacksMutex
-	std::atomic<size_t> uid; //TODO: could be non atomic and protected by callbacksMutex
+	size_t uid;
 	Caller caller;
 };
 
