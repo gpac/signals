@@ -45,7 +45,7 @@ public:
 		dataLength = 0;
 		DTS = 0;
 		CTS_Offset = 0;
-		IsRAP = 0;
+		IsRAP = RAP_NO;
 	}
 	IsoSample(GF_ISOSample* pOther) {
 		GF_ISOSample* pMe = this;
