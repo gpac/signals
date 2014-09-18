@@ -27,7 +27,7 @@ struct Stream {
 	Stream(Stream const& s) = delete;
 	Stream(Stream&& s) = default;
 
-	// TO BE REMOVED
+	//FIXME: TO BE REMOVED
 	int codec_type; 
 };
 
