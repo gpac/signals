@@ -25,10 +25,10 @@ public:
 	}
 
 	std::function<bool(std::shared_ptr<Data>)> getInput() {
-    auto processFunction = [&](std::shared_ptr<Data> data) -> bool {
-      return process(data);		
-    };
-    return processFunction;
+		auto processFunction = [&](std::shared_ptr<Data> data) -> bool {
+			return process(data);
+		};
+		return processFunction;
 	}
 
 	virtual bool handles(const std::string &url) = 0;

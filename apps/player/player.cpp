@@ -28,7 +28,7 @@ struct Stream {
 	Stream(Stream&& s) = default;
 
 	//FIXME: TO BE REMOVED
-	int codec_type; 
+	int codec_type;
 };
 
 Module* createRenderer(int codec_type) {
