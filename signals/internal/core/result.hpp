@@ -7,7 +7,8 @@
 namespace Signals {
 
 class IResult {
-	virtual ~IResult();
+	virtual ~IResult() {
+	}
 };
 
 
@@ -17,6 +18,9 @@ public:
 	typedef std::shared_ptr<QueueThreadSafe<ResultType>> ResultValue;
 
 	explicit ResultQueueThreadSafe() : results(new QueueThreadSafe<ResultType>()) {
+	}
+
+	virtual ~ResultQueueThreadSafe() {
 	}
 
 	void set(ResultType r) {
@@ -44,6 +48,9 @@ public:
 	explicit ResultQueueThreadSafe() {
 	}
 
+	virtual ~ResultQueueThreadSafe() {
+	}
+
 	void set(int) {
 	}
 
@@ -61,6 +68,9 @@ public:
 	typedef std::shared_ptr<std::vector<ResultType>> ResultValue;
 
 	explicit ResultVector() : results(new std::vector<ResultType>()) {
+	}
+
+	virtual ~ResultVector() {
 	}
 
 	void set(ResultType r) {
@@ -88,6 +98,9 @@ public:
 	explicit ResultVector()  {
 	}
 
+	virtual ~ResultVector() {
+	}
+
 	void set(int) {
 	}
 
@@ -108,14 +121,21 @@ template<typename ResultType>
 class ResultLast : public IResult {
 public:
 	typedef ResultType ResultValue;
+
 	explicit ResultLast() {
 	}
+
+	virtual ~ResultLast() {
+	}
+
 	void set(ResultType r) {
 		last = r;
 	}
+
 	ResultValue& get() {
 		return last;
 	}
+
 	void clear() {
 	}
 
