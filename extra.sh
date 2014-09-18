@@ -25,7 +25,7 @@ then
 	rm -rf extra/src/x264
 	git clone --depth 100 git://git.videolan.org/x264.git extra/src/x264
 	pushd extra/src/x264
- 	git checkout d6b4e63d2ed8d444b77c11b36c1d646ee5549276
+ 	git checkout dd79a61e0e354a432907f2d1f7137b27a12dfce7
 	popd
 fi
 
@@ -51,9 +51,9 @@ if [ ! -f extra/src/ffmpeg/ffmpeg.c ] ;
 then
 	mkdir -p extra/src
 	rm -rf extra/src/ffmpeg
-	git clone --depth 8000 git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
+	git clone --depth 1000 git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
 	pushd extra/src/ffmpeg
- 	git checkout 78e39aa7ee12bb61cf34d8ca6bebd129d659d9cd 
+ 	git checkout 27f936eca8a1703a5c203f5d2cbc76862c9219fc
 	popd
 fi
 
@@ -87,7 +87,7 @@ if [ ! -f extra/src/gpac/Changelog ] ;
 then
 	mkdir -p extra/src
 	rm -rf extra/src/gpac
-	svn checkout svn://svn.code.sf.net/p/gpac/code/trunk/gpac -r 5246 extra/src/gpac
+	svn checkout svn://svn.code.sf.net/p/gpac/code/trunk/gpac -r 5426 extra/src/gpac
 fi
 
 if [ ! -f extra/build/gpac/buildOk ] ;
@@ -98,9 +98,9 @@ then
 		--use-ffmpeg=no \
 		--prefix=$EXTRA_DIR
 
-	$MAKE
-	$MAKE install
+	$MAKE lib
 	$MAKE install-lib
+	cp gpac.pc $EXTRA_DIR/lib/pkgconfig
 	popd
 	touch extra/build/gpac/buildOk 
 fi
