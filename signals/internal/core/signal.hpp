@@ -16,9 +16,9 @@ private:
 	typedef typename ProtoSignal<Result, SignalSignature>::CallbackType Callback;
 
 public:
-	Signal(const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature>(callback) {
+	Signal() : ProtoSignal<Result, SignalSignature>() {
 	}
-	Signal(Caller &caller, const Callback &callback = Callback()) : ProtoSignal<Result, SignalSignature>(caller, callback) {
+	Signal(Caller &caller) : ProtoSignal<Result, SignalSignature>(caller) {
 	}
 };
 

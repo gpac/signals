@@ -88,10 +88,10 @@ public:
 	}
 
 protected:
-	ProtoSignal(const CallbackType &cb) : uid(0), defaultCaller(new CallerSync<Callback(Args...)>()), caller(*defaultCaller.get()) {
+	ProtoSignal() : uid(0), defaultCaller(new CallerSync<Callback(Args...)>()), caller(*defaultCaller.get()) {
 	}
 
-	ProtoSignal(ICaller<Callback(Args...)> &caller, const CallbackType &cb) : uid(0), caller(caller) {
+	ProtoSignal(ICaller<Callback(Args...)> &caller) : uid(0), caller(caller) {
 	}
 
 	virtual ~ProtoSignal() {
