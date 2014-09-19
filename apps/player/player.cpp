@@ -98,8 +98,7 @@ int safeMain(int argc, char const* argv[]) {
 
 	// pump all data
 	auto srcModule = es[0].fromModule;
-	while (srcModule->process(nullptr)) {
-	}
+	srcModule->process(nullptr);
 
 	apply(&waitForCompletion, renderedStreams);
 	apply(&waitForCompletion, decodedStreams);

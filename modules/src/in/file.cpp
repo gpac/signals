@@ -26,16 +26,18 @@ File* File::create(std::string const& fn) {
 }
 
 bool File::process(std::shared_ptr<Data> /*data*/) {
-	auto out(signals[0]->getBuffer(IOSIZE));
-	size_t read = fread(out->data(), 1, IOSIZE, file);
-	if (read < IOSIZE) {
-		if (read == 0) {
-			return false;
+	for(;;) {
+		auto out(signals[0]->getBuffer(IOSIZE));
+		size_t read = fread(out->data(), 1, IOSIZE, file);
+		if (read < IOSIZE) {
+			if (read == 0) {
+				break;
+			}
+			out->resize(read);
 		}
-		out->resize(read);
+		signals[0]->emit(out);
 	}
-	signals[0]->emit(out);
-	return true;
+	return false; // no more data to process
 }
 
 bool File::handles(const std::string &url) {
