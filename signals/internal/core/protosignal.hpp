@@ -89,21 +89,9 @@ public:
 
 protected:
 	ProtoSignal(const CallbackType &cb) : uid(0), defaultCaller(new CallerSync<Callback(Args...)>()), caller(*defaultCaller.get()) {
-		if (cb != nullptr) {
-			//TODO: what is this? a disguised connect()?
-			std::lock_guard<std::mutex> lg(callbacksMutex);
-			size_t connectionId = uid++;
-			callbacks[connectionId] = new ConnectionType(caller, cb, connectionId);
-		}
 	}
 
 	ProtoSignal(ICaller<Callback(Args...)> &caller, const CallbackType &cb) : uid(0), caller(caller) {
-		if (cb != nullptr) {
-			//TODO: what is this? a disguised connect()?
-			std::lock_guard<std::mutex> lg(callbacksMutex);
-			size_t connectionId = uid++;
-			callbacks[connectionId] = new ConnectionType(caller, cb, connectionId);
-		}
 	}
 
 	virtual ~ProtoSignal() {
