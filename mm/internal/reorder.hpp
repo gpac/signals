@@ -74,7 +74,7 @@ private:
 	}
 	std::unique_ptr<Modules::Module> delegate;
 	Signal<std::shared_ptr<Data>(std::shared_ptr<Data>), ResultSharedLastOnce<std::shared_ptr<Data>>> synchronizerSignal;
-	Signal<bool(void), ResultQueueThreadSafe<bool>, CallerThread> internalSignal;
+	Signal<bool(void), ResultQueueThreadSafe<bool>> internalSignal;
 };
 
 }

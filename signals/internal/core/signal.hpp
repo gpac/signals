@@ -8,17 +8,15 @@
 namespace Signals {
 
 template <typename SignalSignature,
-          typename Result = ResultQueueThreadSafe<typename std::function<SignalSignature>::result_type>,
-          template<typename> class CallerTemplate = CallerAsync>
+          typename Result = ResultQueueThreadSafe<typename std::function<SignalSignature>::result_type>>
 class Signal : public ProtoSignal<Result, SignalSignature> {
 private:
-	typedef CallerTemplate<SignalSignature> Caller;
 	typedef typename ProtoSignal<Result, SignalSignature>::CallbackType Callback;
 
 public:
 	Signal() : ProtoSignal<Result, SignalSignature>() {
 	}
-	Signal(Caller &caller) : ProtoSignal<Result, SignalSignature>(caller) {
+	Signal(ICaller<SignalSignature> &caller) : ProtoSignal<Result, SignalSignature>(caller) {
 	}
 };
 
