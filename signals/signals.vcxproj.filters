@@ -4,9 +4,6 @@
     <ClInclude Include="..\signals\signals.hpp">
       <Filter>includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\internal\core\caller.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\signals\internal\core\connection.hpp">
       <Filter>includes\internal\core</Filter>
     </ClInclude>
@@ -26,6 +23,9 @@
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
     <ClInclude Include="..\signals\internal\utils\threadpool.hpp">
+      <Filter>includes\internal\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\utils\caller.hpp">
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -152,7 +152,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\signals\internal\core\caller.hpp" />
     <ClInclude Include="..\signals\internal\core\connection.hpp" />
     <ClInclude Include="..\signals\internal\core\protosignal.hpp" />
     <ClInclude Include="..\signals\internal\core\result.hpp" />
@@ -161,6 +160,7 @@
     <ClInclude Include="..\signals\internal\utils\queue.hpp" />
     <ClInclude Include="..\signals\internal\utils\threadpool.hpp" />
     <ClInclude Include="..\signals\signals.hpp" />
+    <ClInclude Include="internal\utils\caller.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

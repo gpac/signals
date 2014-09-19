@@ -1,6 +1,5 @@
 #pragma once
 
-#include "caller.hpp"
 #include <algorithm>
 #include <atomic>
 #include <cassert>
@@ -17,6 +16,7 @@ template<typename> class ISignal;
 template <typename Callback, typename... Args>
 class ISignal<Callback(Args...)> {
 public:
+	virtual size_t connect(const std::function<Callback(Args...)> &cb, ICaller<Callback(Args...)> &caller) = 0;
 	virtual size_t connect(const std::function<Callback(Args...)> &cb) = 0;
 	virtual bool disconnect(size_t connectionId) = 0;
 	virtual size_t emit(Args... args) = 0;
@@ -30,25 +30,36 @@ public:
 	virtual void flushAvailableResults() = 0;
 };
 
-template<typename, typename, typename> class ProtoSignal;
+template<typename> class CallerNull;
 
-template<typename Result, typename Callback, typename... Args, typename Caller>
-class ProtoSignal<Result, Callback(Args...), Caller> : public ISignal<Callback(Args...)> {
+template <typename R, typename... Args>
+class CallerNull<R(Args...)> : public ICaller<R(Args...)> {
+public:
+};
+
+template<typename, typename> class ProtoSignal;
+
+template<typename Result, typename Callback, typename... Args>
+class ProtoSignal<Result, Callback(Args...)> : public ISignal<Callback(Args...)> {
 protected:
 	typedef std::function<Callback(Args...)> CallbackType;
 
 private:
 	typedef typename Result::ResultValue ResultValue;
 	typedef typename CallbackType::result_type ResultType;
-	typedef ConnectionList<CallbackType, ResultType> ConnectionType;
+	typedef ConnectionList<ResultType, Args...> ConnectionType;
 	typedef std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
-	size_t connect(const CallbackType &cb) {
+	size_t connect(const CallbackType &cb, ICaller<Callback(Args...)> &caller) {
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		const size_t connectionId = uid++;
-		callbacks[connectionId] = new ConnectionType(cb, connectionId);
+		callbacks[connectionId] = new ConnectionType(caller, cb, connectionId);
 		return connectionId;
+	}
+
+	size_t connect(const CallbackType &cb) {
+		return connect(cb, caller);
 	}
 
 	bool disconnect(size_t connectionId) {
@@ -60,7 +71,7 @@ public:
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		result.clear();
 		for (auto &cb : callbacks) {
-			cb.second->futures.push_back(caller(cb.second->callback, args...));
+			cb.second->futures.push_back(cb.second->caller(cb.second->callback, args...));
 		}
 		return callbacks.size();
 	}
@@ -77,19 +88,21 @@ public:
 	}
 
 protected:
-	ProtoSignal(const CallbackType &cb) : uid(0) {
+	ProtoSignal(const CallbackType &cb) : uid(0), defaultCaller(new CallerSync<Callback(Args...)>()), caller(*defaultCaller.get()) {
 		if (cb != nullptr) {
+			//TODO: what is this? a disguised connect()?
 			std::lock_guard<std::mutex> lg(callbacksMutex);
 			size_t connectionId = uid++;
-			callbacks[connectionId] = new ConnectionType(cb, connectionId);
+			callbacks[connectionId] = new ConnectionType(caller, cb, connectionId);
 		}
 	}
 
-	ProtoSignal(Caller &caller, const CallbackType &cb) : uid(0), caller(caller) {
+	ProtoSignal(ICaller<Callback(Args...)> &caller, const CallbackType &cb) : uid(0), caller(caller) {
 		if (cb != nullptr) {
+			//TODO: what is this? a disguised connect()?
 			std::lock_guard<std::mutex> lg(callbacksMutex);
 			size_t connectionId = uid++;
-			callbacks[connectionId] = new ConnectionType(cb, connectionId);
+			callbacks[connectionId] = new ConnectionType(caller, cb, connectionId);
 		}
 	}
 
@@ -133,9 +146,11 @@ private:
 
 	std::mutex callbacksMutex;
 	ConnectionManager callbacks; //protected by callbacksMutex
-	Result result; //protected by callbacksMutex
-	size_t uid;
-	Caller caller;
+	Result result;               //protected by callbacksMutex
+	size_t uid;                  //protected by callbacksMutex
+	
+	std::unique_ptr<CallerSync<Callback(Args...)>> const defaultCaller;
+	ICaller<Callback(Args...)> &caller;
 };
 
 }
