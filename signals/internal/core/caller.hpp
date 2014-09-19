@@ -26,7 +26,7 @@ std::function<int(Args...)> NotVoidFunction(std::function<void(Args...)> fn) {
 template<typename> class ICaller;
 
 template <typename R, typename... Args>
-class ICaller<R(Args...)> { //Romain: should be moved in 'core'
+class ICaller<R(Args...)> {
 public:
 	virtual std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &fn, Args... args) = 0;
 };
