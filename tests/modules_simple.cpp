@@ -51,8 +51,7 @@ unittest("print packets size from file: File -> Out::Print") {
 
 	ConnectPin(f->getPin(0), p.get(), &Out::Print::process);
 
-	while (f->process(nullptr)) {
-	}
+	f->process(nullptr);
 
 	f->waitForCompletion();
 }
