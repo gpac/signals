@@ -12,8 +12,9 @@ namespace Modules {
 
 using namespace Signals;
 
-typedef Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>, CallerAsync> SignalAsync;
-typedef Signal<bool(std::shared_ptr<Data>), ResultVector<bool>, CallerSync> SignalSync;
+//FIXME: to be removed when modules and mm are clearly separated. In this case the result may not even need to be checked.
+typedef Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>> SignalAsync;
+typedef Signal<bool(std::shared_ptr<Data>), ResultVector<bool>> SignalSync;
 
 template<typename Allocator, typename Signal, typename DataType> class PinT;
 template<typename DataType> using PinDataAsync = PinT<AllocatorPacket<DataType>, SignalAsync, DataType>;

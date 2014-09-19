@@ -10,7 +10,7 @@ namespace {
 template<typename SignalSignature, typename Result, template<typename> class CallerTemplate, typename ValType>
 void emitTest(std::function<SignalSignature> f, ValType val) {
 	CallerTemplate<SignalSignature> caller;
-	Signal<SignalSignature, Result, CallerTemplate> sig(caller);
+	Signal<SignalSignature, Result> sig(caller);
 	std::vector<size_t> id(TEST_MAX_SIZE);
 	bool timeout = false;
 	for (int i = 0; i < TEST_MAX_SIZE + 1; ++i) {
