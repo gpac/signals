@@ -30,13 +30,6 @@ public:
 	virtual void flushAvailableResults() = 0;
 };
 
-template<typename> class CallerNull;
-
-template <typename R, typename... Args>
-class CallerNull<R(Args...)> : public ICaller<R(Args...)> {
-public:
-};
-
 template<typename, typename> class ProtoSignal;
 
 template<typename Result, typename Callback, typename... Args>
