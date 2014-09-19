@@ -11,15 +11,17 @@ Build:
 $ make
 
 MSYS2:
-64 bits:
-$ export PATH=/mingw64/bin:$PATH
-$ export MSYSTEM=MINGW32
-$ export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig
+  remove '-XCClinker' in bin/make/config.mk (introduced by SDL2)
 
-32 bits:
-$ export PATH=/mingw32/bin:$PATH
-$ export MSYSTEM=MINGW32
-$ export PKG_CONFIG_PATH=/mingw32/lib/pkgconfig
+  64 bits:
+  $ export PATH=/mingw64/bin:$PATH
+  $ export MSYSTEM=MINGW32
+  $ export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig
+  
+  32 bits:
+  $ export PATH=/mingw32/bin:$PATH
+  $ export MSYSTEM=MINGW32
+  $ export PKG_CONFIG_PATH=/mingw32/lib/pkgconfig
 
 Visual Studio:
 You need at least Visual Studio 2014 CTP3.
