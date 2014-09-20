@@ -6,9 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="internal\reorder.hpp">
-      <Filter>internal</Filter>
-    </ClInclude>
     <ClInclude Include="internal\pull2push.hpp">
       <Filter>internal</Filter>
     </ClInclude>

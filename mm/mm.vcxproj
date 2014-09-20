@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClInclude Include="internal\config.hpp" />
     <ClInclude Include="internal\pull2push.hpp" />
-    <ClInclude Include="internal\reorder.hpp" />
     <ClInclude Include="mm.hpp" />
   </ItemGroup>
   <ItemGroup>

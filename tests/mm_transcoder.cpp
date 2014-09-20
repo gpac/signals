@@ -20,8 +20,7 @@ namespace {
 
 unittest("transcoder async: video simple (gpac mux)") {
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	//FIXME: doesn't forward decoder props: auto demux = uptr(new Reorder(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4")));
-
+	
 	//create stub output (for unused demuxer's outputs)
 	auto null = uptr(Out::Null::create());
 
@@ -43,19 +42,17 @@ unittest("transcoder async: video simple (gpac mux)") {
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 
-	auto decode = uptr(new Reorder(Decode::LibavDecode::create(*decoderProps)));
-	auto encode_delegate = Encode::LibavEncode::create(Encode::LibavEncode::Video);
-	auto encode = uptr(new Reorder(encode_delegate));
-	auto mux_delegate = Mux::GPACMuxMP4::create("output_video_gpac");
-	auto mux = uptr(new Reorder(mux_delegate));
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
+	auto mux = uptr(Mux::GPACMuxMP4::create("output_video_gpac"));
 
 	//pass meta data between encoder and mux
-	Connect(encode_delegate->declareStream, mux_delegate, &Mux::GPACMuxMP4::declareStream);
-	encode_delegate->sendOutputPinsInfo();
+	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
+	encode->sendOutputPinsInfo();
 
-	ConnectPin(demux->getPin(videoIndex), decode.get(), &Reorder::process);
-	ConnectPin(decode->getPin(0), encode.get(), &Reorder::process);
-	ConnectPin(encode->getPin(0), mux.get(), &Reorder::process);
+	ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
+	ConnectPin(decode->getPin(0), encode.get(), &Encode::LibavEncode::process);
+	ConnectPin(encode->getPin(0), mux.get(), &Mux::GPACMuxMP4::process);
 
 	while (demux->process(nullptr)) {
 	}

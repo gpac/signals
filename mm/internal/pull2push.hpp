@@ -11,7 +11,7 @@ namespace MM {
 class Pull2Push : public Modules::Module {
 public:
 	Pull2Push(Modules::Module *module) : delegate(module) { //TODO: look if you can force them synchronous? put a caller at each call?
-		signals.push_back(uptr(pinFactory->createPin())); //TODO: this super module should copy the structure from the delegate, see Reorder
+		signals.push_back(uptr(pinFactory->createPin())); //TODO: this super module should copy the structure from the delegate
 		Connect(delegate->getPin(0)->getSignal(), this, &Pull2Push::reemit); //delegate output to this output ; faster is delegate output signal is sync
 	}
 	bool process(std::shared_ptr<Data> data) {
