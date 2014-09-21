@@ -16,12 +16,12 @@ template<typename> class ISignal;
 template <typename Callback, typename... Args>
 class ISignal<Callback(Args...)> {
 public:
-	virtual size_t connect(const std::function<Callback(Args...)> &cb, ICaller<Callback(Args...)> &caller) = 0;
+	virtual size_t connect(const std::function<Callback(Args...)> &cb, IExecutor<Callback(Args...)> &executor) = 0;
 	virtual size_t connect(const std::function<Callback(Args...)> &cb) = 0;
 	virtual bool disconnect(size_t connectionId) = 0;
 	virtual size_t emit(Args... args) = 0;
 
-	virtual ICaller<Callback(Args...)>& getCaller() const = 0;
+	virtual IExecutor<Callback(Args...)>& getExecutor() const = 0;
 
 	//TODO write test based on the shared_ptr reflector
 	/**
@@ -46,15 +46,15 @@ private:
 	typedef std::map<size_t, ConnectionType*> ConnectionManager;
 
 public:
-	size_t connect(const CallbackType &cb, ICaller<Callback(Args...)> &caller) {
+	size_t connect(const CallbackType &cb, IExecutor<Callback(Args...)> &executor) {
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		const size_t connectionId = uid++;
-		callbacks[connectionId] = new ConnectionType(caller, cb, connectionId);
+		callbacks[connectionId] = new ConnectionType(executor, cb, connectionId);
 		return connectionId;
 	}
 
 	size_t connect(const CallbackType &cb) {
-		return connect(cb, caller);
+		return connect(cb, executor);
 	}
 
 	bool disconnect(size_t connectionId) {
@@ -66,7 +66,7 @@ public:
 		std::lock_guard<std::mutex> lg(callbacksMutex);
 		result.clear();
 		for (auto &cb : callbacks) {
-			cb.second->futures.push_back(cb.second->caller(cb.second->callback, args...));
+			cb.second->futures.push_back(cb.second->executor(cb.second->callback, args...));
 		}
 		return callbacks.size();
 	}
@@ -82,15 +82,15 @@ public:
 		return result.get();
 	}
 
-	ICaller<Callback(Args...)>& getCaller() const {
-		return caller;
+	IExecutor<Callback(Args...)>& getExecutor() const {
+		return executor;
 	}
 
 protected:
-	ProtoSignal() : uid(0), defaultCaller(new CallerAsync<Callback(Args...)>()), caller(*defaultCaller.get()) {
+	ProtoSignal() : uid(0), defaultExecutor(new ExecutorAsync<Callback(Args...)>()), executor(*defaultExecutor.get()) {
 	}
 
-	ProtoSignal(ICaller<Callback(Args...)> &caller) : uid(0), caller(caller) {
+	ProtoSignal(IExecutor<Callback(Args...)> &executor) : uid(0), executor(executor) {
 	}
 
 	virtual ~ProtoSignal() {
@@ -136,8 +136,8 @@ private:
 	Result result;               //protected by callbacksMutex
 	size_t uid;                  //protected by callbacksMutex
 	
-	std::unique_ptr<ICaller<Callback(Args...)>> const defaultCaller;
-	ICaller<Callback(Args...)> &caller;
+	std::unique_ptr<IExecutor<Callback(Args...)>> const defaultExecutor;
+	IExecutor<Callback(Args...)> &executor;
 };
 
 }

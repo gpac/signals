@@ -160,7 +160,7 @@
     <ClInclude Include="..\signals\internal\utils\queue.hpp" />
     <ClInclude Include="..\signals\internal\utils\threadpool.hpp" />
     <ClInclude Include="..\signals\signals.hpp" />
-    <ClInclude Include="internal\core\caller.hpp" />
+    <ClInclude Include="internal\core\executor.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

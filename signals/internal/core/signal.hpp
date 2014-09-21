@@ -1,6 +1,6 @@
 #pragma once
 
-#include "caller.hpp"
+#include "executor.hpp"
 #include "connection.hpp"
 #include "result.hpp"
 #include "protosignal.hpp"
@@ -17,7 +17,7 @@ private:
 public:
 	Signal() : ProtoSignal<Result, SignalSignature>() {
 	}
-	Signal(ICaller<SignalSignature> &caller) : ProtoSignal<Result, SignalSignature>(caller) {
+	Signal(IExecutor<SignalSignature> &executor) : ProtoSignal<Result, SignalSignature>(executor) {
 	}
 };
 

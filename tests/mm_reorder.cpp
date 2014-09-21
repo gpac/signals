@@ -74,7 +74,7 @@ unittest("Simple synth Romain") {
 	auto sink1 = uptr(new Sink);
 	auto sink2 = uptr(new Sink);
 
-	CallerThread<bool(std::shared_ptr<Data >)> amp1Thread, amp2Thread, sink1Thread, sink2Thread;
+	ExecutorThread<bool(std::shared_ptr<Data >)> amp1Thread, amp2Thread, sink1Thread, sink2Thread;
 
 	Connect(osc->getPin(0)->getSignal(), amp1.get(), &Amp::process, amp1Thread);
 	Connect(osc->getPin(0)->getSignal(), amp2.get(), &Amp::process, amp2Thread);
