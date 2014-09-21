@@ -17,13 +17,13 @@ using namespace Modules;
 
 namespace {
 std::unique_ptr<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *decoderProps) {
-	auto const codec_type = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
-	if (codec_type == AVMEDIA_TYPE_VIDEO) {
+	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
+	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
 		ConnectPin(pPin, r.get(), &Encode::LibavEncode::process);
 		return std::move(r);
-	} else if (codec_type == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
 		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
 		ConnectPin(pPin, r.get(), &Encode::LibavEncode::process);
