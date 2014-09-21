@@ -28,24 +28,24 @@ MEMBER_FUNCTOR(Class* objectPtr, Result (Class::*memberFunction) (Args...)) {
 }
 
 template<typename B, typename C, typename D, typename E>
-void Connect(B& sig, C objectSlot, D memberFunctionSlot, E& executor) {
+size_t Connect(B& sig, C objectSlot, D memberFunctionSlot, E& executor) {
 	auto functor = MEMBER_FUNCTOR(objectSlot, memberFunctionSlot);
-	sig.connect(functor, executor);
+	return sig.connect(functor, executor);
 }
 
 template<typename B, typename C, typename D>
-void Connect(B& sig, C objectSlot, D memberFunctionSlot) {
-	Connect(sig, objectSlot, memberFunctionSlot, sig.getCaller());
+size_t Connect(B& sig, C objectSlot, D memberFunctionSlot) {
+	return Connect(sig, objectSlot, memberFunctionSlot, sig.getCaller());
 }
 
 template<typename SignalType, typename LambdaType, typename Executor>
-void Connect(SignalType& sig, LambdaType lambda, Executor& executor) {
-	sig.connect(lambda, executor);
+size_t Connect(SignalType& sig, LambdaType lambda, Executor& executor) {
+	return sig.connect(lambda, executor);
 }
 
 template<typename SignalType, typename LambdaType>
-void Connect(SignalType& sig, LambdaType lambda) {
-	sig.connect(lambda);
+size_t Connect(SignalType& sig, LambdaType lambda) {
+	return sig.connect(lambda);
 }
 
 template<typename T>
