@@ -13,14 +13,6 @@ bool Print::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool Print::handles(const std::string &url) {
-	return Print::canHandle(url);
-}
-
-bool Print::canHandle(const std::string &/*url*/) {
-	return true;
-}
-
 Print::Print(std::ostream &os) : os(os) {
 }
 

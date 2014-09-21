@@ -15,8 +15,6 @@ public:
 	static GPACDemuxMP4Full* create();
 	~GPACDemuxMP4Full();
 	bool process(std::shared_ptr<Data> data);
-	bool handles(const std::string &url); //FIXME: useless for memory-based module...
-	static bool canHandle(const std::string &url); //FIXME: useless for memory-based module...
 
 private:
 	GPACDemuxMP4Full();

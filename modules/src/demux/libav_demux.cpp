@@ -74,39 +74,4 @@ bool LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 	return true;
 }
 
-bool LibavDemux::handles(const std::string &url) {
-	return LibavDemux::canHandle(url);
-}
-
-bool LibavDemux::canHandle(const std::string &url) {
-	//FIXME: only works for files
-	AVProbeData pd;
-	const size_t size = 1024;
-	std::vector<uint8_t> buf(size + AVPROBE_PADDING_SIZE);
-	pd.buf = buf.data();
-	pd.filename = NULL;
-
-	std::ifstream fp(url, std::ios::binary);
-	if (!fp.is_open()) {
-		Log::msg(Log::Info, "[LibavDemux] Couldn't open file %s for probing. Aborting.", url.c_str());
-		return false;
-	}
-
-	fp.read((char*)pd.buf, size);
-	const size_t bytesRead = (size_t)fp.gcount();
-	pd.buf_size = (int)bytesRead;
-	if (bytesRead < size) {
-		Log::msg(Log::Warning, "[LibavDemux] Could only read %lu bytes (instead of %lu) for probing format.", (unsigned long)bytesRead, (unsigned long)size);
-	}
-	memset(pd.buf + bytesRead, 0, AVPROBE_PADDING_SIZE);
-
-	avformat_network_init();
-
-	AVInputFormat *format = av_probe_input_format(&pd, 1);
-	if (!format)
-		return false;
-
-	return true;
-}
-
 }

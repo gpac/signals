@@ -580,12 +580,4 @@ TODO: missing open segment
 	return true;
 }
 
-bool GPACMuxMP4::handles(const std::string &url) {
-	return true;
-}
-
-bool GPACMuxMP4::canHandle(const std::string &url) {
-	return true;
-}
-
 }

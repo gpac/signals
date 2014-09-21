@@ -19,8 +19,6 @@ public:
 	SDLVideo();
 	~SDLVideo();
 	bool process(std::shared_ptr<Data> data);
-	bool handles(const std::string &url);
-	static bool canHandle(const std::string &url);
 
 private:
 

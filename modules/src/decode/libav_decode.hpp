@@ -22,8 +22,6 @@ public:
 	static LibavDecode* create(const PropsDecoder &props);
 	~LibavDecode();
 	bool process(std::shared_ptr<Data> data);
-	bool handles(const std::string &url);
-	static bool canHandle(const std::string &url);
 
 private:
 	LibavDecode(AVCodecContext *codecCtx);

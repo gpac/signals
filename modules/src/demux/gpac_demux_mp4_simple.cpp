@@ -77,16 +77,4 @@ bool GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
 	return true;
 }
 
-bool GPACDemuxMP4Simple::handles(const std::string &url) {
-	return GPACDemuxMP4Simple::canHandle(url);
-}
-
-bool GPACDemuxMP4Simple::canHandle(const std::string &url) {
-	if (url.find_last_of("mp4") + 1 == url.size()) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 }

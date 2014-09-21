@@ -13,7 +13,6 @@ public:
 	virtual ~IModule() noexcept(false) {};
 
 	virtual bool process(std::shared_ptr<Data> data) = 0;
-	virtual bool handles(const std::string &url) = 0;
 	virtual void waitForCompletion() = 0; /* required for async, otherwise we still have callback/futures on an object being destroyed */
 };
 
@@ -30,8 +29,6 @@ public:
 		};
 		return processFunction;
 	}
-
-	virtual bool handles(const std::string &url) = 0;
 
 	/**
 	 * Must be called before the destructor.

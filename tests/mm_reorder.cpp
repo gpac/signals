@@ -20,9 +20,6 @@ public:
 		getPin(0)->getSignal().emit(out);
 		return true;
 	}
-	bool handles(const std::string &url) {
-		return false;
-	}
 
 private:
 	int seqNumber;
@@ -33,18 +30,12 @@ public:
 	bool process(std::shared_ptr<Data> sample) {
 		return true;
 	}
-	bool handles(const std::string &url) {
-		return false;
-	}
 };
 
 class Amp : public Modules::Module { //making it sync for perf (avoid spawning one more time when forwarding the output pin)
 public:
 	Amp() : seqNumber(0) {
 		signals.push_back(uptr(pinFactory->createPin()));
-	}
-	bool handles(const std::string &url) {
-		return false;
 	}
 	bool process(std::shared_ptr<Data> sample) {
 		int idx = sample->data()[0];

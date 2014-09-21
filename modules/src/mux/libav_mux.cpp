@@ -142,12 +142,4 @@ bool LibavMux::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool LibavMux::handles(const std::string &url) {
-	return LibavMux::canHandle(url);
-}
-
-bool LibavMux::canHandle(const std::string &/*url*/) {
-	return true; //TODO
-}
-
 }

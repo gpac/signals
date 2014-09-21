@@ -17,8 +17,6 @@ public:
 	static GPACDemuxMP4Simple* create(std::string const& path);
 	~GPACDemuxMP4Simple();
 	bool process(std::shared_ptr<Data> data);
-	bool handles(const std::string &url);
-	static bool canHandle(const std::string &url);
 
 private:
 	GPACDemuxMP4Simple(GF_ISOFile *movie);
