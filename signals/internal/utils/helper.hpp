@@ -35,7 +35,7 @@ size_t Connect(B& sig, C objectSlot, D memberFunctionSlot, E& executor) {
 
 template<typename B, typename C, typename D>
 size_t Connect(B& sig, C objectSlot, D memberFunctionSlot) {
-	return Connect(sig, objectSlot, memberFunctionSlot, sig.getCaller());
+	return Connect(sig, objectSlot, memberFunctionSlot, sig.getExecutor());
 }
 
 template<typename SignalType, typename LambdaType, typename Executor>

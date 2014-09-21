@@ -25,7 +25,7 @@
     <ClInclude Include="..\signals\internal\utils\threadpool.hpp">
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
-    <ClInclude Include="internal\core\caller.hpp">
+    <ClInclude Include="internal\core\executor.hpp">
       <Filter>includes\internal\core</Filter>
     </ClInclude>
   </ItemGroup>
