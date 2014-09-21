@@ -6,8 +6,10 @@ Mid Term apps:
 Tasks (from higher to lower priority):
 - typedef shared_ptr<Data> (would allow sending signals on Data deletion for example, which is needed to remove sleep() in the pin/allocator waitforCompletion())
 - SDL and renderers should be able to run in thread 0
+- investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
 - be able to draw the graph of connections (and allocator states?)
 - remove waitForCompletion() by delegating Modules
+- remove create() and use C++ exceptions in constructors
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
