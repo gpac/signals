@@ -33,9 +33,6 @@ public:
 		delegate->waitForCompletion();
 		Modules::Module::waitForCompletion();
 	}
-	bool handles(const std::string &url) {
-		return delegate->handles(url);
-	}
 
 private:
 	bool reemit(std::shared_ptr<Data> data) { //output pin forwarding

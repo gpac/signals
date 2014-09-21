@@ -101,12 +101,5 @@ bool SDLVideo::process(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool SDLVideo::handles(const std::string &url) {
-	return SDLVideo::canHandle(url);
-}
-
-bool SDLVideo::canHandle(const std::string &/*url*/) {
-	return true;
-}
 }
 }

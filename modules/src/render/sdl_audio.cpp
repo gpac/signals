@@ -114,13 +114,5 @@ void SDLAudio::staticFillAudio(void *udata, uint8_t *stream, int len) {
 	pThis->fillAudio(stream, len);
 }
 
-bool SDLAudio::handles(const std::string &url) {
-	return SDLAudio::canHandle(url);
-}
-
-bool SDLAudio::canHandle(const std::string &/*url*/) {
-	return true;
-}
-
 }
 }

@@ -22,13 +22,5 @@ bool AudioConvert::process(std::shared_ptr<Data> data) {
 	return false;
 }
 
-bool AudioConvert::handles(const std::string &url) {
-	return AudioConvert::canHandle(url);
-}
-
-bool AudioConvert::canHandle(const std::string &/*url*/) {
-	return true;
-}
-
 }
 }

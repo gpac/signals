@@ -11,8 +11,6 @@ namespace In {
 class VideoGenerator : public Module {
 public:
 	VideoGenerator();
-	bool handles(const std::string &url);
-	static bool canHandle(const std::string &url);
 	bool process(std::shared_ptr<Data> data);
 
 private:

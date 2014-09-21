@@ -192,16 +192,4 @@ bool GPACDemuxMP4Full::process(std::shared_ptr<Data> data) {
 	return processData();
 }
 
-bool GPACDemuxMP4Full::handles(const std::string &url) {
-	return GPACDemuxMP4Full::canHandle(url);
-}
-
-bool GPACDemuxMP4Full::canHandle(const std::string &url) {
-	if (url.find_last_of("mp4") + 1 == url.size()) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 }

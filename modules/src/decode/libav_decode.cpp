@@ -119,12 +119,4 @@ bool LibavDecode::process(std::shared_ptr<Data> data) {
 	}
 }
 
-bool LibavDecode::handles(const std::string &url) {
-	return LibavDecode::canHandle(url);
-}
-
-bool LibavDecode::canHandle(const std::string &/*url*/) {
-	return true; //TODO
-}
-
 }

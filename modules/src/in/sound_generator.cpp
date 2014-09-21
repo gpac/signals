@@ -56,13 +56,5 @@ double SoundGenerator::nextSample() {
 	return fVal;
 }
 
-bool SoundGenerator::handles(const std::string &url) {
-	return SoundGenerator::canHandle(url);
-}
-
-bool SoundGenerator::canHandle(const std::string &/*url*/) {
-	return true;
-}
-
 }
 }

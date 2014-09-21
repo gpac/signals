@@ -35,13 +35,5 @@ bool VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	return true;
 }
 
-bool VideoGenerator::handles(const std::string &url) {
-	return VideoGenerator::canHandle(url);
-}
-
-bool VideoGenerator::canHandle(const std::string &/*url*/) {
-	return true;
-}
-
 }
 }

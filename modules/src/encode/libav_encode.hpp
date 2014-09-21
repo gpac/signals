@@ -26,8 +26,6 @@ public:
 	static LibavEncode* create(Type type);
 	~LibavEncode();
 	bool process(std::shared_ptr<Data> data);
-	bool handles(const std::string &url);
-	static bool canHandle(const std::string &url);
 
 	void sendOutputPinsInfo(); //FIXME: temporary until modules have a manager
 	Signal<void(std::shared_ptr<Stream>)> declareStream; //FIXME: temporary until modules have a type 'mux'
