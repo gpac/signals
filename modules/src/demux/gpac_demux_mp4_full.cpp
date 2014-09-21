@@ -13,7 +13,7 @@ namespace Demux {
 class ISOProgressiveReader {
 public:
 	ISOProgressiveReader()
-		: data(0), refresh_boxes(GF_TRUE), samples_processed(0), sample_index(1), sample_count(0), track_number(1) {
+		: data(0), refreshBoxes(GF_TRUE), samplesProcessed(0), sampleIndex(1), sampleCount(0), trackNumber(1) {
 	}
 
 	~ISOProgressiveReader() {
@@ -22,15 +22,15 @@ public:
 	/* data buffer to be read by the parser */
 	std::vector<u8> data;
 	/* URL used to pass a buffer to the parser */
-	std::string data_url;
+	std::string dataUrl;
 	/* The ISO file structure created for the parsing of data */
 	std::unique_ptr<gpacpp::IsoFile> movie;
 	/* Boolean state to indicate if the needs to be parsed */
-	Bool refresh_boxes;
-	u32 samples_processed;
-	u32 sample_index; /* samples are numbered starting from 1 */
-	u32 sample_count;
-	int track_number; //TODO: multi-tracks
+	Bool refreshBoxes;
+	u32 samplesProcessed;
+	u32 sampleIndex; /* samples are numbered starting from 1 */
+	u32 sampleCount;
+	int trackNumber; //TODO: multi-tracks
 };
 
 GPACDemuxMP4Full* GPACDemuxMP4Full::create() {
@@ -47,12 +47,12 @@ GPACDemuxMP4Full::~GPACDemuxMP4Full() {
 
 bool GPACDemuxMP4Full::openData() {
 	/* if the file is not yet opened (no movie), open it in progressive mode (to update its data later on) */
-	u64 missing_bytes;
+	u64 missingBytes;
 	GF_ISOFile *movie;
-	GF_Err e = gf_isom_open_progressive(reader->data_url.c_str(), 0, 0, &movie, &missing_bytes);
+	GF_Err e = gf_isom_open_progressive(reader->dataUrl.c_str(), 0, 0, &movie, &missingBytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
 		Log::msg(Log::Warning, "Error opening fragmented mp4 in progressive mode: %s (missing %s bytes)",
-		         gf_error_to_string(e), missing_bytes);
+		         gf_error_to_string(e), missingBytes);
 
 		return false;
 	}
@@ -63,88 +63,88 @@ bool GPACDemuxMP4Full::openData() {
 
 bool GPACDemuxMP4Full::updateData() {
 	/* let inform the parser that the buffer has been updated with new data */
-	uint64_t missing_bytes;
-	reader->movie->refreshFragmented(missing_bytes, reader->data_url);
+	uint64_t missingBytes;
+	reader->movie->refreshFragmented(missingBytes, reader->dataUrl);
 	return true;
 }
 
 bool GPACDemuxMP4Full::processSample() {
 	try {
 		/* only if we have the track number can we try to get the sample data */
-		if (reader->track_number != 0) {
-			u32 new_sample_count;
+		if (reader->trackNumber != 0) {
+			u32 newSampleCount;
 
 			/* let's see how many samples we have since the last parsed */
-			new_sample_count = reader->movie->getSampleCount(reader->track_number);
-			if (new_sample_count > reader->sample_count) {
+			newSampleCount = reader->movie->getSampleCount(reader->trackNumber);
+			if (newSampleCount > reader->sampleCount) {
 				/* New samples have been added to the file */
 				Log::msg(Log::Info, "Found %s new samples (total: %s)",
-				         new_sample_count - reader->sample_count,
-				         new_sample_count);
-				if (reader->sample_count == 0) {
-					reader->sample_count = new_sample_count;
+				         newSampleCount - reader->sampleCount,
+				         newSampleCount);
+				if (reader->sampleCount == 0) {
+					reader->sampleCount = newSampleCount;
 				}
 			}
-			if (reader->sample_count == 0) {
+			if (reader->sampleCount == 0) {
 				/* no sample yet, let the data input force a reparsing of the data */
-				reader->refresh_boxes = GF_TRUE;
+				reader->refreshBoxes = GF_TRUE;
 			} else {
 				/* we have some samples, lets keep things stable in the parser for now and
 					 don't let the data input force a reparsing of the data */
-				reader->refresh_boxes = GF_FALSE;
+				reader->refreshBoxes = GF_FALSE;
 
 				{
 					/* let's analyze the samples we have parsed so far one by one */
 					int di /*descriptor index*/;
-					auto iso_sample = reader->movie->getSample(reader->track_number, reader->sample_index, di);
+					auto ISOSample = reader->movie->getSample(reader->trackNumber, reader->sampleIndex, di);
 					/* if you want the sample description data, you can call:
 						 GF_Descriptor *desc = movie->getDecoderConfig(reader->track_handle, di);
 						 */
 
-					reader->samples_processed++;
+					reader->samplesProcessed++;
 					/*here we dump some sample info: samp->data, samp->dataLength, samp->isRAP, samp->DTS, samp->CTS_Offset */
 					Log::msg(Log::Info,
 					         "Found sample #%s(#%s) of length %s , RAP: %s, DTS : %s, CTS : %s",
-					         reader->sample_index,
-					         reader->samples_processed,
-					         iso_sample->dataLength,
-					         iso_sample->IsRAP,
-					         iso_sample->DTS,
-					         iso_sample->DTS + iso_sample->CTS_Offset
+					         reader->sampleIndex,
+					         reader->samplesProcessed,
+					         ISOSample->dataLength,
+					         ISOSample->IsRAP,
+					         ISOSample->DTS,
+					         ISOSample->DTS + ISOSample->CTS_Offset
 					        );
-					reader->sample_index++;
+					reader->sampleIndex++;
 
-					auto out(signals[0]->getBuffer(iso_sample->dataLength));
-					memcpy(out->data(), iso_sample->data, iso_sample->dataLength);
+					auto out(signals[0]->getBuffer(ISOSample->dataLength));
+					memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
 					signals[0]->emit(out);
 				}
 
 				/* once we have read all the samples, we can release some data and force a reparse of the input buffer */
-				if (reader->sample_index > reader->sample_count) {
-					u64 new_buffer_start;
-					u64 missing_bytes;
+				if (reader->sampleIndex > reader->sampleCount) {
+					u64 newBufferStart;
+					u64 missingBytes;
 
 					Log::msg(Log::Debug, "Releasing unnecessary buffers");
 					/* release internal structures associated with the samples read so far */
 					reader->movie->resetTables(true);
 
 					/* release the associated input data as well */
-					reader->movie->resetDataOffset(new_buffer_start);
-					if (new_buffer_start) {
-						u32 offset = (u32)new_buffer_start;
+					reader->movie->resetDataOffset(newBufferStart);
+					if (newBufferStart) {
+						u32 offset = (u32)newBufferStart;
 						const size_t newSize = reader->data.size() - offset;
 						memmove(reader->data.data(), reader->data.data() + offset, newSize);
 						reader->data.resize(newSize);
 					}
 					std::stringstream ss;
 					ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();
-					reader->data_url = ss.str();
-					reader->movie->refreshFragmented(missing_bytes, reader->data_url);
+					reader->dataUrl = ss.str();
+					reader->movie->refreshFragmented(missingBytes, reader->dataUrl);
 
 					/* update the sample count and sample index */
-					reader->sample_count = new_sample_count - reader->sample_count;
-					//FIXME: doesn't happen because the size of the chunck is not aligned on samples: assert(reader->sample_count == 0);
-					reader->sample_index = 1;
+					reader->sampleCount = newSampleCount - reader->sampleCount;
+					//FIXME: doesn't happen because the size of the chunck is not aligned on samples: assert(reader->sampleCount == 0);
+					reader->sampleIndex = 1;
 				}
 			}
 		}
@@ -168,7 +168,7 @@ bool GPACDemuxMP4Full::processData() {
 
 bool GPACDemuxMP4Full::process(std::shared_ptr<Data> data) {
 #if 0 //TODO: zero copy mode, or at least improve the current system
-	reader->valid_data_size = reader->dataSize = data->size();
+	reader->validDataSize = reader->dataSize = data->size();
 	reader->data.data() = data->data();
 #else
 	const size_t currSize = reader->data.size();
@@ -177,7 +177,7 @@ bool GPACDemuxMP4Full::process(std::shared_ptr<Data> data) {
 #endif
 	std::stringstream ss;
 	ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();
-	reader->data_url = ss.str();
+	reader->dataUrl = ss.str();
 
 	if (!reader->movie) {
 		if (!openData()) {

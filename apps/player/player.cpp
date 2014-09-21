@@ -28,14 +28,14 @@ struct Stream {
 	Stream(Stream&& s) = default;
 
 	//FIXME: TO BE REMOVED
-	int codec_type;
+	int codecType;
 };
 
-Module* createRenderer(int codec_type) {
-	if (codec_type == AVMEDIA_TYPE_VIDEO) {
+Module* createRenderer(int codecType) {
+	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		return new Render::SDLVideo;
-	} else if (codec_type == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
 		return Render::SDLAudio::create();
 	} else {
@@ -67,14 +67,14 @@ Stream decode(Stream& input) {
 	auto decoder = Decode::LibavDecode::create(*decoderProps);
 	Stream r(decoder);
 	r.pin = decoder->getPin(0);
-	r.codec_type = decoderProps->getAVCodecContext()->codec_type;
+	r.codecType = decoderProps->getAVCodecContext()->codec_type;
 	ConnectPin(input.pin, decoder->getInput());
 
 	return r;
 }
 
 Stream render(Stream& input) {
-	Stream r(createRenderer(input.codec_type));
+	Stream r(createRenderer(input.codecType));
 	ConnectPin(input.pin, r.fromModule->getInput());
 	return r;
 }
