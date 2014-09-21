@@ -96,6 +96,9 @@ then
 	pushd extra/build/gpac
 	../../src/gpac/configure \
 		--use-ffmpeg=no \
+		--use-zlib=no \
+		--use-png=no \
+		--use-jpeg=no \
 		--prefix=$EXTRA_DIR
 
 	$MAKE lib
