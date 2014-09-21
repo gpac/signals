@@ -23,19 +23,29 @@ private:
 
 template<typename Result, typename Class, typename... Args>
 MemberFunctor<Result, Class, Result (Class::*)(Args...)>
-MEMBER_FUNCTOR(Class* ObjectPtr, Result (Class::*MemberFunction) (Args...)) {
-	return MemberFunctor<Result, Class, Result (Class::*)(Args...)>(ObjectPtr, MemberFunction);
+MEMBER_FUNCTOR(Class* objectPtr, Result (Class::*memberFunction) (Args...)) {
+	return MemberFunctor<Result, Class, Result (Class::*)(Args...)>(objectPtr, memberFunction);
+}
+
+template<typename B, typename C, typename D, typename E>
+void Connect(B& sig, C objectSlot, D memberFunctionSlot, E& executor) {
+	auto functor = MEMBER_FUNCTOR(objectSlot, memberFunctionSlot);
+	sig.connect(functor, executor);
 }
 
 template<typename B, typename C, typename D>
-void Connect(B& Sig, C ObjectSlot, D MemberFunctionSlot) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	Sig.connect(functor);
+void Connect(B& sig, C objectSlot, D memberFunctionSlot) {
+	Connect(sig, objectSlot, memberFunctionSlot, sig.getCaller());
+}
+
+template<typename SignalType, typename LambdaType, typename Executor>
+void Connect(SignalType& sig, LambdaType lambda, Executor& executor) {
+	sig.connect(lambda, executor);
 }
 
 template<typename SignalType, typename LambdaType>
-void Connect(SignalType& Sig, LambdaType Lambda) {
-	Sig.connect(Lambda);
+void Connect(SignalType& sig, LambdaType lambda) {
+	sig.connect(lambda);
 }
 
 template<typename T>
