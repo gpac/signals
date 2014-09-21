@@ -21,6 +21,8 @@ public:
 	virtual bool disconnect(size_t connectionId) = 0;
 	virtual size_t emit(Args... args) = 0;
 
+	virtual ICaller<Callback(Args...)>& getCaller() const = 0;
+
 	//TODO write test based on the shared_ptr reflector
 	/**
 	 * Some implementations (such as MSVC std::launch) don't destroy the copy of
@@ -80,8 +82,12 @@ public:
 		return result.get();
 	}
 
+	ICaller<Callback(Args...)>& getCaller() const {
+		return caller;
+	}
+
 protected:
-	ProtoSignal() : uid(0), defaultCaller(new CallerSync<Callback(Args...)>()), caller(*defaultCaller.get()) {
+	ProtoSignal() : uid(0), defaultCaller(new CallerAsync<Callback(Args...)>()), caller(*defaultCaller.get()) {
 	}
 
 	ProtoSignal(ICaller<Callback(Args...)> &caller) : uid(0), caller(caller) {
@@ -130,7 +136,7 @@ private:
 	Result result;               //protected by callbacksMutex
 	size_t uid;                  //protected by callbacksMutex
 	
-	std::unique_ptr<CallerSync<Callback(Args...)>> const defaultCaller;
+	std::unique_ptr<ICaller<Callback(Args...)>> const defaultCaller;
 	ICaller<Callback(Args...)> &caller;
 };
 
