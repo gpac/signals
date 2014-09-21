@@ -1,7 +1,6 @@
 #pragma once
 
 #include "internal/module.hpp"
-#include "internal/param.hpp"
 #include <cstdint>
 #include <string>
 

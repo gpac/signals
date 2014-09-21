@@ -20,6 +20,7 @@ public:
 	virtual void resize(size_t size) = 0;
 };
 
+//FIXME: this class contains multimedia considerations, thus should be in libmm...
 class Data : public IData {
 public:
 	Data(size_t size) : ptr(size) {

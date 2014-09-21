@@ -46,7 +46,7 @@ private:
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 
-void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl);
+void avLog(void *avcl, int level, const char *fmt, va_list vl);
 
 typedef PinDataDefault<DataAVPacket> PinLibav;
 
