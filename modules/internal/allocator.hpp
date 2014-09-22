@@ -33,19 +33,19 @@ public:
 			numAlloc++;
 #endif
 			return data;
-		} else {
-			if (forceNew) {
-				numBlocks++;
-				std::shared_ptr<DataType> data(new DataType(size));
-				usedBlocks.push_back(std::weak_ptr<DataType>(data));
-#ifdef COUNT_ALLOC
-				numAlloc++;
-#endif
-				return data;
-			} else {
-				return std::shared_ptr<DataType>();
-			}
 		}
+
+		if (forceNew) {
+			numBlocks++;
+			std::shared_ptr<DataType> data(new DataType(size));
+			usedBlocks.push_back(std::weak_ptr<DataType>(data));
+#ifdef COUNT_ALLOC
+			numAlloc++;
+#endif
+			return data;
+		}
+		
+		return nullptr;
 	}
 
 	size_t getNumBlocks() const {
