@@ -38,10 +38,6 @@ public:
 		return nullptr;
 	}
 
-	size_t getNumBlocks() const {
-		return numBlocks;
-	}
-
 	size_t getNumUsedBlocks() {
 		updateUsedBlocks();
 		return usedBlocks.size();
