@@ -103,35 +103,33 @@ public:
 	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
 	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
-		for (;;) {
-			std::shared_ptr<DataType> data(allocator.getBuffer(size));
-			if (data.get()) {
-				return data;
-			}
-
-			signal.results(false); //see if results are ready
-			data = allocator.getBuffer(size);
-			if (data.get()) {
-				return data;
-			}
-
-			signal.results(true, true); //wait synchronously for one result
-			data = allocator.getBuffer(size);
-			if (data.get()) {
-				return data;
-			}
-
-#if 0
-			Log::msg(Log::Error, "The allocator failed to wait for available data. Reset the whole allocator.");
-			allocator.reset();
-			data = allocator.getBuffer(size);
-#else
-			Log::msg(Log::Error, "The allocator failed to wait for available data. Add a new buffer.");
-			data = allocator.getBuffer(size, true);
-#endif
-			assert(data.get());
+		std::shared_ptr<DataType> data(allocator.getBuffer(size));
+		if (data.get()) {
 			return data;
 		}
+
+		signal.results(false); //see if results are ready
+		data = allocator.getBuffer(size);
+		if (data.get()) {
+			return data;
+		}
+
+		signal.results(true, true); //wait synchronously for one result
+		data = allocator.getBuffer(size);
+		if (data.get()) {
+			return data;
+		}
+
+#if 0
+		Log::msg(Log::Error, "The allocator failed to wait for available data. Reset the whole allocator.");
+		allocator.reset();
+		data = allocator.getBuffer(size);
+#else
+		Log::msg(Log::Error, "The allocator failed to wait for available data. Add a new buffer.");
+		data = allocator.getBuffer(size, true);
+#endif
+		assert(data.get());
+		return data;
 	}
 
 	Signal& getSignal() {
