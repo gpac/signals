@@ -30,7 +30,7 @@ unittest("transcoder: video simple (libav mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -47,9 +47,9 @@ unittest("transcoder: video simple (libav mux)") {
 	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
 	encode->sendOutputPinsInfo();
 
-	ConnectPinToModule(demux->getPin(videoIndex), decode.get());
-	ConnectPinToModule(decode->getPin(0), encode.get());
-	ConnectPinToModule(encode->getPin(0), mux.get());
+	ConnectPinToModule(demux->getPin(videoIndex), decode);
+	ConnectPinToModule(decode->getPin(0), encode);
+	ConnectPinToModule(encode->getPin(0), mux);
 
 	while (demux->process(nullptr)) {
 	}
@@ -75,7 +75,7 @@ unittest("transcoder: video simple (gpac mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -92,9 +92,9 @@ unittest("transcoder: video simple (gpac mux)") {
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
 	encode->sendOutputPinsInfo();
 
-	ConnectPinToModule(demux->getPin(videoIndex), decode.get());
-	ConnectPinToModule(decode->getPin(0), encode.get());
-	ConnectPinToModule(encode->getPin(0), mux.get());
+	ConnectPinToModule(demux->getPin(videoIndex), decode);
+	ConnectPinToModule(decode->getPin(0), encode);
+	ConnectPinToModule(encode->getPin(0), mux);
 
 	while (demux->process(nullptr)) {
 	}
@@ -121,7 +121,7 @@ unittest("transcoder: audio simple (libav mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 			audioIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -142,10 +142,10 @@ unittest("transcoder: audio simple (libav mux)") {
 	//create an audio resampler
 	auto audioConverter = uptr(Transform::AudioConvert::create());
 
-	ConnectPinToModule(demux->getPin(audioIndex), decode.get());
-	ConnectPinToModule(decode->getPin(0), audioConverter.get());
-	ConnectPinToModule(audioConverter->getPin(0), encode.get());
-	ConnectPinToModule(encode->getPin(0), mux.get());
+	ConnectPinToModule(demux->getPin(audioIndex), decode);
+	ConnectPinToModule(decode->getPin(0), audioConverter);
+	ConnectPinToModule(audioConverter->getPin(0), encode);
+	ConnectPinToModule(encode->getPin(0), mux);
 
 	while (demux->process(nullptr)) {
 	}
@@ -173,7 +173,7 @@ unittest("transcoder: audio simple (gpac mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 			audioIndex = i;
 		} else {
-			ConnectToModule(demux->getPin(i)->getSignal(), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectToModule(demux->getPin(i)->getSignal(), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -193,10 +193,10 @@ unittest("transcoder: audio simple (gpac mux)") {
 	//create an audio resampler
 	auto audioConverter = uptr(Transform::AudioConvert::create());
 
-	ConnectToModule(demux->getPin(audioIndex)->getSignal(), decode.get());
-	ConnectToModule(decode->getPin(0)->getSignal(), audioConverter.get());
-	ConnectToModule(audioConverter->getPin(0)->getSignal(), encode.get());
-	ConnectToModule(encode->getPin(0)->getSignal(), mux.get(), &Mux::LibavMux::process);
+	ConnectToModule(demux->getPin(audioIndex)->getSignal(), decode);
+	ConnectToModule(decode->getPin(0)->getSignal(), audioConverter);
+	ConnectToModule(audioConverter->getPin(0)->getSignal(), encode);
+	ConnectToModule(encode->getPin(0)->getSignal(), mux);
 
 	while (demux->process(nullptr)) {
 	}

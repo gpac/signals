@@ -49,7 +49,7 @@ unittest("print packets size from file: File -> Out::Print") {
 	auto p = uptr(Out::Print::create(std::cout));
 	ASSERT(p != nullptr);
 
-	ConnectPinToModule(f->getPin(0), p.get());
+	ConnectPinToModule(f->getPin(0), p);
 
 	f->process(nullptr);
 
