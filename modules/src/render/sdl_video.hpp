@@ -1,6 +1,6 @@
 #pragma once
 
-#include "internal/module.hpp"
+#include "internal/core/module.hpp"
 #include <mutex>
 #include <string>
 #include <thread>

@@ -4,9 +4,6 @@
     <Filter Include="includes">
       <UniqueIdentifier>{60b9021d-d140-4d60-bbf1-f45ea34e06b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="includes\internal">
-      <UniqueIdentifier>{c1310a27-6c14-4808-84a1-4ca97125b74c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{22a3d231-ad2c-47ab-ae2a-99b76ea5919f}</UniqueIdentifier>
     </Filter>
@@ -37,31 +34,25 @@
     <Filter Include="src\transform">
       <UniqueIdentifier>{ae8eabc9-587b-4dbf-868c-b02d323ccdfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="includes\internal">
+      <UniqueIdentifier>{c1310a27-6c14-4808-84a1-4ca97125b74c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\internal\utils">
+      <UniqueIdentifier>{a9a45a49-8b26-4546-83bd-e21018ca24b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\internal\core">
+      <UniqueIdentifier>{c81eaab6-4326-41f2-b4f3-aad1df7b8076}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
       <Filter>includes</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\module.hpp">
-      <Filter>includes\internal</Filter>
     </ClInclude>
     <ClInclude Include="src\in\file.hpp">
       <Filter>src\in</Filter>
     </ClInclude>
     <ClInclude Include="src\out\print.hpp">
       <Filter>src\out</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\data.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\pin.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\allocator.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\props.hpp">
-      <Filter>includes\internal</Filter>
     </ClInclude>
     <ClInclude Include="src\common\libav.hpp">
       <Filter>src\common</Filter>
@@ -102,9 +93,6 @@
     <ClInclude Include="src\common\mm.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="internal\clock.hpp">
-      <Filter>includes\internal</Filter>
-    </ClInclude>
     <ClInclude Include="src\in\sound_generator.hpp">
       <Filter>src\in</Filter>
     </ClInclude>
@@ -113,6 +101,27 @@
     </ClInclude>
     <ClInclude Include="src\common\pcm.hpp">
       <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\core\allocator.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\core\clock.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\core\data.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\core\module.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\core\pin.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\core\props.hpp">
+      <Filter>includes\internal\core</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\utils\helper.hpp">
+      <Filter>includes\internal\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,9 +158,6 @@
     <ClCompile Include="src\transform\audio_convert.cpp">
       <Filter>src\transform</Filter>
     </ClCompile>
-    <ClCompile Include="internal\pin.cpp">
-      <Filter>includes\internal</Filter>
-    </ClCompile>
     <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp">
       <Filter>src\demux</Filter>
     </ClCompile>
@@ -167,11 +173,14 @@
     <ClCompile Include="src\in\video_generator.cpp">
       <Filter>src\in</Filter>
     </ClCompile>
-    <ClCompile Include="internal\system_clock.cpp">
-      <Filter>includes\internal</Filter>
-    </ClCompile>
     <ClCompile Include="src\render\sdl_common.cpp">
       <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\core\pin.cpp">
+      <Filter>includes\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\core\system_clock.cpp">
+      <Filter>includes\internal\core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

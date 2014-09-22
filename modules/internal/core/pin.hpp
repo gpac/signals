@@ -36,14 +36,24 @@ public:
 	virtual ISignal<bool(std::shared_ptr<Data>)>& getSignal() = 0;
 };
 
-inline void ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor) {
-	p->getSignal().connect(functor);
+inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor) {
+	return p->getSignal().connect(functor);
 }
 
 template<typename C, typename D>
-void ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
+size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
 	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	p->getSignal().connect(functor);
+	return ConnectPin(p, functor);
+}
+
+inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor, IExecutor<bool(std::shared_ptr<Data>)>& executor) {
+	return p->getSignal().connect(functor, executor);
+}
+
+template<typename C, typename D, typename E>
+size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
+	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+	return ConnectPin(p, functor, executor);
 }
 
 

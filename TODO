@@ -10,6 +10,7 @@ Tasks (from higher to lower priority):
 - be able to draw the graph of connections (and allocator states?)
 - remove waitForCompletion() by delegating Modules
 - remove create() and use C++ exceptions in constructors
+- Test executors when MSVC allows it, make experiments with Strands: "Run function objects according to the underlying executor’s rules, but also run them in FIFO order and not concurrently." + Dispatch
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)

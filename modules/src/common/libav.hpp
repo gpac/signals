@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../internal/data.hpp"
-#include "../../internal/pin.hpp"
-#include "../../internal/props.hpp"
+#include "../../internal/core/data.hpp"
+#include "../../internal/core/pin.hpp"
+#include "../../internal/core/props.hpp"
 #include <string>
 #include <cstdarg>
 #include <memory>

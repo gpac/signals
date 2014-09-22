@@ -38,7 +38,7 @@ unittest("empty param test: Out::Print") {
 }
 
 unittest("simple param test") {
-	auto f =uptr(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
 	ASSERT(f != nullptr);
 }
 
@@ -49,7 +49,7 @@ unittest("print packets size from file: File -> Out::Print") {
 	auto p = uptr(Out::Print::create(std::cout));
 	ASSERT(p != nullptr);
 
-	ConnectPin(f->getPin(0), p.get(), &Out::Print::process);
+	ConnectPinToModule(f->getPin(0), p.get());
 
 	f->process(nullptr);
 

@@ -1,6 +1,6 @@
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
-#include "internal/clock.hpp"
+#include "internal/core/clock.hpp"
 #include "sound_generator.hpp"
 #include "../common/pcm.hpp"
 #include <cmath>

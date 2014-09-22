@@ -1,6 +1,6 @@
 #pragma once
 
-#include "internal/module.hpp"
+#include "internal/core/module.hpp"
 #include <string>
 
 namespace Modules {

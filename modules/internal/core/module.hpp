@@ -18,9 +18,9 @@ public:
 
 class Module : public IModule {
 public:
-	Module(PinFactory *pinFactory) : pinFactory(pinFactory) {
+	Module(PinFactory *pinFactory) : pinFactory(pinFactory), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
 	}
-	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()) {
+	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
 	}
 
 	std::function<bool(std::shared_ptr<Data>)> getInput() {
@@ -47,6 +47,10 @@ public:
 		return signals[i].get();
 	}
 
+	IExecutor<bool(std::shared_ptr<Data>)>& getExecutor() const {
+		return executor;
+	}
+
 protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
@@ -54,6 +58,9 @@ protected:
 	std::unique_ptr<PinFactory> const defaultPinFactory;
 	PinFactory* const pinFactory;
 	std::vector<std::unique_ptr<Pin>> signals;
+
+	std::unique_ptr<IExecutor<bool(std::shared_ptr<Data>)>> const defaultExecutor;
+	IExecutor<bool(std::shared_ptr<Data>)> &executor;
 };
 
 }
