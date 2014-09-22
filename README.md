@@ -16,16 +16,14 @@ Remove '-XCClinker' in bin/make/config.mk (introduced by SDL2)
 In the Signals root path:
   
   64 bits:
-  $ export PATH=/mingw64/bin:$PATH
+  $ export PATH=/mingw64/bin:$PWD/extra/bin:$PATH
   $ export MSYSTEM=MINGW32
   $ export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig
-  $ export LD_LIBRARY_PATH=$PWD/extra/bin
   
   32 bits:
-  $ export PATH=/mingw32/bin:$PATH
+  $ export PATH=/mingw32/bin:$PWD/extra/bin:$PATH
   $ export MSYSTEM=MINGW32
   $ export PKG_CONFIG_PATH=/mingw32/lib/pkgconfig
-  $ export LD_LIBRARY_PATH=$PWD/extra/bin
 
 Visual Studio:
 You need at least Visual Studio 2014 CTP3.
