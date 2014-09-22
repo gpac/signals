@@ -67,10 +67,10 @@ unittest("Simple synth Romain") {
 
 	ExecutorThread<bool(std::shared_ptr<Data >)> amp1Thread, amp2Thread, sink1Thread, sink2Thread;
 
-	Connect(osc->getPin(0)->getSignal(), amp1.get(), &Amp::process, amp1Thread);
-	Connect(osc->getPin(0)->getSignal(), amp2.get(), &Amp::process, amp2Thread);
-	Connect(amp1->getPin(0)->getSignal(), sink1.get(), &Sink::process, sink1Thread);
-	Connect(amp2->getPin(0)->getSignal(), sink2.get(), &Sink::process, sink2Thread);
+	ConnectToModule(osc->getPin(0)->getSignal(), amp1.get());
+	ConnectToModule(osc->getPin(0)->getSignal(), amp2.get());
+	Connect(amp1->getPin(0)->getSignal(), sink1.get(), &Sink::process);
+	Connect(amp2->getPin(0)->getSignal(), sink2.get(), &Sink::process);
 
 	for (int i = 0; i < 10000; ++i) { //this is bigger than the default allocator size (100), so there will be contention
 		osc->process(nullptr);

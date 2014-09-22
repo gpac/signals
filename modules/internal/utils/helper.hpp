@@ -15,9 +15,16 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<bool, Class, bool(Class::*)(std::shared_ptr<Data>)>(objectPtr, &Class::process);
 }
 
-size_t ConnectPinToModule(Pin* pin, Module* module) {
+template<typename ModuleType>
+size_t ConnectPinToModule(Pin* pin, ModuleType* module) {
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
 	return ConnectPin(pin, functor, module->getExecutor());
+}
+
+template<typename SignalType, typename ModuleType>
+size_t ConnectToModule(SignalType& sig, ModuleType* module) {
+	auto functor = MEMBER_FUNCTOR_PROCESS(module);
+	return Connect(sig, functor, module->getExecutor());
 }
 
 }

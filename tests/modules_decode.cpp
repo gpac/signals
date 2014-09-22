@@ -36,7 +36,7 @@ unittest("decoder: audio simple") {
 
 	//create an audio resampler
 	//auto audioConverter = uptr(Transform::AudioConvert::create());
-	//Connect(audioConverter->getPin(0)->getSignal(), decoder.get(), &Encode::LibavEncode::process);
+	//ConnectToModule(audioConverter->getPin(0)->getSignal(), decoder.get());
 
 	input->process(nullptr);
 
