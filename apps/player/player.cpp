@@ -68,14 +68,14 @@ Stream decode(Stream& input) {
 	Stream r(decoder);
 	r.pin = decoder->getPin(0);
 	r.codecType = decoderProps->getAVCodecContext()->codec_type;
-	ConnectPin(input.pin, decoder->getInput());
+	ConnectPinToModule(input.pin, decoder);
 
 	return r;
 }
 
 Stream render(Stream& input) {
 	Stream r(createRenderer(input.codecType));
-	ConnectPin(input.pin, r.fromModule->getInput());
+	ConnectPinToModule(input.pin, r.fromModule.get());
 	return r;
 }
 

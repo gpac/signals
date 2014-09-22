@@ -23,13 +23,6 @@ public:
 	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
 	}
 
-	std::function<bool(std::shared_ptr<Data>)> getInput() {
-		auto processFunction = [&](std::shared_ptr<Data> data) -> bool {
-			return process(data);
-		};
-		return processFunction;
-	}
-
 	/**
 	 * Must be called before the destructor.
 	 */
