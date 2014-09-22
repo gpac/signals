@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../internal/data.hpp"
-#include "../../internal/pin.hpp"
+#include "../../internal/core/data.hpp"
+#include "../../internal/core/pin.hpp"
 
 
 namespace Modules {

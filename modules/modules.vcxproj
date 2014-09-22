@@ -19,12 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="internal\allocator.hpp" />
-    <ClInclude Include="internal\clock.hpp" />
-    <ClInclude Include="internal\data.hpp" />
-    <ClInclude Include="internal\module.hpp" />
-    <ClInclude Include="internal\pin.hpp" />
-    <ClInclude Include="internal\props.hpp" />
+    <ClInclude Include="internal\core\allocator.hpp" />
+    <ClInclude Include="internal\core\clock.hpp" />
+    <ClInclude Include="internal\core\data.hpp" />
+    <ClInclude Include="internal\core\module.hpp" />
+    <ClInclude Include="internal\core\pin.hpp" />
+    <ClInclude Include="internal\core\props.hpp" />
+    <ClInclude Include="internal\utils\helper.hpp" />
     <ClInclude Include="modules.hpp" />
     <ClInclude Include="src\common\libav.hpp" />
     <ClInclude Include="src\common\mm.hpp" />
@@ -46,8 +47,8 @@
     <ClInclude Include="src\transform\audio_convert.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="internal\pin.cpp" />
-    <ClCompile Include="internal\system_clock.cpp" />
+    <ClCompile Include="internal\core\pin.cpp" />
+    <ClCompile Include="internal\core\system_clock.cpp" />
     <ClCompile Include="src\common\libav.cpp" />
     <ClCompile Include="src\decode\libav_decode.cpp" />
     <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp" />

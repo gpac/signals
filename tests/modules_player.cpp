@@ -28,7 +28,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			ConnectPin(demux->getPin(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -37,8 +37,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(new Render::SDLVideo);
 
-	ConnectPin(demux->getPin(videoIndex), decode.get(), &Decode::LibavDecode::process);
-	ConnectPin(decode->getPin(0), render.get(), &Render::SDLVideo::process);
+	ConnectPinToModule(demux->getPin(videoIndex), decode.get());
+	ConnectPinToModule(decode->getPin(0), render.get());
 
 	while (demux->process(nullptr)) {
 	}
@@ -59,7 +59,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 			audioIndex = i;
 		} else {
-			ConnectPin(demux->getPin(i), null.get(), &Out::Null::process); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -68,8 +68,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(Render::SDLAudio::create());
 
-	ConnectPin(demux->getPin(audioIndex), decode.get(), &Decode::LibavDecode::process);
-	ConnectPin(decode->getPin(0), render.get(), &Render::SDLAudio::process);
+	ConnectPinToModule(demux->getPin(audioIndex), decode.get());
+	ConnectPinToModule(decode->getPin(0), render.get());
 
 	while (demux->process(nullptr)) {
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../common/mm.hpp"
-#include "internal/module.hpp"
+#include "internal/core/module.hpp"
 #include <string>
 
 typedef struct __tag_isom GF_ISOFile;

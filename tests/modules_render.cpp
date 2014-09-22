@@ -15,7 +15,7 @@ namespace {
 unittest("A/V sync: one thread") {
 	auto videoGen = uptr(new In::VideoGenerator);
 	auto videoRender = uptr(new Render::SDLVideo);
-	ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
+	ConnectPinToModule(videoGen->getPin(0), videoRender.get());
 
 	//FIXME: avoid SDL audio and video parallel creations
 	const int sleepDurInMs = 100;
@@ -24,7 +24,7 @@ unittest("A/V sync: one thread") {
 
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto soundRender = uptr(Render::SDLAudio::create());
-	ConnectPin(soundGen->getPin(0), soundRender.get(), &Render::SDLAudio::process);
+	ConnectPinToModule(soundGen->getPin(0), soundRender.get());
 
 	for(int i=0; i < 25*5; ++i) {
 		videoGen->process(nullptr);
@@ -42,7 +42,7 @@ unittest("A/V sync: separate threads") {
 	auto f = [&]() {
 		auto videoGen = uptr(new In::VideoGenerator);
 		auto videoRender = uptr(new Render::SDLVideo);
-		ConnectPin(videoGen->getPin(0), videoRender.get(), &Render::SDLVideo::process);
+		ConnectPinToModule(videoGen->getPin(0), videoRender.get());
 
 		for(int i=0; i < 25*5; ++i) {
 			videoGen->process(nullptr);
@@ -54,7 +54,7 @@ unittest("A/V sync: separate threads") {
 	auto g = [&]() {
 		auto soundGen = uptr(new In::SoundGenerator);
 		auto soundRender = uptr(Render::SDLAudio::create());
-		ConnectPin(soundGen->getPin(0), soundRender.get(), &Render::SDLAudio::process);
+		ConnectPinToModule(soundGen->getPin(0), soundRender.get());
 		for(int i=0; i < 25*5; ++i) {
 			soundGen->process(nullptr);
 		}

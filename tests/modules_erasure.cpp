@@ -28,8 +28,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder 
 		auto p = uptr(Out::Print::create(std::cout));
 		ASSERT(p != nullptr);
 
-		ConnectPin(demux->getPin(i), decode.get(), &Decode::LibavDecode::process);
-		ConnectPin(decode->getPin(0), p.get(), &Out::Print::process);
+		ConnectPinToModule(demux->getPin(i), decode.get());
+		ConnectPinToModule(decode->getPin(0), p.get());
 
 		decoders.push_back(std::move(decode));
 		printers.push_back(std::move(p));
