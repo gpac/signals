@@ -87,7 +87,7 @@ public:
 	}
 
 protected:
-	ProtoSignal() : uid(0), defaultExecutor(new ExecutorSync<Callback(Args...)>()), executor(*defaultExecutor.get()) {
+	ProtoSignal() : uid(0), defaultExecutor(new ExecutorAsync<Callback(Args...)>()), executor(*defaultExecutor.get()) {
 	}
 
 	ProtoSignal(IExecutor<Callback(Args...)> &executor) : uid(0), executor(executor) {
