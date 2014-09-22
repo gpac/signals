@@ -52,7 +52,8 @@ public:
 		return numBlocks;
 	}
 
-	size_t getNumUsedBlocks() const {
+	size_t getNumUsedBlocks() {
+		updateUsedBlocks();
 		return usedBlocks.size();
 	}
 
@@ -69,13 +70,6 @@ public:
 		updateUsedBlocks();
 	}
 
-	void updateUsedBlocks() {
-		usedBlocks.erase(std::remove_if(usedBlocks.begin(), usedBlocks.end(),
-		[](std::weak_ptr<Data> data) -> bool {
-			return data.expired();
-		}), usedBlocks.end());
-	}
-
 private:
 	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
 
@@ -84,6 +78,14 @@ private:
 #ifdef COUNT_ALLOC
 	std::atomic<uint64_t> numAlloc;
 #endif
+
+	void updateUsedBlocks() {
+		usedBlocks.erase(std::remove_if(usedBlocks.begin(), usedBlocks.end(),
+		[](std::weak_ptr<Data> data) -> bool {
+			return data.expired();
+		}), usedBlocks.end());
+	}
+
 };
 
 }

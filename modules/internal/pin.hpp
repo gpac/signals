@@ -109,13 +109,11 @@ public:
 				return data;
 			} else {
 				signal.results(false); //see if results are ready
-				allocator.updateUsedBlocks();
 				data = allocator.getBuffer(size);
 				if (data.get()) {
 					return data;
 				} else {
 					signal.results(true, true); //wait synchronously for one result
-					allocator.updateUsedBlocks();
 					data = allocator.getBuffer(size);
 					if (data.get()) {
 						return data;
@@ -147,7 +145,6 @@ public:
 private:
 	size_t tryFlushAllocator() {
 		signal.results();                          //getting the result release the future shared_ptr
-		allocator.updateUsedBlocks();              //remove blocks only weak-referenced by the allocator
 		auto usedBlocks = allocator.getNumUsedBlocks(); //some blocks may stay if the allocator data is processed by further modules
 #ifdef COUNT_ALLOC
 		auto numAlloc = allocator.getNumAlloc();
