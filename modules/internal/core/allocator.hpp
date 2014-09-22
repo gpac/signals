@@ -7,8 +7,6 @@
 
 namespace Modules {
 
-//#define COUNT_ALLOC
-
 //TODO: this is a (blocking) allocator by packets - write a more generalist one
 //TODO: make a non-blocking one by calling reset() on the shared_ptr - may required appropriate checks in the modules
 //FIXME: not thread-safe, so cannot be shared between modules

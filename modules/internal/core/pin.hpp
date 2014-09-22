@@ -103,10 +103,6 @@ public:
 		if (maxSleep == 0) {
 			Log::msg(Log::Warning, "Warning: force invalidating the allocator data.");
 			allocator.reset();
-#ifdef COUNT_ALLOC
-			usedBlocks = tryFlushAllocator();
-			assert(usedBlocks == 0);
-#endif
 		}
 	}
 
@@ -154,10 +150,6 @@ private:
 	size_t tryFlushAllocator() {
 		signal.results();                          //getting the result release the future shared_ptr
 		auto usedBlocks = allocator.getNumUsedBlocks(); //some blocks may stay if the allocator data is processed by further modules
-#ifdef COUNT_ALLOC
-		auto numAlloc = allocator.getNumAlloc();
-		Log::msg(Log::Debug, "this[%s], usedBlocks: %s/%s/%s", this, usedBlocks, allocator.getNumBlocks(), numAlloc);
-#endif
 		return usedBlocks;
 	}
 
