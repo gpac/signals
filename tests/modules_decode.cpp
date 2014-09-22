@@ -29,14 +29,14 @@ unittest("decoder: audio simple") {
 
 	//create the audio decoder
 	auto decoder = uptr(createMp3Decoder());
-	ConnectPinToModule(input->getPin(0), decoder.get());
+	ConnectPinToModule(input->getPin(0), decoder);
 
 	auto null = uptr(Out::Null::create());
-	ConnectPinToModule(decoder->getPin(0), null.get());
+	ConnectPinToModule(decoder->getPin(0), null);
 
 	//create an audio resampler
 	//auto audioConverter = uptr(Transform::AudioConvert::create());
-	//ConnectToModule(audioConverter->getPin(0)->getSignal(), decoder.get());
+	//ConnectToModule(audioConverter->getPin(0)->getSignal(), decoder);
 
 	input->process(nullptr);
 

@@ -28,7 +28,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -37,8 +37,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(new Render::SDLVideo);
 
-	ConnectPinToModule(demux->getPin(videoIndex), decode.get());
-	ConnectPinToModule(decode->getPin(0), render.get());
+	ConnectPinToModule(demux->getPin(videoIndex), decode);
+	ConnectPinToModule(decode->getPin(0), render);
 
 	while (demux->process(nullptr)) {
 	}
@@ -59,7 +59,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
 			audioIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -68,8 +68,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto render = uptr(Render::SDLAudio::create());
 
-	ConnectPinToModule(demux->getPin(audioIndex), decode.get());
-	ConnectPinToModule(decode->getPin(0), render.get());
+	ConnectPinToModule(demux->getPin(audioIndex), decode);
+	ConnectPinToModule(decode->getPin(0), render);
 
 	while (demux->process(nullptr)) {
 	}

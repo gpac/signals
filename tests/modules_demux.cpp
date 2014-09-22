@@ -28,8 +28,8 @@ unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print") {
 	auto mp4Demux = uptr(Demux::GPACDemuxMP4Full::create());
 	auto p = uptr(Out::Print::create(std::cout));
 
-	ConnectPinToModule(f->getPin(0), mp4Demux.get());
-	ConnectPinToModule(mp4Demux->getPin(0), p.get());
+	ConnectPinToModule(f->getPin(0), mp4Demux);
+	ConnectPinToModule(mp4Demux->getPin(0), p);
 
 	f->process(nullptr);
 

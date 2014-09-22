@@ -67,8 +67,8 @@ unittest("Simple synth Romain") {
 
 	ExecutorThread<bool(std::shared_ptr<Data >)> amp1Thread, amp2Thread, sink1Thread, sink2Thread;
 
-	ConnectToModule(osc->getPin(0)->getSignal(), amp1.get());
-	ConnectToModule(osc->getPin(0)->getSignal(), amp2.get());
+	ConnectToModule(osc->getPin(0)->getSignal(), amp1);
+	ConnectToModule(osc->getPin(0)->getSignal(), amp2);
 	Connect(amp1->getPin(0)->getSignal(), sink1.get(), &Sink::process);
 	Connect(amp2->getPin(0)->getSignal(), sink2.get(), &Sink::process);
 

@@ -33,7 +33,7 @@ unittest("transcoder async: video simple (gpac mux)") {
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
 			videoIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null.get()); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -50,9 +50,9 @@ unittest("transcoder async: video simple (gpac mux)") {
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
 	encode->sendOutputPinsInfo();
 
-	ConnectPinToModule(demux->getPin(videoIndex), decode.get());
-	ConnectPinToModule(decode->getPin(0), encode.get());
-	ConnectPinToModule(encode->getPin(0), mux.get());
+	ConnectPinToModule(demux->getPin(videoIndex), decode);
+	ConnectPinToModule(decode->getPin(0), encode);
+	ConnectPinToModule(encode->getPin(0), mux);
 
 	while (demux->process(nullptr)) {
 	}

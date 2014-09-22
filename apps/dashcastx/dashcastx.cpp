@@ -21,12 +21,12 @@ std::unique_ptr<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *deco
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
-		ConnectPinToModule(pPin, r.get());
+		ConnectPinToModule(pPin, r);
 		return std::move(r);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
 		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
-		ConnectPinToModule(pPin, r.get());
+		ConnectPinToModule(pPin, r);
 		return std::move(r);
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
@@ -53,14 +53,14 @@ int safeMain(int argc, char const* argv[]) {
 			ASSERT(decoderProps);
 
 			auto decoder = uptr(Decode::LibavDecode::create(*decoderProps));
-			ConnectPinToModule(demux->getPin(i), decoder.get());
+			ConnectPinToModule(demux->getPin(i), decoder);
 
 			//TODO: add audio and video rescaling
 
 			auto encoder = createEncoder(decoder->getPin(0), decoderProps);
 			if (!encoder) {
 				auto r = uptr(Out::Null::create());
-				ConnectPinToModule(decoder->getPin(0), r.get());
+				ConnectPinToModule(decoder->getPin(0), r);
 				modules.push_back(std::move(decoder));
 				modules.push_back(std::move(r));
 				break;
@@ -70,7 +70,7 @@ int safeMain(int argc, char const* argv[]) {
 			std::stringstream filename;
 			filename << i;
 			auto muxer = uptr(Mux::GPACMuxMP4::create(filename.str()));
-			ConnectPinToModule(encoder->getPin(0), muxer.get());
+			ConnectPinToModule(encoder->getPin(0), muxer);
 
 			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);
 			encoder->sendOutputPinsInfo();
