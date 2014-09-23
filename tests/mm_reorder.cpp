@@ -59,9 +59,9 @@ private:
 };
 
 unittest("Simple synth Romain") {
-	auto osc = uptr(new Osc);
-	auto amp1 = uptr(new Amp);
-	auto amp2 = uptr(new Amp);
+	auto osc = uptrSafeModule(new Osc);
+	auto amp1 = uptrSafeModule(new Amp);
+	auto amp2 = uptrSafeModule(new Amp);
 	auto sink1 = uptr(new Sink);
 	auto sink2 = uptr(new Sink);
 

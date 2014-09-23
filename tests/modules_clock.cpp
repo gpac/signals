@@ -1,6 +1,5 @@
 #include "tests.hpp"
 #include "modules.hpp"
-#include "../utils/tools.hpp"
 
 using namespace Tests;
 using namespace Modules;

@@ -5,7 +5,9 @@
 #include "in/video_generator.hpp"
 #include "render/sdl_audio.hpp"
 #include "render/sdl_video.hpp"
-#include "../utils/tools.hpp"
+
+#include "../../../utils/tools.hpp"
+
 
 using namespace Tests;
 using namespace Modules;
@@ -13,8 +15,8 @@ using namespace Modules;
 namespace {
 
 unittest("sound generator") {
-	auto soundGen = uptr(new In::SoundGenerator);
-	auto render = uptr(Render::SDLAudio::create());
+	auto soundGen = uptrSafeModule(new In::SoundGenerator);
+	auto render = uptrSafeModule(Render::SDLAudio::create());
 
 	ConnectPinToModule(soundGen->getPin(0), render);
 
@@ -26,8 +28,8 @@ unittest("sound generator") {
 }
 
 unittest("video generator") {
-	auto videoGen = uptr(new In::VideoGenerator);
-	auto render = uptr(new Render::SDLVideo);
+	auto videoGen = uptrSafeModule(new In::VideoGenerator);
+	auto render = uptrSafeModule(new Render::SDLVideo);
 
 	std::vector<int> times;
 	auto onFrame = [&](std::shared_ptr<Data> data) -> bool {

@@ -2,10 +2,13 @@
 
 #include "modules.hpp"
 
+#include "../../utils/tools.hpp"
+
+
 class Pipeline {
 public:
 	void add(Module* module) {
-		modules.push_back(uptr(module));
+		modules.push_back(uptrSafeModule(module));
 	}
 
 	void run() {
@@ -21,6 +24,6 @@ public:
 	}
 
 private:
-	std::vector<std::unique_ptr<Module>> modules;
+	std::vector<ModuleSafe<Module>> modules;
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "data.hpp"
-#include "internal/utils/queue.hpp"
+#include "../../../signals/internal/utils/queue.hpp"
 #include <algorithm>
 #include <list>
 #include <memory>
