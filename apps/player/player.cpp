@@ -1,4 +1,5 @@
 #include "../../tests/tests.hpp"
+#include "../../utils/tools.hpp"
 #include "modules.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
@@ -8,8 +9,6 @@
 #include "out/null.hpp"
 #include "render/sdl_audio.hpp"
 #include "render/sdl_video.hpp"
-
-#include "pipeline.hpp"
 
 using namespace Tests;
 using namespace Modules;

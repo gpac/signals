@@ -84,10 +84,6 @@ int safeMain(int argc, char const* argv[]) {
 
 		while (demux->process(nullptr)) {
 		}
-
-		foreach(i, modules) {
-			(*i)->waitForCompletion();
-		}
 	}
 
 	return 0;
