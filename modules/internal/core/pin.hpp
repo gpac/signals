@@ -95,19 +95,13 @@ public:
 	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
 	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
-		signal.flushAvailableResults();
+		signal.results(false); //see if results are ready
 		auto data = allocator.getBuffer(size);
 		if (data.get()) {
 			return data;
 		}
 
-		signal.results(false); //see if results are ready
-		data = allocator.getBuffer(size);
-		if (data.get()) {
-			return data;
-		}
-
-		signal.results(true, true); //wait synchronously for one result
+		signal.results(true, true); //wait synchronously for one result //FIXME: not multi-threa friendly at all since the computation may occur in the current thread
 		data = allocator.getBuffer(size);
 		if (data.get()) {
 			return data;
