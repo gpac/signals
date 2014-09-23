@@ -95,6 +95,7 @@ public:
 	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
 	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
+		signal.flushAvailableResults();
 		auto data = allocator.getBuffer(size);
 		if (data.get()) {
 			return data;
