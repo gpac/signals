@@ -28,6 +28,7 @@ template<typename> class IExecutor;
 template <typename R, typename... Args>
 class IExecutor<R(Args...)> {
 public:
+	virtual ~IExecutor() {}
 	virtual std::shared_future<NotVoid<R>> operator() (const std::function<R(Args...)> &fn, Args... args) = 0;
 };
 
