@@ -10,9 +10,9 @@ namespace Modules {
 
 class Module {
 public:
-	Module(PinFactory *pinFactory) : pinFactory(pinFactory), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
+	Module(PinFactory *pinFactory) : pinFactory(pinFactory) {
 	}
-	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
+	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()) {
 	}
 	virtual ~Module() {
 		for (auto &signal : signals) {
@@ -30,10 +30,6 @@ public:
 		return signals[i].get();
 	}
 
-	IProcessExecutor& getExecutor() const {
-		return executor;
-	}
-
 protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
@@ -41,9 +37,6 @@ protected:
 	std::unique_ptr<PinFactory> const defaultPinFactory;
 	PinFactory* const pinFactory;
 	std::vector<std::unique_ptr<Pin>> signals;
-
-	std::unique_ptr<IProcessExecutor> const defaultExecutor;
-	IProcessExecutor &executor;
 };
 
 }
