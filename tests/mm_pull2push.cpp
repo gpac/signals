@@ -9,8 +9,8 @@ using namespace Tests;
 using namespace MM;
 
 unittest("File module async: File -> Out::Print") {
-	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
-	auto p = uptr(Out::Print::create(std::cout));
+	auto f = uptrSafeModule(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto p = uptrSafeModule(new Out::Print(std::cout));
 
 	ConnectToModule(f->getPin(0)->getSignal(), p);
 
@@ -19,8 +19,8 @@ unittest("File module async: File -> Out::Print") {
 }
 
 unittest("Pull2Push the File module: File -> Out::Print") {
-	auto f = uptr(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
-	auto p = uptr(Out::Print::create(std::cout));
+	auto f = uptrSafeModule(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
+	auto p = uptrSafeModule(new Out::Print(std::cout));
 
 	ConnectToModule(f->getPin(0)->getSignal(), p);
 
@@ -31,8 +31,8 @@ unittest("Pull2Push the File module: File -> Out::Print") {
 }
 
 unittest("Pull2Push the File module in a spawned thread: spawned(File) -> Out::Print") {
-	auto f = uptr(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
-	auto p = uptr(Out::Print::create(std::cout));
+	auto f = uptrSafeModule(new MM::Pull2Push(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4")));
+	auto p = uptrSafeModule(new Out::Print(std::cout));
 
 	ConnectToModule(f->getPin(0)->getSignal(), p);
 

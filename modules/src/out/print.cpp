@@ -4,10 +4,6 @@
 
 namespace Out {
 
-Print* Print::create(std::ostream &os) {
-	return new Print(os);
-}
-
 bool Print::process(std::shared_ptr<Data> data) {
 	os << "Print: Received data of size: " << data->size() << std::endl;
 	return true;

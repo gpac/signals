@@ -1,6 +1,5 @@
 #include "tests.hpp"
 #include "modules.hpp"
-#include "../utils/tools.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
@@ -19,10 +18,10 @@ using namespace MM;
 namespace {
 
 unittest("transcoder async: video simple (gpac mux)") {
-	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptrSafeModule(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 	
 	//create stub output (for unused demuxer's outputs)
-	auto null = uptr(Out::Null::create());
+	auto null = uptrSafeModule(Out::Null::create());
 
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
@@ -42,9 +41,9 @@ unittest("transcoder async: video simple (gpac mux)") {
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
-	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
-	auto mux = uptr(Mux::GPACMuxMP4::create("output_video_gpac"));
+	auto decode = uptrSafeModule(Decode::LibavDecode::create(*decoderProps));
+	auto encode = uptrSafeModule(Encode::LibavEncode::create(Encode::LibavEncode::Video));
+	auto mux = uptrSafeModule(Mux::GPACMuxMP4::create("output_video_gpac"));
 
 	//pass meta data between encoder and mux
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);

@@ -17,11 +17,6 @@ DummyStruct runAtStartup(R f(Args...), Args... argVal) {
 	return DummyStruct();
 }
 
-template<typename T>
-std::unique_ptr<T> uptr(T* p) {
-	return std::unique_ptr<T>(p);
-}
-
 inline
 std::vector<char> stringDup(const char *src) {
 	std::vector<char> data(strlen(src) + 1);
@@ -66,3 +61,8 @@ std::vector<T> apply(Lambda func, std::vector<T>& input) {
 	return r;
 }
 
+template<typename T>
+std::unique_ptr<T> uptr(T* p) {
+	return std::unique_ptr<T>(p);
+}
+#define UPTR_DEFINED

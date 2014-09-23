@@ -1,7 +1,6 @@
 #include "../../tests/tests.hpp"
 #include "modules.hpp"
 
-#include "../utils/tools.hpp"
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
 #include "decode/libav_decode.hpp"

@@ -1,6 +1,5 @@
 #include "tests.hpp"
 #include "modules.hpp"
-#include "../utils/tools.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
@@ -25,17 +24,17 @@ Decode::LibavDecode* createMp3Decoder() {
 
 unittest("decoder: audio simple") {
 
-	auto input = uptr(In::File::create("data/sine.mp3"));
+	auto input = uptrSafeModule(In::File::create("data/sine.mp3"));
 
 	//create the audio decoder
-	auto decoder = uptr(createMp3Decoder());
+	auto decoder = uptrSafeModule(createMp3Decoder());
 	ConnectPinToModule(input->getPin(0), decoder);
 
-	auto null = uptr(Out::Null::create());
+	auto null = uptrSafeModule(Out::Null::create());
 	ConnectPinToModule(decoder->getPin(0), null);
 
 	//create an audio resampler
-	//auto audioConverter = uptr(Transform::AudioConvert::create());
+	//auto audioConverter = uptrSafeModule(Transform::AudioConvert::create());
 	//ConnectToModule(audioConverter->getPin(0)->getSignal(), decoder);
 
 	input->process(nullptr);
