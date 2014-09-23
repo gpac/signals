@@ -8,29 +8,19 @@
 
 namespace Modules {
 
-class IModule {
-public:
-	virtual ~IModule() noexcept(false) {};
-
-	virtual bool process(std::shared_ptr<Data> data) = 0;
-	virtual void waitForCompletion() = 0; /* required for async, otherwise we still have callback/futures on an object being destroyed */
-};
-
-class Module : public IModule {
+class Module {
 public:
 	Module(PinFactory *pinFactory) : pinFactory(pinFactory), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
 	}
 	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()), defaultExecutor(new ExecutorSync<bool(std::shared_ptr<Data>)>()), executor(*defaultExecutor.get()) {
 	}
-
-	/**
-	 * Must be called before the destructor.
-	 */
-	virtual void waitForCompletion() {
+	virtual ~Module() {
 		for (auto &signal : signals) {
 			signal->waitForCompletion();
 		}
 	}
+
+	virtual bool process(std::shared_ptr<Data> data) = 0;
 
 	size_t getNumPin() const {
 		return signals.size();
@@ -40,7 +30,7 @@ public:
 		return signals[i].get();
 	}
 
-	IExecutor<bool(std::shared_ptr<Data>)>& getExecutor() const {
+	IProcessExecutor& getExecutor() const {
 		return executor;
 	}
 
@@ -52,8 +42,8 @@ protected:
 	PinFactory* const pinFactory;
 	std::vector<std::unique_ptr<Pin>> signals;
 
-	std::unique_ptr<IExecutor<bool(std::shared_ptr<Data>)>> const defaultExecutor;
-	IExecutor<bool(std::shared_ptr<Data>)> &executor;
+	std::unique_ptr<IProcessExecutor> const defaultExecutor;
+	IProcessExecutor &executor;
 };
 
 }

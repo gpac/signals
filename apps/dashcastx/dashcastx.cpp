@@ -17,16 +17,16 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-ModuleSafe<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *decoderProps) {
+std::unique_ptr<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *decoderProps) {
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
-		auto r = uptrSafeModule(Encode::LibavEncode::create(Encode::LibavEncode::Video));
+		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
 		ConnectPinToModule(pPin, r);
 		return std::move(r);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
-		auto r = uptrSafeModule(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
+		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
 		ConnectPinToModule(pPin, r);
 		return std::move(r);
 	} else {
@@ -43,34 +43,33 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto const inputURL = argv[1];
 
-	std::list<ModuleSafe<Module>> modules;
+	std::list<std::unique_ptr<Module>> modules;
 
 	{
-		auto demux = uptrSafeModule(Demux::LibavDemux::create(inputURL));
+		auto demux = uptr(Demux::LibavDemux::create(inputURL));
 
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
 			auto props = demux->getPin(i)->getProps();
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 
-			auto decoder = uptrSafeModule(Decode::LibavDecode::create(*decoderProps));
+			auto decoder = uptr(Decode::LibavDecode::create(*decoderProps));
 			ConnectPinToModule(demux->getPin(i), decoder);
 
 			//TODO: add audio and video rescaling
 
 			auto encoder = createEncoder(decoder->getPin(0), decoderProps);
 			if (!encoder) {
-				auto r = uptrSafeModule(Out::Null::create());
+				auto r = uptr(Out::Null::create());
 				ConnectPinToModule(decoder->getPin(0), r);
 				modules.push_back(std::move(decoder));
-				modules.push_back(std::move(r));
-				break;
+				modules.push_back(std::move(r)); break;
 			}
 
 			//FIXME: should be fragmented according to parameters
 			std::stringstream filename;
 			filename << i;
-			auto muxer = uptrSafeModule(Mux::GPACMuxMP4::create(filename.str()));
+			auto muxer = uptr(Mux::GPACMuxMP4::create(filename.str()));
 			ConnectPinToModule(encoder->getPin(0), muxer);
 
 			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);

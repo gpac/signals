@@ -16,8 +16,8 @@ using namespace Modules;
 namespace {
 
 unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
-	auto demux = uptrSafeModule(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	auto null = uptrSafeModule(Out::Null::create());
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto null = uptr(Out::Null::create());
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
@@ -33,22 +33,19 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	auto decode = uptrSafeModule(Decode::LibavDecode::create(*decoderProps));
-	auto render = uptrSafeModule(new Render::SDLVideo);
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto render = uptr(new Render::SDLVideo);
 
 	ConnectPinToModule(demux->getPin(videoIndex), decode);
 	ConnectPinToModule(decode->getPin(0), render);
 
 	while (demux->process(nullptr)) {
 	}
-
-	demux->waitForCompletion();
-	decode->waitForCompletion();
 }
 
 unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
-	auto demux = uptrSafeModule(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	auto null = uptrSafeModule(Out::Null::create());
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto null = uptr(Out::Null::create());
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
@@ -64,17 +61,14 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
 	auto props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	auto decode = uptrSafeModule(Decode::LibavDecode::create(*decoderProps));
-	auto render = uptrSafeModule(Render::SDLAudio::create());
+	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto render = uptr(Render::SDLAudio::create());
 
 	ConnectPinToModule(demux->getPin(audioIndex), decode);
 	ConnectPinToModule(decode->getPin(0), render);
 
 	while (demux->process(nullptr)) {
 	}
-
-	demux->waitForCompletion();
-	decode->waitForCompletion();
 }
 
 }

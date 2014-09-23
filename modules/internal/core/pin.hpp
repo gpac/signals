@@ -46,7 +46,9 @@ size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
 	return ConnectPin(p, functor);
 }
 
-inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor, IExecutor<bool(std::shared_ptr<Data>)>& executor) {
+typedef IExecutor<bool(std::shared_ptr<Data>)> IProcessExecutor;
+
+inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
 }
 
