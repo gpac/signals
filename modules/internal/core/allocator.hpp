@@ -33,8 +33,8 @@ public:
 	};
 
 	std::shared_ptr<DataType> getBuffer(size_t size) {
-		auto eos = freeBlocks.pop();
-		if(eos) {
+		auto eos = freeBlocks.tryPop();
+		if (eos) {
 			return nullptr;
 		}
 		std::shared_ptr<DataType> data(new DataType(size), deleter);

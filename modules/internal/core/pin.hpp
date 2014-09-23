@@ -92,23 +92,17 @@ public:
 		allocator.flush();
 	}
 
-	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
-	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
-		signal.results(false); //see if results are ready
-		auto data = allocator.getBuffer(size);
-		if (data.get()) {
-			return data;
+		//FIXME awful hack: infinite loop to wait for available results, otherwise we are blocked
+		for (uint64_t i = 0; ; ++i) {
+			signal.results(false); //see if results are ready
+			auto data = allocator.getBuffer(size);
+			if (data.get()) {
+				return data;
+			}
+			const std::chrono::milliseconds dur(10);
+			std::this_thread::sleep_for(dur);
 		}
-
-		signal.results(true, true); //wait synchronously for one result //FIXME: not multi-threa friendly at all since the computation may occur in the current thread
-		data = allocator.getBuffer(size);
-		if (data.get()) {
-			return data;
-		}
-
-		assert(data.get());
-		return data;
 	}
 
 	Signal& getSignal() {
