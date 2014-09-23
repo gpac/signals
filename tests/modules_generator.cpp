@@ -15,21 +15,19 @@ using namespace Modules;
 namespace {
 
 unittest("sound generator") {
-	auto soundGen = uptrSafeModule(new In::SoundGenerator);
-	auto render = uptrSafeModule(Render::SDLAudio::create());
+	auto soundGen = uptr(new In::SoundGenerator);
+	auto render = uptr(Render::SDLAudio::create());
 
 	ConnectPinToModule(soundGen->getPin(0), render);
 
 	for(int i=0; i < 25; ++i) {
 		soundGen->process(nullptr);
 	}
-
-	soundGen->waitForCompletion();
 }
 
 unittest("video generator") {
-	auto videoGen = uptrSafeModule(new In::VideoGenerator);
-	auto render = uptrSafeModule(new Render::SDLVideo);
+	auto videoGen = uptr(new In::VideoGenerator);
+	auto render = uptr(new Render::SDLVideo);
 
 	std::vector<int> times;
 	auto onFrame = [&](std::shared_ptr<Data> data) -> bool {
@@ -43,9 +41,6 @@ unittest("video generator") {
 	for(int i=0; i < 50; ++i) {
 		videoGen->process(nullptr);
 	}
-
-	videoGen->waitForCompletion();
-	render->waitForCompletion();
 
 	ASSERT(times == makeVector(0, 7200, 180000, 187200));
 }

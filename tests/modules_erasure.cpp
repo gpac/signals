@@ -12,17 +12,17 @@ using namespace Modules;
 namespace {
 
 unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder -> Out::Print}*") {
-	auto demux = uptrSafeModule(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
-	std::vector<ModuleSafe<Decode::LibavDecode>> decoders;
-	std::vector<ModuleSafe<Out::Print>> printers;
+	std::vector<std::unique_ptr<Decode::LibavDecode>> decoders;
+	std::vector<std::unique_ptr<Out::Print>> printers;
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
-		auto decode = uptrSafeModule(Decode::LibavDecode::create(*decoderProps));
+		auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 
-		auto p = uptrSafeModule(new Out::Print(std::cout));
+		auto p = uptr(new Out::Print(std::cout));
 
 		ConnectPinToModule(demux->getPin(i), decode);
 		ConnectPinToModule(decode->getPin(0), p);
@@ -32,11 +32,6 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder 
 	}
 
 	while (demux->process(nullptr)) {
-	}
-
-	demux->waitForCompletion();
-	for (size_t i = 0; i < demux->getNumPin(); ++i) {
-		decoders[i]->waitForCompletion();
 	}
 }
 

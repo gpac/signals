@@ -8,7 +8,7 @@
 class Pipeline {
 public:
 	void add(Module* module) {
-		modules.push_back(uptrSafeModule(module));
+		modules.push_back(uptr(module));
 	}
 
 	void run() {
@@ -17,13 +17,7 @@ public:
 		}
 	}
 
-	~Pipeline() {
-		foreach(i, modules) {
-			(*i)->waitForCompletion();
-		}
-	}
-
 private:
-	std::vector<ModuleSafe<Module>> modules;
+	std::vector<std::unique_ptr<Module>> modules;
 };
 

@@ -3,6 +3,7 @@
 #include <../modules/modules.hpp>
 
 #include "demux/gpac_demux_mp4_simple.hpp"
+#include "tools.hpp"
 
 namespace MM {
 
@@ -27,10 +28,6 @@ public:
 		while (delegate->process(data)) {
 		}
 		return true;
-	}
-	void waitForCompletion() {
-		delegate->waitForCompletion();
-		Modules::Module::waitForCompletion();
 	}
 
 private:

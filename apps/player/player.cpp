@@ -78,11 +78,6 @@ Stream render(Stream& input) {
 	return r;
 }
 
-Stream waitForCompletion(Stream& stream) {
-	stream.fromModule->waitForCompletion();
-	return Stream(nullptr);
-}
-
 int safeMain(int argc, char const* argv[]) {
 
 	if(argc != 2)
@@ -98,10 +93,6 @@ int safeMain(int argc, char const* argv[]) {
 	// pump all data
 	auto srcModule = es[0].fromModule;
 	srcModule->process(nullptr);
-
-	apply(&waitForCompletion, renderedStreams);
-	apply(&waitForCompletion, decodedStreams);
-	apply(&waitForCompletion, es);
 
 	return 0;
 }

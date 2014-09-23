@@ -50,18 +50,15 @@ public:
 		getPin(0)->getSignal().emit(sample);
 		return true;
 	}
-	void waitForCompletion() { //unnecessary - just in case you want to try without the AmpReordered
-		Modules::Module::waitForCompletion();
-	}
 
 private:
 	int seqNumber;
 };
 
 unittest("Simple synth Romain") {
-	auto osc = uptrSafeModule(new Osc);
-	auto amp1 = uptrSafeModule(new Amp);
-	auto amp2 = uptrSafeModule(new Amp);
+	auto osc = uptr(new Osc);
+	auto amp1 = uptr(new Amp);
+	auto amp2 = uptr(new Amp);
 	auto sink1 = uptr(new Sink);
 	auto sink2 = uptr(new Sink);
 
@@ -75,10 +72,6 @@ unittest("Simple synth Romain") {
 	for (int i = 0; i < 10000; ++i) { //this is bigger than the default allocator size (100), so there will be contention
 		osc->process(nullptr);
 	}
-
-	//osc->waitForCompletion(); //not mandatory since later filters (Amp and Sink) use data from the same allocator
-	amp1->waitForCompletion();
-	amp2->waitForCompletion();
 }
 
 }
