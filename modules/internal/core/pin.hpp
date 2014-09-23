@@ -89,27 +89,13 @@ public:
 	}
 
 	void waitForCompletion() {
-		//FIXME: we have to wait for all samples to be processed. Waiting can be long because the allocator doesn't signal
-		// and creates as much buffers as needed. If it waited, we could have better performance results and event-based waiting here.
-		const int sleepDurInMs = 10;
-		const std::chrono::milliseconds dur(sleepDurInMs);
-		int maxSleep = 3000;
-
-		size_t usedBlocks = tryFlushAllocator();
-		while (usedBlocks && --maxSleep > 0) {
-			std::this_thread::sleep_for(dur); //FIXME: we should set events when Data are freed
-			usedBlocks = tryFlushAllocator();
-		}
-		if (maxSleep == 0) {
-			Log::msg(Log::Warning, "Warning: force invalidating the allocator data.");
-			allocator.reset();
-		}
+		allocator.flush();
 	}
 
 	//TODO: this is the sync approach, where data are synced for the Pin to be destroyed.
 	//      The other option is to invalidate all the data by calling
 	std::shared_ptr<Data> getBuffer(size_t size) {
-		std::shared_ptr<DataType> data(allocator.getBuffer(size));
+		auto data = allocator.getBuffer(size);
 		if (data.get()) {
 			return data;
 		}
@@ -126,14 +112,6 @@ public:
 			return data;
 		}
 
-#if 0
-		Log::msg(Log::Error, "The allocator failed to wait for available data. Reset the whole allocator.");
-		allocator.reset();
-		data = allocator.getBuffer(size);
-#else
-		Log::msg(Log::Error, "The allocator failed to wait for available data. Add a new buffer.");
-		data = allocator.getBuffer(size, true);
-#endif
 		assert(data.get());
 		return data;
 	}
@@ -147,11 +125,6 @@ public:
 	}
 
 private:
-	size_t tryFlushAllocator() {
-		signal.results();                          //getting the result release the future shared_ptr
-		auto usedBlocks = allocator.getNumUsedBlocks(); //some blocks may stay if the allocator data is processed by further modules
-		return usedBlocks;
-	}
 
 	Allocator allocator;
 	Signal signal;

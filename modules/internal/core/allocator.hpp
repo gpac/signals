@@ -1,65 +1,59 @@
 #pragma once
 
 #include "data.hpp"
+#include "internal/utils/queue.hpp"
 #include <algorithm>
 #include <list>
 #include <memory>
 
 namespace Modules {
 
-//TODO: this is a (blocking) allocator by packets - write a more generalist one
-//TODO: make a non-blocking one by calling reset() on the shared_ptr - may required appropriate checks in the modules
-//FIXME: not thread-safe, so cannot be shared between modules
 template<typename DataType>
 class AllocatorPacket {
 public:
 	AllocatorPacket(size_t numBlocks = 10)
-		: numBlocks(numBlocks)
+		: deleter(this) {
+		for(size_t i=0;i < numBlocks; ++i) {
+			freeBlocks.push(false);
+		}
+	}
+
+	struct Deleter
 	{
-	}
-
-	std::shared_ptr<DataType> getBuffer(size_t size, bool forceNew = false) {
-		updateUsedBlocks();
-		if (usedBlocks.size() < numBlocks) {
-			std::shared_ptr<DataType> data(new DataType(size));
-			usedBlocks.push_back(std::weak_ptr<DataType>(data));
-			return data;
+		Deleter(AllocatorPacket<DataType>* allocator) : m_allocator(allocator)
+		{
 		}
 
-		if (forceNew) {
-			numBlocks++;
-			std::shared_ptr<DataType> data(new DataType(size));
-			usedBlocks.push_back(std::weak_ptr<DataType>(data));
-			return data;
+		void operator()(DataType* p)
+		{
+			m_allocator->recycle(p);
 		}
-		
-		return nullptr;
+
+		AllocatorPacket<DataType>* const m_allocator;
+	};
+
+	std::shared_ptr<DataType> getBuffer(size_t size) {
+		auto eos = freeBlocks.pop();
+		if(eos) {
+			return nullptr;
+		}
+		std::shared_ptr<DataType> data(new DataType(size), deleter);
+		return data;
 	}
 
-	size_t getNumUsedBlocks() {
-		updateUsedBlocks();
-		return usedBlocks.size();
-	}
-
-	void reset() {
-		for (auto &block : usedBlocks) {
-			block.reset();
-		}
-		updateUsedBlocks();
+	void flush() {
+		freeBlocks.push(true);
 	}
 
 private:
 	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
 
-	size_t numBlocks;
-	std::list<std::weak_ptr<Data>> usedBlocks;
+	Deleter deleter;
+	Signals::QueueThreadSafe<bool> freeBlocks;
 
-	void updateUsedBlocks() {
-		auto isFree = [](std::weak_ptr<Data> data) {
-			return data.expired();
-		};
-			
-		usedBlocks.erase(std::remove_if(usedBlocks.begin(), usedBlocks.end(), isFree), usedBlocks.end());
+	void recycle(DataType* p) {
+		delete p;
+		freeBlocks.push(false);
 	}
 
 };
