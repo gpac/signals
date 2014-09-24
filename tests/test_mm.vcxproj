@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;;NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../utils;../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -113,7 +113,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;;NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../utils;../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -134,7 +134,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;;NOMINMAX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../utils;../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -156,7 +156,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;;NOMINMAX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../utils;../mm;../modules/;../modules/extra_lib/include;../modules/src</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
