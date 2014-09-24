@@ -117,7 +117,7 @@ private:
 	void fillResultsUnsafe(bool sync = true, bool single = false) {
 		for (auto &cb : callbacks) {
 			for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
-				if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) == std::future_status::timeout)) {
+				if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) != std::future_status::ready)) {
 					++f;
 				} else {
 					assert(f->valid());
