@@ -14,7 +14,7 @@ public:
 	}
 	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()) {
 	}
-	virtual ~Module() {
+	virtual ~Module() noexcept(false) {
 		for (auto &signal : signals) {
 			signal->waitForCompletion();
 		}
