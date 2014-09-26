@@ -43,6 +43,7 @@ EXE_MODULES_STUB_OBJS:=\
  	$(LIB_MODULES_OBJS)\
  	$(UTILS_OBJS)
 DEPS+=$(EXE_MODULES_STUB_OBJS:%.o=%.deps)
+CFLAGS+=-iquote$(ProjectName)/modules_stub
 
 TARGETS+=$(OUTDIR)/modules_stub.exe
 $(OUTDIR)/modules_stub.exe: $(EXE_MODULES_STUB_OBJS)
