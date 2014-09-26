@@ -314,8 +314,8 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName)
 
 	GF_Err e = gf_isom_set_storage_mode(m_file, GF_ISOM_STORE_INTERLEAVED);
 	if (e != GF_OK) {
-		Log::msg(Log::Warning, "Cannot make iso file %s streamable", fileName.str());
-		throw std::runtime_error("Cannot make iso file streamable.");
+		Log::msg(Log::Warning, "Cannot make iso file %s interleaved", fileName.str());
+		throw std::runtime_error("Cannot make iso file interleaved.");
 	}
 }
 
@@ -323,9 +323,9 @@ GPACMuxMP4::~GPACMuxMP4() {
 #ifdef USE_FRAGMENTS
 	gf_isom_flush_fragments(m_file, GF_TRUE);
 #endif
-	GF_Err ret = gf_isom_close(m_file);
-	if (ret != GF_OK) {
-		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(ret));
+	GF_Err e = gf_isom_close(m_file);
+	if (e != GF_OK) {
+		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
 		throw std::runtime_error("Cannot close output file.");
 	}
 }
@@ -363,8 +363,8 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 		acfg.sbr_object_type = 0;
 		acfg.audioPL = gf_m4a_get_profile(&acfg);
 
-		/*ret = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
-		assert(ret == GF_OK);*/
+		/*e = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
+		assert(e == GF_OK);*/
 	} else {
 		if (stream->codecName != "mp2") {
 			Log::msg(Log::Warning, "Unlisted codec, setting GPAC_OTI_AUDIO_MPEG1 descriptor.\n");
@@ -433,7 +433,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
 
 #if USE_FRAGMENTS
-	e = gf_isom_finalize_for_fragment(m_file, 1);
+	e = gf_isom_finalize_for_fragment(m_file, 0);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_finalize_for_fragment");
@@ -505,7 +505,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
 		throw std::runtime_error("Cannot setup track as fragmented");
 	}
 
-	e = gf_isom_finalize_for_fragment(m_file, 1);
+	e = gf_isom_finalize_for_fragment(m_file, 0);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
 		throw std::runtime_error("Cannot prepare track for movie fragmentation");
@@ -588,7 +588,7 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 	}
 
 	if ((m_curFragDur * IClock::Rate) > (gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId)) * FRAG_DURATION_IN_180K)) {
-		e = gf_isom_flush_fragments(m_file, GF_TRUE);
+		e = gf_isom_flush_fragments(m_file, GF_FALSE);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
 			return false;
