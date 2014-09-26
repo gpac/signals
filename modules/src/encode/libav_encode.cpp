@@ -224,6 +224,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->numChannels = codecCtx->channels;
 		stream->sampleRate = codecCtx->sample_rate;
 		stream->bitsPerSample = av_get_bytes_per_sample(codecCtx->sample_fmt) * 8;
+		stream->frameSize = codecCtx->frame_size;
 		stream->extradata = codecCtx->extradata;
 		stream->extradataSize = codecCtx->extradata_size;
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one

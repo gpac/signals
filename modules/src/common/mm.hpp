@@ -28,6 +28,7 @@ public:
 	uint32_t numChannels;
 	uint32_t sampleRate;
 	uint8_t bitsPerSample;
+	uint32_t frameSize;
 	const uint8_t *extradata; //TODO: who holds this? std::vector?
 	size_t extradataSize;
 
