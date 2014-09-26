@@ -44,7 +44,7 @@ unittest("transcoder async: video simple (gpac mux)") {
 
 	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
 	auto encode = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
-	auto mux = uptr(Mux::GPACMuxMP4::create("output_video_gpac"));
+	auto mux = uptr(new Mux::GPACMuxMP4("output_video_gpac"));
 
 	//pass meta data between encoder and mux
 	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);

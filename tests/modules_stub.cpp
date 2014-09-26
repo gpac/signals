@@ -35,7 +35,7 @@ unittest("stub: gpac mp4 remux: GPAC demux -> GPAC mux") {
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 
 	//auto props = demux->getPin(videoIndex)->getProps();
-	auto mux = uptr(Mux::GPACMuxMP4::create("output_video_gpac"));
+	auto mux = uptr(new Mux::GPACMuxMP4("output_video_gpac"));
 
 	//pass meta data between encoder and mux
 	//Connect(demux->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);

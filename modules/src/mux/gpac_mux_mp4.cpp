@@ -11,6 +11,7 @@ extern "C" {
 
 
 #define USE_FRAGMENTS 0
+#define FRAG_DURATION_IN_180K 180000ULL
 
 
 namespace {
@@ -299,25 +300,29 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 
 namespace Mux {
 
-GPACMuxMP4* GPACMuxMP4::create(const std::string &baseName) {
+GPACMuxMP4::GPACMuxMP4(const std::string &baseName)
+	: m_DTS(0), m_curFragDur(0) {
 	std::stringstream fileName;
 	fileName << baseName;
 	fileName << ".mp4";
 
-	GF_ISOFile *file = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, NULL);
-	if (!file) {
+	m_file = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, NULL);
+	if (!m_file) {
 		Log::msg(Log::Warning, "Cannot open iso file %s", fileName.str());
 		throw std::runtime_error("Cannot open output file.");
 	}
 
-	return new GPACMuxMP4(file);
-}
-
-GPACMuxMP4::GPACMuxMP4(GF_ISOFile *file)
-	: m_file(file), m_Dts(0) {
+	GF_Err e = gf_isom_set_storage_mode(m_file, GF_ISOM_STORE_INTERLEAVED);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "Cannot make iso file %s streamable", fileName.str());
+		throw std::runtime_error("Cannot make iso file streamable.");
+	}
 }
 
 GPACMuxMP4::~GPACMuxMP4() {
+#ifdef USE_FRAGMENTS
+	gf_isom_flush_fragments(m_file, GF_TRUE);
+#endif
 	GF_Err ret = gf_isom_close(m_file);
 	if (ret != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(ret));
@@ -326,7 +331,7 @@ GPACMuxMP4::~GPACMuxMP4() {
 }
 
 void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
-	GF_Err ret;
+	GF_Err e;
 	u32 di, trackNum;
 	GF_M4ADecSpecInfo acfg;
 
@@ -377,12 +382,12 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 		acfg.sbr_object_type = 0;
 		acfg.audioPL = gf_m4a_get_profile(&acfg);
 
-		ret = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
-		assert(ret == GF_OK);
+		e = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
+		assert(e == GF_OK);
 	}
 
 	trackNum = gf_isom_new_track(m_file, esd->ESID, GF_ISOM_MEDIA_AUDIO, stream->sampleRate);
-	Log::msg(Log::Warning, "TimeScale: %d \n", stream->sampleRate);
+	Log::msg(Log::Warning, "TimeScale: %s\n", stream->sampleRate);
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track\n");
 		throw std::runtime_error("Cannot create new track");
@@ -390,37 +395,37 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 
 	m_trackId = gf_isom_get_track_id(m_file, trackNum);
 
-	ret = gf_isom_set_track_enabled(m_file, trackNum, 1);
-	if (ret != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled\n", gf_error_to_string(ret));
+	e = gf_isom_set_track_enabled(m_file, trackNum, 1);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_set_track_enabled");
 	}
 
-	ret = gf_isom_new_mpeg4_description(m_file, trackNum, esd, NULL, NULL, &di);
-	if (ret != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_new_mpeg4_description\n", gf_error_to_string(ret));
+	e = gf_isom_new_mpeg4_description(m_file, trackNum, esd, NULL, NULL, &di);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_new_mpeg4_description\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_new_mpeg4_description");
 	}
 
 	gf_odf_desc_del((GF_Descriptor *)esd);
 	esd = NULL;
 
-	ret = gf_isom_set_audio_info(m_file, trackNum, di, stream->sampleRate, stream->numChannels, stream->bitsPerSample);
-	if (ret != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_set_audio_info\n", gf_error_to_string(ret));
+	e = gf_isom_set_audio_info(m_file, trackNum, di, stream->sampleRate, stream->numChannels, stream->bitsPerSample);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_set_audio_info\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_set_audio_info");
 	}
 
-	ret = gf_isom_set_pl_indication(m_file, GF_ISOM_PL_AUDIO, acfg.audioPL);
-	if (ret != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_set_pl_indication\n", gf_error_to_string(ret));
+	e = gf_isom_set_pl_indication(m_file, GF_ISOM_PL_AUDIO, acfg.audioPL);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_set_pl_indication\n", gf_error_to_string(e));
 		throw std::runtime_error("Container format import failed");
 	}
 
 #if USE_FRAGMENTS
-	ret = gf_isom_setup_track_fragment(m_file, trackNum, 1, stream->frameSize, 0, 0, 0, 0);
-	if (ret != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment\n", gf_error_to_string(ret));
+	e = gf_isom_setup_track_fragment(m_file, trackNum, 1, stream->frameSize, 0, 0, 0, 0);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_setup_track_fragment");
 	}
 #endif
@@ -428,10 +433,16 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
 
 #if USE_FRAGMENTS
-	ret = gf_isom_finalize_for_fragment(m_file, 1);
-	if (ret != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(ret));
+	e = gf_isom_finalize_for_fragment(m_file, 1);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_finalize_for_fragment");
+	}
+	
+	e = gf_isom_start_fragment(m_file, GF_TRUE);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
+		throw std::runtime_error("Impossible to create the moof");
 	}
 #endif
 }
@@ -487,17 +498,23 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
 	}
 #endif
 
-#if USE_FRAGMENTS
+#if USE_FRAGMENTS //FIXME: this is duplicated for audio and video
 	e = gf_isom_setup_track_fragment(m_file, m_trackId, 1, 1, 0, 0, 0, 0);
 	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_setutrack_fragment", gf_error_to_string(e));
+		Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
 		throw std::runtime_error("Cannot setup track as fragmented");
 	}
 
-	e = gf_isom_finalize_for_fragment(m_file, 0/*no segment*/);
+	e = gf_isom_finalize_for_fragment(m_file, 1);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
 		throw std::runtime_error("Cannot prepare track for movie fragmentation");
+	}
+
+	e = gf_isom_start_fragment(m_file, GF_TRUE);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
+		throw std::runtime_error("Impossible to create the moof");
 	}
 #endif
 }
@@ -549,29 +566,49 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 		gf_bs_get_content(out_bs, &sample.data, &sample.dataLength);
 		gf_bs_del(out_bs);
 		sampleDataMustBeDeleted = true;
-		sample.DTS = m_Dts;
+		sample.DTS = m_DTS;
 	} else {
 		assert(gf_isom_get_media_type(m_file, 1) == GF_ISOM_MEDIA_AUDIO); //TODO: only audio or video supported yet
 		sample.data = (char*)bufPtr;
 		sample.dataLength = bufLen;
-		sample.DTS = m_Dts;
+		sample.DTS = m_DTS;
 	}
 
+	u64 deltaDTS = (data->getDuration() * gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId))) / IClock::Rate;
+	m_DTS += deltaDTS;
+
 #if USE_FRAGMENTS
-	GF_Err ret = gf_isom_fragment_add_sample(m_file, m_trackId, &sample, 1, 1, 0, 0, GF_FALSE);
-	if (ret != GF_OK) {
-		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(ret));
+	m_curFragDur += deltaDTS;
+
+	//TODO: gf_isom_set_traf_base_media_decode_time(m_file, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
+	GF_Err e = gf_isom_fragment_add_sample(m_file, m_trackId, &sample, 1, 1, 0, 0, GF_FALSE);
+	if (e != GF_OK) {
+		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));
 		return false;
 	}
+
+	if ((m_curFragDur * IClock::Rate) > (gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId)) * FRAG_DURATION_IN_180K)) {
+		e = gf_isom_flush_fragments(m_file, GF_TRUE);
+		if (e != GF_OK) {
+			Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
+			return false;
+		}
+		e = gf_isom_start_fragment(m_file, GF_TRUE);
+		if (e != GF_OK) {
+			Log::msg(Log::Error, "%s: gf_isom_start_fragment", gf_error_to_string(e));
+			return false;
+		}
+
+		const u64 oneFragDurInTimescale = (FRAG_DURATION_IN_180K * gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId)) + IClock::Rate / 2) / IClock::Rate;
+		m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
+	}
 #else
-	GF_Err ret = gf_isom_add_sample(m_file, m_trackId, 1, &sample);
-	if (ret != GF_OK) {
-		Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(ret));
+	GF_Err e = gf_isom_add_sample(m_file, m_trackId, 1, &sample);
+	if (e != GF_OK) {
+		Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
 		return false;
 	}
 #endif
-
-	m_Dts += (data->getDuration() * gf_isom_get_media_timescale(m_file, m_trackId)) / IClock::Rate;
 
 	if (sampleDataMustBeDeleted) {
 		gf_free(sample.data);

@@ -16,18 +16,17 @@ namespace Mux {
 
 class GPACMuxMP4 : public Module {
 public:
-	static GPACMuxMP4* create(const std::string &baseName);
+	GPACMuxMP4(const std::string &baseName);
 	~GPACMuxMP4();
 	bool process(std::shared_ptr<Data> data);
 
 	void declareStream(std::shared_ptr<Stream> stream);
 
 private:
-	GPACMuxMP4(GF_ISOFile *file);
 	void declareStreamVideo(std::shared_ptr<StreamVideo> stream);
 	void declareStreamAudio(std::shared_ptr<StreamAudio> stream);
 	GF_ISOFile *m_file;
-	uint64_t m_Dts;
+	uint64_t m_DTS, m_curFragDur;
 	uint32_t m_trackId;
 };
 
