@@ -10,7 +10,8 @@ extern "C" {
 #include "gpacpp.hpp"
 
 
-#define USE_FRAGMENTS 0
+#define USE_SEGMENTS   0
+#define USE_FRAGMENTS (0 | USE_SEGMENTS) //one cannot use segments without fragments
 #define FRAG_DURATION_IN_180K 180000ULL
 
 
@@ -301,7 +302,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 namespace Mux {
 
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName)
-	: m_DTS(0), m_curFragDur(0) {
+	: m_DTS(0), m_curFragDur(0), m_segNum(0) {
 	std::stringstream fileName;
 	fileName << baseName;
 	fileName << ".mp4";
@@ -320,10 +321,18 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName)
 }
 
 GPACMuxMP4::~GPACMuxMP4() {
+	GF_Err e;
 #ifdef USE_FRAGMENTS
 	gf_isom_flush_fragments(m_file, GF_TRUE);
 #endif
-	GF_Err e = gf_isom_close(m_file);
+#ifdef USE_SEGMENTS
+	e = gf_isom_close_segment(m_file, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, 0, NULL, NULL);
+	if (e != GF_OK) {
+		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
+		throw std::runtime_error("Cannot close output file.");
+	}
+#endif
+	e = gf_isom_close(m_file);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
 		throw std::runtime_error("Cannot close output file.");
@@ -422,29 +431,45 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 		throw std::runtime_error("Container format import failed");
 	}
 
-#if USE_FRAGMENTS
-	e = gf_isom_setup_track_fragment(m_file, trackNum, 1, stream->frameSize, 0, 0, 0, 0);
+#if USE_FRAGMENTS //FIXME: this is duplicated for audio and video
+	e = gf_isom_setup_track_fragment(m_file, m_trackId, 1, 1, 0, 0, 0, 0);
 	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment\n", gf_error_to_string(e));
-		throw std::runtime_error("gf_isom_setup_track_fragment");
+		Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
+		throw std::runtime_error("Cannot setup track as fragmented");
 	}
 #endif
 
 	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
 
 #if USE_FRAGMENTS
+#ifdef USE_SEGMENTS
+	e = gf_isom_finalize_for_fragment(m_file, 1);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
+		throw std::runtime_error("Cannot prepare track for movie fragmentation");
+	}
+
+	std::stringstream ss;
+	ss << gf_isom_get_filename(m_file) << "_" << m_segNum;
+	e = gf_isom_start_segment(m_file, (char*)ss.str().c_str(), GF_TRUE);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
+		throw std::runtime_error("Impossible to start the segment");
+	}
+#else 
 	e = gf_isom_finalize_for_fragment(m_file, 0);
 	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(e));
-		throw std::runtime_error("gf_isom_finalize_for_fragment");
+		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
+		throw std::runtime_error("Cannot prepare track for movie fragmentation");
 	}
-	
+#endif /*USE_SEGMENTS*/
+
 	e = gf_isom_start_fragment(m_file, GF_TRUE);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
 		throw std::runtime_error("Impossible to create the moof");
 	}
-#endif
+#endif /*USE_FRAGMENTS*/
 }
 
 void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
@@ -504,19 +529,39 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
 		Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
 		throw std::runtime_error("Cannot setup track as fragmented");
 	}
+#endif
 
+	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
+
+#if USE_FRAGMENTS
+#ifdef USE_SEGMENTS
+	e = gf_isom_finalize_for_fragment(m_file, 1);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
+		throw std::runtime_error("Cannot prepare track for movie fragmentation");
+	}
+
+	std::stringstream ss;
+	ss << gf_isom_get_filename(m_file) << "_" << m_segNum;
+	e = gf_isom_start_segment(m_file, (char*)ss.str().c_str(), GF_TRUE);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
+		throw std::runtime_error("Impossible to start the segment");
+	}
+#else 
 	e = gf_isom_finalize_for_fragment(m_file, 0);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
 		throw std::runtime_error("Cannot prepare track for movie fragmentation");
 	}
+#endif /*USE_SEGMENTS*/
 
 	e = gf_isom_start_fragment(m_file, GF_TRUE);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
 		throw std::runtime_error("Impossible to create the moof");
 	}
-#endif
+#endif /*USE_FRAGMENTS*/
 }
 
 void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
@@ -593,6 +638,23 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 			Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
 			return false;
 		}
+#ifdef USE_SEGMENTS
+		e = gf_isom_close_segment(m_file, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, 0, NULL, NULL);
+		if (e != GF_OK) {
+			Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
+			throw std::runtime_error("Cannot close output file.");
+		}
+		m_segNum++;
+
+		std::stringstream ss;
+		ss << gf_isom_get_filename(m_file) << "_" << m_segNum;
+		e = gf_isom_start_segment(m_file, (char*)ss.str().c_str(), GF_TRUE);
+		if (e != GF_OK) {
+			Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
+			throw std::runtime_error("Impossible to start the segment");
+		}
+#endif
+
 		e = gf_isom_start_fragment(m_file, GF_TRUE);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_start_fragment", gf_error_to_string(e));
@@ -608,7 +670,7 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 		Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
 		return false;
 	}
-#endif
+#endif /*USE_FRAGMENTS*/
 
 	if (sampleDataMustBeDeleted) {
 		gf_free(sample.data);
