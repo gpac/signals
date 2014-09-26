@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30825.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.22013.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_signals", "tests\test_signals.vcxproj", "{56B7E6F6-9666-4F71-A75C-C24AFFC93FCA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -43,6 +43,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_utils", "tests\test_ut
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dashcastx", "apps\dashcastx\dashcastx.vcxproj", "{D0952093-7DEF-41AD-BA68-87FEEA688E95}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_modules_stub", "tests\test_modules_stub.vcxproj", "{22504DAB-00CE-4CD9-BB47-B4B4791D045D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2ECCB03E-D138-43B8-823F-C9CF1837D97A} = {2ECCB03E-D138-43B8-823F-C9CF1837D97A}
+		{BBD0B4EB-5070-4ECF-B626-DA78ED6C8725} = {BBD0B4EB-5070-4ECF-B626-DA78ED6C8725}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +138,14 @@ Global
 		{D0952093-7DEF-41AD-BA68-87FEEA688E95}.Release|Win32.Build.0 = Release|Win32
 		{D0952093-7DEF-41AD-BA68-87FEEA688E95}.Release|x64.ActiveCfg = Release|x64
 		{D0952093-7DEF-41AD-BA68-87FEEA688E95}.Release|x64.Build.0 = Release|x64
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Debug|Win32.Build.0 = Debug|Win32
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Debug|x64.ActiveCfg = Debug|x64
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Debug|x64.Build.0 = Debug|x64
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Release|Win32.ActiveCfg = Release|Win32
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Release|Win32.Build.0 = Release|Win32
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Release|x64.ActiveCfg = Release|x64
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,5 +161,6 @@ Global
 		{BB532BC0-B84B-46B3-B02E-EBE9ECFC664E} = {35FA5B12-E9CC-4957-A4BB-7F30BF7995C9}
 		{4A14FB63-AD80-418D-A68B-0814B51F0C74} = {A39E4613-6955-478C-A8DF-F34F9D721DF8}
 		{D0952093-7DEF-41AD-BA68-87FEEA688E95} = {35FA5B12-E9CC-4957-A4BB-7F30BF7995C9}
+		{22504DAB-00CE-4CD9-BB47-B4B4791D045D} = {A39E4613-6955-478C-A8DF-F34F9D721DF8}
 	EndGlobalSection
 EndGlobal

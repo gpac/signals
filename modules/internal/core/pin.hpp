@@ -3,6 +3,7 @@
 #include "allocator.hpp"
 #include "data.hpp"
 #include "props.hpp"
+#include "internal/utils/helpers.hpp"
 #include "../utils/log.hpp"
 #include <../signals/signals.hpp>
 #include <thread>
@@ -45,8 +46,6 @@ size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
 	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
 	return ConnectPin(p, functor);
 }
-
-typedef IExecutor<bool(std::shared_ptr<Data>)> IProcessExecutor;
 
 inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
