@@ -1,19 +1,24 @@
 #pragma once
 
-#include "../core/pin.hpp"
-#include "../core/module.hpp"
+#include "../../../signals/internal/core/executor.hpp"
+#include "../../../signals/internal/utils/helper.hpp" /* member function helper */
+#include <memory>
 
+
+using namespace Signals;
 
 namespace Modules {
 
-/* member function helper */
-#include "../../../signals/internal/utils/helper.hpp"
+class Pin;
+class Data;
 
 template<typename Class>
 Signals::MemberFunctor<bool, Class, bool(Class::*)(std::shared_ptr<Data>)>
 MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<bool, Class, bool(Class::*)(std::shared_ptr<Data>)>(objectPtr, &Class::process);
 }
+
+typedef IExecutor<bool(std::shared_ptr<Data>)> IProcessExecutor;
 
 static ExecutorSync<bool(std::shared_ptr<Data>)> defaultExecutor;
 
