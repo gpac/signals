@@ -37,16 +37,16 @@ $(OUTDIR)/modules.exe: $(EXE_MODULES_OBJS)
 #---------------------------------------------------------------
 # modules_stub.exe
 #---------------------------------------------------------------
-EXE_MODULES_STUB_OBJS:=\
- 	$(OUTDIR)/modules_stub.o\
- 	$(TEST_COMMON_OBJ)\
- 	$(LIB_MODULES_OBJS)\
- 	$(UTILS_OBJS)
-DEPS+=$(EXE_MODULES_STUB_OBJS:%.o=%.deps)
-CFLAGS+=-iquote$(ProjectName)/modules_stub
-
-TARGETS+=$(OUTDIR)/modules_stub.exe
-$(OUTDIR)/modules_stub.exe: $(EXE_MODULES_STUB_OBJS)
+#EXE_MODULES_STUB_OBJS:=\
+# 	$(OUTDIR)/modules_stub.o\
+# 	$(TEST_COMMON_OBJ)\
+# 	$(LIB_MODULES_OBJS)\
+# 	$(UTILS_OBJS)
+#DEPS+=$(EXE_MODULES_STUB_OBJS:%.o=%.deps)
+#CFLAGS+=-iquote$(ProjectName)/modules_stub
+#
+#TARGETS+=$(OUTDIR)/modules_stub.exe
+#$(OUTDIR)/modules_stub.exe: $(EXE_MODULES_STUB_OBJS)
 
 #---------------------------------------------------------------
 # mm.exe
