@@ -22,6 +22,9 @@
     <ClCompile Include="..\modules\src\demux\gpac_demux_mp4_simple.cpp">
       <Filter>modules</Filter>
     </ClCompile>
+    <ClCompile Include="..\modules\src\out\null.cpp">
+      <Filter>modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\modules\src\mux\gpac_mux_mp4.hpp">
@@ -31,6 +34,9 @@
       <Filter>modules_stub\internal\core</Filter>
     </ClInclude>
     <ClInclude Include="..\modules\src\demux\gpac_demux_mp4_simple.hpp">
+      <Filter>modules</Filter>
+    </ClInclude>
+    <ClInclude Include="..\modules\src\out\null.hpp">
       <Filter>modules</Filter>
     </ClInclude>
   </ItemGroup>
