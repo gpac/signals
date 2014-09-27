@@ -19,8 +19,9 @@ DummyStruct runAtStartup(R f(Args...), Args... argVal) {
 
 inline
 std::vector<char> stringDup(const char *src) {
-	std::vector<char> data(strlen(src) + 1);
-	strcpy(data.data(), src);
+	const size_t srcStrLen = strlen(src) + 1;
+	std::vector<char> data(srcStrLen);
+	strncpy(data.data(), src, srcStrLen);
 	return data;
 }
 
