@@ -21,12 +21,14 @@
   <ItemGroup>
     <ClCompile Include="..\modules\src\demux\gpac_demux_mp4_simple.cpp" />
     <ClCompile Include="..\modules\src\mux\gpac_mux_mp4.cpp" />
+    <ClCompile Include="..\modules\src\out\null.cpp" />
     <ClCompile Include="modules_stub.cpp" />
     <ClCompile Include="tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\modules\src\demux\gpac_demux_mp4_simple.hpp" />
     <ClInclude Include="..\modules\src\mux\gpac_mux_mp4.hpp" />
+    <ClInclude Include="..\modules\src\out\null.hpp" />
     <ClInclude Include="modules_stub\internal\core\module.hpp" />
   </ItemGroup>
   <ItemGroup>
