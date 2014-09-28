@@ -3,7 +3,7 @@
 #include "allocator.hpp"
 #include "data.hpp"
 #include "props.hpp"
-#include "internal/utils/helpers.hpp"
+#include "../modules/internal/utils/helper.hpp"
 #include "../utils/log.hpp"
 #include <../signals/signals.hpp>
 #include <thread>
