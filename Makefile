@@ -36,9 +36,6 @@ else
 endif
 
 CFLAGS += -I$(SRC)/signals
-CFLAGS += -I$(SRC)/mm
-CFLAGS += -I$(SRC)/modules
-CFLAGS += -I$(SRC)/modules/src
 CFLAGS += -I$(SRC)/gpacpp
 CFLAGS += -I$(SRC)/ffpp
 
@@ -82,6 +79,7 @@ CFLAGS+=-I$(ProjectName)
 ProjectName:=modules
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
+CFLAGS+=-I$(ProjectName)/src
 
 ProjectName:=mm
 include $(ProjectName)/project.mk
