@@ -43,6 +43,9 @@
     <Filter Include="includes\internal\core">
       <UniqueIdentifier>{c81eaab6-4326-41f2-b4f3-aad1df7b8076}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\probe">
+      <UniqueIdentifier>{91962d09-56bd-4858-a19c-3e5bfeffd0cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
