@@ -10,9 +10,9 @@ extern "C" {
 #include "gpacpp.hpp"
 
 
-#define USE_SEGMENTS   0
+#define USE_SEGMENTS   1
 #define USE_FRAGMENTS (0 | USE_SEGMENTS) //one cannot use segments without fragments
-#define FRAG_DURATION_IN_180K 180000ULL
+#define FRAG_DURATION_IN_180K (10*180000ULL)
 
 
 namespace {
@@ -320,18 +320,23 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName)
 	}
 }
 
+void GPACMuxMP4::closeSegment() {
+#if USE_SEGMENTS
+	GF_Err e = gf_isom_close_segment(m_file, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, 0, NULL, NULL);
+	if (e != GF_OK) {
+		Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
+		throw std::runtime_error("Cannot close output segment.");
+	}
+	//Romain: emit new segment ...
+#endif
+}
+
 GPACMuxMP4::~GPACMuxMP4() {
 	GF_Err e;
 #if USE_FRAGMENTS
 	gf_isom_flush_fragments(m_file, GF_TRUE);
 #endif
-#if USE_SEGMENTS
-	e = gf_isom_close_segment(m_file, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, 0, NULL, NULL);
-	if (e != GF_OK) {
-		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
-		throw std::runtime_error("Cannot close output file.");
-	}
-#endif
+	closeSegment();
 	e = gf_isom_close(m_file);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
@@ -619,31 +624,27 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 		sample.DTS = m_DTS;
 	}
 
-	u64 deltaDTS = (data->getDuration() * gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId))) / IClock::Rate;
+	u32 deltaDTS = u32(data->getDuration() * gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId))) / IClock::Rate;
 	m_DTS += deltaDTS;
 
 #if USE_FRAGMENTS
 	m_curFragDur += deltaDTS;
 
 	//TODO: gf_isom_set_traf_base_media_decode_time(m_file, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
-	GF_Err e = gf_isom_fragment_add_sample(m_file, m_trackId, &sample, 1, 1, 0, 0, GF_FALSE);
+	GF_Err e = gf_isom_fragment_add_sample(m_file, m_trackId, &sample, 1, deltaDTS, 0, 0, GF_FALSE);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));
 		return false;
 	}
 
 	if ((m_curFragDur * IClock::Rate) > (gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId)) * FRAG_DURATION_IN_180K)) {
-		e = gf_isom_flush_fragments(m_file, GF_FALSE);
+		e = gf_isom_flush_fragments(m_file, GF_FALSE); //Romain: Jean me dit que flush ne sert pas dans notre cas
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
 			return false;
 		}
+		closeSegment();
 #if USE_SEGMENTS
-		e = gf_isom_close_segment(m_file, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, 0, NULL, NULL);
-		if (e != GF_OK) {
-			Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
-			throw std::runtime_error("Cannot close output file.");
-		}
 		m_segNum++;
 
 		std::stringstream ss;

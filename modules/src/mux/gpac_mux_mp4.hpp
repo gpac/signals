@@ -25,6 +25,7 @@ public:
 private:
 	void declareStreamVideo(std::shared_ptr<StreamVideo> stream);
 	void declareStreamAudio(std::shared_ptr<StreamAudio> stream);
+	void closeSegment();
 	GF_ISOFile *m_file;
 	uint64_t m_DTS, m_curFragDur, m_segNum;
 	uint32_t m_trackId;
