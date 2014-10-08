@@ -135,11 +135,6 @@ unittest("transcoder: audio simple (libav mux)") {
 	ConnectPinToModule(encode->getPin(0), mux);
 
 	demux->process(nullptr);
-
-	demux->waitForCompletion();
-	decode->waitForCompletion();
-	mux->waitForCompletion();
-	encode->waitForCompletion();
 }
 #endif
 
@@ -185,11 +180,6 @@ unittest("transcoder: audio simple (gpac mux)") {
 	ConnectToModule(encode->getPin(0)->getSignal(), mux);
 
 	demux->process(nullptr);
-
-	demux->waitForCompletion();
-	decode->waitForCompletion();
-	mux->waitForCompletion();
-	encode->waitForCompletion();
 }
 #endif
 

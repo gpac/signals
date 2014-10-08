@@ -41,9 +41,6 @@ unittest("A/V sync: separate threads") {
 		for(int i=0; i < 25*5; ++i) {
 			videoGen->process(nullptr);
 		}
-
-		videoGen->waitForCompletion();
-		videoRender->waitForCompletion();
 	};
 	auto g = [&]() {
 		auto soundGen = uptr(new In::SoundGenerator);
@@ -52,9 +49,6 @@ unittest("A/V sync: separate threads") {
 		for(int i=0; i < 25*5; ++i) {
 			soundGen->process(nullptr);
 		}
-
-		soundGen->waitForCompletion();
-		soundRender->waitForCompletion();
 	};
 
 	std::thread tf(f);
