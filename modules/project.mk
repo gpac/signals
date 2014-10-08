@@ -18,6 +18,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/render/sdl_common.cpp\
   $(ProjectName)/src/render/sdl_video.cpp\
   $(ProjectName)/src/transform/audio_convert.cpp\
+  $(ProjectName)/internal/utils/stranded_pool_executor.cpp\
 
 LIB_MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
 DEPS+=$(LIB_MODULES_OBJS:%.o=%.deps)

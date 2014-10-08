@@ -126,6 +126,9 @@
     <ClInclude Include="internal\utils\helper.hpp">
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
+    <ClInclude Include="internal\utils\stranded_pool_executor.hpp">
+      <Filter>includes\internal\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="internal\core\system_clock.cpp">
       <Filter>includes\internal\core</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\utils\stranded_pool_executor.cpp">
+      <Filter>includes\internal\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

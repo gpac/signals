@@ -137,4 +137,24 @@ then
 	touch extra/build/sdl2/buildOk
 fi
 
+#-------------------------------------------------------------------------------
+# ASIO
+#-------------------------------------------------------------------------------
+
+if [ ! -f extra/src/asio/asio/include/asio.hpp ] ;
+then
+	mkdir -p extra/src
+	rm -rf extra/src/asio
+	git clone --depth 1000 https://github.com/chriskohlhoff/asio extra/src/asio
+	pushd extra/src/asio
+ 	git checkout f05ccf18df816f8999dcc6449f65e520787899c6
+	popd
+fi
+
+if [ ! -f extra/include/asio/asio.hpp ] ;
+then
+	mkdir -p extra/include/asio
+	cp -r extra/src/asio/asio/include/* extra/include/asio/
+fi
+
 echo "Done"

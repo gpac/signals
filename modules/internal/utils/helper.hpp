@@ -1,11 +1,9 @@
 #pragma once
 
-#include "../../../signals/internal/core/executor.hpp"
+#include "stranded_pool_executor.hpp"
 #include "../../../signals/internal/utils/helper.hpp" /* member function helper */
 #include <memory>
 
-
-using namespace Signals;
 
 namespace Modules {
 
@@ -17,10 +15,6 @@ Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)>
 MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)>(objectPtr, &Class::process);
 }
-
-typedef IExecutor<void(std::shared_ptr<Data>)> IProcessExecutor;
-
-static ExecutorSync<void(std::shared_ptr<Data>)> defaultExecutor;
 
 template<typename ModuleType>
 size_t ConnectPinToModule(Pin* pin, ModuleType* module, IProcessExecutor& executor) {
