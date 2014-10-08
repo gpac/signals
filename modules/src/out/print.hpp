@@ -10,7 +10,7 @@ namespace Out {
 class Print : public Module {
 public:
 	Print(std::ostream &os);
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 private:
 	Print& operator= (const Print&) = delete;

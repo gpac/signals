@@ -16,7 +16,7 @@ class GPACDemuxMP4Simple : public Module {
 public:
 	static GPACDemuxMP4Simple* create(std::string const& path);
 	~GPACDemuxMP4Simple();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 private:
 	GPACDemuxMP4Simple(GF_ISOFile *movie);

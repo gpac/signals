@@ -13,14 +13,14 @@ class Pin;
 class Data;
 
 template<typename Class>
-Signals::MemberFunctor<bool, Class, bool(Class::*)(std::shared_ptr<Data>)>
+Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)>
 MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
-	return Signals::MemberFunctor<bool, Class, bool(Class::*)(std::shared_ptr<Data>)>(objectPtr, &Class::process);
+	return Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)>(objectPtr, &Class::process);
 }
 
-typedef IExecutor<bool(std::shared_ptr<Data>)> IProcessExecutor;
+typedef IExecutor<void(std::shared_ptr<Data>)> IProcessExecutor;
 
-static ExecutorSync<bool(std::shared_ptr<Data>)> defaultExecutor;
+static ExecutorSync<void(std::shared_ptr<Data>)> defaultExecutor;
 
 template<typename ModuleType>
 size_t ConnectPinToModule(Pin* pin, ModuleType* module, IProcessExecutor& executor) {

@@ -30,10 +30,9 @@ unittest("video generator") {
 	auto render = uptr(new Render::SDLVideo);
 
 	std::vector<int> times;
-	auto onFrame = [&](std::shared_ptr<Data> data) -> bool {
+	auto onFrame = [&](std::shared_ptr<Data> data) {
 		times.push_back((int)data->getTime());
 		render->process(data);
-		return true;
 	};
 
 	Connect(videoGen->getPin(0)->getSignal(), onFrame);

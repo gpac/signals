@@ -16,10 +16,9 @@ AudioConvert* AudioConvert::create() {
 	return new AudioConvert();
 }
 
-bool AudioConvert::process(std::shared_ptr<Data> data) {
+void AudioConvert::process(std::shared_ptr<Data> data) {
 	assert(0);
 	//signals[0]->emit(out);
-	return false;
 }
 
 }

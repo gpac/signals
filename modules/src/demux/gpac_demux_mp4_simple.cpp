@@ -47,34 +47,36 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {
 }
 
-bool GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
-	try {
-		int sampleDescriptionIndex;
-		std::unique_ptr<gpacpp::IsoSample> ISOSample;
-		ISOSample = reader->movie->getSample(reader->trackNumber, reader->sampleIndex, sampleDescriptionIndex);
+void GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
+	for (;;) {
+		try {
+			int sampleDescriptionIndex;
+			std::unique_ptr<gpacpp::IsoSample> ISOSample;
+			ISOSample = reader->movie->getSample(reader->trackNumber, reader->sampleIndex, sampleDescriptionIndex);
 
-		Log::msg(Log::Debug, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
-		         reader->sampleIndex,
-		         reader->sampleCount,
-		         ISOSample->dataLength,
-		         ISOSample->IsRAP,
-		         ISOSample->DTS,
-		         ISOSample->DTS + ISOSample->CTS_Offset);
-		reader->sampleIndex++;
+			Log::msg(Log::Debug, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
+				reader->sampleIndex,
+				reader->sampleCount,
+				ISOSample->dataLength,
+				ISOSample->IsRAP,
+				ISOSample->DTS,
+				ISOSample->DTS + ISOSample->CTS_Offset);
+			reader->sampleIndex++;
 
-		auto out(signals[0]->getBuffer(ISOSample->dataLength));
-		memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
-		signals[0]->emit(out);
-	} catch(gpacpp::Error const& err) {
-		if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
-			u64 missingBytes = reader->movie->getMissingBytes(reader->trackNumber);
-			Log::msg(Log::Error, "Missing %s bytes on input file", missingBytes);
-		} else {
-			return false;
+			auto out(signals[0]->getBuffer(ISOSample->dataLength));
+			memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
+			signals[0]->emit(out);
+		}
+		catch (gpacpp::Error const& err) {
+			if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
+				u64 missingBytes = reader->movie->getMissingBytes(reader->trackNumber);
+				Log::msg(Log::Error, "Missing %s bytes on input file", missingBytes);
+			}
+			else {
+				return;
+			}
 		}
 	}
-
-	return true;
 }
 
 }

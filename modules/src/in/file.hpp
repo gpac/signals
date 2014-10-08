@@ -11,7 +11,7 @@ class File : public Module {
 public:
 	static File* create(std::string const& path);
 	~File();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 private:
 	File(FILE *file);

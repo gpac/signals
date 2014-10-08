@@ -96,9 +96,8 @@ SDLVideo::~SDLVideo() {
 	workingThread.join();
 }
 
-bool SDLVideo::process(std::shared_ptr<Data> data) {
+void SDLVideo::process(std::shared_ptr<Data> data) {
 	m_dataQueue.push(data);
-	return true;
 }
 
 }

@@ -17,8 +17,7 @@ unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print") {
 
 	ConnectPinToModule(mp4Demux->getPin(0), p);
 
-	while (mp4Demux->process(nullptr)) {
-	}
+	mp4Demux->process(nullptr);
 }
 
 unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print") {

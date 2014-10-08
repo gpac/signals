@@ -82,8 +82,7 @@ int safeMain(int argc, char const* argv[]) {
 			modules.push_back(std::move(muxer));
 		}
 
-		while (demux->process(nullptr)) {
-		}
+		demux->process(nullptr);
 	}
 
 	return 0;

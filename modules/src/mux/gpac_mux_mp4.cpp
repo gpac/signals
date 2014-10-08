@@ -579,7 +579,7 @@ void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
 	}
 }
 
-bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
+void GPACMuxMP4::process(std::shared_ptr<Data> data) {
 	u32 bufLen = (u32)data->size();
 	u8 *bufPtr = data->data();
 
@@ -634,14 +634,14 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 	GF_Err e = gf_isom_fragment_add_sample(m_file, m_trackId, &sample, 1, deltaDTS, 0, 0, GF_FALSE);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));
-		return false;
+		return;
 	}
 
 	if ((m_curFragDur * IClock::Rate) > (gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId)) * FRAG_DURATION_IN_180K)) {
 		e = gf_isom_flush_fragments(m_file, GF_FALSE); //Romain: Jean me dit que flush ne sert pas dans notre cas
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
-			return false;
+			return;
 		}
 		closeSegment();
 #if USE_SEGMENTS
@@ -659,7 +659,7 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 		e = gf_isom_start_fragment(m_file, GF_TRUE);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_start_fragment", gf_error_to_string(e));
-			return false;
+			return;
 		}
 
 		const u64 oneFragDurInTimescale = (FRAG_DURATION_IN_180K * gf_isom_get_media_timescale(m_file, gf_isom_get_track_by_id(m_file, m_trackId)) + IClock::Rate / 2) / IClock::Rate;
@@ -669,15 +669,13 @@ bool GPACMuxMP4::process(std::shared_ptr<Data> data) {
 	GF_Err e = gf_isom_add_sample(m_file, m_trackId, 1, &sample);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
-		return false;
+		return;
 	}
 #endif /*USE_FRAGMENTS*/
 
 	if (sampleDataMustBeDeleted) {
 		gf_free(sample.data);
 	}
-
-	return true;
 }
 
 }

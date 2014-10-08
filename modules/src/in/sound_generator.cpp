@@ -20,7 +20,7 @@ SoundGenerator::SoundGenerator()
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
-bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
+void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const bytesPerSample = 4;
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * SAMPLE_RATE / 1000;
@@ -44,7 +44,6 @@ bool SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	}
 
 	signals[0]->emit(out);
-	return true;
 }
 
 double SoundGenerator::nextSample() {

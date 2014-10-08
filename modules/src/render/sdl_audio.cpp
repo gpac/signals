@@ -54,11 +54,11 @@ SDLAudio::~SDLAudio() {
 	SDL_CloseAudio();
 }
 
-bool SDLAudio::process(std::shared_ptr<Data> data) {
+void SDLAudio::process(std::shared_ptr<Data> data) {
 	auto pcmData = dynamic_cast<PcmData*>(data.get());
 	if (!pcmData) {
 		Log::msg(Log::Warning, "[SDLAudio render] invalid packet type");
-		return false;
+		return;
 	}
 
 	{
@@ -68,8 +68,6 @@ bool SDLAudio::process(std::shared_ptr<Data> data) {
 		}
 		m_Fifo.write(pcmData->data(), (size_t)pcmData->size());
 	}
-
-	return true;
 }
 
 void SDLAudio::fillAudio(uint8_t *stream, int len) {

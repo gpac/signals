@@ -20,7 +20,7 @@ public:
 		}
 	}
 
-	virtual bool process(std::shared_ptr<Data> data) = 0;
+	virtual void process(std::shared_ptr<Data> data) = 0;
 
 	size_t getNumPin() const {
 		return signals.size();

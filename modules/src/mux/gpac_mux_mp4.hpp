@@ -18,7 +18,7 @@ class GPACMuxMP4 : public Module {
 public:
 	GPACMuxMP4(const std::string &baseName);
 	~GPACMuxMP4();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 	void declareStream(std::shared_ptr<Stream> stream);
 
