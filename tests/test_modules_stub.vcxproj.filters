@@ -25,6 +25,7 @@
     <ClCompile Include="..\modules\src\out\null.cpp">
       <Filter>modules</Filter>
     </ClCompile>
+    <ClCompile Include="modules_stub.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\modules\src\mux\gpac_mux_mp4.hpp">
