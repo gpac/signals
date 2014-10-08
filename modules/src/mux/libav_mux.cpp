@@ -116,10 +116,10 @@ void LibavMux::ensureHeader() {
 	}
 }
 
-bool LibavMux::process(std::shared_ptr<Data> data) {
+void LibavMux::process(std::shared_ptr<Data> data) {
 	DataAVPacket *encoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!encoderData) {
-		return false;
+		return;
 	}
 	AVPacket *pkt = encoderData->getPacket();
 
@@ -136,10 +136,8 @@ bool LibavMux::process(std::shared_ptr<Data> data) {
 	pkt->stream_index = avStream->index;
 	if (av_interleaved_write_frame(m_formatCtx, pkt) != 0) {
 		Log::msg(Log::Warning, "[libav_mux] can't write video frame.");
-		return false;
+		return;
 	}
-
-	return true;
 }
 
 }

@@ -39,8 +39,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	ConnectPinToModule(demux->getPin(videoIndex), decode);
 	ConnectPinToModule(decode->getPin(0), render);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 }
 
 unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
@@ -67,8 +66,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	ConnectPinToModule(demux->getPin(audioIndex), decode);
 	ConnectPinToModule(decode->getPin(0), render);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 }
 
 }

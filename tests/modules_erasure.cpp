@@ -31,8 +31,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder 
 		printers.push_back(std::move(p));
 	}
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 }
 
 }

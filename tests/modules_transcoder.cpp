@@ -50,8 +50,7 @@ unittest("transcoder: video simple (libav mux)") {
 	ConnectPinToModule(decode->getPin(0), encode);
 	ConnectPinToModule(encode->getPin(0), mux);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 }
 
 unittest("transcoder: video simple (gpac mux)") {
@@ -90,8 +89,7 @@ unittest("transcoder: video simple (gpac mux)") {
 	ConnectPinToModule(decode->getPin(0), encode);
 	ConnectPinToModule(encode->getPin(0), mux);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 }
 
 #if 0
@@ -136,8 +134,7 @@ unittest("transcoder: audio simple (libav mux)") {
 	ConnectPinToModule(audioConverter->getPin(0), encode);
 	ConnectPinToModule(encode->getPin(0), mux);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 
 	demux->waitForCompletion();
 	decode->waitForCompletion();
@@ -187,8 +184,7 @@ unittest("transcoder: audio simple (gpac mux)") {
 	ConnectToModule(audioConverter->getPin(0)->getSignal(), encode);
 	ConnectToModule(encode->getPin(0)->getSignal(), mux);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 
 	demux->waitForCompletion();
 	decode->waitForCompletion();

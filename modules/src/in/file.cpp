@@ -25,7 +25,7 @@ File* File::create(std::string const& fn) {
 	return new File(f);
 }
 
-bool File::process(std::shared_ptr<Data> /*data*/) {
+void File::process(std::shared_ptr<Data> /*data*/) {
 	for(;;) {
 		auto out(signals[0]->getBuffer(IOSIZE));
 		size_t read = fread(out->data(), 1, IOSIZE, file);
@@ -37,7 +37,6 @@ bool File::process(std::shared_ptr<Data> /*data*/) {
 		}
 		signals[0]->emit(out);
 	}
-	return false; // no more data to process
 }
 
 }

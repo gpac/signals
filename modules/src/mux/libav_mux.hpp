@@ -14,7 +14,7 @@ class LibavMux : public Module {
 public:
 	static LibavMux* create(const std::string &baseName);
 	~LibavMux();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 	void declareStream(std::shared_ptr<Stream> stream);
 

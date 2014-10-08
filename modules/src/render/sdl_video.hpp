@@ -18,7 +18,7 @@ class SDLVideo : public Module {
 public:
 	SDLVideo();
 	~SDLVideo();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 private:
 

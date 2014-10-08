@@ -65,7 +65,7 @@ public:
 	std::shared_ptr<Data> getBuffer(size_t size) {
 		return std::shared_ptr<Data>(new Data(size));
 	}
-	Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>>& getSignal() {
+	Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>>& getSignal() {
 		return signal;
 	}
 	IProps* getProps() const {
@@ -73,7 +73,7 @@ public:
 	}
 
 private:
-	Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>> signal;
+	Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>> signal;
 	std::unique_ptr<IProps> props;
 };
 
@@ -89,7 +89,7 @@ class Module {
 public:
 	Module() : defaultPinFactory(new PinFactory), pinFactory(defaultPinFactory.get()) {}
 	virtual ~Module() noexcept(false) {}
-	virtual bool process(std::shared_ptr<Data> data) = 0;
+	virtual void process(std::shared_ptr<Data> data) = 0;
 	size_t getNumPin() const {
 		return 1;
 	}
@@ -105,9 +105,9 @@ protected:
 	std::vector<std::unique_ptr<Pin>> signals;
 };
 
-typedef IExecutor<bool(std::shared_ptr<Data>)> IProcessExecutor;
+typedef IExecutor<void(std::shared_ptr<Data>)> IProcessExecutor;
 
-inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
+inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
 }
 

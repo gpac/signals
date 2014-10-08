@@ -81,10 +81,6 @@ include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 CFLAGS+=-I$(ProjectName)/src
 
-ProjectName:=mm
-include $(ProjectName)/project.mk
-CFLAGS+=-I$(ProjectName)
-
 ProjectName:=tests
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)

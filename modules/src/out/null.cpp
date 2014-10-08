@@ -11,8 +11,7 @@ Null* Null::create() {
 Null::Null() {
 }
 
-bool Null::process(std::shared_ptr<Data> data) {
-	return true;
+void Null::process(std::shared_ptr<Data> data) {
 }
 
 }

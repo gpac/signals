@@ -58,12 +58,12 @@ LibavDecode::~LibavDecode() {
 	avcodec_close(codecCtx.get());
 }
 
-bool LibavDecode::processAudio(DataAVPacket *decoderData) {
+void LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx.get(), avFrame->get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
-		return true;
+		return;
 	}
 	if (gotFrame) {
 		if(!m_pAudioConverter)
@@ -72,16 +72,14 @@ bool LibavDecode::processAudio(DataAVPacket *decoderData) {
 		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
 	}
-
-	return true;
 }
 
-bool LibavDecode::processVideo(DataAVPacket *decoderData) {
+void LibavDecode::processVideo(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx.get(), avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
-		return true;
+		return;
 	}
 	if (gotPicture) {
 		if(!m_pVideoConverter)
@@ -92,7 +90,6 @@ bool LibavDecode::processVideo(DataAVPacket *decoderData) {
 		signals[0]->emit(out);
 		++m_numFrames;
 	}
-	return true;
 }
 
 void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
@@ -100,11 +97,11 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
 	s->setTime(m_numFrames * framePeriodIn180k);
 }
 
-bool LibavDecode::process(std::shared_ptr<Data> data) {
+void LibavDecode::process(std::shared_ptr<Data> data) {
 	auto decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
 		Log::msg(Log::Warning, "[LibavDecode] Invalid packet type.");
-		return false;
+		return;
 	}
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
@@ -115,7 +112,7 @@ bool LibavDecode::process(std::shared_ptr<Data> data) {
 		break;
 	default:
 		assert(0);
-		return false;
+		return;
 	}
 }
 

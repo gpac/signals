@@ -14,7 +14,7 @@ VideoGenerator::VideoGenerator()
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
-bool VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
+void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const picSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3 / 2;
 	auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(picSize));
 
@@ -32,7 +32,6 @@ bool VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 		signals[0]->emit(out);
 
 	++m_numFrames;
-	return true;
 }
 
 }

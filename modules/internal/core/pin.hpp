@@ -14,8 +14,8 @@ namespace Modules {
 using namespace Signals;
 
 //FIXME: to be removed when modules and mm are clearly separated. In this case the result may not even need to be checked.
-typedef Signal<bool(std::shared_ptr<Data>), ResultQueueThreadSafe<bool>> SignalAsync;
-typedef Signal<bool(std::shared_ptr<Data>), ResultVector<bool>> SignalSync;
+typedef Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>> SignalAsync;
+typedef Signal<void(std::shared_ptr<Data>), ResultVector<NotVoid<void>>> SignalSync;
 
 template<typename Allocator, typename Signal, typename DataType> class PinT;
 template<typename DataType> using PinDataAsync = PinT<AllocatorPacket<DataType>, SignalAsync, DataType>;
@@ -34,10 +34,10 @@ public:
 	virtual void waitForCompletion() = 0;
 	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
 	virtual IProps* getProps() const = 0;
-	virtual ISignal<bool(std::shared_ptr<Data>)>& getSignal() = 0;
+	virtual ISignal<void(std::shared_ptr<Data>)>& getSignal() = 0;
 };
 
-inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor) {
+inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor) {
 	return p->getSignal().connect(functor);
 }
 
@@ -47,7 +47,7 @@ size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
 	return ConnectPin(p, functor);
 }
 
-inline size_t ConnectPin(Pin* p, std::function<bool(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
+inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
 }
 

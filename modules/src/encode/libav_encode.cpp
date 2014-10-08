@@ -285,17 +285,17 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool LibavEncode::process(std::shared_ptr<Data> data) {
+void LibavEncode::process(std::shared_ptr<Data> data) {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		return processVideo(data);
+		processVideo(data);
 		break;
 	case AVMEDIA_TYPE_AUDIO:
-		return processAudio(data);
+		processAudio(data);
 		break;
 	default:
 		assert(0);
-		return false;
+		return;
 	}
 }
 

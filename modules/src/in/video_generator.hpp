@@ -11,7 +11,7 @@ namespace In {
 class VideoGenerator : public Module {
 public:
 	VideoGenerator();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 private:
 	uint64_t m_numFrames;

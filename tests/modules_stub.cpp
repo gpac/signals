@@ -46,8 +46,7 @@ unittest("stub: gpac mp4 remux: GPAC demux -> GPAC mux") {
 
 	ConnectPinToModule(demux->getPin(videoIndex), mux);
 
-	while (demux->process(nullptr)) {
-	}
+	demux->process(nullptr);
 }
 
 }

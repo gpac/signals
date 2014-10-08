@@ -21,12 +21,12 @@ class LibavDecode : public Module {
 public:
 	static LibavDecode* create(const PropsDecoder &props);
 	~LibavDecode();
-	bool process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data);
 
 private:
 	LibavDecode(AVCodecContext *codecCtx);
-	bool processAudio(DataAVPacket*);
-	bool processVideo(DataAVPacket*);
+	void processAudio(DataAVPacket*);
+	void processVideo(DataAVPacket*);
 
 	void setTimestamp(std::shared_ptr<Data> s) const;
 
