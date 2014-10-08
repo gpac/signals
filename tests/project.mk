@@ -48,19 +48,6 @@ $(OUTDIR)/modules.exe: $(EXE_MODULES_OBJS)
 #TARGETS+=$(OUTDIR)/modules_stub.exe
 #$(OUTDIR)/modules_stub.exe: $(EXE_MODULES_STUB_OBJS)
 
-#---------------------------------------------------------------
-# mm.exe
-#---------------------------------------------------------------
-TARGETS+=$(OUTDIR)/mm.exe
-MM_OBJS:=\
-  $(OUTDIR)/mm.o\
- 	$(TEST_COMMON_OBJ)\
- 	$(LIB_MODULES_OBJS)\
- 	$(UTILS_OBJS)\
- 	$(MM_OBJS)
-$(OUTDIR)/mm.exe: $(MM_OBJS)
-DEPS+=$(OUTDIR)/mm.deps
-
 
 #---------------------------------------------------------------
 # run tests
@@ -74,5 +61,4 @@ TestOutDir:=$(OUTDIR)
 run: unit
 	$(call run_from,$(TestProjectName),$(TestOutDir)/modules.exe)
 	$(call run_from,$(TestProjectName),$(TestOutDir)/signals.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/mm.exe)
 
