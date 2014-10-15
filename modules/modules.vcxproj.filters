@@ -129,6 +129,9 @@
     <ClInclude Include="internal\utils\stranded_pool_executor.hpp">
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\decode\converters.hpp">
+      <Filter>src\decode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
