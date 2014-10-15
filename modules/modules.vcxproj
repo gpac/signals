@@ -31,6 +31,7 @@
     <ClInclude Include="src\common\libav.hpp" />
     <ClInclude Include="src\common\mm.hpp" />
     <ClInclude Include="src\common\pcm.hpp" />
+    <ClInclude Include="src\decode\converters.hpp" />
     <ClInclude Include="src\decode\libav_decode.hpp" />
     <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp" />
     <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp" />
