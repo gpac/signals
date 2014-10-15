@@ -7,9 +7,6 @@
     <ClInclude Include="..\signals\internal\core\connection.hpp">
       <Filter>includes\internal\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\signals\internal\core\protosignal.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\signals\internal\core\result.hpp">
       <Filter>includes\internal\core</Filter>
     </ClInclude>

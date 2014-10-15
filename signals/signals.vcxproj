@@ -153,7 +153,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\signals\internal\core\connection.hpp" />
-    <ClInclude Include="..\signals\internal\core\protosignal.hpp" />
     <ClInclude Include="..\signals\internal\core\result.hpp" />
     <ClInclude Include="..\signals\internal\core\signal.hpp" />
     <ClInclude Include="..\signals\internal\utils\helper.hpp" />
