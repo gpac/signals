@@ -22,7 +22,7 @@ unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print") {
 
 unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print") {
 	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	auto mp4Demux = uptr(Demux::GPACDemuxMP4Full::create());
+	auto mp4Demux = uptr(new Demux::GPACDemuxMP4Full());
 	auto p = uptr(new Out::Print(std::cout));
 
 	ConnectPinToModule(f->getPin(0), mp4Demux);

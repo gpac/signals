@@ -18,7 +18,7 @@ Decode::LibavDecode* createMp3Decoder() {
 	avContext.codec_type = AVMEDIA_TYPE_AUDIO;
 	avContext.codec_id = AV_CODEC_ID_MP3;
 	PropsDecoder props(&avContext);
-	return Decode::LibavDecode::create(props);
+	return new Decode::LibavDecode(props);
 }
 }
 

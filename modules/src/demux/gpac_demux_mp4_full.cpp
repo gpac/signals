@@ -33,10 +33,6 @@ class ISOProgressiveReader {
 		int trackNumber; //TODO: multi-tracks
 };
 
-GPACDemuxMP4Full* GPACDemuxMP4Full::create() {
-	return new GPACDemuxMP4Full();
-}
-
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 	: reader(new ISOProgressiveReader) {
 	signals.push_back(uptr(pinFactory->createPin()));

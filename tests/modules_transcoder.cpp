@@ -44,7 +44,7 @@ unittest("transcoder: video simple (libav mux)") {
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(Mux::LibavMux::create("output_video_libav"));
 
@@ -83,7 +83,7 @@ unittest("transcoder: video simple (gpac mux)") {
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("output_video_gpac"));
 
@@ -122,7 +122,7 @@ unittest("transcoder: audio simple (libav mux)") {
 	//create the video decoder
 	Props *props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 
 	//create the encoder
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
@@ -169,7 +169,7 @@ unittest("transcoder: audio simple (gpac mux)") {
 	Props *props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 	auto mux = uptr(Mux::LibavMux::create("output_audio_gpac"));
 
@@ -194,7 +194,7 @@ unittest("transcoder: h264/mp4 to jpg") {
 
 	auto props = demux->getPin(0)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	auto decoder = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 
 	auto encoder = uptr(new Encode::JPEGTurboEncode(decoderProps->getAVCodecContext()->width, decoderProps->getAVCodecContext()->height));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
@@ -210,16 +210,21 @@ unittest("transcoder: h264/mp4 to jpg") {
 	demux->process(nullptr);
 }
 
-unittest("transcoder: jpg to h264 (libav)") {
+unittest("transcoder: jpg to h264 (gpac)") {
 	auto reader = uptr(In::File::create("data/sample.jpg")); //Romain: also test with >65K file
 	auto decoder = uptr(new Decode::JPEGTurboDecode());
+	auto props = decoder->getPin(0)->getProps();
+	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto srcCtx = decoderProps->getAVCodecContext();
+	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width, srcCtx->height, /*FIXME: hardcoded*/ AV_PIX_FMT_RGB24));
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
-	auto mux = uptr(Mux::LibavMux::create("data/test"));
-	Connect(encoder->declareStream, mux.get(), &Mux::LibavMux::declareStream);
+	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));
+	Connect(encoder->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
 	encoder->sendOutputPinsInfo();
 
 	ConnectPinToModule(reader->getPin(0), decoder);
-	ConnectPinToModule(decoder->getPin(0), encoder);
+	ConnectPinToModule(decoder->getPin(0), converter);
+	ConnectPinToModule(converter->getPin(0), encoder);
 	ConnectPinToModule(encoder->getPin(0), mux);
 
 	reader->process(nullptr);
