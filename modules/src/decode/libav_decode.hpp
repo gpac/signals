@@ -11,7 +11,6 @@ struct Frame;
 }
 
 class AudioConverter;
-class VideoConverter;
 
 using namespace Modules;
 
@@ -31,10 +30,6 @@ private:
 	void setTimestamp(std::shared_ptr<Data> s) const;
 
 	std::unique_ptr<AVCodecContext> const codecCtx;
-	std::unique_ptr<ffpp::Frame> const avFrame;
-
-	std::unique_ptr<AudioConverter> m_pAudioConverter;
-	std::unique_ptr<VideoConverter> m_pVideoConverter;
 
 	uint64_t m_numFrames;
 };

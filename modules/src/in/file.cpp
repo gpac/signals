@@ -19,7 +19,7 @@ File::~File() {
 File* File::create(std::string const& fn) {
 	FILE *f = fopen(fn.c_str(), "rb");
 	if (!f) {
-		Log::msg(Log::Error, "Can't open file: %s", fn);
+		Log::msg(Log::Error, "Can't open file for reading: %s", fn);
 		throw std::runtime_error("File not found");
 	}
 	return new File(f);

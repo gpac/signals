@@ -129,8 +129,17 @@
     <ClInclude Include="internal\utils\stranded_pool_executor.hpp">
       <Filter>includes\internal\utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\decode\converters.hpp">
+    <ClInclude Include="src\decode\jpegturbo_decode.hpp">
       <Filter>src\decode</Filter>
+    </ClInclude>
+    <ClInclude Include="src\encode\jpegturbo_encode.hpp">
+      <Filter>src\encode</Filter>
+    </ClInclude>
+    <ClInclude Include="src\out\file.hpp">
+      <Filter>src\out</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transform\video_convert.hpp">
+      <Filter>src\transform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +202,18 @@
     </ClCompile>
     <ClCompile Include="internal\utils\stranded_pool_executor.cpp">
       <Filter>includes\internal\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\decode\jpegturbo_decode.cpp">
+      <Filter>src\decode</Filter>
+    </ClCompile>
+    <ClCompile Include="src\encode\jpegturbo_encode.cpp">
+      <Filter>src\encode</Filter>
+    </ClCompile>
+    <ClCompile Include="src\out\file.cpp">
+      <Filter>src\out</Filter>
+    </ClCompile>
+    <ClCompile Include="src\transform\video_convert.cpp">
+      <Filter>src\transform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

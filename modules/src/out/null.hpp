@@ -3,8 +3,7 @@
 #include "internal/core/module.hpp"
 #include <string>
 
-using namespace Modules;
-
+namespace Modules {
 namespace Out {
 
 /**
@@ -12,11 +11,9 @@ namespace Out {
  */
 class Null : public Module {
 public:
-	static Null* create();
-	void process(std::shared_ptr<Data> data);
-
-private:
 	Null();
+	void process(std::shared_ptr<Data> data);
 };
 
+}
 }

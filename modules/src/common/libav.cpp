@@ -84,6 +84,30 @@ void DataAVPacket::resize(size_t /*size*/) {
 	assert(0);
 }
 
+DataAVFrame::DataAVFrame(size_t size)
+	: Data(size), frame(av_frame_alloc()) {
+}
+
+DataAVFrame::~DataAVFrame() {
+	av_frame_free(&frame);
+}
+
+uint8_t* DataAVFrame::data() {
+	return frame->data[0];
+}
+
+uint64_t DataAVFrame::size() const {
+	return 0;
+}
+
+AVFrame* DataAVFrame::getFrame() const {
+	return frame;
+}
+
+void DataAVFrame::resize(size_t /*size*/) {
+	assert(0);
+}
+
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
 	auto opt = stringDup(options);
 	char *tok = strtok(opt.data(), "- ");
@@ -113,11 +137,18 @@ void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
 #endif
 }
 
-PinLibavFactory::PinLibavFactory() {
+PinLibavPacketFactory::PinLibavPacketFactory() {
 }
 
-Pin* PinLibavFactory::createPin(IProps *props) {
-	return new PinLibav(props);
+Pin* PinLibavPacketFactory::createPin(IProps *props) {
+	return new PinLibavPacket(props);
+}
+
+PinLibavFrameFactory::PinLibavFrameFactory() {
+}
+
+Pin* PinLibavFrameFactory::createPin(IProps *props) {
+	return new PinLibavFrame(props);
 }
 
 }

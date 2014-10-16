@@ -17,7 +17,7 @@ namespace {
 
 unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	auto null = uptr(Out::Null::create());
+	auto null = uptr(new Out::Null);
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
@@ -44,7 +44,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
-	auto null = uptr(Out::Null::create());
+	auto null = uptr(new Out::Null);
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
@@ -68,5 +68,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	demux->process(nullptr);
 }
+
+//Romain: add A/V tranform tests
 
 }

@@ -8,18 +8,18 @@
 namespace Demux {
 
 class ISOFileReader {
-public:
-	void init(GF_ISOFile* m) {
-		movie.reset(new gpacpp::IsoFile(m));
-		u32 trackId = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
-		trackNumber = movie->getTrackById(trackId);
-		sampleCount = movie->getSampleCount(trackNumber);
-		sampleIndex = 1;
-	}
+	public:
+		void init(GF_ISOFile* m) {
+			movie.reset(new gpacpp::IsoFile(m));
+			u32 trackId = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
+			trackNumber = movie->getTrackById(trackId);
+			sampleCount = movie->getSampleCount(trackNumber);
+			sampleIndex = 1;
+		}
 
-	std::unique_ptr<gpacpp::IsoFile> movie;
-	uint32_t trackNumber;
-	uint32_t sampleIndex, sampleCount;
+		std::unique_ptr<gpacpp::IsoFile> movie;
+		uint32_t trackNumber;
+		uint32_t sampleIndex, sampleCount;
 };
 
 
@@ -55,24 +55,22 @@ void GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
 			ISOSample = reader->movie->getSample(reader->trackNumber, reader->sampleIndex, sampleDescriptionIndex);
 
 			Log::msg(Log::Debug, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
-				reader->sampleIndex,
-				reader->sampleCount,
-				ISOSample->dataLength,
-				ISOSample->IsRAP,
-				ISOSample->DTS,
-				ISOSample->DTS + ISOSample->CTS_Offset);
+			         reader->sampleIndex,
+			         reader->sampleCount,
+			         ISOSample->dataLength,
+			         ISOSample->IsRAP,
+			         ISOSample->DTS,
+			         ISOSample->DTS + ISOSample->CTS_Offset);
 			reader->sampleIndex++;
 
 			auto out(signals[0]->getBuffer(ISOSample->dataLength));
 			memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
 			signals[0]->emit(out);
-		}
-		catch (gpacpp::Error const& err) {
+		} catch (gpacpp::Error const& err) {
 			if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 				u64 missingBytes = reader->movie->getMissingBytes(reader->trackNumber);
 				Log::msg(Log::Error, "Missing %s bytes on input file", missingBytes);
-			}
-			else {
+			} else {
 				return;
 			}
 		}

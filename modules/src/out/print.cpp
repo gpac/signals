@@ -2,6 +2,7 @@
 #include "../utils/log.hpp"
 
 
+namespace Modules {
 namespace Out {
 
 void Print::process(std::shared_ptr<Data> data) {
@@ -11,4 +12,5 @@ void Print::process(std::shared_ptr<Data> data) {
 Print::Print(std::ostream &os) : os(os) {
 }
 
+}
 }

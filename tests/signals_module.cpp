@@ -6,15 +6,15 @@ using namespace Signals;
 
 namespace {
 class Signaler {
-public:
-	Signal<int(int)> signal;
+	public:
+		Signal<int(int)> signal;
 };
 
 class Slot {
-public:
-	int slot(int a) {
-		return 1 + Util::dummyPrint(a);
-	}
+	public:
+		int slot(int a) {
+			return 1 + Util::dummyPrint(a);
+		}
 };
 
 unittest("basic module connection tests") {

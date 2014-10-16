@@ -38,23 +38,23 @@ public:
 };
 
 inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor) {
-	return p->getSignal().connect(functor);
+return p->getSignal().connect(functor);
 }
 
 template<typename C, typename D>
 size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectPin(p, functor);
+auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+return ConnectPin(p, functor);
 }
 
 inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
-	return p->getSignal().connect(functor, executor);
+return p->getSignal().connect(functor, executor);
 }
 
 template<typename C, typename D, typename E>
 size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectPin(p, functor, executor);
+auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+return ConnectPin(p, functor, executor);
 }
 
 
@@ -117,7 +117,6 @@ public:
 	}
 
 private:
-
 	Allocator allocator;
 	Signal signal;
 	std::unique_ptr<IProps> props;

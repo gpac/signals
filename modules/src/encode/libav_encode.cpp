@@ -38,12 +38,8 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Encode {
 
-LibavEncode* LibavEncode::create(Type type) {
-	return new LibavEncode(type);
-}
-
 LibavEncode::LibavEncode(Type type)
-	: Module(new PinLibavFactory), avFrame(new ffpp::Frame), frameNum(-1) {
+	: Module(new PinLibavPacketFactory), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -187,6 +183,14 @@ LibavEncode::LibavEncode(Type type)
 }
 
 LibavEncode::~LibavEncode() {
+	//push possibly buffered frames
+#if 0 //FIXME: since the other connected modules may have been destroyed, we may crash
+	for (;;) {
+		//FIXME: infinite loop
+		process(nullptr);
+	}
+#endif
+
 	if (codecCtx) {
 		avcodec_close(codecCtx);
 	}
@@ -263,12 +267,16 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	avFrame->get()->data[0] = (uint8_t*)data->data();
-	avFrame->get()->data[1] = avFrame->get()->data[0] + codecCtx->width * codecCtx->height;
-	avFrame->get()->data[2] = avFrame->get()->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
-	avFrame->get()->pts = ++frameNum;
+	AVFrame *f = NULL;
+	if (data) {
+		avFrame->get()->data[0] = (uint8_t*)data->data();
+		avFrame->get()->data[1] = avFrame->get()->data[0] + codecCtx->width * codecCtx->height;
+		avFrame->get()->data[2] = avFrame->get()->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
+		avFrame->get()->pts = ++frameNum;
+		f = avFrame->get();
+	}
 	int gotPkt = 0;
-	if (avcodec_encode_video2(codecCtx, pkt, avFrame->get(), &gotPkt)) {
+	if (avcodec_encode_video2(codecCtx, pkt, f, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %d.", frameNum);
 		return false;
 	} else {

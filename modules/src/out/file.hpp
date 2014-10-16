@@ -6,15 +6,16 @@
 namespace Modules {
 namespace Out {
 
-class Print : public Module {
+class File : public Module {
 public:
-	Print(std::ostream &os);
+	static File* create(std::string const& path);
+	~File();
 	void process(std::shared_ptr<Data> data);
 
 private:
-	Print& operator= (const Print&) = delete;
+	File(FILE *file);
 
-	std::ostream &os;
+	FILE *file;
 };
 
 }

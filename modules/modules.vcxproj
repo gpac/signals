@@ -31,44 +31,51 @@
     <ClInclude Include="src\common\libav.hpp" />
     <ClInclude Include="src\common\mm.hpp" />
     <ClInclude Include="src\common\pcm.hpp" />
-    <ClInclude Include="src\decode\converters.hpp" />
+    <ClInclude Include="src\decode\jpegturbo_decode.hpp" />
     <ClInclude Include="src\decode\libav_decode.hpp" />
     <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp" />
     <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp" />
     <ClInclude Include="src\demux\libav_demux.hpp" />
+    <ClInclude Include="src\encode\jpegturbo_encode.hpp" />
     <ClInclude Include="src\encode\libav_encode.hpp" />
     <ClInclude Include="src\in\file.hpp" />
     <ClInclude Include="src\in\sound_generator.hpp" />
     <ClInclude Include="src\in\video_generator.hpp" />
     <ClInclude Include="src\mux\gpac_mux_mp4.hpp" />
     <ClInclude Include="src\mux\libav_mux.hpp" />
+    <ClInclude Include="src\out\file.hpp" />
     <ClInclude Include="src\out\null.hpp" />
     <ClInclude Include="src\out\print.hpp" />
     <ClInclude Include="src\render\sdl_audio.hpp" />
     <ClInclude Include="src\render\sdl_video.hpp" />
     <ClInclude Include="src\transform\audio_convert.hpp" />
+    <ClInclude Include="src\transform\video_convert.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="internal\core\pin.cpp" />
     <ClCompile Include="internal\core\system_clock.cpp" />
     <ClCompile Include="internal\utils\stranded_pool_executor.cpp" />
     <ClCompile Include="src\common\libav.cpp" />
+    <ClCompile Include="src\decode\jpegturbo_decode.cpp" />
     <ClCompile Include="src\decode\libav_decode.cpp" />
     <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp" />
     <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp" />
     <ClCompile Include="src\demux\libav_demux.cpp" />
+    <ClCompile Include="src\encode\jpegturbo_encode.cpp" />
     <ClCompile Include="src\encode\libav_encode.cpp" />
     <ClCompile Include="src\in\file.cpp" />
     <ClCompile Include="src\in\sound_generator.cpp" />
     <ClCompile Include="src\in\video_generator.cpp" />
     <ClCompile Include="src\mux\gpac_mux_mp4.cpp" />
     <ClCompile Include="src\mux\libav_mux.cpp" />
+    <ClCompile Include="src\out\file.cpp" />
     <ClCompile Include="src\out\null.cpp" />
     <ClCompile Include="src\out\print.cpp" />
     <ClCompile Include="src\render\sdl_audio.cpp" />
     <ClCompile Include="src\render\sdl_common.cpp" />
     <ClCompile Include="src\render\sdl_video.cpp" />
     <ClCompile Include="src\transform\audio_convert.cpp" />
+    <ClCompile Include="src\transform\video_convert.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\utils\utils.vcxproj">
@@ -150,12 +157,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
+      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,12 +180,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
+      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -192,10 +205,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -214,10 +230,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

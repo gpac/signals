@@ -48,8 +48,8 @@
 
 namespace Tests {
 inline void Fail(char const* file, int line, const char* expr) {
-	std::cerr << "TEST FAILED: " << file << "(" << line << "): (" << expr << ")" << std::endl;
-	std::raise(SIGABRT);
+std::cerr << "TEST FAILED: " << file << "(" << line << "): (" << expr << ")" << std::endl;
+std::raise(SIGABRT);
 }
 
 #define ASSERT(expr) \
@@ -59,45 +59,45 @@ int RegisterTest(void (*f)(), const char* testName, int& dummy);
 void RunAll();
 
 inline void Test(const std::string &name) {
-	std::cout << std::endl << "[ ***** " << name.c_str() << " ***** ]" << std::endl;
+std::cout << std::endl << "[ ***** " << name.c_str() << " ***** ]" << std::endl;
 }
 
 namespace Util {
 inline int dummy(int a) {
-	return a;
+return a;
 }
 inline int dummyPrint(int a) {
-	std::cout << "a = " << a << std::endl;
-	return a;
+std::cout << "a = " << a << std::endl;
+return a;
 }
 
 inline int compute(int a) {
-	int64_t n = (int64_t)1 << a;
-	if (a <= 0) {
-		return 1;
-	}
-	uint64_t res = n;
-	while (--n > 1) {
-		res *= n;
-	}
-	return (int)res;
+int64_t n = (int64_t)1 << a;
+if (a <= 0) {
+	return 1;
+}
+uint64_t res = n;
+while (--n > 1) {
+	res *= n;
+}
+return (int)res;
 }
 
 inline void sleepInMs(int ms) {
-	//std::cout << "sleepInMs(" << ms << ") in thread " << std::this_thread::get_id() << std::endl;
-	SLEEP_IN_MS(ms);
+//std::cout << "sleepInMs(" << ms << ") in thread " << std::this_thread::get_id() << std::endl;
+SLEEP_IN_MS(ms);
 }
 
 inline int log2(int i) {
-	int res = 0;
-	while (i >>= 1) {
-		++res;
-	}
-	return res;
+int res = 0;
+while (i >>= 1) {
+	++res;
+}
+return res;
 }
 
 inline bool isPow2(int i) {
-	return (i == 0) || (i - (1 << (int)log2(i)) == 0);
+return (i == 0) || (i - (1 << (int)log2(i)) == 0);
 }
 
 class Profiler {

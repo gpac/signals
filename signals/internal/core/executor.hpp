@@ -10,17 +10,17 @@ namespace Signals {
 
 template<typename R, typename... Args>
 std::function<R(Args...)> NotVoidFunction(std::function<R(Args...)> fn) {
-	return fn;
+return fn;
 }
 
 // converts a function returning void to a function return int (always 0).
 template<typename... Args>
 std::function<int(Args...)> NotVoidFunction(std::function<void(Args...)> fn) {
-	auto closure = [=](Args... args) -> int {
-		fn(args...);
-		return 0;
-	};
-	return closure;
+auto closure = [=](Args... args) -> int {
+	fn(args...);
+	return 0;
+};
+return closure;
 }
 
 template<typename> class IExecutor;
