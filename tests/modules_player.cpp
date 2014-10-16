@@ -33,7 +33,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 	auto props = demux->getPin(videoIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto render = uptr(new Render::SDLVideo);
 
 	ConnectPinToModule(demux->getPin(videoIndex), decode);
@@ -60,7 +60,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
 	auto props = demux->getPin(audioIndex)->getProps();
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-	auto decode = uptr(Decode::LibavDecode::create(*decoderProps));
+	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto render = uptr(Render::SDLAudio::create());
 
 	ConnectPinToModule(demux->getPin(audioIndex), decode);

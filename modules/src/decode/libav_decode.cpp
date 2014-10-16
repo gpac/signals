@@ -16,13 +16,9 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Decode {
 
-LibavDecode* LibavDecode::create(const PropsDecoder &props) {
-	return new LibavDecode(props.getAVCodecContext());
-}
-
-LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
+LibavDecode::LibavDecode(const PropsDecoder &props)
 	: Module(new PinLibavFrameFactory), codecCtx(new AVCodecContext), m_numFrames(0) {
-	*codecCtx = *codecCtx2;
+	*codecCtx = *props.getAVCodecContext();
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:

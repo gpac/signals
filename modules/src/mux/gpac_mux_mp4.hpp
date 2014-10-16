@@ -16,7 +16,7 @@ namespace Mux {
 
 class GPACMuxMP4 : public Module {
 public:
-	GPACMuxMP4(const std::string &baseName);
+	GPACMuxMP4(const std::string &baseName, bool useSegments = false);
 	~GPACMuxMP4();
 	void process(std::shared_ptr<Data> data);
 
@@ -29,6 +29,7 @@ private:
 	GF_ISOFile *m_file;
 	uint64_t m_DTS, m_curFragDur, m_segNum;
 	uint32_t m_trackId;
+	bool m_useSegments, m_useFragments;
 };
 
 }

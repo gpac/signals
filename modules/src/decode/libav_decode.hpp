@@ -18,12 +18,11 @@ namespace Decode {
 
 class LibavDecode : public Module {
 public:
-	static LibavDecode* create(const PropsDecoder &props);
+	LibavDecode(const PropsDecoder &props);
 	~LibavDecode();
 	void process(std::shared_ptr<Data> data);
 
 private:
-	LibavDecode(AVCodecContext *codecCtx);
 	void processAudio(DataAVPacket*);
 	void processVideo(DataAVPacket*);
 

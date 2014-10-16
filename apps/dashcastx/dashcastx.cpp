@@ -53,7 +53,7 @@ int safeMain(int argc, char const* argv[]) {
 			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 			ASSERT(decoderProps);
 
-			auto decoder = uptr(Decode::LibavDecode::create(*decoderProps));
+			auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 			ConnectPinToModule(demux->getPin(i), decoder);
 
 			//TODO: add audio and video rescaling
@@ -69,7 +69,7 @@ int safeMain(int argc, char const* argv[]) {
 			//FIXME: should be fragmented according to parameters
 			std::stringstream filename;
 			filename << i;
-			auto muxer = uptr(new Mux::GPACMuxMP4(filename.str()));
+			auto muxer = uptr(new Mux::GPACMuxMP4(filename.str(), true));
 			ConnectPinToModule(encoder->getPin(0), muxer);
 
 			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);

@@ -12,12 +12,11 @@ class ISOProgressiveReader;
 
 class GPACDemuxMP4Full : public Module {
 public:
-	static GPACDemuxMP4Full* create();
+	GPACDemuxMP4Full();
 	~GPACDemuxMP4Full();
 	void process(std::shared_ptr<Data> data);
 
 private:
-	GPACDemuxMP4Full();
 	bool openData();
 	bool updateData();
 	bool processSample();

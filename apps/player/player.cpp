@@ -62,7 +62,7 @@ Stream decode(Stream& input) {
 	auto decoderProps = dynamic_cast<PropsDecoder*>(props);
 	ASSERT(decoderProps);
 
-	auto decoder = Decode::LibavDecode::create(*decoderProps);
+	auto decoder = new Decode::LibavDecode(*decoderProps);
 	Stream r(decoder);
 	r.pin = decoder->getPin(0);
 	r.codecType = decoderProps->getAVCodecContext()->codec_type;
