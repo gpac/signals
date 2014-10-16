@@ -23,19 +23,30 @@ Decode::LibavDecode* createMp3Decoder() {
 }
 
 unittest("decoder: audio simple") {
-
 	auto input = uptr(In::File::create("data/sine.mp3"));
 
 	//create the audio decoder
 	auto decoder = uptr(createMp3Decoder());
 	ConnectPinToModule(input->getPin(0), decoder);
 
-	auto null = uptr(Out::Null::create());
+	auto null = uptr(new Out::Null);
 	ConnectPinToModule(decoder->getPin(0), null);
 
+	input->process(nullptr);
+}
+
+unittest("decoder: audio converter") {
+	auto input = uptr(In::File::create("data/sine.mp3"));
+
+	//create the audio decoder
+	auto decoder = uptr(createMp3Decoder());
+	ConnectPinToModule(input->getPin(0), decoder);
+
 	//create an audio resampler
-	//auto audioConverter = uptr(Transform::AudioConvert::create());
-	//ConnectToModule(audioConverter->getPin(0)->getSignal(), decoder);
+#if 0 //TODO
+	auto audioConverter = uptr(new Transform::AudioConvert());
+	ConnectToModule(decoder->getPin(0)->getSignal(), audioConverter);
+#endif
 
 	input->process(nullptr);
 }

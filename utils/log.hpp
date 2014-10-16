@@ -7,9 +7,9 @@
 
 template<typename T>
 std::string toString(T const& val) {
-	std::stringstream ss;
-	ss << val;
-	return ss.str();
+std::stringstream ss;
+ss << val;
+return ss.str();
 }
 
 template<typename T>
@@ -54,30 +54,30 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 }
 
 class Log {
-public:
-	enum Level {
-		Quiet = -1,
-		Error = 0,
-		Warning,
-		Info,
-		Debug
-	};
+	public:
+		enum Level {
+			Quiet = -1,
+			Error = 0,
+			Warning,
+			Info,
+			Debug
+		};
 
-	template<typename... Arguments>
-	static void msg(Level level, const std::string& fmt, Arguments... args) {
-		if ((level != Quiet) && (level <= globalLogLevel)) {
-			get(level) << format(fmt, args...) << std::endl;
-			get(level).flush();
+		template<typename... Arguments>
+		static void msg(Level level, const std::string& fmt, Arguments... args) {
+			if ((level != Quiet) && (level <= globalLogLevel)) {
+				get(level) << format(fmt, args...) << std::endl;
+				get(level).flush();
+			}
 		}
-	}
 
-	void setLevel(Level level);
-	Log::Level getLevel();
+		void setLevel(Level level);
+		Log::Level getLevel();
 
-private:
-	Log();
-	~Log();
-	static std::ostream& get(Level level);
+	private:
+		Log();
+		~Log();
+		static std::ostream& get(Level level);
 
-	static Level globalLogLevel;
+		static Level globalLogLevel;
 };

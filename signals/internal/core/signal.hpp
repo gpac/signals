@@ -40,7 +40,7 @@ public:
 template<typename, typename> class PSignal;
 
 template<typename Result, typename Callback, typename... Args>
-class PSignal<Result, Callback(Args...)> : public ISignal<Callback(Args...)>{
+class PSignal<Result, Callback(Args...)> : public ISignal<Callback(Args...)> {
 protected:
 	typedef std::function<Callback(Args...)> CallbackType;
 
@@ -124,8 +124,7 @@ private:
 			for (auto f = cb.second->futures.begin(); f != cb.second->futures.end();) {
 				if (!sync && (f->wait_for(std::chrono::nanoseconds(0)) != std::future_status::ready)) {
 					++f;
-				}
-				else {
+				} else {
 					assert(f->valid());
 					result.set(f->get());
 					f = cb.second->futures.erase(f);

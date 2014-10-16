@@ -10,7 +10,7 @@ using namespace Signals;
 namespace Modules {
 
 struct IClock {
-	static auto const Rate = 180000LL;
+static auto const Rate = 180000LL;
 };
 
 class Data {
@@ -108,13 +108,13 @@ protected:
 typedef IExecutor<void(std::shared_ptr<Data>)> IProcessExecutor;
 
 inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
-	return p->getSignal().connect(functor, executor);
+return p->getSignal().connect(functor, executor);
 }
 
 template<typename C, typename D, typename E>
 size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectPin(p, functor, executor);
+auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+return ConnectPin(p, functor, executor);
 }
 
 }

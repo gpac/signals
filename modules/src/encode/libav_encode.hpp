@@ -23,7 +23,7 @@ public:
 		unknown
 	};
 
-	static LibavEncode* create(Type type);
+	LibavEncode(Type type);
 	~LibavEncode();
 	void process(std::shared_ptr<Data> data);
 
@@ -31,7 +31,6 @@ public:
 	Signal<void(std::shared_ptr<Stream>)> declareStream; //FIXME: temporary until modules have a type 'mux'
 
 private:
-	LibavEncode(Type type);
 	bool processAudio(std::shared_ptr<Data> data);
 	bool processVideo(std::shared_ptr<Data> data);
 

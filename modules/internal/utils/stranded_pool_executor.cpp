@@ -7,7 +7,7 @@ namespace Modules {
 
 //a shared thread pool for the modules
 #define N_THREADS_PER_CPU 1 //TODO: run perf tests - some modules may be blocking somehow? (I/O, own parallelisme pattern as in x264, etc.)
-static asio::thread_pool g_threadPool{ N_THREADS_PER_CPU * std::thread::hardware_concurrency() };
+static asio::thread_pool g_threadPool { N_THREADS_PER_CPU * std::thread::hardware_concurrency() };
 
 StrandedPoolModuleExecutor::StrandedPoolModuleExecutor() : threadPool(g_threadPool), strand(threadPool.get_executor()) {
 }

@@ -21,12 +21,12 @@ std::unique_ptr<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *deco
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
-		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Video));
+		auto r = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 		ConnectPinToModule(pPin, r);
 		return std::move(r);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
-		auto r = uptr(Encode::LibavEncode::create(Encode::LibavEncode::Audio));
+		auto r = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 		ConnectPinToModule(pPin, r);
 		return std::move(r);
 	} else {
@@ -60,7 +60,7 @@ int safeMain(int argc, char const* argv[]) {
 
 			auto encoder = createEncoder(decoder->getPin(0), decoderProps);
 			if (!encoder) {
-				auto r = uptr(Out::Null::create());
+				auto r = uptr(new Out::Null);
 				ConnectPinToModule(decoder->getPin(0), r);
 				modules.push_back(std::move(decoder));
 				modules.push_back(std::move(r)); break;

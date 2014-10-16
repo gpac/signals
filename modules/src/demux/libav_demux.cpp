@@ -45,7 +45,7 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 }
 
 LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
-	: Module(new PinLibavFactory), m_formatCtx(formatCtx) {
+	: Module(new PinLibavPacketFactory), m_formatCtx(formatCtx) {
 	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
 		signals.push_back(uptr(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec))));
 	}
@@ -62,8 +62,7 @@ void LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 		int status = av_read_frame(m_formatCtx, pkt);
 		if (status < 0) {
 			if (status == (int)AVERROR_EOF || (m_formatCtx->pb && m_formatCtx->pb->eof_reached)) {
-			}
-			else if (m_formatCtx->pb && m_formatCtx->pb->error) {
+			} else if (m_formatCtx->pb && m_formatCtx->pb->error) {
 				Log::msg(Log::Warning, "[Libavcodec_55] Stream contains an irrecoverable error - leaving");
 			}
 			return;

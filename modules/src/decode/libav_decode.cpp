@@ -7,7 +7,6 @@
 #include <string>
 
 #include "ffpp.hpp"
-#include "converters.hpp"
 
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
@@ -22,7 +21,7 @@ LibavDecode* LibavDecode::create(const PropsDecoder &props) {
 }
 
 LibavDecode::LibavDecode(AVCodecContext *codecCtx2)
-	: Module(new PinPcmFactory), codecCtx(new AVCodecContext), avFrame(new ffpp::Frame), m_numFrames(0) {
+	: Module(new PinLibavFrameFactory), codecCtx(new AVCodecContext), m_numFrames(0) {
 	*codecCtx = *codecCtx2;
 
 	switch (codecCtx->codec_type) {
@@ -60,32 +59,26 @@ LibavDecode::~LibavDecode() {
 
 void LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
+	auto out = std::dynamic_pointer_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotFrame;
-	if (avcodec_decode_audio4(codecCtx.get(), avFrame->get(), &gotFrame, pkt) < 0) {
+	if (avcodec_decode_audio4(codecCtx.get(), out->getFrame(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return;
 	}
 	if (gotFrame) {
-		if(!m_pAudioConverter)
-			m_pAudioConverter.reset(new AudioConverter(*codecCtx, *signals[0]));
-
-		auto out = m_pAudioConverter->convert(codecCtx.get(), avFrame->get());
 		signals[0]->emit(out);
 	}
 }
 
 void LibavDecode::processVideo(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
+	auto out = std::dynamic_pointer_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotPicture;
-	if (avcodec_decode_video2(codecCtx.get(), avFrame->get(), &gotPicture, pkt) < 0) {
+	if (avcodec_decode_video2(codecCtx.get(), out->getFrame(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return;
 	}
 	if (gotPicture) {
-		if(!m_pVideoConverter)
-			m_pVideoConverter.reset(new VideoConverter(*codecCtx, *signals[0]));
-
-		auto out = m_pVideoConverter->convert(codecCtx.get(), avFrame->get());
 		setTimestamp(out);
 		signals[0]->emit(out);
 		++m_numFrames;
@@ -100,7 +93,7 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
 void LibavDecode::process(std::shared_ptr<Data> data) {
 	auto decoderData = dynamic_cast<DataAVPacket*>(data.get());
 	if (!decoderData) {
-		Log::msg(Log::Warning, "[LibavDecode] Invalid packet type.");
+		Log::msg(Log::Warning, "[LibavDecode] Invalid data type.");
 		return;
 	}
 	switch (codecCtx->codec_type) {

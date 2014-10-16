@@ -13,19 +13,16 @@ class AllocatorPacket {
 public:
 	AllocatorPacket(size_t numBlocks = 10)
 		: deleter(this) {
-		for(size_t i=0;i < numBlocks; ++i) {
+		for(size_t i=0; i < numBlocks; ++i) {
 			freeBlocks.push(false);
 		}
 	}
 
-	struct Deleter
-	{
-		Deleter(AllocatorPacket<DataType>* allocator) : m_allocator(allocator)
-		{
+	struct Deleter {
+		Deleter(AllocatorPacket<DataType>* allocator) : m_allocator(allocator) {
 		}
 
-		void operator()(DataType* p)
-		{
+		void operator()(DataType* p) {
 			m_allocator->recycle(p);
 		}
 

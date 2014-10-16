@@ -461,7 +461,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 		Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
 		throw std::runtime_error("Impossible to start the segment");
 	}
-#else 
+#else
 	e = gf_isom_finalize_for_fragment(m_file, 0);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
@@ -553,7 +553,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
 		Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
 		throw std::runtime_error("Impossible to start the segment");
 	}
-#else 
+#else
 	e = gf_isom_finalize_for_fragment(m_file, 0);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));

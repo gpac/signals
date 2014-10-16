@@ -125,7 +125,6 @@ fi
 
 if [ ! -f extra/build/sdl2/buildOk ] ;
 then
-
 	mkdir -p extra/build/sdl2
 	pushd extra/build/sdl2
 	../../src/sdl2/configure \
@@ -158,3 +157,32 @@ then
 fi
 
 echo "Done"
+
+#-------------------------------------------------------------------------------
+# libjpeg-turbo
+#-------------------------------------------------------------------------------
+
+if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ;
+then
+	mkdir -p extra/src
+	rm -rf extra/src/libjpeg_turbo_1.3.x
+	pushd extra/src
+	svn co svn://svn.code.sf.net/p/libjpeg-turbo/code/branches/1.3.x libjpeg_turbo_1.3.x
+	pushd libjpeg_turbo_1.3.x
+	autoreconf -i
+	popd
+	popd
+fi
+
+if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ;
+then
+	mkdir -p extra/build/libjpeg_turbo_1.3.x
+	pushd extra/build/libjpeg_turbo_1.3.x
+	../../src/libjpeg_turbo_1.3.x/configure \
+		--prefix=$EXTRA_DIR
+
+	$MAKE
+	$MAKE install
+	popd
+	touch extra/build/libjpeg_turbo_1.3.x/buildOk
+fi

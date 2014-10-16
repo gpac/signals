@@ -38,7 +38,7 @@ Module* createRenderer(int codecType) {
 		return Render::SDLAudio::create();
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
-		return Out::Null::create();
+		return new Out::Null;
 	}
 }
 
