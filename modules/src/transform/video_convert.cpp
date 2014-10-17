@@ -17,10 +17,22 @@ VideoConvert::~VideoConvert() {
 }
 
 void VideoConvert::process(std::shared_ptr<Data> data) {
-	auto videoData = dynamic_cast<DataAVFrame*>(data.get());
-	if (!videoData) {
-		Log::msg(Log::Warning, "[VideoConvert] Invalid data type.");
-		return;
+	uint8_t *srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+	int srcStride[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	/*TODO: autoconversion to DataAVFrame*/
+	{
+		auto videoData = dynamic_cast<DataAVFrame*>(data.get());
+		if (videoData) {
+			memcpy(srcSlice , videoData->getFrame()->data    , sizeof(srcSlice));
+			memcpy(srcStride, videoData->getFrame()->linesize, sizeof(srcStride));
+		} else {
+			if (srcW * srcH * 3 != data->size()) {
+				Log::msg(Log::Warning, "[VideoConvert] Invalid data type.");
+				return;
+			}
+			srcSlice[0]  = data->data();
+			srcStride[0] = srcW * 3;
+		}
 	}
 
 	const int dstFrameSize = avpicture_get_size(dstFormat, dstW, dstH);
@@ -47,7 +59,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 		return;
 	}
 
-	sws_scale(m_SwContext, videoData->getFrame()->data, videoData->getFrame()->linesize, 0, srcH, pDst, dstStride);
+	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcH, pDst, dstStride);
 
 	signals[0]->emit(out);
 }

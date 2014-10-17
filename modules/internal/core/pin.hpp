@@ -34,6 +34,7 @@ public:
 	virtual void waitForCompletion() = 0;
 	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
 	virtual IProps* getProps() const = 0;
+	virtual void setProps(IProps *props) = 0; /*TODO: attached with every emitted packet. shared_data<>?*/
 	virtual ISignal<void(std::shared_ptr<Data>)>& getSignal() = 0;
 };
 
@@ -114,6 +115,14 @@ public:
 
 	IProps* getProps() const {
 		return props.get();
+	}
+
+	/**
+	 * Takes ownership.
+	 */
+	void setProps(IProps *props) {
+		std::unique_ptr<IProps> uprops(props);
+		this->props.swap(uprops);
 	}
 
 private:

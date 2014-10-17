@@ -2,7 +2,7 @@
 #include "../utils/tools.hpp"
 #include "file.hpp"
 
-#define IOSIZE 65536
+#define IOSIZE (64*1024) //FIXME: this can lead to random errors when the module cannot agregate the data itself (e.g. JPEGTurbo decoder)
 
 namespace Modules {
 namespace In {

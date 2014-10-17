@@ -16,6 +16,7 @@ public:
 	void process(std::shared_ptr<Data> data);
 
 private:
+	void ensureProps(int width, int height, int pixelFmt);
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 };
 
