@@ -86,7 +86,7 @@ LibavEncode::LibavEncode(Type type)
 	int linesize[8];
 	switch (type) {
 	case Video: {
-		codecCtx->width = VIDEO_WIDTH;
+		codecCtx->width = VIDEO_WIDTH; //Romain: Ouuuuaaaaaaa
 		codecCtx->height = VIDEO_HEIGHT;
 		linesize[0] = codecCtx->width;
 		linesize[1] = codecCtx->width / 2;

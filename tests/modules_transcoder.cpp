@@ -189,6 +189,56 @@ unittest("transcoder: audio simple (gpac mux)") {
 }
 #endif
 
+unittest("transcoder: jpg to jpg") {
+	const std::string filename("data/sample.jpg");
+	auto decoder = uptr(new Decode::JPEGTurboDecode());
+	{
+		auto preReader = uptr(In::File::create(filename));
+		ConnectPinToModule(preReader->getPin(0), decoder);
+		preReader->process(nullptr);
+	}
+	auto props = decoder->getPin(0)->getProps();
+	ASSERT(props != nullptr);
+	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto srcCtx = decoderProps->getAVCodecContext();
+
+	auto reader = uptr(In::File::create(filename)); //Romain: also test with >65K file
+	auto encoder = uptr(new Encode::JPEGTurboEncode(decoderProps->getAVCodecContext()->width, decoderProps->getAVCodecContext()->height));
+	auto writer = uptr(Out::File::create("data/test.jpg"));
+
+	ConnectPinToModule(reader->getPin(0), decoder);
+	ConnectPinToModule(decoder->getPin(0), encoder);
+	ConnectPinToModule(encoder->getPin(0), writer);
+
+	reader->process(nullptr);
+}
+
+unittest("transcoder: jpg to resized jpg") {
+	const std::string filename("data/sample.jpg");
+	auto decoder = uptr(new Decode::JPEGTurboDecode());
+	{
+		auto preReader = uptr(In::File::create(filename));
+		ConnectPinToModule(preReader->getPin(0), decoder);
+		preReader->process(nullptr);
+	}
+	auto props = decoder->getPin(0)->getProps();
+	ASSERT(props != nullptr);
+	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto srcCtx = decoderProps->getAVCodecContext();
+
+	auto reader = uptr(In::File::create(filename));
+	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width / 2, srcCtx->height / 2, srcCtx->pix_fmt));
+	auto encoder = uptr(new Encode::JPEGTurboEncode(srcCtx->width/2, srcCtx->height/2));
+	auto writer = uptr(Out::File::create("data/test.jpg"));
+
+	ConnectPinToModule(reader->getPin(0), decoder);
+	ConnectPinToModule(decoder->getPin(0), converter);
+	ConnectPinToModule(converter->getPin(0), encoder);
+	ConnectPinToModule(encoder->getPin(0), writer);
+
+	reader->process(nullptr);
+}
+
 unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
@@ -211,12 +261,21 @@ unittest("transcoder: h264/mp4 to jpg") {
 }
 
 unittest("transcoder: jpg to h264 (gpac)") {
-	auto reader = uptr(In::File::create("data/sample.jpg")); //Romain: also test with >65K file
+	const std::string filename("data/sample.jpg");
 	auto decoder = uptr(new Decode::JPEGTurboDecode());
+	{
+		auto preReader = uptr(In::File::create(filename));
+		ConnectPinToModule(preReader->getPin(0), decoder);
+		//FIXME: to retrieve the props, we now need to decode (need to have a memory module keeping the data while inspecting)
+		preReader->process(nullptr); //Romain: remove nullptr?
+	}
 	auto props = decoder->getPin(0)->getProps();
+	ASSERT(props != nullptr);
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
-	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width, srcCtx->height, /*FIXME: hardcoded*/ AV_PIX_FMT_RGB24));
+
+	auto reader = uptr(In::File::create(filename)); //Romain: also test with >65K file
+	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width, srcCtx->height, /*FIXME: hardcoded*/AV_PIX_FMT_YUV420P));
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));
 	Connect(encoder->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
