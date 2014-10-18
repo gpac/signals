@@ -66,7 +66,6 @@ int safeMain(int argc, char const* argv[]) {
 				modules.push_back(std::move(r)); break;
 			}
 
-			//FIXME: should be fragmented according to parameters
 			std::stringstream filename;
 			filename << i;
 			auto muxer = uptr(new Mux::GPACMuxMP4(filename.str(), true));
