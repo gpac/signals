@@ -267,7 +267,7 @@ unittest("transcoder: jpg to h264 (gpac)") {
 		auto preReader = uptr(In::File::create(filename));
 		ConnectPinToModule(preReader->getPin(0), decoder);
 		//FIXME: to retrieve the props, we now need to decode (need to have a memory module keeping the data while inspecting)
-		preReader->process(nullptr); //Romain: remove nullptr?
+		preReader->process(nullptr);
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
