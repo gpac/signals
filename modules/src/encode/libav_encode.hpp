@@ -3,7 +3,6 @@
 #include "internal/core/module.hpp"
 #include "../common/libav.hpp"
 #include "../common/mm.hpp"
-#include <string>
 
 struct AVStream;
 

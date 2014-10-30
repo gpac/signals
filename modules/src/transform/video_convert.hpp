@@ -2,7 +2,6 @@
 
 #include "internal/core/module.hpp"
 #include "ffpp.hpp"
-#include <string>
 
 namespace Modules {
 namespace Transform {

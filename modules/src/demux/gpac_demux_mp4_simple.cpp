@@ -1,7 +1,6 @@
 #include "gpac_demux_mp4_simple.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
-#include <string>
 
 #include "gpacpp.hpp"
 
