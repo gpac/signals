@@ -2,7 +2,6 @@
 
 #include "internal/core/module.hpp"
 #include <cstdint>
-#include <string>
 
 typedef struct __tag_isom GF_ISOFile;
 

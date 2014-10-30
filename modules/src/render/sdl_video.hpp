@@ -2,7 +2,6 @@
 
 #include "internal/core/module.hpp"
 #include <mutex>
-#include <string>
 #include <thread>
 
 struct SDL_Rect;

@@ -2,7 +2,6 @@
 
 #include "internal/core/module.hpp"
 #include "../common/libav.hpp"
-#include <string>
 
 struct AVCodecContext;
 

@@ -2,7 +2,6 @@
 
 #include "../common/mm.hpp"
 #include "internal/core/module.hpp"
-#include <string>
 
 struct AVFormatContext;
 

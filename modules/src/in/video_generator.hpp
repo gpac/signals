@@ -2,7 +2,6 @@
 
 #include "internal/core/clock.hpp"
 #include "internal/core/module.hpp"
-#include <string>
 
 namespace Modules {
 

@@ -3,7 +3,6 @@
 #include "internal/core/data.hpp"
 #include "internal/core/pin.hpp"
 #include "internal/core/props.hpp"
-#include <string>
 #include <cstdarg>
 #include <memory>
 

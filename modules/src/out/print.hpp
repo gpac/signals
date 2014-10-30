@@ -1,7 +1,6 @@
 #pragma once
 
 #include "internal/core/module.hpp"
-#include <string>
 
 namespace Modules {
 namespace Out {

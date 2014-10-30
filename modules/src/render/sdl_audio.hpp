@@ -4,7 +4,6 @@
 #include "internal/core/module.hpp"
 #include "fifo.hpp"
 #include <mutex>
-#include <string>
 #include <vector>
 #include <memory.h>
 

@@ -2,7 +2,6 @@
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include <cassert>
-#include <string>
 
 #include "ffpp.hpp"
 

@@ -6,7 +6,6 @@ extern "C" {
 #include <turbojpeg.h>
 }
 #include <cassert>
-#include <string>
 
 
 namespace Encode {

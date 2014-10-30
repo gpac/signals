@@ -4,7 +4,6 @@
 extern "C" {
 #include <libavutil/samplefmt.h> //TODO: remove when media types
 }
-#include <string>
 
 
 namespace ffpp {
