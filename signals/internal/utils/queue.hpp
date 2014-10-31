@@ -8,6 +8,7 @@
 
 namespace Signals {
 
+//FIXME: it doesn't compile with non-pointer types, see ENABLE_FAILING_TESTS
 template<typename T>
 class QueueThreadSafe {
 public:
@@ -16,6 +17,7 @@ public:
 
 	void push(T data) {
 		std::lock_guard<std::mutex> lock(mutex);
+		cleared = false;
 		dataQueue.push(std::move(data));
 		dataCondition.notify_one();
 	}
@@ -42,19 +44,25 @@ public:
 
 	T pop() {
 		std::unique_lock<std::mutex> lock(mutex);
-		while(dataQueue.empty())
+		while (dataQueue.empty() && !cleared)
 			dataCondition.wait(lock);
-
+		if (cleared)
+			return nullptr;
 		T p;
 		std::swap(p, dataQueue.front());
 		dataQueue.pop();
 		return p;
 	}
 
+	/**
+	 * Clear the queue and force all the waiting pop() to return.
+	 */
 	void clear() {
 		std::lock_guard<std::mutex> lock(mutex);
 		std::queue<T> emptyQueue;
 		std::swap(emptyQueue, dataQueue);
+		cleared = true;
+		dataCondition.notify_all();
 	}
 
 #ifdef TESTS
@@ -96,6 +104,7 @@ private:
 	mutable std::mutex mutex;
 	std::queue<T> dataQueue;
 	std::condition_variable dataCondition;
+	bool cleared = false;
 };
 
 template<typename T>
