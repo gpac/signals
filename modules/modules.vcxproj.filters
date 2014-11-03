@@ -7,9 +7,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{22a3d231-ad2c-47ab-ae2a-99b76ea5919f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\demux">
-      <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\in">
       <UniqueIdentifier>{a3f6e730-3170-425f-819d-cc94e02e576b}</UniqueIdentifier>
     </Filter>
@@ -46,6 +43,12 @@
     <Filter Include="src\probe">
       <UniqueIdentifier>{91962d09-56bd-4858-a19c-3e5bfeffd0cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\stream">
+      <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\decode\demux">
+      <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modules.hpp">
@@ -67,7 +70,7 @@
       <Filter>src\decode</Filter>
     </ClInclude>
     <ClInclude Include="src\demux\libav_demux.hpp">
-      <Filter>src\demux</Filter>
+      <Filter>src\decode\demux</Filter>
     </ClInclude>
     <ClInclude Include="src\encode\libav_encode.hpp">
       <Filter>src\encode</Filter>
@@ -85,10 +88,10 @@
       <Filter>src\transform</Filter>
     </ClInclude>
     <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp">
-      <Filter>src\demux</Filter>
+      <Filter>src\decode\demux</Filter>
     </ClInclude>
     <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp">
-      <Filter>src\demux</Filter>
+      <Filter>src\decode\demux</Filter>
     </ClInclude>
     <ClInclude Include="src\mux\gpac_mux_mp4.hpp">
       <Filter>src\mux</Filter>
@@ -141,6 +144,9 @@
     <ClInclude Include="src\transform\video_convert.hpp">
       <Filter>src\transform</Filter>
     </ClInclude>
+    <ClInclude Include="src\stream\mpeg_dash.hpp">
+      <Filter>src\stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
@@ -159,7 +165,7 @@
       <Filter>src\decode</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\libav_demux.cpp">
-      <Filter>src\demux</Filter>
+      <Filter>src\decode\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\encode\libav_encode.cpp">
       <Filter>src\encode</Filter>
@@ -177,10 +183,10 @@
       <Filter>src\transform</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp">
-      <Filter>src\demux</Filter>
+      <Filter>src\decode\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp">
-      <Filter>src\demux</Filter>
+      <Filter>src\decode\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\mux\gpac_mux_mp4.cpp">
       <Filter>src\mux</Filter>
@@ -214,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="src\transform\video_convert.cpp">
       <Filter>src\transform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stream\mpeg_dash.cpp">
+      <Filter>src\stream</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

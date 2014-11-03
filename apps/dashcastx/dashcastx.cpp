@@ -7,6 +7,7 @@
 #include "demux/libav_demux.hpp"
 #include "encode/libav_encode.hpp"
 #include "mux/gpac_mux_mp4.hpp"
+#include "stream/mpeg_dash.hpp"
 #include "out/null.hpp"
 
 #include "../../utils/tools.hpp"
@@ -47,6 +48,7 @@ int safeMain(int argc, char const* argv[]) {
 
 	{
 		auto demux = uptr(Demux::LibavDemux::create(inputURL));
+		auto dasher = uptr(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static)); //Romain: test static here and put Live for Cires21
 
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
 			auto props = demux->getPin(i)->getProps();
@@ -74,13 +76,19 @@ int safeMain(int argc, char const* argv[]) {
 			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);
 			encoder->sendOutputPinsInfo();
 
-			//TODO: add the "floatting" DASHer
+			//Romain: hardcoded => use declareStream above
+			if (i == 0) {
+				Connect(muxer->getPin(0)->getSignal(), dasher.get(), &Modules::Stream::MPEG_DASH::processVideo);
+			} else {
+				Connect(muxer->getPin(0)->getSignal(), dasher.get(), &Modules::Stream::MPEG_DASH::processAudio);
+			}
 
 			modules.push_back(std::move(decoder));
 			modules.push_back(std::move(encoder));
 			modules.push_back(std::move(muxer));
 		}
 
+		modules.push_back(std::move(dasher));
 		demux->process(nullptr);
 	}
 
