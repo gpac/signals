@@ -26,7 +26,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 			memcpy(srcSlice , videoData->getFrame()->data    , sizeof(srcSlice));
 			memcpy(srcStride, videoData->getFrame()->linesize, sizeof(srcStride));
 		} else {
-			if (srcW * srcH * 3 != data->size()) {
+			if (srcW * srcH * (uint64_t)3 != data->size()) {
 				Log::msg(Log::Warning, "[VideoConvert] Invalid data type.");
 				return;
 			}

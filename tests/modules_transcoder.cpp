@@ -202,8 +202,8 @@ unittest("transcoder: jpg to jpg") {
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 
-	auto reader = uptr(In::File::create(filename)); //Romain: also test with >65K file
-	auto encoder = uptr(new Encode::JPEGTurboEncode(decoderProps->getAVCodecContext()->width, decoderProps->getAVCodecContext()->height));
+	auto reader = uptr(In::File::create(filename));
+	auto encoder = uptr(new Encode::JPEGTurboEncode(decoderProps->getAVCodecContext()->width, srcCtx->height));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
 	ConnectPinToModule(reader->getPin(0), decoder);
@@ -274,7 +274,7 @@ unittest("transcoder: jpg to h264 (gpac)") {
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 
-	auto reader = uptr(In::File::create(filename)); //Romain: also test with >65K file
+	auto reader = uptr(In::File::create(filename));
 	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width, srcCtx->height, /*FIXME: hardcoded*/AV_PIX_FMT_YUV420P));
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));
