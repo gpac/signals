@@ -61,7 +61,7 @@ void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<Data> /*audio*/, st
 	auto audioSeg = uptr(Out::File::create(audioFn));
 	auto videoSeg = uptr(Out::File::create(videoFn));
 #else
-	printf("%d\n", segNum);
+	//printf("%d\n", segNum);
 #endif
 }
 

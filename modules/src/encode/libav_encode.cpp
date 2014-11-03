@@ -85,7 +85,7 @@ LibavEncode::LibavEncode(Type type)
 	int linesize[8];
 	switch (type) {
 	case Video: {
-		codecCtx->width = VIDEO_WIDTH; //Romain: Ouuuuaaaaaaa
+		codecCtx->width = VIDEO_WIDTH; //FIXME: encode size should be a parameter
 		codecCtx->height = VIDEO_HEIGHT;
 		linesize[0] = codecCtx->width;
 		linesize[1] = codecCtx->width / 2;
@@ -222,7 +222,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
 		declareStream.emit(stream);
 	} else if (codecCtx->codec_type == AVMEDIA_TYPE_AUDIO) {
-		std::shared_ptr<StreamAudio> stream(new StreamAudio); //Romain: should use a constructor
+		std::shared_ptr<StreamAudio> stream(new StreamAudio); //TODO: should use a constructor
 		stream->codecName = getCodecName();
 		stream->numChannels = codecCtx->channels;
 		stream->sampleRate = codecCtx->sample_rate;
