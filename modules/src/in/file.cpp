@@ -22,6 +22,13 @@ File* File::create(std::string const& fn) {
 		Log::msg(Log::Error, "Can't open file for reading: %s", fn);
 		throw std::runtime_error("File not found");
 	}
+
+	fseek(f, 0, SEEK_END);
+	auto size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	if (size > IOSIZE)
+		Log::msg(Log::Info, "File %s size is %s, will be sent by %s bytes chunks. Check the downstream modules are compatible.", fn, size, IOSIZE);
+
 	return new File(f);
 }
 
