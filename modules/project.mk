@@ -20,6 +20,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/render/sdl_audio.cpp\
   $(ProjectName)/src/render/sdl_common.cpp\
   $(ProjectName)/src/render/sdl_video.cpp\
+  $(ProjectName)/src/stream/mpeg_dash.cpp\
   $(ProjectName)/src/transform/audio_convert.cpp\
   $(ProjectName)/src/transform/video_convert.cpp\
   $(ProjectName)/internal/utils/stranded_pool_executor.cpp\
