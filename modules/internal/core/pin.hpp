@@ -18,8 +18,8 @@ typedef Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>
 typedef Signal<void(std::shared_ptr<Data>), ResultVector<NotVoid<void>>> SignalSync;
 
 template<typename Allocator, typename Signal, typename DataType> class PinT;
-template<typename DataType> using PinDataAsync = PinT<AllocatorPacket<DataType>, SignalAsync, DataType>;
-template<typename DataType> using PinDataSync = PinT<AllocatorPacket<DataType>, SignalSync, DataType>;
+template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>, SignalAsync, DataType>;
+template<typename DataType> using PinDataSync = PinT<PacketAllocator<DataType>, SignalSync, DataType>;
 template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
 
 typedef PinDataAsync<Data> PinAsync;
