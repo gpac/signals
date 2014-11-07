@@ -9,9 +9,9 @@
 namespace Modules {
 
 template<typename DataType>
-class AllocatorPacket {
+class PacketAllocator {
 public:
-	AllocatorPacket(size_t numBlocks = 10)
+	PacketAllocator(size_t numBlocks = 10)
 		: deleter(this) {
 		for(size_t i=0; i < numBlocks; ++i) {
 			freeBlocks.push(false);
@@ -19,14 +19,14 @@ public:
 	}
 
 	struct Deleter {
-		Deleter(AllocatorPacket<DataType>* allocator) : m_allocator(allocator) {
+		Deleter(PacketAllocator<DataType>* allocator) : m_allocator(allocator) {
 		}
 
 		void operator()(DataType* p) {
 			m_allocator->recycle(p);
 		}
 
-		AllocatorPacket<DataType>* const m_allocator;
+		PacketAllocator<DataType>* const m_allocator;
 	};
 
 	std::shared_ptr<DataType> getBuffer(size_t size) {
@@ -43,7 +43,7 @@ public:
 	}
 
 private:
-	AllocatorPacket& operator= (const AllocatorPacket&) = delete;
+	PacketAllocator& operator= (const PacketAllocator&) = delete;
 
 	Deleter deleter;
 	Signals::QueueThreadSafe<bool> freeBlocks;
