@@ -330,6 +330,7 @@ void fillVideoSample(u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 
 namespace Mux {
 
+//TODO: segments start with RAP
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 	: m_DTS(0), m_curFragDur(0), m_segNum(0), m_useSegments(useSegments), m_useFragments(useSegments) {
 	std::stringstream fileName;
@@ -354,7 +355,9 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 	}
 
 	//FIXME: this is signalling only (no data)
-	signals.push_back(uptr(pinFactory->createPin()));
+	if (m_useSegments) {
+		signals.push_back(uptr(pinFactory->createPin()));
+	}
 }
 
 void GPACMuxMP4::closeSegment() {
