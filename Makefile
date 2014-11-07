@@ -58,9 +58,9 @@ $(BIN)/config.mk:
 	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --libs --static libavcodec libavformat libswresample libswscale x264 gpac >> $(BIN)/config.mk.tmp ; \
 	sed -i "s/-lgpac/-lgpac_static/" $(BIN)/config.mk.tmp ; \
+	echo 'CFLAGS+=-I$(SRC)/extra/include/asio' >> $(BIN)/config.mk.tmp
+	echo 'LDFLAGS+=-lturbojpeg' >> $(BIN)/config.mk.tmp ; \
 	mv $(BIN)/config.mk.tmp $(BIN)/config.mk ; \
-	echo -n "CFLAGS+=-I$(SRC)/extra/include/asio" >> $(BIN)/config.mk.tmp
-	echo -n 'LDFLAGS+=-lturbojpeg' >> $(BIN)/config.mk.tmp ; \
 
 include $(BIN)/config.mk
 
