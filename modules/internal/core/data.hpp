@@ -29,15 +29,15 @@ public:
 	virtual ~Data() {
 	}
 
-	uint8_t* data() {
+	virtual uint8_t* data() {
 		return ptr.data();
 	}
 
-	uint64_t size() const {
+	virtual uint64_t size() const {
 		return ptr.size();
 	}
 
-	void resize(size_t size) {
+	virtual void resize(size_t size) {
 		ptr.resize(size);
 	}
 
@@ -71,5 +71,4 @@ static const int VIDEO_WIDTH = 1280; //Romain
 static const int VIDEO_HEIGHT = 720;
 static const int VIDEO_FPS = 24;
 
-static const int AUDIO_SAMPLERATE = 44100;
 }

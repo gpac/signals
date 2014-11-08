@@ -2,6 +2,7 @@
 
 #include "internal/core/clock.hpp"
 #include "internal/core/module.hpp"
+#include "../common/pcm.hpp"
 #include "fifo.hpp"
 #include <mutex>
 #include <vector>
@@ -45,8 +46,9 @@ private:
 		dst += n * bytesPerSample;
 	}
 
-	static auto const bytesPerSample = 4;
-	static auto const audioJitterTolerance = 300;
+	static auto const audioJitterTolerance = 500;
+	uint8_t bytesPerSample;
+	AudioPcmConfig audioCfg;
 	std::mutex m_Mutex;
 	Fifo m_Fifo;
 	uint64_t m_FifoTime;

@@ -5,7 +5,6 @@
 template<typename T>
 class GenericFifo {
 public:
-
 	GenericFifo() : m_writePos(0), m_readPos(0) {
 	}
 

@@ -1,29 +1,36 @@
 #include "sdl_audio.hpp"
 #include "render_common.hpp"
-#include "../common/pcm.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include "SDL2/SDL.h"
 #include <cstring>
 #include <fstream>
 #include <algorithm>
 
 namespace Modules {
-namespace Render {
 
-#define AUDIO_JITTER_TOLERANCE 300
+namespace {
+SDL_AudioSpec SDLAudioSpecConvert(AudioPcmConfig &cfg) {
+	SDL_AudioSpec audioSpec;
+	audioSpec.freq = cfg.getSampleRate();
+	audioSpec.format = cfg.getFormat();
+	audioSpec.channels = cfg.getNumChannels();
+	return audioSpec;
+}
+}
+
+namespace Render {
 
 SDLAudio* SDLAudio::create() {
 	return new SDLAudio();
 }
 
 SDLAudio::SDLAudio() : m_FifoTime(0) {
-	SDL_AudioSpec audioSpec;
-	audioSpec.freq = AUDIO_SAMPLERATE;
-	audioSpec.format = AUDIO_S16;
-	audioSpec.channels = 2;    /* 1 = mono, 2 = stereo */
+	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(audioCfg);
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
 	audioSpec.userdata = this;
+	bytesPerSample = audioCfg.getBytesPerSample();
 
 	SDL_AudioSpec realSpec;
 
@@ -55,11 +62,9 @@ SDLAudio::~SDLAudio() {
 }
 
 void SDLAudio::process(std::shared_ptr<Data> data) {
-	auto pcmData = dynamic_cast<PcmData*>(data.get());
-	if (!pcmData) {
-		Log::msg(Log::Warning, "[SDLAudio render] invalid packet type");
-		return;
-	}
+	auto pcmData = safe_cast<PcmData>(data);
+	if (!pcmData->isComparable(audioCfg))
+		throw std::runtime_error("[SDLAudio] Incompatible audio data");
 
 	{
 		std::lock_guard<std::mutex> lg(m_Mutex);
