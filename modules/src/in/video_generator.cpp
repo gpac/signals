@@ -16,7 +16,7 @@ VideoGenerator::VideoGenerator()
 
 void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const picSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3 / 2;
-	auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(picSize));
+	auto out = safe_cast<PcmData>(signals[0]->getBuffer(picSize));
 
 	// generate video
 	auto const p = out->data();

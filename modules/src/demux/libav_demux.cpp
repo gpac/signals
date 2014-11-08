@@ -56,7 +56,7 @@ LibavDemux::~LibavDemux() {
 
 void LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 	for (;;) {
-		auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0/*FIXME: pkt->stream_index*/]->getBuffer(0));
+		auto out = safe_cast<DataAVPacket>(signals[0/*FIXME: pkt->stream_index*/]->getBuffer(0));
 		AVPacket *pkt = out->getPacket();
 		int status = av_read_frame(m_formatCtx, pkt);
 		if (status < 0) {

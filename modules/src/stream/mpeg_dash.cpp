@@ -111,12 +111,7 @@ void MPEG_DASH::process(std::shared_ptr<Data> data) {
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time
 	 */
-	auto inputData = dynamic_cast<DataAVPacket*>(data.get());
-	if (!inputData) {
-		Log::msg(Log::Warning, "[MPEG_DASH] Invalid data type.");
-		return;
-	}
-
+	auto inputData = safe_cast<DataAVPacket>(data);
 	AVPacket *pkt = inputData->getPacket();
 	switch (pkt->stream_index) {
 	//FIXME: arbitrary

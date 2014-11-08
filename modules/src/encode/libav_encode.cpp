@@ -219,7 +219,7 @@ void LibavEncode::sendOutputPinsInfo() {
 }
 
 bool LibavEncode::processAudio(const DataAVFrame *data) {
-	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
 	int gotPkt = 0;
@@ -239,7 +239,7 @@ bool LibavEncode::processAudio(const DataAVFrame *data) {
 }
 
 bool LibavEncode::processVideo(const DataAVFrame *data) {
-	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
 	AVFrame *f = data->getFrame();
@@ -265,18 +265,13 @@ bool LibavEncode::processVideo(const DataAVFrame *data) {
 }
 
 void LibavEncode::process(std::shared_ptr<Data> data) {
-	const auto encoderData = dynamic_cast<DataAVFrame*>(data.get());
-	if (!encoderData) {
-		Log::msg(Log::Warning, "[LibavEncode] Invalid data type.");
-		return;
-	}
-
+	const auto encoderData = safe_cast<DataAVFrame>(data);
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		processVideo(encoderData);
+		processVideo(encoderData.get());
 		break;
 	case AVMEDIA_TYPE_AUDIO:
-		processAudio(encoderData);
+		processAudio(encoderData.get());
 		break;
 	default:
 		assert(0);
