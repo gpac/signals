@@ -19,7 +19,7 @@ public:
 	enum Type {
 		Video,
 		Audio,
-		unknown
+		Unknown
 	};
 
 	LibavEncode(Type type);

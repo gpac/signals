@@ -2,31 +2,32 @@
 #include "../utils/tools.hpp"
 #include "internal/core/clock.hpp"
 #include "sound_generator.hpp"
-#include "../common/pcm.hpp"
 #include <cmath>
 
 #ifndef M_PI //FIXME: Cygwin does not have maths.h extensions
 #define M_PI 3.14159265358979323846
 #endif
 
-auto const SAMPLE_RATE = 44100;
-auto const SINE_FREQ = 880.0;
-
 namespace Modules {
 namespace In {
 
+auto const SAMPLE_RATE = AUDIO_SAMPLERATE;
+auto const SINE_FREQ = 880.0;
+
 SoundGenerator::SoundGenerator()
 	: Module(new PinPcmFactory), m_numSamples(20000) {
+	audioCfg.setSampleRate(SAMPLE_RATE);
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
-	auto const bytesPerSample = 4;
+	auto const bytesPerSample = audioCfg.getBytesPerSample();
 	auto const sampleDurationInMs = 40;
-	auto const bufferSize = bytesPerSample * sampleDurationInMs * SAMPLE_RATE / 1000;
+	auto const bufferSize = bytesPerSample * sampleDurationInMs * audioCfg.getSampleRate() / 1000;
 	
 	auto out = safe_cast<PcmData>(signals[0]->getBuffer(bufferSize));
-	out->setTime(m_numSamples * IClock::Rate / SAMPLE_RATE);
+	out->setConfig(audioCfg);
+	out->setTime(m_numSamples * IClock::Rate / audioCfg.getSampleRate());
 
 	// generate sound
 	auto const p = out->data();
@@ -47,9 +48,9 @@ void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 }
 
 double SoundGenerator::nextSample() {
-	auto const BEEP_PERIOD = SAMPLE_RATE;
+	auto const BEEP_PERIOD = audioCfg.getSampleRate();
 	auto const beepPhase = m_numSamples % BEEP_PERIOD;
-	auto const phase = m_numSamples * 2.0 * SINE_FREQ * M_PI / SAMPLE_RATE;
+	auto const phase = m_numSamples * 2.0 * SINE_FREQ * M_PI / audioCfg.getSampleRate();
 	auto const fVal = beepPhase < BEEP_PERIOD/8 ? sin(phase) : 0;
 	m_numSamples++;
 	return fVal;

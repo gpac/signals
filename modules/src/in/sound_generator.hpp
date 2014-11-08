@@ -1,6 +1,7 @@
 #pragma once
 
 #include "internal/core/module.hpp"
+#include "../common/pcm.hpp"
 
 namespace Modules {
 
@@ -14,6 +15,7 @@ public:
 private:
 	double nextSample();
 	uint64_t m_numSamples;
+	AudioPcmConfig audioCfg;
 };
 
 }
