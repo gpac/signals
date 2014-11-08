@@ -86,17 +86,13 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
 }
 
 void LibavDecode::process(std::shared_ptr<Data> data) {
-	auto decoderData = dynamic_cast<DataAVPacket*>(data.get());
-	if (!decoderData) {
-		Log::msg(Log::Warning, "[LibavDecode] Invalid data type.");
-		return;
-	}
+	auto decoderData = safe_cast<DataAVPacket>(data);
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		return processVideo(decoderData);
+		return processVideo(decoderData.get());
 		break;
 	case AVMEDIA_TYPE_AUDIO:
-		return processAudio(decoderData);
+		return processAudio(decoderData.get());
 		break;
 	default:
 		assert(0);
