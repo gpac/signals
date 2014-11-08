@@ -8,6 +8,7 @@
 #include "out/null.hpp"
 #include "render/sdl_audio.hpp"
 #include "render/sdl_video.hpp"
+#include "tools.hpp"
 
 
 using namespace Tests;

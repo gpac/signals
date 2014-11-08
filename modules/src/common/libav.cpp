@@ -61,6 +61,8 @@ DataAVPacket::DataAVPacket(size_t size)
 	: Data(size), pkt(new AVPacket) {
 	av_init_packet(pkt.get());
 	av_free_packet(pkt.get());
+	if (size)
+		av_new_packet(pkt.get(), (int)size);
 }
 
 DataAVPacket::~DataAVPacket() {

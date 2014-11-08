@@ -5,6 +5,7 @@
 #include "render/sdl_video.hpp"
 #include "in/sound_generator.hpp"
 #include "in/video_generator.hpp"
+#include "tools.hpp"
 
 using namespace Tests;
 using namespace Modules;

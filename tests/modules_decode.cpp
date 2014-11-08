@@ -10,6 +10,7 @@ extern "C"
 #include "in/file.hpp"
 #include "out/null.hpp"
 #include "transform/audio_convert.hpp"
+#include "tools.hpp"
 
 using namespace Tests;
 using namespace Modules;
@@ -59,7 +60,6 @@ std::shared_ptr<Data> getTestMp3Frame() {
 }
 
 unittest("decoder: audio simple") {
-
 	auto decoder = uptr(createMp3Decoder());
 
 	auto null = uptr(new Out::Null);
@@ -78,7 +78,6 @@ Decode::LibavDecode* createVideoDecoder() {
 }
 
 std::shared_ptr<Data> getTestH24Frame() {
-
   static const uint8_t h264_gray_frame[] = {
     0x00, 0x00, 0x00, 0x01,
     0x67, 0x4d, 0x40, 0x0a, 0xe8, 0x8f, 0x42, 0x00,
@@ -94,7 +93,6 @@ std::shared_ptr<Data> getTestH24Frame() {
 }
 
 unittest("decoder: video simple") {
-
 	auto decoder = uptr(createVideoDecoder());
 	auto data = getTestH24Frame();
 
@@ -102,7 +100,6 @@ unittest("decoder: video simple") {
 }
 
 unittest("decoder: audio converter") {
-
 	auto decoder = uptr(createMp3Decoder());
 
 	//create an audio resampler

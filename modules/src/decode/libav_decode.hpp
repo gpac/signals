@@ -27,7 +27,7 @@ private:
 
 	void setTimestamp(std::shared_ptr<Data> s, uint64_t increment = 1) const;
 
-	std::unique_ptr<AVCodecContext> const codecCtx;
+	AVCodecContext * const codecCtx;
 
 	uint64_t m_numFrames;
 };

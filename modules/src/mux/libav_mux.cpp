@@ -103,7 +103,7 @@ void LibavMux::ensureHeader() {
 			Log::msg(Log::Warning, "[libav_mux] fatal error: can't write the container header");
 			for (unsigned i = 0; i < m_formatCtx->nb_streams; i++) {
 				if (m_formatCtx->streams[i]->codec && m_formatCtx->streams[i]->codec->codec) {
-					Log::msg(Log::Debug, "[libav_mux] codec[%u] is \"%s\" (%s)", i, m_formatCtx->streams[i]->codec->codec->name, m_formatCtx->streams[i]->codec->codec->long_name);
+					Log::msg(Log::Debug, "[libav_mux] codec[%s] is \"%s\" (%s)", i, m_formatCtx->streams[i]->codec->codec->name, m_formatCtx->streams[i]->codec->codec->long_name);
 				}
 			}
 		} else {

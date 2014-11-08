@@ -2,6 +2,7 @@
 #include "modules.hpp"
 
 #include "render/sdl_audio.hpp"
+#include "tools.hpp"
 
 
 using namespace Tests;

@@ -26,7 +26,7 @@ void fps2NumDen(const double fps, int &num, int &den) {
 	} else {
 		num = (int)fps;
 		den = 1;
-		Log::msg(Log::Warning, "[libav_encode] Frame rate '%lf' was not recognized. Truncating to '%d'.", fps, num);
+		Log::msg(Log::Warning, "[libav_encode] Frame rate '%s' was not recognized. Truncating to '%s'.", fps, num);
 	}
 }
 
@@ -225,7 +225,7 @@ bool LibavEncode::processAudio(const DataAVFrame *data) {
 	int gotPkt = 0;
 	data->getFrame()->pts = ++frameNum;
 	if (avcodec_encode_audio2(codecCtx, pkt, data->getFrame(), &gotPkt)) {
-		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
+		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %s.", frameNum);
 		return false;
 	}
 	if (gotPkt) {
@@ -248,7 +248,7 @@ bool LibavEncode::processVideo(const DataAVFrame *data) {
 
 	int gotPkt = 0;
 	if (avcodec_encode_video2(codecCtx, pkt, f, &gotPkt)) {
-		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %d.", frameNum);
+		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %s.", frameNum);
 		return false;
 	} else {
 		if (gotPkt) {
