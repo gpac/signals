@@ -25,7 +25,7 @@ private:
 	void processAudio(DataAVPacket*);
 	void processVideo(DataAVPacket*);
 
-	void setTimestamp(std::shared_ptr<Data> s) const;
+	void setTimestamp(std::shared_ptr<Data> s, uint64_t increment = 1) const;
 
 	std::unique_ptr<AVCodecContext> const codecCtx;
 

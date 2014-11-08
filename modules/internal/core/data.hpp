@@ -69,6 +69,7 @@ private:
 
 static const int VIDEO_WIDTH = 1280; //Romain
 static const int VIDEO_HEIGHT = 720;
+static const int VIDEO_FPS = 24;
 
 static const int AUDIO_SAMPLERATE = 44100;
 }
