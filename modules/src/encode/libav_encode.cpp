@@ -38,7 +38,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode::LibavEncode(Type type)
-	: Module(new PinLibavPacketFactory), avFrame(new ffpp::Frame), frameNum(-1) {
+	: Module(new PinLibavPacketFactory), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -82,14 +82,10 @@ LibavEncode::LibavEncode(Type type)
 	}
 
 	/* parameters */
-	int linesize[8];
 	switch (type) {
 	case Video: {
 		codecCtx->width = VIDEO_WIDTH; //FIXME: encode size should be a parameter
 		codecCtx->height = VIDEO_HEIGHT;
-		linesize[0] = codecCtx->width;
-		linesize[1] = codecCtx->width / 2;
-		linesize[2] = codecCtx->width / 2;
 		if (strcmp(generalDict.get("vcodec")->value, "mjpeg")) {
 			codecCtx->pix_fmt = PIX_FMT_YUV420P;
 		} else {
@@ -161,21 +157,6 @@ LibavEncode::LibavEncode(Type type)
 			Log::msg(Log::Warning, "[libav_encode] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
 		}
 		tok = strtok(NULL, "- ");
-	}
-	/* AVFrame parameters */
-	switch (type) {
-	case Video:
-		avFrame->get()->linesize[0] = linesize[0];
-		avFrame->get()->linesize[1] = linesize[1];
-		avFrame->get()->linesize[2] = linesize[2];
-		break;
-	case Audio:
-		avFrame->get()->sample_rate = codecCtx->sample_rate;
-		avFrame->get()->nb_samples = codecCtx->frame_size;
-		avFrame->get()->channel_layout = codecCtx->channel_layout;
-		break;
-	default:
-		assert(0);
 	}
 
 	signals.push_back(uptr(pinFactory->createPin()));
