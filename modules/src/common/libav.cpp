@@ -60,7 +60,7 @@ namespace Modules {
 DataAVPacket::DataAVPacket(size_t size)
 	: Data(size), pkt(new AVPacket) {
 	av_init_packet(pkt.get());
-	av_new_packet(pkt.get(), size);
+	av_new_packet(pkt.get(), (int)size);
 }
 
 DataAVPacket::~DataAVPacket() {
@@ -85,7 +85,7 @@ void DataAVPacket::resize(size_t /*size*/) {
 }
 
 DataAVFrame::DataAVFrame(size_t size)
-	: Data(size), frame(av_frame_alloc()) {
+	: PcmData(size), frame(av_frame_alloc()) {
 }
 
 DataAVFrame::~DataAVFrame() {
@@ -97,7 +97,8 @@ uint8_t* DataAVFrame::data() {
 }
 
 uint64_t DataAVFrame::size() const {
-	return 0;
+	assert(frame->linesize[1] == 0); //TODO: multi plane audio
+	return frame->linesize[0];
 }
 
 AVFrame* DataAVFrame::getFrame() const {

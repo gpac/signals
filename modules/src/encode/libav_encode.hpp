@@ -30,8 +30,8 @@ public:
 	Signal<void(std::shared_ptr<Stream>)> declareStream; //FIXME: temporary until modules have a type 'mux'
 
 private:
-	bool processAudio(std::shared_ptr<Data> data);
-	bool processVideo(std::shared_ptr<Data> data);
+	bool processAudio(const DataAVFrame *data);
+	bool processVideo(const DataAVFrame *data);
 
 	std::string getCodecName() const;
 

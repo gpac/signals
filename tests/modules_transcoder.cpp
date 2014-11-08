@@ -287,7 +287,7 @@ unittest("transcoder: jpg to h264 (gpac)") {
 	ConnectPinToModule(encoder->getPin(0), mux);
 
 	reader->process(nullptr);
-	encoder->process(nullptr); //Romain: we need to manage the lifetime of the Modules with shared_ptr
+	encoder->process(nullptr); //FIXME: we need to manage the lifetime of the Modules with shared_ptr
 }
 
 }

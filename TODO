@@ -8,6 +8,7 @@ Tasks (from higher to lower priority):
 - SDL and renderers should be able to run in thread 0
 - investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
 - be able to draw the graph of connections (and allocator states?)
+- check constness of the data being shared (once emitted) or duplicate
 - remove create() and use C++ exceptions in constructors
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - player example plugged with Qt

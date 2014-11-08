@@ -237,23 +237,18 @@ void LibavEncode::sendOutputPinsInfo() {
 	}
 }
 
-bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
+bool LibavEncode::processAudio(const DataAVFrame *data) {
 	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	//FIXME: audio are only 2 planes right now...
-	avFrame->get()->data[0] = (uint8_t*)data->data();
-	avFrame->get()->data[1] = (uint8_t*)data->data() + data->size() / 2;
-	avFrame->get()->linesize[0] = (int)data->size() / 2;
-	avFrame->get()->linesize[1] = (int)data->size() / 2;
-	avFrame->get()->pts = ++frameNum;
 	int gotPkt = 0;
-	if (avcodec_encode_audio2(codecCtx, pkt, avFrame->get(), &gotPkt)) {
+	data->getFrame()->pts = ++frameNum;
+	if (avcodec_encode_audio2(codecCtx, pkt, data->getFrame(), &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %d.", frameNum);
 		return false;
 	}
 	if (gotPkt) {
-		pkt->pts = pkt->dts = avFrame->get()->pts * pkt->duration;
+		pkt->pts = pkt->dts = frameNum * pkt->duration;
 		out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 		assert(pkt->size);
 		signals[0]->emit(out);
@@ -262,18 +257,14 @@ bool LibavEncode::processAudio(std::shared_ptr<Data> data) {
 	return true;
 }
 
-bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
+bool LibavEncode::processVideo(const DataAVFrame *data) {
 	auto out = std::dynamic_pointer_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	AVFrame *f = NULL;
-	if (data) {
-		avFrame->get()->data[0] = (uint8_t*)data->data();
-		avFrame->get()->data[1] = avFrame->get()->data[0] + codecCtx->width * codecCtx->height;
-		avFrame->get()->data[2] = avFrame->get()->data[1] + (codecCtx->width / 2) * (codecCtx->height / 2);
-		avFrame->get()->pts = ++frameNum;
-		f = avFrame->get();
-	}
+	AVFrame *f = data->getFrame();
+	f->pict_type = AV_PICTURE_TYPE_NONE;
+	f->pts = ++frameNum;
+
 	int gotPkt = 0;
 	if (avcodec_encode_video2(codecCtx, pkt, f, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %d.", frameNum);
@@ -293,12 +284,18 @@ bool LibavEncode::processVideo(std::shared_ptr<Data> data) {
 }
 
 void LibavEncode::process(std::shared_ptr<Data> data) {
+	const auto encoderData = dynamic_cast<DataAVFrame*>(data.get());
+	if (!encoderData) {
+		Log::msg(Log::Warning, "[LibavEncode] Invalid data type.");
+		return;
+	}
+
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		processVideo(data);
+		processVideo(encoderData);
 		break;
 	case AVMEDIA_TYPE_AUDIO:
-		processAudio(data);
+		processAudio(encoderData);
 		break;
 	default:
 		assert(0);
