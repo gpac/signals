@@ -21,6 +21,15 @@ Decode::LibavDecode* createMp3Decoder() {
 	return new Decode::LibavDecode(props);
 }
 
+template<size_t numBytes>
+std::shared_ptr<Data> createAvPacket(uint8_t const (&bytes)[numBytes]) {
+	auto pkt = std::make_shared<DataAVPacket>(numBytes);
+	//FIXME: no data is copied
+	//FIXME: I allocate a numBytes-sized DataAVPacket, how can I fill it now?
+	//memcpy(pkt->data(), bytes, numBytes);
+	return pkt;
+}
+
 std::shared_ptr<Data> getTestMp3Frame() {
 	static const uint8_t mp3_sine_frame[] = {
 		0xff, 0xfb, 0x30, 0xc0, 0x00, 0x00, 0x00, 0x00,
@@ -45,7 +54,7 @@ std::shared_ptr<Data> getTestMp3Frame() {
 	 	0x00, 0x00, 0x00, 0x00
 	};
 
-	return std::make_shared<DataAVPacket>(sizeof mp3_sine_frame);
+	return createAvPacket(mp3_sine_frame);
 }
 
 }
@@ -59,6 +68,40 @@ unittest("decoder: audio simple") {
 
 	auto frame = getTestMp3Frame();
 	decoder->process(frame);
+}
+
+namespace {
+Decode::LibavDecode* createVideoDecoder() {
+	AVCodecContext avContext;
+	memset(&avContext, 0, sizeof avContext);
+	avContext.codec_type = AVMEDIA_TYPE_VIDEO;
+	avContext.codec_id = AV_CODEC_ID_H264;
+	PropsDecoder props(&avContext);
+	return new Decode::LibavDecode(props);
+}
+
+std::shared_ptr<Data> getTestH24Frame() {
+
+  static const uint8_t h264_gray_frame[] = {
+    0x00, 0x00, 0x00, 0x01,
+    0x67, 0x4d, 0x40, 0x0a, 0xe8, 0x8f, 0x42, 0x00,
+    0x00, 0x03, 0x00, 0x02, 0x00, 0x00, 0x03, 0x00,
+    0x64, 0x1e, 0x24, 0x4a, 0x24,
+    0x00, 0x00, 0x00, 0x01, 0x68, 0xeb, 0xc3, 0xcb,
+    0x20, 0x00, 0x00, 0x01, 0x65, 0x88, 0x84, 0x00,
+    0xaf, 0xfd, 0x0f, 0xdf,
+  };
+
+	return createAvPacket(h264_gray_frame);
+}
+}
+
+unittest("decoder: video simple") {
+
+	auto decoder = uptr(createVideoDecoder());
+	auto data = getTestH24Frame();
+
+	decoder->process(data);
 }
 
 unittest("decoder: audio converter") {
