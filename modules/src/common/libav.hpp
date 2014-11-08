@@ -3,6 +3,7 @@
 #include "internal/core/data.hpp"
 #include "internal/core/pin.hpp"
 #include "internal/core/props.hpp"
+#include "pcm.hpp"
 #include <cstdarg>
 #include <memory>
 
@@ -45,8 +46,8 @@ private:
 	std::unique_ptr<AVPacket> const pkt;
 };
 
-//TODO: remove: created specially to fix the Transform converters relying on libav
-class DataAVFrame : public Data {
+//TODO: remove: created specially to fix the Transform converters relying on libav + awful hack: derives from PcmData
+class DataAVFrame : public PcmData {
 public:
 	DataAVFrame(size_t size);
 	~DataAVFrame();
