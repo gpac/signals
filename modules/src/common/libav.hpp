@@ -67,7 +67,6 @@ typedef PinDataDefault<DataAVPacket> PinLibavPacket;
 
 class PinLibavPacketFactory : public PinFactory {
 public:
-	PinLibavPacketFactory();
 	Pin* createPin(IProps *props = nullptr);
 };
 
@@ -75,7 +74,6 @@ typedef PinDataDefault<DataAVFrame> PinLibavFrame;
 
 class PinLibavFrameFactory : public PinFactory {
 public:
-	PinLibavFrameFactory();
 	Pin* createPin(IProps *props = nullptr);
 };
 

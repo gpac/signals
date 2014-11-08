@@ -137,14 +137,8 @@ void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
 #endif
 }
 
-PinLibavPacketFactory::PinLibavPacketFactory() {
-}
-
 Pin* PinLibavPacketFactory::createPin(IProps *props) {
 	return new PinLibavPacket(props);
-}
-
-PinLibavFrameFactory::PinLibavFrameFactory() {
 }
 
 Pin* PinLibavFrameFactory::createPin(IProps *props) {
