@@ -1,7 +1,10 @@
 #include "tests.hpp"
 #include "modules.hpp"
 
+extern "C"
+{
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
+}
 
 #include "decode/libav_decode.hpp"
 #include "in/file.hpp"
@@ -13,20 +16,16 @@ using namespace Modules;
 
 namespace {
 Decode::LibavDecode* createMp3Decoder() {
-	AVCodecContext avContext;
-	memset(&avContext, 0, sizeof avContext);
-	avContext.codec_type = AVMEDIA_TYPE_AUDIO;
-	avContext.codec_id = AV_CODEC_ID_MP3;
-	PropsDecoder props(&avContext);
+	auto codec = avcodec_find_decoder(AV_CODEC_ID_MP3);
+	auto context = avcodec_alloc_context3(codec);
+	PropsDecoder props(context);
 	return new Decode::LibavDecode(props);
 }
 
 template<size_t numBytes>
 std::shared_ptr<Data> createAvPacket(uint8_t const (&bytes)[numBytes]) {
 	auto pkt = std::make_shared<DataAVPacket>(numBytes);
-	//FIXME: no data is copied
-	//FIXME: I allocate a numBytes-sized DataAVPacket, how can I fill it now?
-	//memcpy(pkt->data(), bytes, numBytes);
+	memcpy(pkt->data(), bytes, numBytes);
 	return pkt;
 }
 
@@ -72,11 +71,9 @@ unittest("decoder: audio simple") {
 
 namespace {
 Decode::LibavDecode* createVideoDecoder() {
-	AVCodecContext avContext;
-	memset(&avContext, 0, sizeof avContext);
-	avContext.codec_type = AVMEDIA_TYPE_VIDEO;
-	avContext.codec_id = AV_CODEC_ID_H264;
-	PropsDecoder props(&avContext);
+	auto codec = avcodec_find_decoder(AV_CODEC_ID_H264);
+	auto context = avcodec_alloc_context3(codec);
+	PropsDecoder props(context);
 	return new Decode::LibavDecode(props);
 }
 
