@@ -66,3 +66,12 @@ template<typename T>
 std::unique_ptr<T> uptr(T* p) {
 	return std::unique_ptr<T>(p);
 }
+
+template<typename T, typename U>
+std::shared_ptr<T> safe_cast(std::shared_ptr<U> p)
+{
+	auto r = std::dynamic_pointer_cast<T>(p);
+	if(!r)
+		throw std::runtime_error("dynamic cast error");
+	return r;
+}
