@@ -5,6 +5,7 @@
 #include "demux/gpac_demux_mp4_full.hpp"
 #include "in/file.hpp"
 #include "out/print.hpp"
+#include "tools.hpp"
 
 using namespace Tests;
 using namespace Modules;

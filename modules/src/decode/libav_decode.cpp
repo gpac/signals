@@ -16,8 +16,8 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Decode {
 
 LibavDecode::LibavDecode(const PropsDecoder &props)
-	: Module(new PinLibavFrameFactory), codecCtx(new AVCodecContext), m_numFrames(0) {
-	*codecCtx = *props.getAVCodecContext();
+	: Module(new PinLibavFrameFactory), codecCtx(avcodec_alloc_context3(NULL)), m_numFrames(0) {
+	avcodec_copy_context(codecCtx, props.getAVCodecContext());
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
@@ -25,14 +25,14 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		break;
 	default:
 		Log::msg(Log::Warning, "Module LibavDecode: codec_type %s not supported. Must be audio or video.", codecCtx->codec_type);
-		throw std::runtime_error("Unknown decoder type. Failed.");
+		throw std::runtime_error("[LibavDecode] Unknown decoder type. Failed.");
 	}
 
 	//find an appropriate decoder
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec) {
 		Log::msg(Log::Warning, "Module LibavDecode: Codec not found");
-		throw std::runtime_error("Decoder not found.");
+		throw std::runtime_error("[LibavDecode] Decoder not found.");
 	}
 
 	//TODO: test: force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
@@ -40,23 +40,24 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 	dict.set("threads", "1");
 
 	//open the codec
-	if (avcodec_open2(codecCtx.get(), codec, &dict) < 0) {
+	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
 		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
-		throw std::runtime_error("Couldn't open stream.");
+		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
 	signals.push_back(uptr(pinFactory->createPin()));
 }
 
 LibavDecode::~LibavDecode() {
-	avcodec_close(codecCtx.get());
+	avcodec_close(codecCtx);
+	av_free(codecCtx);
 }
 
 void LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotFrame;
-	if (avcodec_decode_audio4(codecCtx.get(), out->getFrame(), &gotFrame, pkt) < 0) {
+	if (avcodec_decode_audio4(codecCtx, out->getFrame(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return;
 	}
@@ -71,7 +72,7 @@ void LibavDecode::processVideo(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotPicture;
-	if (avcodec_decode_video2(codecCtx.get(), out->getFrame(), &gotPicture, pkt) < 0) {
+	if (avcodec_decode_video2(codecCtx, out->getFrame(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return;
 	}
@@ -83,9 +84,15 @@ void LibavDecode::processVideo(DataAVPacket *decoderData) {
 }
 
 void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) const {
-	auto bitsPerSample = av_get_bytes_per_sample(codecCtx->sample_fmt);
-	bitsPerSample++;
-	s->setTime((m_numFrames * increment * IClock::Rate * codecCtx->time_base.num + (codecCtx->time_base.den / 2)) / codecCtx->time_base.den);
+	uint64_t t;
+	if (m_numFrames == 0) {
+		t = 0;
+	} else if (codecCtx->time_base.den == 0) {
+		throw std::runtime_error("[LibavDecode] Unknown frame rate. Cannot set the timestamp.");
+	} else {
+		t = m_numFrames * increment * IClock::Rate * codecCtx->time_base.num + (codecCtx->time_base.den / 2) / codecCtx->time_base.den;
+	}
+	s->setTime(t);
 }
 
 void LibavDecode::process(std::shared_ptr<Data> data) {

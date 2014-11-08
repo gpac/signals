@@ -4,6 +4,7 @@
 #include "decode/libav_decode.hpp"
 #include "demux/libav_demux.hpp"
 #include "out/print.hpp"
+#include "tools.hpp"
 
 
 using namespace Tests;

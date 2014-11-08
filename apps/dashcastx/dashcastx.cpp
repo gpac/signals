@@ -65,7 +65,8 @@ int safeMain(int argc, char const* argv[]) {
 				auto r = uptr(new Out::Null);
 				ConnectPinToModule(decoder->getPin(0), r);
 				modules.push_back(std::move(decoder));
-				modules.push_back(std::move(r)); break;
+				modules.push_back(std::move(r));
+				continue;
 			}
 
 			std::stringstream filename;
