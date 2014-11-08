@@ -61,7 +61,9 @@ void LibavDecode::processAudio(DataAVPacket *decoderData) {
 		return;
 	}
 	if (gotFrame) {
+		setTimestamp(out, out->getFrame()->nb_samples);
 		signals[0]->emit(out);
+		++m_numFrames;
 	}
 }
 
@@ -80,9 +82,10 @@ void LibavDecode::processVideo(DataAVPacket *decoderData) {
 	}
 }
 
-void LibavDecode::setTimestamp(std::shared_ptr<Data> s) const {
-	auto const framePeriodIn180k = IClock::Rate / 24;
-	s->setTime(m_numFrames * framePeriodIn180k);
+void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) const {
+	auto bitsPerSample = av_get_bytes_per_sample(codecCtx->sample_fmt);
+	bitsPerSample++;
+	s->setTime((m_numFrames * increment * IClock::Rate * codecCtx->time_base.num + (codecCtx->time_base.den / 2)) / codecCtx->time_base.den);
 }
 
 void LibavDecode::process(std::shared_ptr<Data> data) {
