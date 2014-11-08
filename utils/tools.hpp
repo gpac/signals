@@ -66,4 +66,3 @@ template<typename T>
 std::unique_ptr<T> uptr(T* p) {
 	return std::unique_ptr<T>(p);
 }
-#define UPTR_DEFINED
