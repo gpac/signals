@@ -25,11 +25,7 @@ AudioConvert::~AudioConvert() {
 }
 
 void AudioConvert::process(std::shared_ptr<Data> data) {
-	auto audioData = dynamic_cast<DataAVFrame*>(data.get());
-	if (!audioData) {
-		Log::msg(Log::Warning, "[AudioConvert] Invalid data type.");
-		return;
-	}
+	auto audioData = safe_cast<DataAVFrame>(data);
 
 	const int bufferSize = av_samples_get_buffer_size(nullptr, av_get_channel_layout_nb_channels(srcChannelLayout), audioData->getFrame()->nb_samples, srcFmt, 0);
 

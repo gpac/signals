@@ -54,7 +54,7 @@ LibavDecode::~LibavDecode() {
 
 void LibavDecode::processAudio(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
-	auto out = std::dynamic_pointer_cast<DataAVFrame>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx.get(), out->getFrame(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
@@ -69,7 +69,7 @@ void LibavDecode::processAudio(DataAVPacket *decoderData) {
 
 void LibavDecode::processVideo(DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
-	auto out = std::dynamic_pointer_cast<DataAVFrame>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx.get(), out->getFrame(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");

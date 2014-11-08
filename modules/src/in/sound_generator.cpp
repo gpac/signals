@@ -24,8 +24,8 @@ void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const bytesPerSample = 4;
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * SAMPLE_RATE / 1000;
-	auto out = std::dynamic_pointer_cast<PcmData>(signals[0]->getBuffer(bufferSize));
-
+	
+	auto out = safe_cast<PcmData>(signals[0]->getBuffer(bufferSize));
 	out->setTime(m_numSamples * IClock::Rate / SAMPLE_RATE);
 
 	// generate sound
