@@ -48,23 +48,23 @@ public:
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: missing configuration.");
 			return false;
 		}
-		if (cfg->sampleRate == sampleRate) {
+		if (cfg->sampleRate != sampleRate) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", cfg->sampleRate, sampleRate);
 			return false;
 		}
-		if (cfg->numChannels == numChannels) {
+		if (cfg->numChannels != numChannels) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: channel number is %s, expect %s.", cfg->numChannels, numChannels);
 			return false;
 		}
-		if (cfg->layout == layout) {
+		if (cfg->layout != layout) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", cfg->layout, layout);
 			return false;
 		}
-		if (cfg->format == format) {
+		if (cfg->format != format) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: format is %s, expect %s.", cfg->format, format);
 			return false;
 		}
-		if (cfg->numPlanes == numPlanes) {
+		if (cfg->numPlanes != numPlanes) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: plane number is %s, expect %s.", cfg->numPlanes, numPlanes);
 			return false;
 		}
