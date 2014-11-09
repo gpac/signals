@@ -48,7 +48,7 @@ private:
 
 	static auto const audioJitterTolerance = 500;
 	uint8_t bytesPerSample;
-	AudioPcmConfig audioCfg;
+	std::unique_ptr<AudioPcmConfig> audioCfg;
 	std::mutex m_Mutex;
 	Fifo m_Fifo;
 	uint64_t m_FifoTime;

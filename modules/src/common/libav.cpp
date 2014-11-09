@@ -1,4 +1,5 @@
 #include "libav.hpp"
+#include "pcm.hpp"
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include <cassert>
@@ -54,17 +55,17 @@ const char* avlogLevelName(int level) {
 	}
 }
 
-void libavAudioCtxConvertGeneric(const Modules::AudioPcmConfig &cfg, int &sampleRate, AVSampleFormat &format, int &numChannels, uint64_t &layout) {
-	sampleRate = cfg.getSampleRate();
+void libavAudioCtxConvertGeneric(const Modules::AudioPcmConfig *cfg, int &sampleRate, AVSampleFormat &format, int &numChannels, uint64_t &layout) {
+	sampleRate = cfg->getSampleRate();
 
-	switch (cfg.getFormat()) {
+	switch (cfg->getFormat()) {
 	case Modules::S16: format = AV_SAMPLE_FMT_S16; break;
 	case Modules::F32: format = AV_SAMPLE_FMT_FLT; break;
 	default: throw std::runtime_error("Unknown libav audio format");
 	}
 
-	numChannels = cfg.getNumChannels();
-	switch (cfg.getLayout()) {
+	numChannels = cfg->getNumChannels();
+	switch (cfg->getLayout()) {
 	case Modules::Mono: layout = AV_CH_LAYOUT_MONO; break;
 	case Modules::Stereo: layout = AV_CH_LAYOUT_STEREO; break;
 	default: throw std::runtime_error("Unknown libav audio layout");
@@ -74,12 +75,12 @@ void libavAudioCtxConvertGeneric(const Modules::AudioPcmConfig &cfg, int &sample
 
 namespace Modules {
 
-void libavAudioCtxConvert(const Modules::AudioPcmConfig &cfg, AVCodecContext *codecCtx) {
+void libavAudioCtxConvert(const Modules::AudioPcmConfig *cfg, AVCodecContext *codecCtx) {
 	libavAudioCtxConvertGeneric(cfg, codecCtx->sample_rate, codecCtx->sample_fmt, codecCtx->channels, codecCtx->channel_layout);
 }
 
 void libavFrameDataConvert(const Modules::PcmData *data, AVFrame *frame) {
-	libavAudioCtxConvertGeneric(*data, frame->sample_rate, (AVSampleFormat&)frame->format, frame->channels, frame->channel_layout);
+	libavAudioCtxConvertGeneric(data, frame->sample_rate, (AVSampleFormat&)frame->format, frame->channels, frame->channel_layout);
 	for (size_t i = 0; i < data->getNumPlanes(); ++i) {
 		frame->data[i] = data->getPlane(i);
 		frame->linesize[i] = (int)data->getPlaneSize(i);

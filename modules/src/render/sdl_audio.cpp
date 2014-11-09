@@ -10,15 +10,16 @@
 namespace Modules {
 
 namespace {
-SDL_AudioSpec SDLAudioSpecConvert(const AudioPcmConfig &cfg) {
+SDL_AudioSpec SDLAudioSpecConvert(const AudioPcmConfig *cfg) {
 	SDL_AudioSpec audioSpec;
-	audioSpec.freq = cfg.getSampleRate();
-	audioSpec.channels = cfg.getNumChannels();
-	switch (cfg.getFormat()) {
+	audioSpec.freq = cfg->getSampleRate();
+	audioSpec.channels = cfg->getNumChannels();
+	switch (cfg->getFormat()) {
 	case S16: audioSpec.format = AUDIO_S16; break;
 	case F32: audioSpec.format = AUDIO_F32; break;
 	default: throw std::runtime_error("Unknown SDL audio format");
 	}
+
 	return audioSpec;
 }
 }
@@ -29,12 +30,12 @@ SDLAudio* SDLAudio::create() {
 	return new SDLAudio();
 }
 
-SDLAudio::SDLAudio() : m_FifoTime(0) {
-	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(audioCfg);
+SDLAudio::SDLAudio() : audioCfg(new AudioPcmConfig()), m_FifoTime(0) {
+	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(audioCfg.get());
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
 	audioSpec.userdata = this;
-	bytesPerSample = audioCfg.getBytesPerSample();
+	bytesPerSample = audioCfg->getBytesPerSample();
 
 	SDL_AudioSpec realSpec;
 
@@ -67,7 +68,7 @@ SDLAudio::~SDLAudio() {
 
 void SDLAudio::process(std::shared_ptr<Data> data) {
 	auto pcmData = safe_cast<PcmData>(data);
-	if (!pcmData->isComparable(audioCfg))
+	if (!pcmData->isComparable(audioCfg.get()))
 		throw std::runtime_error("[SDLAudio] Incompatible audio data");
 
 	{
