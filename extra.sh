@@ -44,6 +44,29 @@ then
 fi
 
 #-------------------------------------------------------------------------------
+# vo-aacenc
+#-------------------------------------------------------------------------------
+if [ ! -f extra/src/vo-aacenc-0.1.3/configure ] ;
+then
+	mkdir -p extra/src
+	rm -rf extra/src/vo-aacenc
+	wget http://sourceforge.net/projects/opencore-amr/files/vo-aacenc/vo-aacenc-0.1.3.tar.gz/download -O vo-aacenc.tar.gz
+	tar xvlf vo-aacenc.tar.gz -C extra/src
+fi
+
+if [ ! -f extra/build/vo-aacenc/buildOk ] ;
+then
+	mkdir -p extra/build/vo-aacenc
+	pushd extra/build/vo-aacenc
+	../../src/vo-aacenc-0.1.3/configure \
+		--host=$HOST \
+		--prefix=$EXTRA_DIR
+	make
+	make install
+	popd
+fi
+
+#-------------------------------------------------------------------------------
 # FFMPEG
 #-------------------------------------------------------------------------------
 
@@ -68,6 +91,8 @@ then
 		--enable-static \
 		--enable-gpl \
 		--enable-libx264 \
+		--enable-version3 \
+		--enable-libvo-aacenc \
 		--enable-swresample \
 		--enable-swscale \
 		--extra-cflags="`pkg-config x264 --cflags`" \
