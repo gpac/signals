@@ -22,7 +22,7 @@ struct Frame {
 		}
 
 		~Frame() {
-			avcodec_free_frame(&avFrame);
+			av_frame_free(&avFrame);
 		}
 
 		AVFrame* get() {
