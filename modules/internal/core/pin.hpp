@@ -5,6 +5,7 @@
 #include "props.hpp"
 #include "../modules/internal/utils/helper.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include <../signals/signals.hpp>
 #include <thread>
 
@@ -120,10 +121,7 @@ public:
 	 * Takes ownership.
 	 */
 	void setProps(IProps *props) {
-		std::unique_ptr<IProps> uprops(props);
-		auto curProps = this->props.get();
-		this->props.swap(uprops);
-		delete curProps;
+		this->props = uptr(props);
 	}
 
 private:
