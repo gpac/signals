@@ -17,9 +17,9 @@ using namespace Signals;
 typedef Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>> SignalAsync;
 typedef Signal<void(std::shared_ptr<Data>), ResultVector<NotVoid<void>>> SignalSync;
 
-template<typename Allocator, typename Signal, typename DataType> class PinT;
-template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>, SignalAsync, DataType>;
-template<typename DataType> using PinDataSync = PinT<PacketAllocator<DataType>, SignalSync, DataType>;
+template<typename Allocator, typename Signal> class PinT;
+template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>, SignalAsync>;
+template<typename DataType> using PinDataSync = PinT<PacketAllocator<DataType>, SignalSync>;
 template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
 
 typedef PinDataAsync<Data> PinAsync;
@@ -73,7 +73,7 @@ public:
 };
 
 //TODO: the pin could check the bool result (currently done by the allocator) and retry on failure (but is it its role?)
-template<typename Allocator, typename Signal, typename DataType>
+template<typename Allocator, typename Signal>
 class PinT : public Pin {
 public:
 	PinT(IProps *props = nullptr)
