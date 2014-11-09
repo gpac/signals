@@ -10,8 +10,9 @@ namespace Modules {
 namespace In {
 
 VideoGenerator::VideoGenerator()
-	: Module(new PinPcmFactory), m_numFrames(0) {
-	pins.push_back(uptr(pinFactory->createPin()));
+	: m_numFrames(0) {
+	PinPcmFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {

@@ -9,7 +9,8 @@ namespace In {
 
 File::File(FILE *file)
 	: file(file) {
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinDefaultFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 File::~File() {

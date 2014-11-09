@@ -39,7 +39,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode::LibavEncode(Type type)
-	: Module(new PinLibavPacketFactory), audioCfg(new AudioPcmConfig()), avFrame(new ffpp::Frame), frameNum(-1) {
+	: audioCfg(new AudioPcmConfig()), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -157,7 +157,8 @@ LibavEncode::LibavEncode(Type type)
 		tok = strtok(NULL, "- ");
 	}
 
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinLibavPacketFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 LibavEncode::~LibavEncode() {

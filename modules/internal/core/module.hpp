@@ -9,10 +9,8 @@ namespace Modules {
 
 class Module {
 public:
-	Module(PinFactory *pinFactory) : pinFactory(pinFactory) {
-	}
-	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()) {
-	}
+	Module() = default;
+
 	virtual ~Module() noexcept(false) {
 		for (auto &signal : pins) {
 			signal->waitForCompletion();
@@ -33,8 +31,6 @@ protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
 
-	std::unique_ptr<PinFactory> const defaultPinFactory;
-	PinFactory* const pinFactory;
 	std::vector<std::unique_ptr<Pin>> pins;
 };
 

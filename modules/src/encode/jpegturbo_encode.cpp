@@ -28,7 +28,8 @@ class JPEGTurbo {
 
 JPEGTurboEncode::JPEGTurboEncode(int width, int height, int JPEGQuality)
 	: jtHandle(new JPEGTurbo), JPEGQuality(JPEGQuality), width(width), height(height) {
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinDefaultFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 JPEGTurboEncode::~JPEGTurboEncode() {

@@ -16,7 +16,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Decode {
 
 LibavDecode::LibavDecode(const PropsDecoder &props)
-	: Module(new PinLibavFrameFactory), codecCtx(avcodec_alloc_context3(NULL)), avFrame(new ffpp::Frame), m_numFrames(0) {
+	: codecCtx(avcodec_alloc_context3(NULL)), avFrame(new ffpp::Frame), m_numFrames(0) {
 	avcodec_copy_context(codecCtx, props.getAVCodecContext());
 
 	switch (codecCtx->codec_type) {
@@ -45,7 +45,9 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	pins.push_back(uptr(pinFactory->createPin(new PropsDecoder(codecCtx))));
+	PinLibavFrameFactory factory;
+
+	pins.push_back(uptr(factory.createPin(new PropsDecoder(codecCtx))));
 }
 
 LibavDecode::~LibavDecode() {

@@ -15,9 +15,10 @@ auto const SAMPLE_RATE = AUDIO_SAMPLERATE;
 auto const SINE_FREQ = 880.0;
 
 SoundGenerator::SoundGenerator()
-	: Module(new PinPcmFactory), m_numSamples(20000) {
+	: m_numSamples(20000) {
 	audioCfg.setSampleRate(SAMPLE_RATE);
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinPcmFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
