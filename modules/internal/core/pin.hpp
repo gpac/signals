@@ -68,7 +68,6 @@ public:
 
 class PinDefaultFactory : public PinFactory {
 public:
-	PinDefaultFactory();
 	Pin* createPin(IProps *props = nullptr);
 };
 
