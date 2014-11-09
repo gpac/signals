@@ -3,7 +3,6 @@
 #include "internal/core/data.hpp"
 #include "internal/core/pin.hpp"
 #include "internal/core/props.hpp"
-#include "pcm.hpp" //Romain: move to cpp
 #include <cstdarg>
 #include <memory>
 
@@ -59,7 +58,9 @@ private:
 	AVFrame *frame;
 };
 
-void libavAudioCtxConvert(const AudioPcmConfig &cfg, AVCodecContext *codecCtx);
+class AudioPcmConfig;
+class PcmData;
+void libavAudioCtxConvert(const AudioPcmConfig *cfg, AVCodecContext *codecCtx);
 void libavFrameDataConvert(const PcmData *data, AVFrame *frame);
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);

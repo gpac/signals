@@ -56,7 +56,6 @@ LibavDecode::~LibavDecode() {
 void LibavDecode::processAudio(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
 	auto out = safe_cast<PcmData>(signals[0]->getBuffer(0));
-	//Romain: utile? libavFrameDataConvert(out.get(), avFrame->get());
 
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {

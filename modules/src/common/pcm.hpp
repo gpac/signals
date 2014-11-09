@@ -43,12 +43,13 @@ public:
 		setNumPlanes(numPlanes);
 	}
 
-	bool isComparable(AudioPcmConfig &cfg) {
-		if ((cfg.sampleRate == sampleRate) &&
-			(cfg.numChannels == numChannels) &&
-			(cfg.layout == layout) &&
-			(cfg.format == format) &&
-			(cfg.numPlanes == numPlanes)) {
+	bool isComparable(AudioPcmConfig *cfg) const {
+		if (cfg &&
+			(cfg->sampleRate == sampleRate) &&
+			(cfg->numChannels == numChannels) &&
+			(cfg->layout == layout) &&
+			(cfg->format == format) &&
+			(cfg->numPlanes == numPlanes)) {
 			return true;
 		}
 
