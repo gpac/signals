@@ -35,10 +35,10 @@ class DataAVPacket : public Data {
 public:
 	DataAVPacket(size_t size = 0);
 	~DataAVPacket();
-	uint8_t* data();
-	uint64_t size() const;
+	uint8_t* data()  override;
+	uint64_t size() const  override;
 	AVPacket* getPacket() const;
-	void resize(size_t size);
+	void resize(size_t size)  override;
 
 private:
 	std::unique_ptr<AVPacket> const pkt;
@@ -49,10 +49,10 @@ class DataAVFrame : public Data {
 public:
 	DataAVFrame(size_t size);
 	~DataAVFrame();
-	uint8_t* data();
-	uint64_t size() const;
+	uint8_t* data()  override;
+	uint64_t size() const  override;
 	AVFrame* getFrame() const;
-	void resize(size_t size);
+	void resize(size_t size) override;
 
 private:
 	AVFrame *frame;

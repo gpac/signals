@@ -161,19 +161,19 @@ public:
 		freePlanes();
 	}
 
-	virtual uint8_t* data() {
+	virtual uint8_t* data() override {
 		if (getNumPlanes() > 1)
 			throw std::runtime_error("Forbidden operation. Use audio planes to access the data.");
 		return planes[0];
 	}
 
-	virtual uint64_t size() const {
+	virtual uint64_t size() const override {
 		if (getNumPlanes() > 1)
 			throw std::runtime_error("Forbidden operation. Use audio planes to retrieve the size.");
 		return planeSize[0];
 	}
 
-	virtual void resize(size_t size) {
+	virtual void resize(size_t size) override {
 		throw std::runtime_error("Forbidden operation. You cannot resize PCM data.");
 	}
 
