@@ -13,7 +13,7 @@ class JPEGTurboDecode : public Module {
 public:
 	JPEGTurboDecode();
 	~JPEGTurboDecode();
-	void process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data) override;
 
 private:
 	void ensureProps(int width, int height, int pixelFmt);
