@@ -23,7 +23,7 @@ File* File::create(std::string const& fn) {
 }
 
 void File::process(std::shared_ptr<Data> data) {
-	fwrite(data->data(), 1, data->size(), file);
+	fwrite(data->data(), 1, (size_t)data->size(), file);
 }
 
 }
