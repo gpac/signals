@@ -72,6 +72,13 @@ std::shared_ptr<T> safe_cast(std::shared_ptr<U> p)
 {
 	auto r = std::dynamic_pointer_cast<T>(p);
 	if(!r)
-		throw std::runtime_error("dynamic cast error");
+	{
+		std::string s;
+		s += "dynamic cast error: could not convert from ";
+		s += typeid(U).name();
+		s += " to ";
+		s += typeid(T).name();
+		throw std::runtime_error(s.c_str());
+	}
 	return r;
 }
