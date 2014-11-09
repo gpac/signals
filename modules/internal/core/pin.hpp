@@ -23,9 +23,9 @@ template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>,
 template<typename DataType> using PinDataSync = PinT<PacketAllocator<DataType>, SignalSync>;
 template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
 
-typedef PinDataAsync<Data> PinAsync;
-typedef PinDataSync<Data> PinSync;
-typedef PinDataDefault<Data> PinDefault;
+typedef PinDataAsync<RawData> PinAsync;
+typedef PinDataSync<RawData> PinSync;
+typedef PinDataDefault<RawData> PinDefault;
 
 class Pin {
 public:

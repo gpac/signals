@@ -11,35 +11,13 @@ namespace Modules {
 /**
  * A generic data container.
  */
-class IData {
+class Data {
 public:
-	virtual ~IData() {
+	virtual ~Data() {
 	}
 	virtual uint8_t* data() = 0;
 	virtual uint64_t size() const = 0;
 	virtual void resize(size_t size) = 0;
-};
-
-//FIXME: this class contains multimedia considerations, thus should be in libmm...
-class Data : public IData {
-public:
-	Data(size_t size) : ptr(size) {
-	}
-
-	virtual ~Data() {
-	}
-
-	virtual uint8_t* data() override {
-		return ptr.data();
-	}
-
-	virtual uint64_t size() const override {
-		return ptr.size();
-	}
-
-	virtual void resize(size_t size) override {
-		ptr.resize(size);
-	}
 
 	void setTime(uint64_t timeIn180k) {
 		m_TimeIn180k = timeIn180k;
@@ -62,9 +40,29 @@ public:
 	}
 
 private:
-	std::vector<uint8_t> ptr;
 	uint64_t m_TimeIn180k;
 	uint64_t m_DurationIn180k;
+};
+
+class RawData : public Data {
+public:
+	RawData(size_t size) : buffer(size) {
+	}
+
+	virtual uint8_t* data() override {
+		return buffer.data();
+	}
+
+	virtual uint64_t size() const override {
+		return buffer.size();
+	}
+
+	virtual void resize(size_t size) override {
+		buffer.resize(size);
+	}
+
+private:
+	std::vector<uint8_t> buffer;
 };
 
 static const int VIDEO_WIDTH = 1280; //Romain

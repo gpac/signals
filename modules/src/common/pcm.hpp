@@ -146,9 +146,9 @@ private:
 };
 
 //Romain: rename PcmData in DataPcm
-class PcmData : public Data, public AudioPcmConfig {
+class PcmData : public RawData, public AudioPcmConfig {
 public:
-	PcmData(size_t size) : Data(0) {
+	PcmData(size_t size) : RawData(0) {
 		memset(planes, 0, sizeof(planes));
 		memset(planeSize, 0, sizeof(planeSize));
 		if (size > 0) {

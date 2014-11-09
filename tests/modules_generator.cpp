@@ -30,8 +30,9 @@ unittest("video generator") {
 
 	std::vector<int> times;
 	auto onFrame = [&](std::shared_ptr<Data> data) {
-		times.push_back((int)data->getTime());
-		render->process(data);
+		auto rawData = safe_cast<RawData>(data);
+		times.push_back((int)rawData->getTime());
+		render->process(rawData);
 	};
 
 	Connect(videoGen->getPin(0)->getSignal(), onFrame);
