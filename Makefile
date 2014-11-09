@@ -109,7 +109,8 @@ $(BIN)/%.exe:
 	
 $(BIN)/%.o: $(SRC)/%.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -c -o "$@" $< $(CFLAGS)
+	$(CXX) "$<" -c $(CFLAGS) -o "$(BIN)/$*.deps" -MM -MT "$(BIN)/$*.o"
+	$(CXX) "$<" -c $(CFLAGS) -o "$@" 
 	
 clean:
 	rm -rf $(BIN)
@@ -121,8 +122,5 @@ $(BIN)/alldeps: $(DEPS)
 	@mkdir -p "$(dir $@)"
 	cat $^ > "$@"
 
-$(BIN)/%.deps: %.cpp
-	@mkdir -p "$(dir $@)"
-	$(CXX) $(CFLAGS) -c -MM "$^" -MT "$(BIN)/$*.o" > "$@"
-
 -include $(BIN)/alldeps
+
