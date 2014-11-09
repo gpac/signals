@@ -53,9 +53,39 @@ const char* avlogLevelName(int level) {
 		return "unknown";
 	}
 }
+
+void libavAudioCtxConvertGeneric(const Modules::AudioPcmConfig &cfg, int &sampleRate, AVSampleFormat &format, int &numChannels, uint64_t &layout) {
+	sampleRate = cfg.getSampleRate();
+
+	switch (cfg.getFormat()) {
+	case Modules::S16: format = AV_SAMPLE_FMT_S16; break;
+	case Modules::F32: format = AV_SAMPLE_FMT_FLT; break;
+	default: throw std::runtime_error("Unknown libav audio format");
+	}
+
+	numChannels = cfg.getNumChannels();
+	switch (cfg.getLayout()) {
+	case Modules::Mono: layout = AV_CH_LAYOUT_MONO; break;
+	case Modules::Stereo: layout = AV_CH_LAYOUT_STEREO; break;
+	default: throw std::runtime_error("Unknown libav audio layout");
+	}
+}
 }
 
 namespace Modules {
+
+void libavAudioCtxConvert(const Modules::AudioPcmConfig &cfg, AVCodecContext *codecCtx) {
+	libavAudioCtxConvertGeneric(cfg, codecCtx->sample_rate, codecCtx->sample_fmt, codecCtx->channels, codecCtx->channel_layout);
+}
+
+void libavFrameDataConvert(const Modules::PcmData *data, AVFrame *frame) {
+	libavAudioCtxConvertGeneric(*data, frame->sample_rate, (AVSampleFormat&)frame->format, frame->channels, frame->channel_layout);
+	for (size_t i = 0; i < data->getNumPlanes(); ++i) {
+		frame->data[i] = data->getPlane(i);
+		frame->linesize[i] = (int)data->getPlaneSize(i);
+	}
+	frame->nb_samples = (int)(data->getPlaneSize(0) / data->getBytesPerSample());
+}
 
 DataAVPacket::DataAVPacket(size_t size)
 	: Data(size), pkt(new AVPacket) {
@@ -87,7 +117,7 @@ void DataAVPacket::resize(size_t /*size*/) {
 }
 
 DataAVFrame::DataAVFrame(size_t size)
-	: PcmData(size), frame(av_frame_alloc()) {
+	: Data(size), frame(av_frame_alloc()) {
 }
 
 DataAVFrame::~DataAVFrame() {
@@ -99,8 +129,9 @@ uint8_t* DataAVFrame::data() {
 }
 
 uint64_t DataAVFrame::size() const {
-	assert(frame->linesize[1] == 0); //TODO: multi plane audio
-	return frame->linesize[0];
+	if (frame->linesize[1])
+		Log::msg(Log::Info, "[DataAVFrame] Storage is planar. Returning the sum of all plane size.");
+	return avpicture_get_size((AVPixelFormat)frame->format, frame->width, frame->height);
 }
 
 AVFrame* DataAVFrame::getFrame() const {
@@ -145,7 +176,16 @@ Pin* PinLibavPacketFactory::createPin(IProps *props) {
 }
 
 Pin* PinLibavFrameFactory::createPin(IProps *props) {
-	return new PinLibavFrame(props);
+	auto p = dynamic_cast<PropsDecoder*>(props);
+	if (!p)
+		throw std::runtime_error("dynamic cast error");
+
+	switch (p->getAVCodecContext()->codec_type) {
+	case AVMEDIA_TYPE_VIDEO: return new PinLibavFrame(props);
+	case AVMEDIA_TYPE_AUDIO: return new PinPcm(props);
+	default: throw std::runtime_error("[PinLibavFrameFactory] Invalid Pin type.");
+}
+	
 }
 
 }

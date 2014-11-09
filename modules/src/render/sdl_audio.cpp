@@ -10,11 +10,15 @@
 namespace Modules {
 
 namespace {
-SDL_AudioSpec SDLAudioSpecConvert(AudioPcmConfig &cfg) {
+SDL_AudioSpec SDLAudioSpecConvert(const AudioPcmConfig &cfg) {
 	SDL_AudioSpec audioSpec;
 	audioSpec.freq = cfg.getSampleRate();
-	audioSpec.format = cfg.getFormat();
 	audioSpec.channels = cfg.getNumChannels();
+	switch (cfg.getFormat()) {
+	case S16: audioSpec.format = AUDIO_S16; break;
+	case F32: audioSpec.format = AUDIO_F32; break;
+	default: throw std::runtime_error("Unknown SDL audio format");
+	}
 	return audioSpec;
 }
 }

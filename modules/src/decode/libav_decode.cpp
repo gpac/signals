@@ -16,7 +16,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Decode {
 
 LibavDecode::LibavDecode(const PropsDecoder &props)
-	: Module(new PinLibavFrameFactory), codecCtx(avcodec_alloc_context3(NULL)), m_numFrames(0) {
+	: Module(new PinLibavFrameFactory), codecCtx(avcodec_alloc_context3(NULL)), avFrame(new ffpp::Frame), m_numFrames(0) {
 	avcodec_copy_context(codecCtx, props.getAVCodecContext());
 
 	switch (codecCtx->codec_type) {
@@ -45,7 +45,7 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	signals.push_back(uptr(pinFactory->createPin()));
+	signals.push_back(uptr(pinFactory->createPin(new PropsDecoder(codecCtx))));
 }
 
 LibavDecode::~LibavDecode() {
@@ -53,22 +53,27 @@ LibavDecode::~LibavDecode() {
 	av_free(codecCtx);
 }
 
-void LibavDecode::processAudio(DataAVPacket *decoderData) {
-	AVPacket *pkt = decoderData->getPacket();
-	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
+void LibavDecode::processAudio(const DataAVPacket *data) {
+	AVPacket *pkt = data->getPacket();
+	auto out = safe_cast<PcmData>(signals[0]->getBuffer(0));
+	//Romain: utile? libavFrameDataConvert(out.get(), avFrame->get());
+
 	int gotFrame;
-	if (avcodec_decode_audio4(codecCtx, out->getFrame(), &gotFrame, pkt) < 0) {
+	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return;
 	}
 	if (gotFrame) {
-		setTimestamp(out, out->getFrame()->nb_samples);
+		for (uint8_t i = 0; i < out->getNumPlanes(); ++i) {
+			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[i]);
+		}
+		setTimestamp(out, avFrame->get()->nb_samples);
 		signals[0]->emit(out);
 		++m_numFrames;
 	}
 }
 
-void LibavDecode::processVideo(DataAVPacket *decoderData) {
+void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
 	int gotPicture;
@@ -90,7 +95,7 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) cons
 	} else if (codecCtx->time_base.den == 0) {
 		throw std::runtime_error("[LibavDecode] Unknown frame rate. Cannot set the timestamp.");
 	} else {
-		t = m_numFrames * increment * IClock::Rate * codecCtx->time_base.num + (codecCtx->time_base.den / 2) / codecCtx->time_base.den;
+		t = (m_numFrames * increment * IClock::Rate * codecCtx->time_base.num * codecCtx->ticks_per_frame + (codecCtx->time_base.den / 2)) / codecCtx->time_base.den;
 	}
 	s->setTime(t);
 }

@@ -260,7 +260,7 @@ unittest("transcoder: h264/mp4 to jpg") {
 	demux->process(nullptr);
 }
 
-unittest("transcoder: jpg to h264 (gpac)") {
+unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	const std::string filename("data/sample.jpg");
 	auto decoder = uptr(new Decode::JPEGTurboDecode());
 	{
