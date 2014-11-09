@@ -9,7 +9,7 @@ namespace Modules {
 namespace Transform {
 
 AudioConvert::AudioConvert(AVSampleFormat srcFmt, uint64_t srcChannelLayout, int srcSampleRate, AVSampleFormat dstFmt, uint64_t dstChannelLayout, int dstSampleRate)
-	: Module(new PinPcmFactory), srcFmt(srcFmt), srcChannelLayout(srcChannelLayout), srcSampleRate(srcSampleRate),
+	: srcFmt(srcFmt), srcChannelLayout(srcChannelLayout), srcSampleRate(srcSampleRate),
 	  dstFmt(dstFmt), dstChannelLayout(dstChannelLayout), dstSampleRate(dstSampleRate), m_Swr(new ffpp::SwResampler) {
 	m_Swr->setInputSampleFmt(srcFmt);
 	m_Swr->setInputLayout(srcChannelLayout);
@@ -18,7 +18,8 @@ AudioConvert::AudioConvert(AVSampleFormat srcFmt, uint64_t srcChannelLayout, int
 	m_Swr->setOutputLayout(dstChannelLayout);
 	m_Swr->setOutputSampleRate(dstSampleRate);
 	m_Swr->init();
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinPcmFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 AudioConvert::~AudioConvert() {

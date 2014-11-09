@@ -35,7 +35,8 @@ class ISOProgressiveReader {
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 	: reader(new ISOProgressiveReader) {
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinDefaultFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 GPACDemuxMP4Full::~GPACDemuxMP4Full() {

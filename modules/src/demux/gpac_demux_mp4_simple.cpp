@@ -40,7 +40,8 @@ GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
 GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
-	pins.push_back(uptr(pinFactory->createPin()));
+	PinDefaultFactory pin;
+	pins.push_back(uptr(pin.createPin()));
 }
 
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {

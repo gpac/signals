@@ -356,7 +356,8 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 
 	//FIXME: this is signalling only (no data)
 	if (m_useSegments) {
-		pins.push_back(uptr(pinFactory->createPin()));
+		PinDefaultFactory pinFactory;
+		pins.push_back(uptr(pinFactory.createPin()));
 	}
 }
 
