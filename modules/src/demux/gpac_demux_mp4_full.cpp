@@ -35,7 +35,7 @@ class ISOProgressiveReader {
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 	: reader(new ISOProgressiveReader) {
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 GPACDemuxMP4Full::~GPACDemuxMP4Full() {
@@ -110,9 +110,9 @@ bool GPACDemuxMP4Full::processSample() {
 					        );
 					reader->sampleIndex++;
 
-					auto out(signals[0]->getBuffer(ISOSample->dataLength));
+					auto out(pins[0]->getBuffer(ISOSample->dataLength));
 					memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
-					signals[0]->emit(out);
+					pins[0]->emit(out);
 				}
 
 				/* once we have read all the samples, we can release some data and force a reparse of the input buffer */

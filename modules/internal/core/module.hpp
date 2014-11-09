@@ -14,7 +14,7 @@ public:
 	Module() : defaultPinFactory(new PinDefaultFactory), pinFactory(defaultPinFactory.get()) {
 	}
 	virtual ~Module() noexcept(false) {
-		for (auto &signal : signals) {
+		for (auto &signal : pins) {
 			signal->waitForCompletion();
 		}
 	}
@@ -22,11 +22,11 @@ public:
 	virtual void process(std::shared_ptr<Data> data) = 0;
 
 	size_t getNumPin() const {
-		return signals.size();
+		return pins.size();
 	}
 
 	Pin* getPin(size_t i) {
-		return signals[i].get();
+		return pins[i].get();
 	}
 
 protected:
@@ -35,7 +35,7 @@ protected:
 
 	std::unique_ptr<PinFactory> const defaultPinFactory;
 	PinFactory* const pinFactory;
-	std::vector<std::unique_ptr<Pin>> signals;
+	std::vector<std::unique_ptr<Pin>> pins;
 };
 
 }

@@ -9,7 +9,7 @@ namespace Transform {
 VideoConvert::VideoConvert(int srcW, int srcH, AVPixelFormat srcFormat, int dstW, int dstH, AVPixelFormat dstFormat)
 	: srcW(srcW), srcH(srcH), dstW(dstW), dstH(dstH), dstFormat(dstFormat) {
 	m_SwContext = sws_getContext(srcW, srcH, srcFormat, dstW, dstH, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 VideoConvert::~VideoConvert() {
@@ -36,7 +36,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 	}
 
 	const int dstFrameSize = avpicture_get_size(dstFormat, dstW, dstH);
-	auto out(signals[0]->getBuffer(dstFrameSize));
+	auto out(pins[0]->getBuffer(dstFrameSize));
 
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
@@ -61,7 +61,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 
 	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcH, pDst, dstStride);
 
-	signals[0]->emit(out);
+	pins[0]->emit(out);
 }
 
 }

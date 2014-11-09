@@ -46,7 +46,7 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
 	: Module(new PinLibavPacketFactory), m_formatCtx(formatCtx) {
 	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
-		signals.push_back(uptr(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec))));
+		pins.push_back(uptr(pinFactory->createPin(new PropsDecoder(formatCtx->streams[i]->codec))));
 	}
 }
 
@@ -56,7 +56,7 @@ LibavDemux::~LibavDemux() {
 
 void LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 	for (;;) {
-		auto out = safe_cast<DataAVPacket>(signals[0/*FIXME: pkt->stream_index*/]->getBuffer(0));
+		auto out = safe_cast<DataAVPacket>(pins[0/*FIXME: pkt->stream_index*/]->getBuffer(0));
 		AVPacket *pkt = out->getPacket();
 		int status = av_read_frame(m_formatCtx, pkt);
 		if (status < 0) {
@@ -70,7 +70,7 @@ void LibavDemux::process(std::shared_ptr<Data> /*data*/) {
 		auto const base = m_formatCtx->streams[pkt->stream_index]->time_base;
 		auto const time = pkt->pts * base.num * IClock::Rate / base.den;
 		out->setTime(time);
-		signals[pkt->stream_index]->emit(out);
+		pins[pkt->stream_index]->emit(out);
 	}
 }
 

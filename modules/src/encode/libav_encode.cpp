@@ -157,7 +157,7 @@ LibavEncode::LibavEncode(Type type)
 		tok = strtok(NULL, "- ");
 	}
 
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 LibavEncode::~LibavEncode() {
@@ -179,7 +179,7 @@ std::string LibavEncode::getCodecName() const {
 }
 
 void LibavEncode::sendOutputPinsInfo() {
-	assert(signals.size() == 1); //FIXME: tested with 1 output pin only
+	assert(pins.size() == 1); //FIXME: tested with 1 output pin only
 	if (codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
 		std::shared_ptr<StreamVideo> stream(new StreamVideo);
 		stream->width = codecCtx->width;
@@ -207,7 +207,7 @@ void LibavEncode::sendOutputPinsInfo() {
 }
 
 bool LibavEncode::processAudio(const PcmData *data) {
-	auto out = safe_cast<DataAVPacket>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
 	libavFrameDataConvert(data, avFrame->get());
@@ -222,14 +222,14 @@ bool LibavEncode::processAudio(const PcmData *data) {
 		pkt->pts = pkt->dts = frameNum * pkt->duration;
 		out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 		assert(pkt->size);
-		signals[0]->emit(out);
+		pins[0]->emit(out);
 	}
 
 	return true;
 }
 
 bool LibavEncode::processVideo(const DataAVFrame *data) {
-	auto out = safe_cast<DataAVPacket>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
 	AVFrame *f = data->getFrame();
@@ -247,7 +247,7 @@ bool LibavEncode::processVideo(const DataAVFrame *data) {
 				pkt->duration = codecCtx->time_base.num;
 			}
 			out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
-			signals[0]->emit(out);
+			pins[0]->emit(out);
 		}
 	}
 

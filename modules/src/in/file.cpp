@@ -9,7 +9,7 @@ namespace In {
 
 File::File(FILE *file)
 	: file(file) {
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 File::~File() {
@@ -34,7 +34,7 @@ File* File::create(std::string const& fn) {
 
 void File::process(std::shared_ptr<Data> /*data*/) {
 	for(;;) {
-		auto out(signals[0]->getBuffer(IOSIZE));
+		auto out(pins[0]->getBuffer(IOSIZE));
 		size_t read = fread(out->data(), 1, IOSIZE, file);
 		if (read < IOSIZE) {
 			if (read == 0) {
@@ -42,7 +42,7 @@ void File::process(std::shared_ptr<Data> /*data*/) {
 			}
 			out->resize(read);
 		}
-		signals[0]->emit(out);
+		pins[0]->emit(out);
 	}
 }
 

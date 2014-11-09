@@ -11,12 +11,12 @@ namespace In {
 
 VideoGenerator::VideoGenerator()
 	: Module(new PinPcmFactory), m_numFrames(0) {
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const picSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3 / 2;
-	auto out = safe_cast<PcmData>(signals[0]->getBuffer(picSize));
+	auto out = safe_cast<PcmData>(pins[0]->getBuffer(picSize));
 
 	// generate video
 	auto const p = out->data();
@@ -29,7 +29,7 @@ void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	out->setTime(m_numFrames * framePeriodIn180k);
 
 	if(m_numFrames % 25 < 2)
-		signals[0]->emit(out);
+		pins[0]->emit(out);
 
 	++m_numFrames;
 }
