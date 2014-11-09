@@ -44,16 +44,32 @@ public:
 	}
 
 	bool isComparable(AudioPcmConfig *cfg) const {
-		if (cfg &&
-			(cfg->sampleRate == sampleRate) &&
-			(cfg->numChannels == numChannels) &&
-			(cfg->layout == layout) &&
-			(cfg->format == format) &&
-			(cfg->numPlanes == numPlanes)) {
-			return true;
+		if (!cfg) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: missing configuration.");
+			return false;
+		}
+		if (cfg->sampleRate == sampleRate) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", cfg->sampleRate, sampleRate);
+			return false;
+		}
+		if (cfg->numChannels == numChannels) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: channel number is %s, expect %s.", cfg->numChannels, numChannels);
+			return false;
+		}
+		if (cfg->layout == layout) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", cfg->layout, layout);
+			return false;
+		}
+		if (cfg->format == format) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: format is %s, expect %s.", cfg->format, format);
+			return false;
+		}
+		if (cfg->numPlanes == numPlanes) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: plane number is %s, expect %s.", cfg->numPlanes, numPlanes);
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	uint8_t getBytesPerSample() const {
@@ -89,7 +105,7 @@ public:
 		return numChannels;
 	}
 
-	uint8_t getLayout() const {
+	AudioLayout getLayout() const {
 		return layout;
 	}
 
@@ -108,6 +124,10 @@ public:
 
 	void setFormat(AudioFormat format) {
 		this->format = format;
+	}
+
+	void setLayout(AudioLayout layout) {
+		this->layout = layout;
 	}
 
 	void setNumPlanes(uint8_t numPlanes) {
@@ -180,6 +200,7 @@ public:
 	void setPlane(uint8_t planeIdx, uint8_t *plane, uint64_t size) {
 		if (planeIdx > getNumPlanes())
 			throw std::runtime_error("Pcm plane doesn't exist.");
+		//TODO: use realloc
 		freePlane(planeIdx);
 		planes[planeIdx] = new uint8_t[size];
 		planeSize[planeIdx] = size;
