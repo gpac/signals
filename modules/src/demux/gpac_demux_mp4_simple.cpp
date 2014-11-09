@@ -40,7 +40,7 @@ GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
 GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {
@@ -62,9 +62,9 @@ void GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
 			         ISOSample->DTS + ISOSample->CTS_Offset);
 			reader->sampleIndex++;
 
-			auto out(signals[0]->getBuffer(ISOSample->dataLength));
+			auto out(pins[0]->getBuffer(ISOSample->dataLength));
 			memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
-			signals[0]->emit(out);
+			pins[0]->emit(out);
 		} catch (gpacpp::Error const& err) {
 			if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 				u64 missingBytes = reader->movie->getMissingBytes(reader->trackNumber);

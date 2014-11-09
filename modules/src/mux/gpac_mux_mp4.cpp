@@ -356,7 +356,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 
 	//FIXME: this is signalling only (no data)
 	if (m_useSegments) {
-		signals.push_back(uptr(pinFactory->createPin()));
+		pins.push_back(uptr(pinFactory->createPin()));
 	}
 }
 
@@ -368,11 +368,11 @@ void GPACMuxMP4::closeSegment() {
 			throw std::runtime_error("Cannot close output segment.");
 		}
 
-		auto out = signals[0]->getBuffer(0);
+		auto out = pins[0]->getBuffer(0);
 		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 		out->setTime((m_DTS * IClock::Rate + mediaTimescale / 2) / mediaTimescale);
 		out->setDuration(m_curFragDur, mediaTimescale);
-		signals[0]->emit(out);
+		pins[0]->emit(out);
 	}
 }
 

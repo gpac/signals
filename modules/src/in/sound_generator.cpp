@@ -17,7 +17,7 @@ auto const SINE_FREQ = 880.0;
 SoundGenerator::SoundGenerator()
 	: Module(new PinPcmFactory), m_numSamples(20000) {
 	audioCfg.setSampleRate(SAMPLE_RATE);
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
@@ -25,7 +25,7 @@ void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * audioCfg.getSampleRate() / 1000;
 	
-	auto out = safe_cast<PcmData>(signals[0]->getBuffer(bufferSize));
+	auto out = safe_cast<PcmData>(pins[0]->getBuffer(bufferSize));
 	out->setConfig(audioCfg);
 	out->setTime(m_numSamples * IClock::Rate / audioCfg.getSampleRate());
 
@@ -44,7 +44,7 @@ void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 		p[i*bytesPerSample+3] = (val >> 8) & 0xFF;
 	}
 
-	signals[0]->emit(out);
+	pins[0]->emit(out);
 }
 
 double SoundGenerator::nextSample() {

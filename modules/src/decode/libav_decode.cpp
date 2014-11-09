@@ -45,7 +45,7 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	signals.push_back(uptr(pinFactory->createPin(new PropsDecoder(codecCtx))));
+	pins.push_back(uptr(pinFactory->createPin(new PropsDecoder(codecCtx))));
 }
 
 LibavDecode::~LibavDecode() {
@@ -55,7 +55,7 @@ LibavDecode::~LibavDecode() {
 
 void LibavDecode::processAudio(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
-	auto out = safe_cast<PcmData>(signals[0]->getBuffer(0));
+	auto out = safe_cast<PcmData>(pins[0]->getBuffer(0));
 
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
@@ -71,14 +71,14 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 		libavFrame2pcmConvert(avFrame->get(), &audioCfg);
 		out->setConfig(audioCfg);
 		setTimestamp(out, avFrame->get()->nb_samples);
-		signals[0]->emit(out);
+		pins[0]->emit(out);
 		++m_numFrames;
 	}
 }
 
 void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
-	auto out = safe_cast<DataAVFrame>(signals[0]->getBuffer(0));
+	auto out = safe_cast<DataAVFrame>(pins[0]->getBuffer(0));
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, out->getFrame(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
@@ -86,7 +86,7 @@ void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	}
 	if (gotPicture) {
 		setTimestamp(out);
-		signals[0]->emit(out);
+		pins[0]->emit(out);
 		++m_numFrames;
 	}
 }

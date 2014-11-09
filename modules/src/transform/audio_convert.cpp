@@ -18,7 +18,7 @@ AudioConvert::AudioConvert(AVSampleFormat srcFmt, uint64_t srcChannelLayout, int
 	m_Swr->setOutputLayout(dstChannelLayout);
 	m_Swr->setOutputSampleRate(dstSampleRate);
 	m_Swr->init();
-	signals.push_back(uptr(pinFactory->createPin()));
+	pins.push_back(uptr(pinFactory->createPin()));
 }
 
 AudioConvert::~AudioConvert() {
@@ -32,7 +32,7 @@ void AudioConvert::process(std::shared_ptr<Data> data) {
 	auto const srcNumSamples = audioData->getFrame()->nb_samples;
 	auto const dstNumSamples = divUp(srcNumSamples * dstSampleRate, srcSampleRate);
 
-	auto out(signals[0]->getBuffer(bufferSize * 10));
+	auto out(pins[0]->getBuffer(bufferSize * 10));
 
 	uint8_t* pDst = out->data();
 	auto const numSamples = m_Swr->convert(&pDst, dstNumSamples, (const uint8_t**)audioData->getFrame()->data, srcNumSamples);
@@ -42,7 +42,7 @@ void AudioConvert::process(std::shared_ptr<Data> data) {
 
 	out->resize(sampleSize);
 
-	signals[0]->emit(out);
+	pins[0]->emit(out);
 }
 
 }
