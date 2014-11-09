@@ -17,7 +17,7 @@ class SDLVideo : public Module {
 public:
 	SDLVideo();
 	~SDLVideo();
-	void process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data) override;
 
 private:
 

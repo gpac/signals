@@ -17,7 +17,7 @@ class AudioConvert : public Module {
 	public:
 		AudioConvert(enum AVSampleFormat srcFmt, uint64_t srcChannelLayout, int srcSampleRate, enum AVSampleFormat dstFmt, uint64_t dstChannelLayout, int dstSampleRate);
 		~AudioConvert();
-		void process(std::shared_ptr<Data> data);
+		void process(std::shared_ptr<Data> data) override;
 
 	private:
 		AVSampleFormat srcFmt;

@@ -12,7 +12,7 @@ class LibavDemux : public Module {
 public:
 	static LibavDemux* create(const std::string &url);
 	~LibavDemux();
-	void process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data) override;
 
 private:
 	LibavDemux(struct AVFormatContext *formatCtx);

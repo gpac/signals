@@ -20,7 +20,7 @@ class SDLAudio : public Module {
 public:
 	static SDLAudio* create();
 	~SDLAudio();
-	void process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data) override;
 
 private:
 	SDLAudio();

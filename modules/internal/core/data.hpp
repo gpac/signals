@@ -29,15 +29,15 @@ public:
 	virtual ~Data() {
 	}
 
-	virtual uint8_t* data() {
+	virtual uint8_t* data() override {
 		return ptr.data();
 	}
 
-	virtual uint64_t size() const {
+	virtual uint64_t size() const override {
 		return ptr.size();
 	}
 
-	virtual void resize(size_t size) {
+	virtual void resize(size_t size) override {
 		ptr.resize(size);
 	}
 

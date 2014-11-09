@@ -10,7 +10,7 @@ class File : public Module {
 public:
 	static File* create(std::string const& path);
 	~File();
-	void process(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<Data> data) override;
 
 private:
 	File(FILE *file);
