@@ -113,7 +113,7 @@ void libavFrameDataConvert(const PcmData *data, AVFrame *frame) {
 }
 
 DataAVPacket::DataAVPacket(size_t size)
-	: Data(size), pkt(new AVPacket) {
+	: pkt(new AVPacket) {
 	av_init_packet(pkt.get());
 	av_free_packet(pkt.get());
 	if (size)
@@ -142,7 +142,7 @@ void DataAVPacket::resize(size_t /*size*/) {
 }
 
 DataAVFrame::DataAVFrame(size_t size)
-	: Data(size), frame(av_frame_alloc()) {
+	: frame(av_frame_alloc()) {
 }
 
 DataAVFrame::~DataAVFrame() {
@@ -155,7 +155,7 @@ uint8_t* DataAVFrame::data() {
 
 uint64_t DataAVFrame::size() const {
 	if (frame->linesize[1])
-		Log::msg(Log::Info, "[DataAVFrame] Storage is planar. Returning the sum of all plane size.");
+		Log::msg(Log::Debug, "[DataAVFrame] Storage is planar. Returning the sum of all plane size.");
 	return avpicture_get_size((AVPixelFormat)frame->format, frame->width, frame->height);
 }
 
