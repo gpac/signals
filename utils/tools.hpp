@@ -51,14 +51,11 @@ std::vector<T> makeVector(T val, Arguments... args) {
 	return r;
 }
 
-#define foreach(iterator, container) \
-	for(auto iterator=std::begin(container);iterator != std::end(container);++iterator)
-
 template<typename Lambda, typename T>
 std::vector<T> apply(Lambda func, std::vector<T>& input) {
 	std::vector<T> r;
-	foreach(element, input)
-	r.push_back(func(*element));
+	for(auto& element : input)
+		r.push_back(func(element));
 	return r;
 }
 
