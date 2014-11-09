@@ -20,12 +20,12 @@ using namespace Modules;
 namespace {
 std::unique_ptr<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *decoderProps) {
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
-	/*if (codecType == AVMEDIA_TYPE_VIDEO) { //Romain
+	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
 		auto r = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 		ConnectPinToModule(pPin, r);
 		return std::move(r);
-	} else */if (codecType == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
 		auto r = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 		ConnectPinToModule(pPin, r);
@@ -71,7 +71,7 @@ int safeMain(int argc, char const* argv[]) {
 
 			std::stringstream filename;
 			filename << i;
-			auto muxer = uptr(new Mux::GPACMuxMP4(filename.str(), false)); //Romain
+			auto muxer = uptr(new Mux::GPACMuxMP4(filename.str(), true));
 			ConnectPinToModule(encoder->getPin(0), muxer);
 
 			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);

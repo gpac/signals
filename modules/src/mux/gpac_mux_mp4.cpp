@@ -355,7 +355,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 	}
 
 	//FIXME: this is signalling only (no data)
-	if (1 || m_useSegments) { //Romain
+	if (m_useSegments) {
 		signals.push_back(uptr(pinFactory->createPin()));
 	}
 }
