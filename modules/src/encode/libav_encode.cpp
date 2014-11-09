@@ -175,17 +175,7 @@ LibavEncode::~LibavEncode() {
 }
 
 std::string LibavEncode::getCodecName() const {
-	switch (codecCtx->codec_id) {
-	case AV_CODEC_ID_MP2:
-		return "mp2";
-	case AV_CODEC_ID_MP3:
-		return "mp3";
-	case AV_CODEC_ID_AAC:
-		return "aac";
-	default:
-		assert(0);
-		return "not supported"; //TODO: add more codecs and find a universal terminology
-	}
+	return avcodec_get_name(codecCtx->codec_id);
 }
 
 void LibavEncode::sendOutputPinsInfo() {
