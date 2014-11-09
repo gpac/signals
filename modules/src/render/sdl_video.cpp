@@ -1,8 +1,15 @@
 #include "sdl_video.hpp"
 #include "../utils/log.hpp"
+#include "../utils/tools.hpp"
 #include "SDL2/SDL.h"
 #include "internal/core/clock.hpp"
 #include "render_common.hpp"
+
+//TODO: remove once Signals has a Picture type
+#include "../common/libav.hpp"
+extern "C" {
+#include <libavcodec/avcodec.h>
+}
 
 namespace Modules {
 namespace Render {
@@ -84,7 +91,8 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	auto const delayInMs = (delay * 1000) / IClock::Rate;
 	SDL_Delay((Uint32)delayInMs);
 
-	SDL_UpdateYUVTexture(texture, NULL, data->data(), width, data->data() + width*height, width / 2, data->data()+(width*height*5)/4, width / 2);
+	auto frame = safe_cast<DataAVFrame>(data)->getFrame();
+	SDL_UpdateYUVTexture(texture, NULL, frame->data[0], frame->linesize[0], frame->data[1], frame->linesize[1], frame->data[2], frame->linesize[2]);
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
 	SDL_RenderPresent(renderer);
 
@@ -97,6 +105,10 @@ SDLVideo::~SDLVideo() {
 }
 
 void SDLVideo::process(std::shared_ptr<Data> data) {
+	auto frame = safe_cast<DataAVFrame>(data)->getFrame();
+	if ((AVPixelFormat)frame->format != PIX_FMT_YUV420P)
+		throw std::runtime_error("Unknown SDLVideo format");
+
 	m_dataQueue.push(data);
 }
 

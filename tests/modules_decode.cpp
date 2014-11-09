@@ -7,6 +7,7 @@ extern "C"
 }
 
 #include "decode/libav_decode.hpp"
+#include "encode/libav_encode.hpp"
 #include "in/file.hpp"
 #include "out/null.hpp"
 #include "transform/audio_convert.hpp"
@@ -107,6 +108,15 @@ unittest("decoder: audio converter") {
 	auto audioConverter = uptr(new Transform::AudioConvert());
 	ConnectToModule(decoder->getPin(0)->getSignal(), audioConverter);
 #endif
+
+	auto frame = getTestMp3Frame();
+	decoder->process(frame);
+}
+
+unittest("decoder: audio mp3 to AAC") {
+	auto decoder = uptr(createMp3Decoder());
+	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
+	ConnectToModule(decoder->getPin(0)->getSignal(), encoder);
 
 	auto frame = getTestMp3Frame();
 	decoder->process(frame);

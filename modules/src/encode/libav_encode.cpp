@@ -38,7 +38,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode::LibavEncode(Type type)
-	: Module(new PinLibavPacketFactory), frameNum(-1) {
+	: Module(new PinLibavPacketFactory), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -110,10 +110,7 @@ LibavEncode::LibavEncode(Type type)
 	}
 	break;
 	case Audio:
-		codecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
-		codecCtx->sample_rate = AUDIO_SAMPLERATE;
-		codecCtx->channels = 2;
-		codecCtx->channel_layout = AV_CH_LAYOUT_STEREO;
+		libavAudioCtxConvert(audioCfg, codecCtx);
 		break;
 	default:
 		assert(0);
@@ -218,13 +215,15 @@ void LibavEncode::sendOutputPinsInfo() {
 	}
 }
 
-bool LibavEncode::processAudio(const DataAVFrame *data) {
+bool LibavEncode::processAudio(const PcmData *data) {
 	auto out = safe_cast<DataAVPacket>(signals[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
+	libavFrameDataConvert(data, avFrame->get());
+	avFrame->get()->pts = ++frameNum;
+
 	int gotPkt = 0;
-	data->getFrame()->pts = ++frameNum;
-	if (avcodec_encode_audio2(codecCtx, pkt, data->getFrame(), &gotPkt)) {
+	if (avcodec_encode_audio2(codecCtx, pkt, avFrame->get(), &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %s.", frameNum);
 		return false;
 	}
@@ -265,14 +264,19 @@ bool LibavEncode::processVideo(const DataAVFrame *data) {
 }
 
 void LibavEncode::process(std::shared_ptr<Data> data) {
-	const auto encoderData = safe_cast<DataAVFrame>(data);
 	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO:
+	case AVMEDIA_TYPE_VIDEO: {
+		const auto encoderData = safe_cast<DataAVFrame>(data);
 		processVideo(encoderData.get());
 		break;
-	case AVMEDIA_TYPE_AUDIO:
+	}
+	case AVMEDIA_TYPE_AUDIO: {
+		const auto encoderData = safe_cast<PcmData>(data);
+		if (!encoderData->isComparable(audioCfg))
+			throw std::runtime_error("[SDLAudio] Incompatible audio data");
 		processAudio(encoderData.get());
 		break;
+	}
 	default:
 		assert(0);
 		return;

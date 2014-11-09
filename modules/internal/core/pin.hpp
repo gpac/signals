@@ -122,7 +122,9 @@ public:
 	 */
 	void setProps(IProps *props) {
 		std::unique_ptr<IProps> uprops(props);
+		auto curProps = this->props.get();
 		this->props.swap(uprops);
+		delete curProps;
 	}
 
 private:

@@ -3,7 +3,7 @@
 #include "internal/core/data.hpp"
 #include "internal/core/pin.hpp"
 #include "internal/core/props.hpp"
-#include "pcm.hpp"
+#include "pcm.hpp" //Romain: move to cpp
 #include <cstdarg>
 #include <memory>
 
@@ -15,11 +15,10 @@ struct AVDictionary;
 
 namespace Modules {
 
-//FIXME: move in libmm, or add a new namespace
 class PropsDecoder : public IProps {
 public:
 	/**
-	 * Doesn't take the ownership
+	 * Doesn't take the ownership of codecCtx
 	 */
 	PropsDecoder(AVCodecContext *codecCtx)
 		: codecCtx(codecCtx) {
@@ -47,7 +46,7 @@ private:
 };
 
 //TODO: remove: created specially to fix the Transform converters relying on libav + awful hack: derives from PcmData
-class DataAVFrame : public PcmData {
+class DataAVFrame : public Data {
 public:
 	DataAVFrame(size_t size);
 	~DataAVFrame();
@@ -59,6 +58,9 @@ public:
 private:
 	AVFrame *frame;
 };
+
+void libavAudioCtxConvert(const AudioPcmConfig &cfg, AVCodecContext *codecCtx);
+void libavFrameDataConvert(const PcmData *data, AVFrame *frame);
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 
