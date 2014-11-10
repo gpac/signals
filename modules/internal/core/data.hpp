@@ -98,9 +98,10 @@ public:
 	void setResolution(Resolution res) {
 		m_res = res;
 		resize(res.yv12size());
+		auto const numPixels = res.width * res.height;
 		m_comp[0] = data();
-		m_comp[1] = data() + res.yv12size();
-		m_comp[2] = data() + res.yv12size() + res.yv12size()/4;
+		m_comp[1] = data() + numPixels;
+		m_comp[2] = data() + numPixels + numPixels/4;
 		m_pitch[0] = res.width;
 		m_pitch[1] = res.width/2;
 		m_pitch[2] = res.width/2;

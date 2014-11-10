@@ -78,6 +78,32 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 	}
 }
 
+namespace {
+	void copyToPicture(AVFrame const* avFrame, Picture* pic) {
+
+		pic->setResolution(Resolution(avFrame->width, avFrame->height));
+
+		for(int comp=0;comp < 3;++comp) {
+
+			auto subsampling = comp == 0 ? 1 : 2;
+			auto src = avFrame->data[comp];
+			auto srcPitch = avFrame->linesize[comp];
+
+			auto dst = pic->getComp(comp);
+			auto dstPitch = pic->getPitch(comp);
+
+			auto const h = avFrame->height / subsampling;
+			auto const w = avFrame->width / subsampling;
+
+			for(int y=0;y < h; ++y) {
+				memcpy(dst, src, w);
+				src += srcPitch;
+				dst += dstPitch;
+			}
+		}
+	}
+}
+
 void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
 	auto pic = safe_cast<Picture>(pins[0]->getBuffer(0));
@@ -87,7 +113,7 @@ void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 		return;
 	}
 	if (gotPicture) {
-		pic->setResolution(Resolution(codecCtx->width, codecCtx->height));
+		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
 		pins[0]->emit(pic);
 		++m_numFrames;
