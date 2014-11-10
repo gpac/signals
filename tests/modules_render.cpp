@@ -44,8 +44,8 @@ unittest("render: dynamic resolution") {
 	videoRender->process(pic2);
 }
 
-unittest("A/V sync: separate threads") {
-#if 0
+#ifdef __linux__
+unittest("render: A/V sync: separate threads") {
 	auto f = [&]() {
 		auto videoGen = uptr(new In::VideoGenerator);
 		auto videoRender = uptr(new Render::SDLVideo);
@@ -75,7 +75,7 @@ unittest("A/V sync: separate threads") {
 
 	tf.join();
 	tg.join();
-#endif
 }
+#endif
 
 }
