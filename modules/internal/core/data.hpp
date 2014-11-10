@@ -4,6 +4,8 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
+#include <sstream>
 #include <stdlib.h>
 
 namespace Modules {
@@ -79,6 +81,11 @@ struct Resolution {
 	int width, height;
 	size_t yv12size() const {
 		return width * height * 3 / 2;
+	}
+	std::string toString() const {
+		std::stringstream ss;
+		ss << width << "x" << height;
+		return ss.str();
 	}
 };
 

@@ -234,7 +234,10 @@ bool LibavEncode::processVideo(const Picture *pic) {
 	AVPacket *pkt = out->getPacket();
 
 	if(pic->getResolution() != VIDEO_RESOLUTION)
-		throw std::runtime_error("LibavEncode: resolution mismatch");
+		throw std::runtime_error(format("LibavEncode: resolution mismatch, expected %s, got %s",
+				 	VIDEO_RESOLUTION.toString(),
+					pic->getResolution().toString()
+					));
 
 	ffpp::Frame frame;
 	AVFrame *f = frame.get();
