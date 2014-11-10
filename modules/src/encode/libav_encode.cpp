@@ -85,8 +85,8 @@ LibavEncode::LibavEncode(Type type)
 	/* parameters */
 	switch (type) {
 	case Video: {
-		codecCtx->width = VIDEO_WIDTH; //FIXME: encode size should be a parameter
-		codecCtx->height = VIDEO_HEIGHT;
+		codecCtx->width = VIDEO_RESOLUTION.width; //FIXME: encode size should be a parameter
+		codecCtx->height = VIDEO_RESOLUTION.height;
 		if (strcmp(generalDict.get("vcodec")->value, "mjpeg")) {
 			codecCtx->pix_fmt = PIX_FMT_YUV420P;
 		} else {
@@ -233,7 +233,8 @@ bool LibavEncode::processVideo(const Picture *pic) {
 	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	assert(pic->getResolution() == Resolution(VIDEO_WIDTH, VIDEO_HEIGHT));
+	if(pic->getResolution() != VIDEO_RESOLUTION)
+		throw std::runtime_error("LibavEncode: resolution mismatch");
 
 	ffpp::Frame frame;
 	AVFrame *f = frame.get();

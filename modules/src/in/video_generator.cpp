@@ -15,7 +15,7 @@ VideoGenerator::VideoGenerator()
 }
 
 void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
-	auto const dim = Resolution(VIDEO_WIDTH, VIDEO_HEIGHT);
+	auto const dim = VIDEO_RESOLUTION;
 	auto const picSize = dim.yv12size();
 	auto pic = safe_cast<Picture>(pins[0]->getBuffer(picSize));
 

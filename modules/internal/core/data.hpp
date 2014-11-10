@@ -73,6 +73,9 @@ struct Resolution {
 	bool operator==(Resolution const& other) const {
 		return width == other.width && height == other.height;
 	}
+	bool operator!=(Resolution const& other) const {
+		return !(*this == other);
+	}
 	int width, height;
 	size_t yv12size() const {
 		return width * height * 3 / 2;
@@ -113,8 +116,7 @@ private:
 	uint8_t* m_comp[3];
 };
 
-static const int VIDEO_WIDTH = 320;
-static const int VIDEO_HEIGHT = 200;
+static const Resolution VIDEO_RESOLUTION(320, 200);
 static const int VIDEO_FPS = 24;
 
 }
