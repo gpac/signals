@@ -46,7 +46,6 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 	}
 
 	PinLibavFrameFactory factory;
-
 	pins.push_back(uptr(factory.createPin(new PropsDecoder(codecCtx))));
 }
 

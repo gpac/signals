@@ -89,9 +89,9 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	}
 
 	SDL_UpdateYUVTexture(texture, NULL, 
-			pic->getComp(0), pic->getPitch(0),
-			pic->getComp(1), pic->getPitch(1),
-			pic->getComp(2), pic->getPitch(2));
+			pic->getComp(0), (int)pic->getPitch(0),
+			pic->getComp(1), (int)pic->getPitch(1),
+			pic->getComp(2), (int)pic->getPitch(2));
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
 	SDL_RenderPresent(renderer);
 

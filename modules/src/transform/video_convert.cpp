@@ -25,7 +25,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 	for(int i=0;i < 3; ++i)
 	{
 		srcSlice[i] = videoData->getComp(i);
-		srcStride[i] = videoData->getPitch(i);
+		srcStride[i] = (int)videoData->getPitch(i);
 	}
 
 	const int dstFrameSize = avpicture_get_size(dstFormat, dstW, dstH);

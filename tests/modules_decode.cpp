@@ -17,11 +17,17 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-Decode::LibavDecode* createMp3Decoder() {
-	auto codec = avcodec_find_decoder(AV_CODEC_ID_MP3);
+Decode::LibavDecode* createGenericDecoder(enum AVCodecID id) {
+	auto codec = avcodec_find_decoder(id);
 	auto context = avcodec_alloc_context3(codec);
 	PropsDecoder props(context);
-	return new Decode::LibavDecode(props);
+	auto decode = new Decode::LibavDecode(props);
+	avcodec_close(context);
+	return decode;
+}
+
+Decode::LibavDecode* createMp3Decoder() {
+	return createGenericDecoder(AV_CODEC_ID_MP3);
 }
 
 template<size_t numBytes>
@@ -72,10 +78,7 @@ unittest("decoder: audio simple") {
 
 namespace {
 Decode::LibavDecode* createVideoDecoder() {
-	auto codec = avcodec_find_decoder(AV_CODEC_ID_H264);
-	auto context = avcodec_alloc_context3(codec);
-	PropsDecoder props(context);
-	return new Decode::LibavDecode(props);
+	return createGenericDecoder(AV_CODEC_ID_H264);
 }
 
 std::shared_ptr<Data> getTestH24Frame() {
@@ -127,10 +130,34 @@ unittest("decoder: audio converter") {
 	decoder->process(frame);
 }
 
-unittest("decoder: audio mp3 to AAC") {
+#ifdef ENABLE_FAILING_TESTS
+//TODO: this test fails because the exception is caught by a Signals future. To be tested when tasks are pushed to an executor
+unittest("decoder: failing audio mp3 to AAC") {
 	auto decoder = uptr(createMp3Decoder());
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
-	ConnectToModule(decoder->getPin(0)->getSignal(), encoder);
+
+	ConnectPinToModule(decoder->getPin(0), encoder);
+
+	auto frame = getTestMp3Frame();
+	bool thrown = false;
+	try {
+		decoder->process(frame);
+	} catch (std::exception const& e) {
+		std::cerr << "Expected error: " << e.what() << std::endl;
+		thrown = true;
+	}
+	ASSERT(thrown);
+}
+#endif
+
+unittest("decoder: audio mp3 to converter to AAC") {
+	auto decoder = uptr(createMp3Decoder());
+	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
+	auto converter = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Mono, 44100, AudioStruct::Planar,
+		                                              AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved));
+
+	ConnectPinToModule(decoder->getPin(0), converter);
+	ConnectPinToModule(converter->getPin(0), encoder);
 
 	auto frame = getTestMp3Frame();
 	decoder->process(frame);

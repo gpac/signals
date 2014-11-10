@@ -1,6 +1,7 @@
 #pragma once
 
 #include "internal/core/module.hpp"
+#include "../common/pcm.hpp"
 extern "C" {
 #include <libavutil/samplefmt.h> //TODO: remove when media types
 }
@@ -8,6 +9,7 @@ extern "C" {
 
 namespace ffpp {
 struct SwResampler;
+struct Frame;
 }
 
 namespace Modules {
@@ -15,17 +17,14 @@ namespace Transform {
 
 class AudioConvert : public Module {
 	public:
-		AudioConvert(enum AVSampleFormat srcFmt, uint64_t srcChannelLayout, int srcSampleRate, enum AVSampleFormat dstFmt, uint64_t dstChannelLayout, int dstSampleRate);
+		AudioConvert(AudioSampleFormat srcFmt, AudioLayout srcChannelLayout, uint32_t srcSampleRate, AudioStruct srcStruct,
+			         AudioSampleFormat dstFmt, AudioLayout dstChannelLayout, uint32_t dstSampleRate, AudioStruct dstStruct);
 		~AudioConvert();
 		void process(std::shared_ptr<Data> data) override;
 
 	private:
-		AVSampleFormat srcFmt;
-		uint64_t srcChannelLayout;
-		int srcSampleRate;
-		AVSampleFormat dstFmt;
-		uint64_t dstChannelLayout;
-		int dstSampleRate;
+		std::unique_ptr<PcmFormat> srcAudioCfg, dstAudioCfg;
+		std::unique_ptr<ffpp::Frame> const aFrame;
 		std::unique_ptr<ffpp::SwResampler> const m_Swr;
 };
 

@@ -16,19 +16,43 @@ enum AudioLayout {
 	Stereo
 };
 
-static const int AUDIO_SAMPLERATE = 44100;
-static const int AUDIO_CHANNEL_NUM = 2;
+enum AudioStruct {
+	Interleaved,
+	Planar
+};
+
+static const uint32_t AUDIO_SAMPLERATE = 44100;
+static const uint8_t AUDIO_CHANNEL_NUM = 2;
 static const AudioLayout AUDIO_LAYOUT = Stereo;
 
 static const AudioSampleFormat AUDIO_PCM_FORMAT = S16;
-static const int AUDIO_PCM_PLANES_DEFAULT = 1;
-static const int AUDIO_PCM_PLANES_MAX = 8;
+static const uint8_t AUDIO_PCM_PLANES_MAX = 8;
+}
 
+namespace {
+uint8_t getNumChannelsFromLayout(Modules::AudioLayout layout) {
+	switch (layout) {
+	case Modules::Mono:
+		return 1;
+	case Modules::Stereo:
+		return 2;
+	default:
+		throw std::runtime_error("Unknown audio layout");
+	}
+}
+}
 
-struct PcmFormat {
+namespace Modules {
+
+class PcmFormat {
+public:
 	PcmFormat(uint32_t sampleRate = AUDIO_SAMPLERATE, uint8_t numChannels = AUDIO_CHANNEL_NUM,
-		AudioLayout layout = AUDIO_LAYOUT, AudioSampleFormat sampleFormat = AUDIO_PCM_FORMAT, uint8_t numPlanes = AUDIO_PCM_PLANES_DEFAULT) :
-		sampleRate(sampleRate), numChannels(numChannels), layout(layout), sampleFormat(sampleFormat), numPlanes(numPlanes) {
+		AudioLayout layout = AUDIO_LAYOUT, AudioSampleFormat sampleFormat = AUDIO_PCM_FORMAT, AudioStruct structa = Interleaved) :
+		sampleRate(sampleRate), numChannels(numChannels), layout(layout), sampleFormat(sampleFormat), numPlanes((structa == Planar) ? numChannels : 1) {
+	}
+
+	PcmFormat(uint32_t sampleRate, AudioLayout layout, AudioSampleFormat sampleFormat, AudioStruct structa) :
+		sampleRate(sampleRate), numChannels(getNumChannelsFromLayout(layout)), layout(layout), sampleFormat(sampleFormat), numPlanes((structa == Planar) ? numChannels : 1) {
 	}
 
 	bool operator!=(const PcmFormat& other) const {
@@ -67,17 +91,7 @@ struct PcmFormat {
 		case F32: b *= 4; break;
 		default: throw std::runtime_error("Unknown audio format");
 		}
-		switch (layout) {
-		case Mono:
-			b *= 1;
-			break;
-		case Stereo:
-			b *= 2;
-			break;
-		default:
-			throw std::runtime_error("Unknown audio layout");
-		}
-
+		b *= getNumChannelsFromLayout(layout);
 		return b;
 	}
 

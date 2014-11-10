@@ -17,6 +17,7 @@ auto const SINE_FREQ = 880.0;
 SoundGenerator::SoundGenerator()
 	: m_numSamples(20000) {
 	pcmFormat.sampleRate = SAMPLE_RATE;
+	pcmFormat.numPlanes = 1;
 	PinPcmFactory pinFactory;
 	pins.push_back(uptr(pinFactory.createPin()));
 }

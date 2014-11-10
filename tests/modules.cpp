@@ -1,6 +1,7 @@
 #include "tests.hpp"
 #include "modules.hpp"
 
+//#define ENABLE_FAILING_TESTS
 
 #include "modules_fifo.cpp"
 #include "modules_simple.cpp"
