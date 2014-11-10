@@ -83,16 +83,18 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	}
 
 	// sanity check
-	assert((int)data->size() >= width * height * 3 / 2);
+	auto pic = safe_cast<Picture>(data);
 
 	auto const now = g_DefaultClock->now();
-	auto const timestamp = data->getTime() + PREROLL_DELAY; // assume timestamps start at zero
+	auto const timestamp = pic->getTime() + PREROLL_DELAY; // assume timestamps start at zero
 	auto const delay = (Uint32)std::max<int64_t>(0, timestamp - now);
 	auto const delayInMs = (delay * 1000) / IClock::Rate;
 	SDL_Delay((Uint32)delayInMs);
 
-	auto frame = safe_cast<DataAVFrame>(data)->getFrame();
-	SDL_UpdateYUVTexture(texture, NULL, frame->data[0], frame->linesize[0], frame->data[1], frame->linesize[1], frame->data[2], frame->linesize[2]);
+	SDL_UpdateYUVTexture(texture, NULL, 
+			pic->getComp(0), pic->getPitch(0),
+			pic->getComp(1), pic->getPitch(1),
+			pic->getComp(2), pic->getPitch(2));
 	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
 	SDL_RenderPresent(renderer);
 
@@ -105,10 +107,6 @@ SDLVideo::~SDLVideo() {
 }
 
 void SDLVideo::process(std::shared_ptr<Data> data) {
-	auto frame = safe_cast<DataAVFrame>(data)->getFrame();
-	if ((AVPixelFormat)frame->format != PIX_FMT_YUV420P)
-		throw std::runtime_error("Unknown SDLVideo format");
-
 	m_dataQueue.push(data);
 }
 

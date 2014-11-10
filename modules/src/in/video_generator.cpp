@@ -11,26 +11,28 @@ namespace In {
 
 VideoGenerator::VideoGenerator()
 	: m_numFrames(0) {
-	PinPcmFactory pinFactory;
-	pins.push_back(uptr(pinFactory.createPin()));
+	pins.push_back(uptr(new PinDataDefault<Picture>));
 }
 
 void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
-	auto const picSize = VIDEO_WIDTH * VIDEO_HEIGHT * 3 / 2;
-	auto out = safe_cast<PcmData>(pins[0]->getBuffer(picSize));
+	auto const dim = Resolution(VIDEO_WIDTH, VIDEO_HEIGHT);
+	auto const picSize = dim.yv12size();
+	auto pic = safe_cast<Picture>(pins[0]->getBuffer(picSize));
+
+	pic->setResolution(dim);
 
 	// generate video
-	auto const p = out->data();
+	auto const p = pic->data();
 	auto const FLASH_PERIOD = FRAMERATE;
 	auto const flash = (m_numFrames % FLASH_PERIOD) == 0;
 	auto const val = flash ? 0xCC : 0x80;
 	memset(p, val, picSize);
 
 	auto const framePeriodIn180k = IClock::Rate / FRAMERATE;
-	out->setTime(m_numFrames * framePeriodIn180k);
+	pic->setTime(m_numFrames * framePeriodIn180k);
 
 	if(m_numFrames % 25 < 2)
-		pins[0]->emit(out);
+		pins[0]->emit(pic);
 
 	++m_numFrames;
 }
