@@ -102,6 +102,11 @@ unittest("decoder: video simple") {
 		auto const res = pic->getResolution();
 		assert(res.width == 16);
 		assert(res.height == 16);
+
+		auto const firstPixel = *pic->getComp(0);
+		auto const lastPixel = *(pic->getComp(0) + res.width * res.height - 1);
+		assert(firstPixel == 0x80);
+		assert(lastPixel == 0x80);
 	};
 
 	ConnectPin(decoder->getPin(0), onPic);
