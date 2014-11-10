@@ -15,7 +15,7 @@ namespace Modules {
 namespace Render {
 
 SDLVideo::SDLVideo()
-	: displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
+	: texture(nullptr), displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
 }
 
 void SDLVideo::doRender() {
@@ -33,13 +33,7 @@ void SDLVideo::doRender() {
 		throw std::runtime_error("Renderer creation failed");
 	}
 
-	Uint32 pixelFormat = SDL_PIXELFORMAT_IYUV; //FIXME hardcoded
-	texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, resolution.width, resolution.height);
-	if (!texture) {
-		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
-		SDL_DestroyRenderer(renderer);
-		throw std::runtime_error("Texture creation failed");
-	}
+	createTexture();
 
 	SDL_EventState(SDL_KEYUP, SDL_IGNORE); //ignore key up events, they don't even get filtered
 
@@ -89,8 +83,10 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	auto const delayInMs = (delay * 1000) / IClock::Rate;
 	SDL_Delay((Uint32)delayInMs);
 
-	if(pic->getResolution() != resolution)
-		throw std::runtime_error("SDLVideo: resolution mismatch");
+	if(pic->getResolution() != resolution) {
+		resolution = pic->getResolution();
+		createTexture();
+	}
 
 	SDL_UpdateYUVTexture(texture, NULL, 
 			pic->getComp(0), pic->getPitch(0),
@@ -100,6 +96,19 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	SDL_RenderPresent(renderer);
 
 	m_NumFrames++;
+}
+
+void SDLVideo::createTexture() {
+	Log::msg(Log::Info, format("[SDLVideo render] %sx%s", resolution.width, resolution.height));
+
+	if(texture)
+		SDL_DestroyTexture(texture);
+
+	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STATIC, resolution.width, resolution.height);
+	if (!texture) {
+		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
+		throw std::runtime_error("Texture creation failed");
+	}
 }
 
 SDLVideo::~SDLVideo() {

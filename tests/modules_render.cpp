@@ -12,7 +12,7 @@ using namespace Modules;
 
 namespace {
 
-unittest("A/V sync: one thread") {
+unittest("render: A/V sync, one thread") {
 	auto videoGen = uptr(new In::VideoGenerator);
 	auto videoRender = uptr(new Render::SDLVideo);
 	ConnectPinToModule(videoGen->getPin(0), videoRender);
@@ -30,6 +30,18 @@ unittest("A/V sync: one thread") {
 		videoGen->process(nullptr);
 		soundGen->process(nullptr);
 	}
+}
+
+unittest("render: dynamic resolution") {
+	auto videoRender = uptr(new Render::SDLVideo);
+
+	std::shared_ptr<Data> pic1 = uptr(new Picture(Resolution(128, 64)));
+	pic1->setTime(1000);
+	videoRender->process(pic1);
+
+	std::shared_ptr<Data> pic2 = uptr(new Picture(Resolution(64, 256)));
+	pic2->setTime(2000);
+	videoRender->process(pic2);
 }
 
 unittest("A/V sync: separate threads") {
