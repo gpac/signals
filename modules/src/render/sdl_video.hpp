@@ -23,6 +23,7 @@ private:
 
 	void doRender();
 	void processOneFrame(std::shared_ptr<Data> data);
+	void createTexture();
 
 	/* Video */
 	SDL_Window* window;
