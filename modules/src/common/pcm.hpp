@@ -162,7 +162,7 @@ public:
 
 private:
 	void freePlane(uint8_t planeIdx) {
-		delete planes[planeIdx];
+		delete [] planes[planeIdx];
 		planes[planeIdx] = nullptr;
 		planeSize[planeIdx] = 0;
 	}
