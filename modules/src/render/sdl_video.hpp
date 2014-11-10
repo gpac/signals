@@ -29,7 +29,7 @@ private:
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
 	std::unique_ptr<SDL_Rect> displayrect;
-	int width, height;
+	Resolution resolution;
 
 	int64_t m_NumFrames;
 

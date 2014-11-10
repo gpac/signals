@@ -19,9 +19,8 @@ SDLVideo::SDLVideo()
 }
 
 void SDLVideo::doRender() {
-	width = VIDEO_WIDTH;
-	height = VIDEO_HEIGHT;
-	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	resolution = VIDEO_RESOLUTION;
+	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resolution.width, resolution.height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
 		throw std::runtime_error("Window creation failed");
@@ -35,8 +34,7 @@ void SDLVideo::doRender() {
 	}
 
 	Uint32 pixelFormat = SDL_PIXELFORMAT_IYUV; //FIXME hardcoded
-	//SDL_Texture *texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
-	texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, width, height);
+	texture = SDL_CreateTexture(renderer, pixelFormat, SDL_TEXTUREACCESS_STATIC, resolution.width, resolution.height);
 	if (!texture) {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
 		SDL_DestroyRenderer(renderer);
@@ -47,8 +45,8 @@ void SDLVideo::doRender() {
 
 	displayrect->x = 0;
 	displayrect->y = 0;
-	displayrect->w = width;
-	displayrect->h = height;
+	displayrect->w = resolution.width;
+	displayrect->h = resolution.height;
 
 	m_NumFrames = 0;
 
@@ -90,6 +88,9 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	auto const delay = (Uint32)std::max<int64_t>(0, timestamp - now);
 	auto const delayInMs = (delay * 1000) / IClock::Rate;
 	SDL_Delay((Uint32)delayInMs);
+
+	if(pic->getResolution() != resolution)
+		throw std::runtime_error("SDLVideo: resolution mismatch");
 
 	SDL_UpdateYUVTexture(texture, NULL, 
 			pic->getComp(0), pic->getPitch(0),
