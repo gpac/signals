@@ -31,7 +31,7 @@ public:
 
 private:
 	bool processAudio(const PcmData *data);
-	bool processVideo(const DataAVFrame *data);
+	bool processVideo(const Picture *data);
 
 	std::string getCodecName() const;
 

@@ -229,13 +229,21 @@ bool LibavEncode::processAudio(const PcmData *data) {
 	return true;
 }
 
-bool LibavEncode::processVideo(const DataAVFrame *data) {
+bool LibavEncode::processVideo(const Picture *pic) {
 	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	AVFrame *f = data->getFrame();
+	assert(pic->getResolution() == Resolution(VIDEO_WIDTH, VIDEO_HEIGHT));
+
+	ffpp::Frame frame;
+	AVFrame *f = frame.get();
 	f->pict_type = AV_PICTURE_TYPE_NONE;
 	f->pts = ++frameNum;
+	for(int i=0;i < 3; ++i)
+	{
+		f->data[i] = pic->getComp(i);
+		f->linesize[i] = pic->getPitch(i);
+	}
 
 	int gotPkt = 0;
 	if (avcodec_encode_video2(codecCtx, pkt, f, &gotPkt)) {
@@ -258,7 +266,7 @@ bool LibavEncode::processVideo(const DataAVFrame *data) {
 void LibavEncode::process(std::shared_ptr<Data> data) {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
-		const auto encoderData = safe_cast<DataAVFrame>(data);
+		const auto encoderData = safe_cast<Picture>(data);
 		processVideo(encoderData.get());
 		break;
 	}

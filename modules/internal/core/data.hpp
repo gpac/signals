@@ -65,8 +65,56 @@ private:
 	std::vector<uint8_t> buffer;
 };
 
-static const int VIDEO_WIDTH = 1280; //Romain
-static const int VIDEO_HEIGHT = 720;
+struct Resolution {
+	Resolution() : width(0), height(0) {
+	}
+	Resolution(int w, int h) : width(w), height(h) {
+	}
+	bool operator==(Resolution const& other) const {
+		return width == other.width && height == other.height;
+	}
+	int width, height;
+	size_t yv12size() const {
+		return width * height * 3 / 2;
+	}
+};
+
+class Picture : public RawData {
+public:
+	Picture(size_t unused) : RawData(0) {
+	}
+	Picture(Resolution res) : RawData(res.yv12size()) {
+		setResolution(res);
+	}
+	uint8_t* getComp(int comp) const {
+		return m_comp[comp];
+	}
+	size_t getPitch(int comp) const {
+		return m_pitch[comp];
+	}
+	void setResolution(Resolution res) {
+		m_res = res;
+		resize(res.yv12size());
+		m_comp[0] = data();
+		m_comp[1] = data() + res.yv12size();
+		m_comp[2] = data() + res.yv12size() + res.yv12size()/4;
+		m_pitch[0] = res.width;
+		m_pitch[1] = res.width/2;
+		m_pitch[2] = res.width/2;
+	}
+
+	Resolution getResolution() const {
+		return m_res;
+	}
+
+private:
+	Resolution m_res;
+	size_t m_pitch[3];
+	uint8_t* m_comp[3];
+};
+
+static const int VIDEO_WIDTH = 320;
+static const int VIDEO_HEIGHT = 200;
 static const int VIDEO_FPS = 24;
 
 }

@@ -80,15 +80,16 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 
 void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
-	auto out = safe_cast<DataAVFrame>(pins[0]->getBuffer(0));
+	auto pic = safe_cast<Picture>(pins[0]->getBuffer(0));
 	int gotPicture;
-	if (avcodec_decode_video2(codecCtx, out->getFrame(), &gotPicture, pkt) < 0) {
+	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return;
 	}
 	if (gotPicture) {
-		setTimestamp(out);
-		pins[0]->emit(out);
+		pic->setResolution(Resolution(codecCtx->width, codecCtx->height));
+		setTimestamp(pic);
+		pins[0]->emit(pic);
 		++m_numFrames;
 	}
 }

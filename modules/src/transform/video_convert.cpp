@@ -20,20 +20,12 @@ VideoConvert::~VideoConvert() {
 void VideoConvert::process(std::shared_ptr<Data> data) {
 	uint8_t *srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	int srcStride[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	/*TODO: autoconversion to DataAVFrame*/
+
+	auto videoData = safe_cast<Picture>(data);
+	for(int i=0;i < 3; ++i)
 	{
-		auto videoData = dynamic_cast<DataAVFrame*>(data.get());
-		if (videoData) {
-			memcpy(srcSlice , videoData->getFrame()->data    , sizeof(srcSlice));
-			memcpy(srcStride, videoData->getFrame()->linesize, sizeof(srcStride));
-		} else {
-			if (srcW * srcH * (uint64_t)3 != data->size()) {
-				Log::msg(Log::Warning, "[VideoConvert] Invalid data type.");
-				return;
-			}
-			srcSlice[0]  = data->data();
-			srcStride[0] = srcW * 3;
-		}
+		srcSlice[i] = videoData->getComp(i);
+		srcStride[i] = videoData->getPitch(i);
 	}
 
 	const int dstFrameSize = avpicture_get_size(dstFormat, dstW, dstH);
