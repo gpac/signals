@@ -39,7 +39,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode::LibavEncode(Type type)
-	: audioCfg(new AudioPcmConfig()), avFrame(new ffpp::Frame), frameNum(-1) {
+	: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
@@ -111,7 +111,7 @@ LibavEncode::LibavEncode(Type type)
 	}
 	break;
 	case Audio:
-		libavAudioCtxConvert(audioCfg.get(), codecCtx);
+		libavAudioCtxConvert(pcmFormat.get(), codecCtx);
 		break;
 	default:
 		assert(0);
@@ -264,7 +264,7 @@ void LibavEncode::process(std::shared_ptr<Data> data) {
 	}
 	case AVMEDIA_TYPE_AUDIO: {
 		const auto encoderData = safe_cast<PcmData>(data);
-		if (!encoderData->isComparable(audioCfg.get()))
+		if (!encoderData->isComparable(pcmFormat.get()))
 			throw std::runtime_error("[SDLAudio] Incompatible audio data");
 		processAudio(encoderData.get());
 		break;
