@@ -233,18 +233,14 @@ bool LibavEncode::processVideo(const Picture *pic) {
 	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	if(pic->getResolution() != VIDEO_RESOLUTION)
-		throw std::runtime_error(format("LibavEncode: resolution mismatch, expected %s, got %s",
-				 	VIDEO_RESOLUTION.toString(),
-					pic->getResolution().toString()
-					));
-
 	ffpp::Frame frame;
 	AVFrame *f = frame.get();
 	f->pict_type = AV_PICTURE_TYPE_NONE;
 	f->pts = ++frameNum;
 	for(int i=0;i < 3; ++i)
 	{
+		f->width = pic->getResolution().width;
+		f->height = pic->getResolution().height;
 		f->data[i] = pic->getComp(i);
 		f->linesize[i] = pic->getPitch(i);
 	}
