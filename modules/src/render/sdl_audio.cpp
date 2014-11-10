@@ -12,9 +12,9 @@ namespace Modules {
 namespace {
 SDL_AudioSpec SDLAudioSpecConvert(const PcmFormat *cfg) {
 	SDL_AudioSpec audioSpec;
-	audioSpec.freq = cfg->getSampleRate();
-	audioSpec.channels = cfg->getNumChannels();
-	switch (cfg->getFormat()) {
+	audioSpec.freq = cfg->sampleRate;
+	audioSpec.channels = cfg->numChannels;
+	switch (cfg->sampleFormat) {
 	case S16: audioSpec.format = AUDIO_S16; break;
 	case F32: audioSpec.format = AUDIO_F32; break;
 	default: throw std::runtime_error("Unknown SDL audio format");
@@ -68,7 +68,7 @@ SDLAudio::~SDLAudio() {
 
 void SDLAudio::process(std::shared_ptr<Data> data) {
 	auto pcmData = safe_cast<PcmData>(data);
-	if (!pcmData->isComparable(pcmFormat.get()))
+	if (pcmData->getFormat() != *pcmFormat)
 		throw std::runtime_error("[SDLAudio] Incompatible audio data");
 
 	{
