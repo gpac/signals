@@ -16,7 +16,7 @@ auto const SINE_FREQ = 880.0;
 
 SoundGenerator::SoundGenerator()
 	: m_numSamples(20000) {
-	pcmFormat.setSampleRate(SAMPLE_RATE);
+	pcmFormat.sampleRate = SAMPLE_RATE;
 	PinPcmFactory pinFactory;
 	pins.push_back(uptr(pinFactory.createPin()));
 }
@@ -24,11 +24,11 @@ SoundGenerator::SoundGenerator()
 void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const bytesPerSample = pcmFormat.getBytesPerSample();
 	auto const sampleDurationInMs = 40;
-	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.getSampleRate() / 1000;
+	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.sampleRate / 1000;
 	
 	auto out = safe_cast<PcmData>(pins[0]->getBuffer(bufferSize));
-	out->setConfig(pcmFormat);
-	out->setTime(m_numSamples * IClock::Rate / pcmFormat.getSampleRate());
+	out->setFormat(pcmFormat);
+	out->setTime(m_numSamples * IClock::Rate / pcmFormat.sampleRate);
 
 	// generate sound
 	auto const p = out->data();
@@ -49,9 +49,9 @@ void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 }
 
 double SoundGenerator::nextSample() {
-	auto const BEEP_PERIOD = pcmFormat.getSampleRate();
+	auto const BEEP_PERIOD = pcmFormat.sampleRate;
 	auto const beepPhase = m_numSamples % BEEP_PERIOD;
-	auto const phase = m_numSamples * 2.0 * SINE_FREQ * M_PI / pcmFormat.getSampleRate();
+	auto const phase = m_numSamples * 2.0 * SINE_FREQ * M_PI / pcmFormat.sampleRate;
 	auto const fVal = beepPhase < BEEP_PERIOD/8 ? sin(phase) : 0;
 	m_numSamples++;
 	return fVal;

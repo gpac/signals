@@ -263,10 +263,10 @@ void LibavEncode::process(std::shared_ptr<Data> data) {
 		break;
 	}
 	case AVMEDIA_TYPE_AUDIO: {
-		const auto encoderData = safe_cast<PcmData>(data);
-		if (!encoderData->isComparable(pcmFormat.get()))
+		const auto pcmData = safe_cast<PcmData>(data);
+		if (pcmData->getFormat() != *pcmFormat)
 			throw std::runtime_error("[SDLAudio] Incompatible audio data");
-		processAudio(encoderData.get());
+		processAudio(pcmData.get());
 		break;
 	}
 	default:

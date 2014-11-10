@@ -25,47 +25,35 @@ static const int AUDIO_PCM_PLANES_DEFAULT = 1;
 static const int AUDIO_PCM_PLANES_MAX = 8;
 
 
-class PcmFormat {
-public:
+struct PcmFormat {
 	PcmFormat(uint32_t sampleRate = AUDIO_SAMPLERATE, uint8_t numChannels = AUDIO_CHANNEL_NUM,
 		AudioLayout layout = AUDIO_LAYOUT, AudioSampleFormat sampleFormat = AUDIO_PCM_FORMAT, uint8_t numPlanes = AUDIO_PCM_PLANES_DEFAULT) :
 		sampleRate(sampleRate), numChannels(numChannels), layout(layout), sampleFormat(sampleFormat), numPlanes(numPlanes) {
 	}
 
-	void setConfig(PcmFormat &audioPcmConfig) {
-		setConfig(audioPcmConfig.sampleRate, audioPcmConfig.numChannels, audioPcmConfig.layout, audioPcmConfig.sampleFormat, audioPcmConfig.numPlanes);
+	bool operator!=(const PcmFormat& other) const {
+		return !(*this == other);
 	}
 
-	void setConfig(uint32_t sampleRate, uint8_t numChannels, AudioLayout layout, AudioSampleFormat sampleFormat, uint8_t numPlanes) {
-		setSampleRate(sampleRate);
-		setChannels(numChannels, layout);
-		setFormat(sampleFormat);
-		setNumPlanes(numPlanes);
-	}
-
-	bool isComparable(const PcmFormat *cfg) const {
-		if (!cfg) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: missing configuration.");
+	bool operator==(const PcmFormat& other) const {
+		if (other.sampleRate != sampleRate) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", other.sampleRate, sampleRate);
 			return false;
 		}
-		if (cfg->sampleRate != sampleRate) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", cfg->sampleRate, sampleRate);
+		if (other.numChannels != numChannels) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: channel number is %s, expect %s.", other.numChannels, numChannels);
 			return false;
 		}
-		if (cfg->numChannels != numChannels) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: channel number is %s, expect %s.", cfg->numChannels, numChannels);
+		if (other.layout != layout) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", other.layout, layout);
 			return false;
 		}
-		if (cfg->layout != layout) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", cfg->layout, layout);
+		if (other.sampleFormat != sampleFormat) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample format is %s, expect %s.", other.sampleFormat, sampleFormat);
 			return false;
 		}
-		if (cfg->sampleFormat != sampleFormat) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample format is %s, expect %s.", cfg->sampleFormat, sampleFormat);
-			return false;
-		}
-		if (cfg->numPlanes != numPlanes) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: plane number is %s, expect %s.", cfg->numPlanes, numPlanes);
+		if (other.numPlanes != numPlanes) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: plane number is %s, expect %s.", other.numPlanes, numPlanes);
 			return false;
 		}
 
@@ -93,50 +81,6 @@ public:
 		return b;
 	}
 
-	uint32_t getSampleRate() const {
-		return sampleRate;
-	}
-
-	AudioSampleFormat getFormat() const {
-		return sampleFormat;
-	}
-
-	uint8_t getNumChannels() const {
-		return numChannels;
-	}
-
-	AudioLayout getLayout() const {
-		return layout;
-	}
-
-	uint8_t getNumPlanes() const {
-		return numPlanes;
-	}
-
-	void setSampleRate(uint32_t sampleRate) {
-		this->sampleRate = sampleRate;
-	}
-
-	void setChannels(uint8_t numChannels, AudioLayout layout) {
-		this->numChannels = numChannels;
-		this->layout = layout;
-	}
-
-	void setFormat(AudioSampleFormat sampleFormat) {
-		this->sampleFormat = sampleFormat;
-	}
-
-	void setLayout(AudioLayout layout) {
-		this->layout = layout;
-	}
-
-	void setNumPlanes(uint8_t numPlanes) {
-		if (numPlanes > AUDIO_PCM_PLANES_MAX)
-			throw std::runtime_error("Too many Pcm planes.");
-		this->numPlanes = numPlanes;
-	}
-
-private:
 	uint32_t sampleRate;
 	uint8_t numChannels;
 	AudioLayout layout;
@@ -145,14 +89,13 @@ private:
 	uint8_t numPlanes;
 };
 
-//Romain: rename PcmData in DataPcm
-class PcmData : public RawData, public PcmFormat {
+class PcmData : public RawData {
 public:
 	PcmData(size_t size) : RawData(0) {
 		memset(planes, 0, sizeof(planes));
 		memset(planeSize, 0, sizeof(planeSize));
 		if (size > 0) {
-			setNumPlanes(1);
+			format.numPlanes = 1;
 			setPlane(0, nullptr, size);
 		}
 	}
@@ -161,14 +104,22 @@ public:
 		freePlanes();
 	}
 
+	const PcmFormat& getFormat() const {
+		return format;
+	}
+
+	void setFormat(PcmFormat const& format) {
+		this->format = format;
+	}
+
 	virtual uint8_t* data() override {
-		if (getNumPlanes() > 1)
+		if (format.numPlanes > 1)
 			throw std::runtime_error("Forbidden operation. Use audio planes to access the data.");
 		return planes[0];
 	}
 
 	virtual uint64_t size() const override {
-		if (getNumPlanes() > 1)
+		if (format.numPlanes > 1)
 			throw std::runtime_error("Forbidden operation. Use audio planes to retrieve the size.");
 		return planeSize[0];
 	}
@@ -178,19 +129,19 @@ public:
 	}
 
 	uint8_t* getPlane(size_t planeIdx) const {
-		if (planeIdx > getNumPlanes())
+		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
 		return planes[planeIdx];
 	}
 
 	uint64_t getPlaneSize(size_t planeIdx) const {
-		if (planeIdx > getNumPlanes())
+		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
 		return planeSize[planeIdx];
 	}
 
 	void setPlanes(uint8_t numAudioPlanes, uint8_t* audioPlanes[AUDIO_PCM_PLANES_MAX], uint64_t audioPlaneSize[AUDIO_PCM_PLANES_MAX]) {
-		setNumPlanes(numAudioPlanes);
+		format.numPlanes = numAudioPlanes;
 		freePlanes();
 		for (uint8_t i = 0; i < numAudioPlanes; ++i) {
 			setPlane(i, planes[i], planeSize[i]);
@@ -198,7 +149,7 @@ public:
 	}
 
 	void setPlane(uint8_t planeIdx, uint8_t *plane, uint64_t size) {
-		if (planeIdx > getNumPlanes())
+		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
 		//TODO: use realloc
 		freePlane(planeIdx);
@@ -216,11 +167,12 @@ private:
 		planeSize[planeIdx] = 0;
 	}
 	void freePlanes() {
-		for (uint8_t i = 0; i < getNumPlanes(); ++i) {
+		for (uint8_t i = 0; i < format.numPlanes; ++i) {
 			freePlane(i);
 		}
 	}
 
+	PcmFormat format;
 	uint8_t* planes[AUDIO_PCM_PLANES_MAX];
 	uint64_t planeSize[AUDIO_PCM_PLANES_MAX];
 };

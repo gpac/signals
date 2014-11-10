@@ -56,16 +56,16 @@ const char* avlogLevelName(int level) {
 }
 
 void libavAudioCtxConvertGeneric(const Modules::PcmFormat *cfg, int &sampleRate, AVSampleFormat &format, int &numChannels, uint64_t &layout) {
-	sampleRate = cfg->getSampleRate();
+	sampleRate = cfg->sampleRate;
 
-	switch (cfg->getFormat()) {
+	switch (cfg->sampleFormat) {
 	case Modules::S16: format = AV_SAMPLE_FMT_S16; break;
 	case Modules::F32: format = AV_SAMPLE_FMT_FLT; break;
 	default: throw std::runtime_error("Unknown libav audio format");
 	}
 
-	numChannels = cfg->getNumChannels();
-	switch (cfg->getLayout()) {
+	numChannels = cfg->numChannels;
+	switch (cfg->layout) {
 	case Modules::Mono: layout = AV_CH_LAYOUT_MONO; break;
 	case Modules::Stereo: layout = AV_CH_LAYOUT_STEREO; break;
 	default: throw std::runtime_error("Unknown libav audio layout");
@@ -80,36 +80,37 @@ void libavAudioCtxConvert(const PcmFormat *cfg, AVCodecContext *codecCtx) {
 }
 
 void libavFrame2pcmConvert(const AVFrame *frame, PcmFormat *cfg) {
-	cfg->setSampleRate(frame->sample_rate);
+	cfg->sampleRate = frame->sample_rate;
 
 	switch (frame->format) {
 	case AV_SAMPLE_FMT_S16:
 	case AV_SAMPLE_FMT_S16P:
-		cfg->setFormat(Modules::S16);
+		cfg->sampleFormat = Modules::S16;
 		break;
 	case AV_SAMPLE_FMT_FLT:  
 	case AV_SAMPLE_FMT_FLTP:
-		cfg->setFormat(Modules::F32);
+		cfg->sampleFormat = Modules::F32;
 		break;
 	default:
 		throw std::runtime_error("Unknown libav audio format");
 	}
 
-	cfg->setNumPlanes(frame->channels);
+	cfg->numPlanes = frame->channels;
 	switch (frame->channel_layout) {
-	case AV_CH_LAYOUT_MONO:   cfg->setLayout(Modules::Mono); break;
-	case AV_CH_LAYOUT_STEREO: cfg->setLayout(Modules::Stereo); break;
+	case AV_CH_LAYOUT_MONO:   cfg->layout = Modules::Mono; break;
+	case AV_CH_LAYOUT_STEREO: cfg->layout = Modules::Stereo; break;
 	default: throw std::runtime_error("Unknown libav audio layout");
 	}
 }
 
-void libavFrameDataConvert(const PcmData *data, AVFrame *frame) {
-	libavAudioCtxConvertGeneric(data, frame->sample_rate, (AVSampleFormat&)frame->format, frame->channels, frame->channel_layout);
-	for (size_t i = 0; i < data->getNumPlanes(); ++i) {
-		frame->data[i] = data->getPlane(i);
-		frame->linesize[i] = (int)data->getPlaneSize(i);
+void libavFrameDataConvert(const PcmData *pcmData, AVFrame *frame) {
+	auto const& format = pcmData->getFormat();
+	libavAudioCtxConvertGeneric(&format, frame->sample_rate, (AVSampleFormat&)frame->format, frame->channels, frame->channel_layout);
+	for (size_t i = 0; i < format.numPlanes; ++i) {
+		frame->data[i] = pcmData->getPlane(i);
+		frame->linesize[i] = (int)pcmData->getPlaneSize(i);
 	}
-	frame->nb_samples = (int)(data->getPlaneSize(0) / data->getBytesPerSample());
+	frame->nb_samples = (int)(pcmData->getPlaneSize(0) / format.getBytesPerSample());
 }
 
 DataAVPacket::DataAVPacket(size_t size)
