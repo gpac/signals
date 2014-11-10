@@ -69,9 +69,9 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[i]);
 		}
 		//TODO: not supposed to change across the session
-		AudioPcmConfig audioCfg;
-		libavFrame2pcmConvert(avFrame->get(), &audioCfg);
-		out->setConfig(audioCfg);
+		PcmFormat pcmFormat;
+		libavFrame2pcmConvert(avFrame->get(), &pcmFormat);
+		out->setConfig(pcmFormat);
 		setTimestamp(out, avFrame->get()->nb_samples);
 		pins[0]->emit(out);
 		++m_numFrames;

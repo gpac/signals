@@ -58,11 +58,11 @@ private:
 	AVFrame *frame;
 };
 
-class AudioPcmConfig;
+class PcmFormat;
 class PcmData;
-void libavAudioCtxConvert(const AudioPcmConfig *cfg, AVCodecContext *codecCtx);
+void libavAudioCtxConvert(const PcmFormat *cfg, AVCodecContext *codecCtx);
 void libavFrameDataConvert(const PcmData *data, AVFrame *frame);
-void libavFrame2pcmConvert(const AVFrame *frame, AudioPcmConfig *cfg);
+void libavFrame2pcmConvert(const AVFrame *frame, PcmFormat *cfg);
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 

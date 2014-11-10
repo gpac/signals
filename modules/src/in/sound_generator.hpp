@@ -15,7 +15,7 @@ public:
 private:
 	double nextSample();
 	uint64_t m_numSamples;
-	AudioPcmConfig audioCfg;
+	PcmFormat pcmFormat;
 };
 
 }

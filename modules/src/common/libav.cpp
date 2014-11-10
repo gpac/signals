@@ -55,7 +55,7 @@ const char* avlogLevelName(int level) {
 	}
 }
 
-void libavAudioCtxConvertGeneric(const Modules::AudioPcmConfig *cfg, int &sampleRate, AVSampleFormat &format, int &numChannels, uint64_t &layout) {
+void libavAudioCtxConvertGeneric(const Modules::PcmFormat *cfg, int &sampleRate, AVSampleFormat &format, int &numChannels, uint64_t &layout) {
 	sampleRate = cfg->getSampleRate();
 
 	switch (cfg->getFormat()) {
@@ -75,11 +75,11 @@ void libavAudioCtxConvertGeneric(const Modules::AudioPcmConfig *cfg, int &sample
 
 namespace Modules {
 
-void libavAudioCtxConvert(const AudioPcmConfig *cfg, AVCodecContext *codecCtx) {
+void libavAudioCtxConvert(const PcmFormat *cfg, AVCodecContext *codecCtx) {
 	libavAudioCtxConvertGeneric(cfg, codecCtx->sample_rate, codecCtx->sample_fmt, codecCtx->channels, codecCtx->channel_layout);
 }
 
-void libavFrame2pcmConvert(const AVFrame *frame, AudioPcmConfig *cfg) {
+void libavFrame2pcmConvert(const AVFrame *frame, PcmFormat *cfg) {
 	cfg->setSampleRate(frame->sample_rate);
 
 	switch (frame->format) {

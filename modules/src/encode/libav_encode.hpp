@@ -36,7 +36,7 @@ private:
 	std::string getCodecName() const;
 
 	AVCodecContext *codecCtx;
-	std::unique_ptr<AudioPcmConfig> audioCfg;
+	std::unique_ptr<PcmFormat> pcmFormat;
 	std::unique_ptr<ffpp::Frame> const avFrame;
 	int frameNum;
 };

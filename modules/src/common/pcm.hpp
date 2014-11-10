@@ -6,7 +6,7 @@
 
 namespace Modules {
 
-enum AudioFormat {
+enum AudioSampleFormat {
 	S16,
 	F32
 };
@@ -20,30 +20,30 @@ static const int AUDIO_SAMPLERATE = 44100;
 static const int AUDIO_CHANNEL_NUM = 2;
 static const AudioLayout AUDIO_LAYOUT = Stereo;
 
-static const AudioFormat AUDIO_PCM_FORMAT = S16;
+static const AudioSampleFormat AUDIO_PCM_FORMAT = S16;
 static const int AUDIO_PCM_PLANES_DEFAULT = 1;
 static const int AUDIO_PCM_PLANES_MAX = 8;
 
 
-class AudioPcmConfig {
+class PcmFormat {
 public:
-	AudioPcmConfig(uint32_t sampleRate = AUDIO_SAMPLERATE, uint8_t numChannels = AUDIO_CHANNEL_NUM,
-		AudioLayout layout = AUDIO_LAYOUT, AudioFormat format = AUDIO_PCM_FORMAT, uint8_t numPlanes = AUDIO_PCM_PLANES_DEFAULT) :
-		sampleRate(sampleRate), numChannels(numChannels), layout(layout), format(format), numPlanes(numPlanes) {
+	PcmFormat(uint32_t sampleRate = AUDIO_SAMPLERATE, uint8_t numChannels = AUDIO_CHANNEL_NUM,
+		AudioLayout layout = AUDIO_LAYOUT, AudioSampleFormat sampleFormat = AUDIO_PCM_FORMAT, uint8_t numPlanes = AUDIO_PCM_PLANES_DEFAULT) :
+		sampleRate(sampleRate), numChannels(numChannels), layout(layout), sampleFormat(sampleFormat), numPlanes(numPlanes) {
 	}
 
-	void setConfig(AudioPcmConfig &audioPcmConfig) {
-		setConfig(audioPcmConfig.sampleRate, audioPcmConfig.numChannels, audioPcmConfig.layout, audioPcmConfig.format, audioPcmConfig.numPlanes);
+	void setConfig(PcmFormat &audioPcmConfig) {
+		setConfig(audioPcmConfig.sampleRate, audioPcmConfig.numChannels, audioPcmConfig.layout, audioPcmConfig.sampleFormat, audioPcmConfig.numPlanes);
 	}
 
-	void setConfig(uint32_t sampleRate, uint8_t numChannels, AudioLayout layout, AudioFormat format, uint8_t numPlanes) {
+	void setConfig(uint32_t sampleRate, uint8_t numChannels, AudioLayout layout, AudioSampleFormat sampleFormat, uint8_t numPlanes) {
 		setSampleRate(sampleRate);
 		setChannels(numChannels, layout);
-		setFormat(format);
+		setFormat(sampleFormat);
 		setNumPlanes(numPlanes);
 	}
 
-	bool isComparable(AudioPcmConfig *cfg) const {
+	bool isComparable(const PcmFormat *cfg) const {
 		if (!cfg) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: missing configuration.");
 			return false;
@@ -60,8 +60,8 @@ public:
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", cfg->layout, layout);
 			return false;
 		}
-		if (cfg->format != format) {
-			Log::msg(Log::Info, "[Audio] Incompatible configuration: format is %s, expect %s.", cfg->format, format);
+		if (cfg->sampleFormat != sampleFormat) {
+			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample format is %s, expect %s.", cfg->sampleFormat, sampleFormat);
 			return false;
 		}
 		if (cfg->numPlanes != numPlanes) {
@@ -74,7 +74,7 @@ public:
 
 	uint8_t getBytesPerSample() const {
 		uint8_t b = 1;
-		switch (format) {
+		switch (sampleFormat) {
 		case S16: b *= 2; break;
 		case F32: b *= 4; break;
 		default: throw std::runtime_error("Unknown audio format");
@@ -97,8 +97,8 @@ public:
 		return sampleRate;
 	}
 
-	AudioFormat getFormat() const {
-		return format;
+	AudioSampleFormat getFormat() const {
+		return sampleFormat;
 	}
 
 	uint8_t getNumChannels() const {
@@ -122,8 +122,8 @@ public:
 		this->layout = layout;
 	}
 
-	void setFormat(AudioFormat format) {
-		this->format = format;
+	void setFormat(AudioSampleFormat sampleFormat) {
+		this->sampleFormat = sampleFormat;
 	}
 
 	void setLayout(AudioLayout layout) {
@@ -141,12 +141,12 @@ private:
 	uint8_t numChannels;
 	AudioLayout layout;
 
-	AudioFormat format;
+	AudioSampleFormat sampleFormat;
 	uint8_t numPlanes;
 };
 
 //Romain: rename PcmData in DataPcm
-class PcmData : public RawData, public AudioPcmConfig {
+class PcmData : public RawData, public PcmFormat {
 public:
 	PcmData(size_t size) : RawData(0) {
 		memset(planes, 0, sizeof(planes));
