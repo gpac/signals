@@ -60,6 +60,7 @@ private:
 
 class PcmFormat;
 class PcmData;
+void libavAudioCtxConvertLibav(const PcmFormat *cfg, int &sampleRate, int &format, int &numChannels, uint64_t &layout);
 void libavAudioCtxConvert(const PcmFormat *cfg, AVCodecContext *codecCtx);
 void libavFrameDataConvert(const PcmData *data, AVFrame *frame);
 void libavFrame2pcmConvert(const AVFrame *frame, PcmFormat *cfg);
