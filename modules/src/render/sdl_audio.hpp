@@ -18,12 +18,12 @@ namespace Render {
 //FIXME: check it doesn't need to run in thread 0, like most render on Unix do because of X11...
 class SDLAudio : public Module {
 public:
-	static SDLAudio* create();
+	static SDLAudio* create(IClock* clock = g_DefaultClock);
 	~SDLAudio();
 	void process(std::shared_ptr<Data> data) override;
 
 private:
-	SDLAudio();
+	SDLAudio(IClock* clock);
 	static void staticFillAudio(void *udata, uint8_t *stream, int len);
 	void fillAudio(uint8_t *stream, int len);
 
@@ -46,6 +46,7 @@ private:
 		dst += n * bytesPerSample;
 	}
 
+	IClock* const m_clock;
 	static auto const audioJitterTolerance = 500;
 	uint8_t bytesPerSample;
 	std::unique_ptr<PcmFormat> pcmFormat;

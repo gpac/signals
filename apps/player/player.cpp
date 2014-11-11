@@ -29,13 +29,13 @@ struct Stream {
 	int codecType;
 };
 
-Module* createRenderer(int codecType) {
+Module* createRenderer(int codecType, IClock* clock) {
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
-		return new Render::SDLVideo;
+		return new Render::SDLVideo(clock);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
-		return Render::SDLAudio::create();
+		return Render::SDLAudio::create(clock);
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
 		return new Out::Null;
@@ -71,8 +71,8 @@ Stream decode(Stream& input) {
 	return r;
 }
 
-Stream render(Stream& input) {
-	Stream r(createRenderer(input.codecType));
+Stream render(Stream& input, IClock* clock) {
+	Stream r(createRenderer(input.codecType, clock));
 	ConnectPinToModule(input.pin, r.fromModule.get(), defaultExecutor);
 	return r;
 }
@@ -84,10 +84,12 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto const inputFile = argv[1];
 
+	auto clock = uptr(createSystemClock());
+
 	// construct pipeline
 	auto es = demux(inputFile);
 	auto decodedStreams = apply(&decode, es);
-	auto renderedStreams = apply(&render, decodedStreams);
+	auto renderedStreams = apply(&render, decodedStreams, clock.get());
 
 	// pump all data
 	auto srcModule = es[0].fromModule;

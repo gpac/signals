@@ -26,11 +26,11 @@ SDL_AudioSpec SDLAudioSpecConvert(const PcmFormat *cfg) {
 
 namespace Render {
 
-SDLAudio* SDLAudio::create() {
-	return new SDLAudio();
+SDLAudio* SDLAudio::create(IClock* clock) {
+	return new SDLAudio(clock);
 }
 
-SDLAudio::SDLAudio() : pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)), m_FifoTime(0) {
+SDLAudio::SDLAudio(IClock* clock) : m_clock(clock), pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)), m_FifoTime(0) {
 	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(pcmFormat.get());
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
@@ -82,7 +82,7 @@ void SDLAudio::process(std::shared_ptr<Data> data) {
 
 void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	// timestamp of the first sample of the buffer
-	auto const bufferTimeIn180k = g_DefaultClock->now() + m_Latency;
+	auto const bufferTimeIn180k = m_clock->now() + m_Latency;
 
 	std::lock_guard<std::mutex> lg(m_Mutex);
 
