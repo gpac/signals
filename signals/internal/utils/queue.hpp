@@ -98,16 +98,4 @@ private:
 	std::condition_variable dataAvailable;
 };
 
-template<typename T>
-class Queue : public std::queue<T> {
-	std::shared_ptr<T> tryPop() {
-		if (std::queue<T>::empty()) {
-			return std::shared_ptr<T>();
-		}
-		std::shared_ptr<T> res(std::make_shared<T>(std::move(std::queue<T>::front())));
-		std::queue<T>::pop();
-		return res;
-	}
-};
-
 }
