@@ -36,12 +36,10 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 	case AV_PIX_FMT_YUV420P: {
 			auto pic = picAlloc.getBuffer(0);
 			pic->setResolution(dstRes);
-			pDst[0] = pic->data();
-			pDst[1] = pic->data() + dstRes.width * dstRes.height;
-			pDst[2] = pic->data() + dstRes.width * dstRes.height * 5 / 4;
-			dstStride[0] = dstRes.width;
-			dstStride[1] = dstRes.width / 2;
-			dstStride[2] = dstRes.width / 2;
+			for(int i=0; i<3; ++i) {
+				pDst[i] = pic->getComp(i);
+				dstStride[i] = pic->getPitch(i);
+			}
 			out = pic;
 			break;
 		}
