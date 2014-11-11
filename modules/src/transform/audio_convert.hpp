@@ -24,7 +24,6 @@ class AudioConvert : public Module {
 
 	private:
 		std::unique_ptr<PcmFormat> srcPcmFormat, dstPcmFormat;
-		std::unique_ptr<ffpp::Frame> const aFrame;
 		std::unique_ptr<ffpp::SwResampler> const m_Swr;
 };
 
