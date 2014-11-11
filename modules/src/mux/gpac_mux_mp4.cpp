@@ -338,7 +338,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 	fileName << ".mp4";
 
 	if (baseName == "") {
-		//TODO: open in memory - apparrently we have to use the gmem:// protocol
+		//TODO: open in memory - apparently we have to use the gmem:// protocol
 		assert(0);
 	} else {
 		m_iso = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, NULL);
@@ -354,7 +354,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 		throw std::runtime_error("Cannot make iso file interleaved.");
 	}
 
-	//FIXME: this is signalling only (no data)
+	//FIXME: this is a signalling pin only for segment availability (no data)
 	if (m_useSegments) {
 		PinDefaultFactory pinFactory;
 		pins.push_back(uptr(pinFactory.createPin()));

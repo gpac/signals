@@ -4,11 +4,6 @@
 #include "SDL2/SDL.h"
 #include "render_common.hpp"
 
-//TODO: remove once Signals has a Picture type
-#include "../common/libav.hpp"
-extern "C" {
-#include <libavcodec/avcodec.h>
-}
 
 namespace Modules {
 namespace Render {

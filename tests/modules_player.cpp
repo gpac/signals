@@ -25,10 +25,10 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
-		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose it somewhere
+		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose types it somewhere else
 			videoIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null);
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -52,10 +52,10 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		auto props = demux->getPin(i)->getProps();
 		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 		ASSERT(decoderProps);
-		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) { //TODO: expose it somewhere
+		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) {
 			audioIndex = i;
 		} else {
-			ConnectPinToModule(demux->getPin(i), null); //FIXME: this is a stub to void the assert of not connected signals...
+			ConnectPinToModule(demux->getPin(i), null);
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -73,7 +73,5 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	demux->process(nullptr);
 }
-
-//TODO: add A/V transform tests
 
 }

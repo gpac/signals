@@ -2,7 +2,7 @@
 #include "../utils/tools.hpp"
 #include "file.hpp"
 
-#define IOSIZE (64*1024) //FIXME: this can lead to random errors when the module cannot agregate the data itself (e.g. JPEGTurbo decoder)
+#define IOSIZE (64*1024)
 
 namespace Modules {
 namespace In {
@@ -28,7 +28,7 @@ File* File::create(std::string const& fn) {
 	auto size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	if (size > IOSIZE)
-		Log::msg(Log::Info, "File %s size is %s, will be sent by %s bytes chunks. Check the downstream modules are compatible.", fn, size, IOSIZE);
+		Log::msg(Log::Info, "File %s size is %s, will be sent by %s bytes chunks. Check the downstream modules are able to agregate data frames.", fn, size, IOSIZE);
 
 	return new File(f);
 }
