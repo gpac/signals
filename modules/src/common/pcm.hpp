@@ -175,11 +175,11 @@ public:
 		//TODO: use realloc
 		if ((planes[planeIdx] == nullptr) || (plane != planes[planeIdx])) {
 			freePlane(planeIdx);
-			planes[planeIdx] = new uint8_t[size];
+			planes[planeIdx] = new uint8_t[(size_t)size];
 		}
 		planeSize[planeIdx] = size;
 		if (plane) {
-			memcpy(planes[planeIdx], plane, size);
+			memcpy(planes[planeIdx], plane, (size_t)size);
 		}
 	}
 
