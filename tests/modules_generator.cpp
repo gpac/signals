@@ -26,8 +26,9 @@ unittest("sound generator") {
 }
 
 unittest("video generator") {
-	auto videoGen = uptr(new In::VideoGenerator);
-	auto render = uptr(new Render::SDLVideo);
+	auto clock = uptr(createSystemClock());
+	auto videoGen = uptr(new In::VideoGenerator());
+	auto render = uptr(new Render::SDLVideo(clock.get()));
 
 	std::vector<int> times;
 	auto onFrame = [&](std::shared_ptr<Data> data) {
