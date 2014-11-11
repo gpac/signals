@@ -61,7 +61,6 @@ private:
 		delete p;
 		freeBlocks.push(OneBufferIsFree);
 	}
-
 };
 
 }
