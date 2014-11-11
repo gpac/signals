@@ -17,9 +17,8 @@ public:
 
 	void push(T data) {
 		std::lock_guard<std::mutex> lock(mutex);
-		cleared = false;
 		dataQueue.push(std::move(data));
-		dataCondition.notify_one();
+		dataAvailable.notify_one();
 	}
 
 	bool tryPop(T &value) {
@@ -44,25 +43,18 @@ public:
 
 	T pop() {
 		std::unique_lock<std::mutex> lock(mutex);
-		while (dataQueue.empty() && !cleared)
-			dataCondition.wait(lock);
-		if (cleared)
-			return nullptr;
+		while (dataQueue.empty())
+			dataAvailable.wait(lock);
 		T p;
 		std::swap(p, dataQueue.front());
 		dataQueue.pop();
 		return p;
 	}
 
-	/**
-	 * Clear the queue and force all the waiting pop() to return.
-	 */
 	void clear() {
 		std::lock_guard<std::mutex> lock(mutex);
 		std::queue<T> emptyQueue;
 		std::swap(emptyQueue, dataQueue);
-		cleared = true;
-		dataCondition.notify_all();
 	}
 
 #ifdef TESTS
@@ -103,8 +95,7 @@ private:
 
 	mutable std::mutex mutex;
 	std::queue<T> dataQueue;
-	std::condition_variable dataCondition;
-	bool cleared = false;
+	std::condition_variable dataAvailable;
 };
 
 template<typename T>
