@@ -20,7 +20,7 @@ CFLAGS+=-Wno-format-nonliteral
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
-BIN=bin/make
+BIN=bin
 SRC=.
 
 # default to debug mode
