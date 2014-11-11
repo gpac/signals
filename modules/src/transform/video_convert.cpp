@@ -38,7 +38,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 			pic->setResolution(dstRes);
 			for(int i=0; i<3; ++i) {
 				pDst[i] = pic->getComp(i);
-				dstStride[i] = pic->getPitch(i);
+				dstStride[i] = (int)pic->getPitch(i);
 			}
 			out = pic;
 			break;
