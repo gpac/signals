@@ -8,7 +8,6 @@
 
 namespace Signals {
 
-//FIXME: it doesn't compile with non-pointer types, see ENABLE_FAILING_TESTS
 template<typename T>
 class QueueThreadSafe {
 public:
@@ -29,16 +28,6 @@ public:
 		value = std::move(dataQueue.front());
 		dataQueue.pop();
 		return true;
-	}
-
-	T tryPop() {
-		std::lock_guard<std::mutex> lock(mutex);
-		if (dataQueue.empty()) {
-			return nullptr;
-		}
-		auto res = T(std::move(dataQueue.front()));
-		dataQueue.pop();
-		return res;
 	}
 
 	T pop() {
