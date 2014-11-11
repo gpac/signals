@@ -117,19 +117,6 @@ unittest("decoder: video simple") {
 	decoder->process(data);
 }
 
-unittest("decoder: audio converter") {
-	auto decoder = uptr(createMp3Decoder());
-
-	//create an audio resampler
-#if 0 //TODO
-	auto audioConverter = uptr(new Transform::AudioConvert());
-	ConnectToModule(decoder->getPin(0)->getSignal(), audioConverter);
-#endif
-
-	auto frame = getTestMp3Frame();
-	decoder->process(frame);
-}
-
 #ifdef ENABLE_FAILING_TESTS
 //TODO: this test fails because the exception is caught by a Signals future. To be tested when tasks are pushed to an executor
 unittest("decoder: failing audio mp3 to AAC") {
