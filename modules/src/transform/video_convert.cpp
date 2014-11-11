@@ -28,24 +28,30 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
 
-	const int dstFrameSize = avpicture_get_size(dstFormat, dstRes.width, dstRes.height);
-	auto out(pins[0]->getBuffer(dstFrameSize));
+	std::shared_ptr<Data> out;
 
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
 	switch (dstFormat) {
-	case AV_PIX_FMT_YUV420P:
-		pDst[0] = out->data();
-		pDst[1] = out->data() + dstRes.width * dstRes.height;
-		pDst[2] = out->data() + dstRes.width * dstRes.height * 5 / 4;
-		dstStride[0] = dstRes.width;
-		dstStride[1] = dstRes.width / 2;
-		dstStride[2] = dstRes.width / 2;
-		break;
-	case AV_PIX_FMT_RGB24:
-		pDst[0] = out->data();
-		dstStride[0] = dstRes.width * 3;
-		break;
+	case AV_PIX_FMT_YUV420P: {
+			auto pic = picAlloc.getBuffer(0);
+			pic->setResolution(dstRes);
+			pDst[0] = pic->data();
+			pDst[1] = pic->data() + dstRes.width * dstRes.height;
+			pDst[2] = pic->data() + dstRes.width * dstRes.height * 5 / 4;
+			dstStride[0] = dstRes.width;
+			dstStride[1] = dstRes.width / 2;
+			dstStride[2] = dstRes.width / 2;
+			out = pic;
+			break;
+		}
+	case AV_PIX_FMT_RGB24: {
+			const int dstFrameSize = avpicture_get_size(dstFormat, dstRes.width, dstRes.height);
+			out = rawAlloc.getBuffer(dstFrameSize);
+			pDst[0] = out->data();
+			dstStride[0] = dstRes.width * 3;
+			break;
+		}
 	default:
 		assert(0);
 		Log::msg(Log::Warning, "[VideoConvert] Dst colorspace not supported. Ignoring.");

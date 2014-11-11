@@ -74,6 +74,8 @@ unittest("video converter: pass-through") {
 	int numFrames = 0;
 
 	auto onFrame = [&](std::shared_ptr<Data> data) {
+		auto pic = safe_cast<Picture>(data);
+		ASSERT(pic->getResolution() == res);
 		numFrames++;
 	};
 
@@ -97,7 +99,8 @@ unittest("video converter: different sizes") {
 	int numFrames = 0;
 
 	auto onFrame = [&](std::shared_ptr<Data> data) {
-		ASSERT_EQUALS(data->size(), dstRes.yv12size());
+		auto pic = safe_cast<Picture>(data);
+		ASSERT(pic->getResolution() == dstRes);
 		numFrames++;
 	};
 
