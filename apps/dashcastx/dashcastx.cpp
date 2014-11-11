@@ -8,6 +8,7 @@
 #include "encode/libav_encode.hpp"
 #include "mux/gpac_mux_mp4.hpp"
 #include "stream/mpeg_dash.hpp"
+#include "transform/audio_convert.hpp"
 #include "out/null.hpp"
 
 #include "../../utils/tools.hpp"
@@ -48,7 +49,7 @@ int safeMain(int argc, char const* argv[]) {
 
 	{
 		auto demux = uptr(Demux::LibavDemux::create(inputURL));
-		auto dasher = uptr(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static)); //Romain: test static here and put Live for Cires21
+		auto dasher = uptr(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
 
 		for (size_t i = 0; i < demux->getNumPin(); ++i) {
 			auto props = demux->getPin(i)->getProps();
@@ -58,9 +59,20 @@ int safeMain(int argc, char const* argv[]) {
 			auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 			ConnectPinToModule(demux->getPin(i), decoder);
 
-			//TODO: add audio and video rescaling
+			//FIXME: hardcoded converters
+			Pin *pPin;
+			if (i == 0) {
+				pPin = decoder->getPin(0);
+			} else {
+				auto baseFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
+				auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+				auto converter = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
+				ConnectPinToModule(decoder->getPin(0), converter);
+				pPin = converter->getPin(0);
+				modules.push_back(std::move(converter));
+			}
 
-			auto encoder = createEncoder(decoder->getPin(0), decoderProps);
+			auto encoder = createEncoder(pPin, decoderProps);
 			if (!encoder) {
 				auto r = uptr(new Out::Null);
 				ConnectPinToModule(decoder->getPin(0), r);
@@ -77,7 +89,7 @@ int safeMain(int argc, char const* argv[]) {
 			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);
 			encoder->sendOutputPinsInfo();
 
-			//Romain: hardcoded => use declareStream above
+			//FIXME: hardcoded => use declareStream above
 			if (i == 0) {
 				Connect(muxer->getPin(0)->getSignal(), dasher.get(), &Modules::Stream::MPEG_DASH::processVideo);
 			} else {
