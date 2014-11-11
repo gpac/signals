@@ -48,7 +48,6 @@ unittest("audio converter: 44100 to 48000") {
 
 	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto otherFormat = PcmFormat(48000, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
-
 	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
 	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
 
