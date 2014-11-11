@@ -22,7 +22,7 @@ public:
 	}
 
 private:
-	QueueThreadSafe<std::shared_ptr<Data>> record;
+	Queue<std::shared_ptr<Data>> record;
 };
 
 class IComparator : public Module {
@@ -57,7 +57,7 @@ public:
 	virtual bool compare(std::shared_ptr<Data> original, std::shared_ptr<Data> other) const = 0;
 
 private:
-	QueueThreadSafe<std::shared_ptr<Data>> original, other;
+	Queue<std::shared_ptr<Data>> original, other;
 };
 
 class PcmComparator : public IComparator {
