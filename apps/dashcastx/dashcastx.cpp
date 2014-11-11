@@ -19,7 +19,7 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-std::unique_ptr<Encode::LibavEncode> createEncoder(Pin *pPin, PropsDecoder *decoderProps) {
+std::unique_ptr<Encode::LibavEncode> createEncoder(IPin *pPin, PropsDecoder *decoderProps) {
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "Found video stream");
@@ -60,7 +60,7 @@ int safeMain(int argc, char const* argv[]) {
 			ConnectPinToModule(demux->getPin(i), decoder);
 
 			//FIXME: hardcoded converters
-			Pin *pPin;
+			IPin *pPin;
 			if (i == 0) {
 				pPin = decoder->getPin(0);
 			} else {

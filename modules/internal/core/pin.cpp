@@ -2,7 +2,7 @@
 
 namespace Modules {
 
-Pin* PinDefaultFactory::createPin(IProps *props) {
+IPin* PinDefaultFactory::createPin(IProps *props) {
 	return new PinDefault(props);
 }
 

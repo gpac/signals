@@ -7,7 +7,7 @@
 
 namespace Modules {
 
-class Pin;
+class IPin;
 class Data;
 
 template<typename Class>
@@ -17,13 +17,13 @@ return Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)
 }
 
 template<typename ModuleType>
-size_t ConnectPinToModule(Pin* pin, ModuleType* module, IProcessExecutor& executor) {
+size_t ConnectPinToModule(IPin* pin, ModuleType* module, IProcessExecutor& executor) {
 auto functor = MEMBER_FUNCTOR_PROCESS(module);
 return ConnectPin(pin, functor, executor);
 }
 
 template<typename ModuleType>
-size_t ConnectPinToModule(Pin* pin, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
+size_t ConnectPinToModule(IPin* pin, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
 return ConnectPinToModule(pin, module.get(), executor);
 }
 
