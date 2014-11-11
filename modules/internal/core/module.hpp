@@ -12,9 +12,6 @@ public:
 	Module() = default;
 
 	virtual ~Module() noexcept(false) {
-		for (auto &signal : pins) {
-			signal->waitForCompletion();
-		}
 	}
 
 	virtual void process(std::shared_ptr<Data> data) = 0;

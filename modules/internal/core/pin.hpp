@@ -32,7 +32,6 @@ public:
 	virtual ~Pin() {
 	}
 	virtual size_t emit(std::shared_ptr<Data> data) = 0;
-	virtual void waitForCompletion() = 0;
 	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
 	virtual IProps* getProps() const = 0;
 	virtual void setProps(IProps *props) = 0; /*TODO: attached with every emitted packet. shared_data<>?*/
@@ -81,7 +80,7 @@ public:
 	}
 
 	~PinT() {
-		waitForCompletion();
+		allocator.flush();
 	}
 
 	size_t emit(std::shared_ptr<Data> data) {
@@ -90,10 +89,6 @@ public:
 			Log::msg(Log::Debug, "emit(): Pin had no receiver");
 		}
 		return numReceivers;
-	}
-
-	void waitForCompletion() {
-		allocator.flush();
 	}
 
 	std::shared_ptr<Data> getBuffer(size_t size) {
