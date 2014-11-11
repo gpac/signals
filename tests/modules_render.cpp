@@ -13,8 +13,9 @@ using namespace Modules;
 namespace {
 
 unittest("render: A/V sync, one thread") {
+	auto clock = uptr(createSystemClock());
 	auto videoGen = uptr(new In::VideoGenerator);
-	auto videoRender = uptr(new Render::SDLVideo);
+	auto videoRender = uptr(new Render::SDLVideo(clock.get()));
 	ConnectPinToModule(videoGen->getPin(0), videoRender);
 
 	//FIXME: avoid SDL audio and video parallel creations
@@ -23,7 +24,7 @@ unittest("render: A/V sync, one thread") {
 	std::this_thread::sleep_for(dur);
 
 	auto soundGen = uptr(new In::SoundGenerator);
-	auto soundRender = uptr(Render::SDLAudio::create());
+	auto soundRender = uptr(Render::SDLAudio::create(clock.get()));
 	ConnectPinToModule(soundGen->getPin(0), soundRender);
 
 	for(int i=0; i < 25*5; ++i) {

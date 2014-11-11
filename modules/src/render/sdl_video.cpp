@@ -2,7 +2,6 @@
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include "SDL2/SDL.h"
-#include "internal/core/clock.hpp"
 #include "render_common.hpp"
 
 //TODO: remove once Signals has a Picture type
@@ -14,8 +13,8 @@ extern "C" {
 namespace Modules {
 namespace Render {
 
-SDLVideo::SDLVideo()
-	: texture(nullptr), displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
+SDLVideo::SDLVideo(IClock* clock)
+	: m_clock(clock), texture(nullptr), displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
 }
 
 void SDLVideo::doRender() {
@@ -77,7 +76,7 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	// sanity check
 	auto pic = safe_cast<Picture>(data);
 
-	auto const now = g_DefaultClock->now();
+	auto const now = m_clock->now();
 	auto const timestamp = pic->getTime() + PREROLL_DELAY; // assume timestamps start at zero
 	auto const delay = (Uint32)std::max<int64_t>(0, timestamp - now);
 	auto const delayInMs = (delay * 1000) / IClock::Rate;

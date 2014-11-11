@@ -51,11 +51,11 @@ std::vector<T> makeVector(T val, Arguments... args) {
 	return r;
 }
 
-template<typename Lambda, typename T>
-std::vector<T> apply(Lambda func, std::vector<T>& input) {
+template<typename Lambda, typename T, typename... Arguments>
+std::vector<T> apply(Lambda func, std::vector<T>& input, Arguments... args) {
 	std::vector<T> r;
 	for(auto& element : input)
-		r.push_back(func(element));
+		r.push_back(func(element, args...));
 	return r;
 }
 
