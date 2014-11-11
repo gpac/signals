@@ -57,14 +57,14 @@ void avLog(void *avcl, int level, const char *fmt, va_list vl);
 
 typedef PinDataDefault<DataAVPacket> PinLibavPacket;
 
-class PinLibavPacketFactory : public PinFactory {
+class PinLibavPacketFactory {
 public:
 	IPin* createPin(IProps *props = nullptr);
 };
 
 typedef PinDataDefault<Picture> PinPicture;
 
-class PinRawDataFactory : public PinFactory {
+class PinRawDataFactory {
 public:
 	IPin* createPin(IProps *props = nullptr);
 };

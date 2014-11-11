@@ -57,15 +57,7 @@ auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
 return ConnectPin(p, functor, executor);
 }
 
-
-class PinFactory {
-public:
-	virtual ~PinFactory() {
-	}
-	virtual IPin* createPin(IProps *props = nullptr) = 0;
-};
-
-class PinDefaultFactory : public PinFactory {
+class PinDefaultFactory {
 public:
 	IPin* createPin(IProps *props = nullptr);
 };
@@ -94,7 +86,7 @@ public:
 		return allocator.getBuffer(size);
 	}
 
-	Signal& getSignal() {
+	ISignal<void(std::shared_ptr<Data>)>& getSignal() override {
 		return signal;
 	}
 
