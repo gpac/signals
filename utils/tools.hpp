@@ -67,6 +67,8 @@ std::unique_ptr<T> uptr(T* p) {
 template<typename T, typename U>
 std::shared_ptr<T> safe_cast(std::shared_ptr<U> p)
 {
+	if (!p)
+		return nullptr;
 	auto r = std::dynamic_pointer_cast<T>(p);
 	if(!r)
 	{
