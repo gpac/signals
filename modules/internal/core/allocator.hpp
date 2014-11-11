@@ -42,7 +42,7 @@ public:
 		return nullptr;
 	}
 
-	void flush() {
+	void unblock() {
 		freeBlocks.push(Exit);
 	}
 
