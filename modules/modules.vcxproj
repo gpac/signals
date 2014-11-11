@@ -51,6 +51,8 @@
     <ClInclude Include="src\stream\mpeg_dash.hpp" />
     <ClInclude Include="src\transform\audio_convert.hpp" />
     <ClInclude Include="src\transform\video_convert.hpp" />
+    <ClInclude Include="src\utils\comparator.hpp" />
+    <ClInclude Include="src\utils\recorder.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="internal\core\pin.cpp" />
@@ -78,6 +80,7 @@
     <ClCompile Include="src\stream\mpeg_dash.cpp" />
     <ClCompile Include="src\transform\audio_convert.cpp" />
     <ClCompile Include="src\transform\video_convert.cpp" />
+    <ClCompile Include="src\utils\recorder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\utils\utils.vcxproj">
