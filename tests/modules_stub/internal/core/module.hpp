@@ -61,7 +61,6 @@ public:
 	size_t emit(std::shared_ptr<Data> data) {
 		return 1;
 	}
-	void waitForCompletion() {}
 	std::shared_ptr<Data> getBuffer(size_t size) {
 		return std::shared_ptr<Data>(new Data(size));
 	}
