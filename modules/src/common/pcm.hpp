@@ -179,7 +179,7 @@ public:
 		}
 		planeSize[planeIdx] = size;
 		if (plane) {
-			memcpy(planes[planeIdx], plane, (size_t)size);
+			memmove(planes[planeIdx], plane, (size_t)size);
 		}
 	}
 
