@@ -233,5 +233,8 @@
     <ClCompile Include="src\utils\recorder.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\comparator.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

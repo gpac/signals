@@ -80,6 +80,7 @@
     <ClCompile Include="src\stream\mpeg_dash.cpp" />
     <ClCompile Include="src\transform\audio_convert.cpp" />
     <ClCompile Include="src\transform\video_convert.cpp" />
+    <ClCompile Include="src\utils\comparator.cpp" />
     <ClCompile Include="src\utils\recorder.cpp" />
   </ItemGroup>
   <ItemGroup>
