@@ -143,32 +143,6 @@ void DataAVPacket::resize(size_t /*size*/) {
 	assert(0);
 }
 
-DataAVFrame::DataAVFrame(size_t size)
-	: frame(av_frame_alloc()) {
-}
-
-DataAVFrame::~DataAVFrame() {
-	av_frame_free(&frame);
-}
-
-uint8_t* DataAVFrame::data() {
-	return frame->data[0];
-}
-
-uint64_t DataAVFrame::size() const {
-	if (frame->linesize[1])
-		Log::msg(Log::Debug, "[DataAVFrame] Storage is planar. Returning the sum of all plane size.");
-	return avpicture_get_size((AVPixelFormat)frame->format, frame->width, frame->height);
-}
-
-AVFrame* DataAVFrame::getFrame() const {
-	return frame;
-}
-
-void DataAVFrame::resize(size_t /*size*/) {
-	assert(0);
-}
-
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
 	auto opt = stringDup(options);
 	char *tok = strtok(opt.data(), "- ");
@@ -212,7 +186,7 @@ Pin* PinLibavFrameFactory::createPin(IProps *props) {
 	case AVMEDIA_TYPE_AUDIO: return new PinPcm(props);
 	default: throw std::runtime_error("[PinLibavFrameFactory] Invalid Pin type.");
 }
-	
+
 }
 
 }

@@ -44,20 +44,6 @@ private:
 	std::unique_ptr<AVPacket> const pkt;
 };
 
-//TODO: remove: created specially to fix the Transform converters relying on libav + awful hack: derives from PcmData
-class DataAVFrame : public Data {
-public:
-	DataAVFrame(size_t size);
-	~DataAVFrame();
-	uint8_t* data()  override;
-	uint64_t size() const  override;
-	AVFrame* getFrame() const;
-	void resize(size_t size) override;
-
-private:
-	AVFrame *frame;
-};
-
 class PcmFormat;
 class PcmData;
 void libavAudioCtxConvertLibav(const PcmFormat *cfg, int &sampleRate, int &format, int &numChannels, uint64_t &layout);
