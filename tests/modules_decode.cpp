@@ -140,8 +140,10 @@ unittest("decoder: failing audio mp3 to AAC") {
 unittest("decoder: audio mp3 to converter to AAC") {
 	auto decoder = uptr(createMp3Decoder());
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
-	auto converter = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Mono, 44100, AudioStruct::Planar,
-		                                              AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved));
+
+	auto srcFormat = PcmFormat(44100, 1, AudioLayout::Mono, AudioSampleFormat::S16, AudioStruct::Planar);
+	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 
 	ConnectPinToModule(decoder->getPin(0), converter);
 	ConnectPinToModule(converter->getPin(0), encoder);

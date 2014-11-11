@@ -17,13 +17,12 @@ namespace Transform {
 
 class AudioConvert : public Module {
 	public:
-		AudioConvert(AudioSampleFormat srcFmt, AudioLayout srcChannelLayout, uint32_t srcSampleRate, AudioStruct srcStruct,
-			         AudioSampleFormat dstFmt, AudioLayout dstChannelLayout, uint32_t dstSampleRate, AudioStruct dstStruct);
+		AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat);
 		~AudioConvert();
 		void process(std::shared_ptr<Data> data) override;
 
 	private:
-		std::unique_ptr<PcmFormat> srcPcmFormat, dstPcmFormat;
+		PcmFormat srcPcmFormat, dstPcmFormat;
 		std::unique_ptr<ffpp::SwResampler> const m_Swr;
 		uint64_t accumulatedTimeInDstSR;
 };

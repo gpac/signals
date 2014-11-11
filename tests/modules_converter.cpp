@@ -17,15 +17,16 @@ unittest("audio converter: interleaved to planar to interleaved") {
 	auto comparator = uptr(new Utils::PcmComparator);
 	ConnectPin(soundGen->getPin(0), comparator.get(), &Utils::PcmComparator::pushOriginal);
 
-	auto converter1 = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved,
-	                                                   AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Planar));
-	auto converter2 = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Planar,
-	                                                   AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved));
+	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+	auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Planar);
+
+	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
+	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
 
 	ConnectPinToModule(soundGen->getPin(0), converter1);
 	ConnectPinToModule(converter1->getPin(0), converter2);
 	ConnectPin(converter2->getPin(0), comparator.get(), &Utils::PcmComparator::pushOther);
-	
+
 	soundGen->process(nullptr);
 	bool thrown = false;
 	try {
@@ -42,11 +43,12 @@ unittest("audio converter: 44100 to 48000") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto comparator = uptr(new Utils::PcmComparator);
 	ConnectPin(soundGen->getPin(0), comparator.get(), &Utils::PcmComparator::pushOriginal);
-	
-	auto converter1 = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved,
-	                                                   AudioSampleFormat::S16, AudioLayout::Stereo, 48000, AudioStruct::Interleaved));
-	auto converter2 = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 48000, AudioStruct::Interleaved,
-	                                                   AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved));
+
+	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+	auto otherFormat = PcmFormat(48000, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+
+	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
+	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
 
 	ConnectPinToModule(soundGen->getPin(0), converter1);
 	ConnectPinToModule(converter1->getPin(0), converter2);

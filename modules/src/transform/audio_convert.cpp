@@ -8,17 +8,16 @@
 namespace Modules {
 namespace Transform {
 
-AudioConvert::AudioConvert(AudioSampleFormat srcFmt, AudioLayout srcChannelLayout, uint32_t srcSampleRate, AudioStruct srcStruct,
-	AudioSampleFormat dstFmt, AudioLayout dstChannelLayout, uint32_t dstSampleRate, AudioStruct dstStruct)
-	: srcPcmFormat(new PcmFormat(srcSampleRate, srcChannelLayout, srcFmt, srcStruct)),
-	  dstPcmFormat(new PcmFormat(dstSampleRate, dstChannelLayout, dstFmt, dstStruct)),
+AudioConvert::AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat) 
+	: srcPcmFormat(srcFormat),
+	  dstPcmFormat(dstFormat),
 	  m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0) {
 	AVSampleFormat avSrcFmt, avDstFmt;
 	uint64_t avSrcChannelLayout, avDstChannelLayout;
 	int avSrcNumChannels, avDstNumChannels, avSrcSampleRate, avDstSampleRate;
 
-	libavAudioCtxConvertLibav(srcPcmFormat.get(), avSrcSampleRate, (int&)avSrcFmt, avSrcNumChannels, avSrcChannelLayout);
-	libavAudioCtxConvertLibav(dstPcmFormat.get(), avDstSampleRate, (int&)avDstFmt, avDstNumChannels, avDstChannelLayout);
+	libavAudioCtxConvertLibav(&srcPcmFormat, avSrcSampleRate, (int&)avSrcFmt, avSrcNumChannels, avSrcChannelLayout);
+	libavAudioCtxConvertLibav(&dstPcmFormat, avDstSampleRate, (int&)avDstFmt, avDstNumChannels, avDstChannelLayout);
 	
 	m_Swr->setInputSampleFmt(avSrcFmt);
 	m_Swr->setInputLayout(avSrcChannelLayout);
@@ -40,33 +39,33 @@ void AudioConvert::process(std::shared_ptr<Data> data) {
 	uint64_t srcNumSamples, dstNumSamples;
 	auto audioData = safe_cast<PcmData>(data);
 	if (audioData) {
-		if (audioData->getFormat() != *srcPcmFormat)
+		if (audioData->getFormat() != srcPcmFormat)
 			throw std::runtime_error("[AudioConvert] Incompatible input audio data");
 
 		srcNumSamples = audioData->size() / audioData->getFormat().getBytesPerSample();
-		dstNumSamples = divUp(srcNumSamples * dstPcmFormat->sampleRate, (uint64_t)srcPcmFormat->sampleRate);
+		dstNumSamples = divUp(srcNumSamples * dstPcmFormat.sampleRate, (uint64_t)srcPcmFormat.sampleRate);
 	} else {
 		srcNumSamples = 0;
-		dstNumSamples = m_Swr->getDelay(dstPcmFormat->sampleRate);
+		dstNumSamples = m_Swr->getDelay(dstPcmFormat.sampleRate);
 		if (dstNumSamples == 0)
 			return;
 	}
 
-	auto const dstBufferSize = dstNumSamples * dstPcmFormat->getBytesPerSample();
+	auto const dstBufferSize = dstNumSamples * dstPcmFormat.getBytesPerSample();
 	auto out = safe_cast<PcmData>(pins[0]->getBuffer(0));
-	out->setFormat(*dstPcmFormat);
-	for (uint8_t i=0; i < dstPcmFormat->numPlanes; ++i)
-		out->setPlane(i, nullptr, dstBufferSize / dstPcmFormat->numPlanes);
+	out->setFormat(dstPcmFormat);
+	for (uint8_t i=0; i < dstPcmFormat.numPlanes; ++i)
+		out->setPlane(i, nullptr, dstBufferSize / dstPcmFormat.numPlanes);
 	auto pDst = (uint8_t**)out->getPlanes();
 
 	auto const outNumSamples = m_Swr->convert(pDst, (int)dstNumSamples, (const uint8_t**)audioData->getPlanes(), (int)srcNumSamples);
 
-	auto const outPlaneSize = outNumSamples * dstPcmFormat->getBytesPerSample() / dstPcmFormat->numPlanes;
-	for (uint8_t i = 0; i < dstPcmFormat->numPlanes; ++i)
+	auto const outPlaneSize = outNumSamples * dstPcmFormat.getBytesPerSample() / dstPcmFormat.numPlanes;
+	for (uint8_t i = 0; i < dstPcmFormat.numPlanes; ++i)
 		out->setPlane(i, out->getPlane(i), outPlaneSize);
 
 	accumulatedTimeInDstSR += outNumSamples;
-	auto const accumulatedTimeIn180k = divUp<uint64_t>(accumulatedTimeInDstSR * IClock::Rate, dstPcmFormat->sampleRate);
+	auto const accumulatedTimeIn180k = divUp<uint64_t>(accumulatedTimeInDstSR * IClock::Rate, dstPcmFormat.sampleRate);
 	out->setTime(accumulatedTimeIn180k);
 
 	pins[0]->emit(out);
