@@ -185,7 +185,7 @@ IPin* PinRawDataFactory::createPin(IProps *props) {
 	switch (p->getAVCodecContext()->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: return new PinPicture(props);
 	case AVMEDIA_TYPE_AUDIO: return new PinPcm(props);
-	default: throw std::runtime_error("[PinRawDataFactory] Invalid IPin type.");
+	default: throw std::runtime_error("[PinRawDataFactory] Invalid Pin type.");
 }
 
 }

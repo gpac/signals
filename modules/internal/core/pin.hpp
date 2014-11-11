@@ -77,7 +77,7 @@ public:
 	size_t emit(std::shared_ptr<Data> data) {
 		size_t numReceivers = signal.emit(data);
 		if (numReceivers == 0) {
-			Log::msg(Log::Debug, "emit(): IPin had no receiver");
+			Log::msg(Log::Debug, "emit(): Pin had no receiver");
 		}
 		return numReceivers;
 	}
