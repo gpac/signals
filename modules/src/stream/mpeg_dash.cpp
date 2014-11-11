@@ -53,9 +53,8 @@ MPEG_DASH::MPEG_DASH(Type type)
 }
 
 MPEG_DASH::~MPEG_DASH() {
-	//FIXME: the right thing to do would be to wait until it is empty
-	audioDataQueue.clear();
-	videoDataQueue.clear();
+	audioDataQueue.push(nullptr);
+	videoDataQueue.push(nullptr);
 	workingThread.join();
 }
 
