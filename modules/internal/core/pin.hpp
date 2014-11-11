@@ -23,8 +23,6 @@ template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>,
 template<typename DataType> using PinDataSync = PinT<PacketAllocator<DataType>, SignalSync>;
 template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
 
-typedef PinDataAsync<RawData> PinAsync;
-typedef PinDataSync<RawData> PinSync;
 typedef PinDataDefault<RawData> PinDefault;
 
 struct IPin {
