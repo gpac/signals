@@ -109,6 +109,7 @@ public:
 		memset(planes, 0, sizeof(planes));
 		memset(planeSize, 0, sizeof(planeSize));
 		if (size > 0) {
+			throw std::runtime_error("Forbidden operation. Requested size must be 0. Then call setFormat().");
 			format.numPlanes = 1;
 			setPlane(0, nullptr, size);
 		}
@@ -172,8 +173,10 @@ public:
 		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
 		//TODO: use realloc
-		freePlane(planeIdx);
-		planes[planeIdx] = new uint8_t[size];
+		if ((planes[planeIdx] == nullptr) || (plane != planes[planeIdx])) {
+			freePlane(planeIdx);
+			planes[planeIdx] = new uint8_t[size];
+		}
 		planeSize[planeIdx] = size;
 		if (plane) {
 			memcpy(planes[planeIdx], plane, size);

@@ -27,12 +27,15 @@ void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.sampleRate / 1000;
 	
-	auto out = safe_cast<PcmData>(pins[0]->getBuffer(bufferSize));
+	auto out = safe_cast<PcmData>(pins[0]->getBuffer(0));
 	out->setFormat(pcmFormat);
+	for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i)
+		out->setPlane(i, nullptr, bufferSize / pcmFormat.numPlanes);
 	out->setTime(m_numSamples * IClock::Rate / pcmFormat.sampleRate);
 
 	// generate sound
 	auto const p = out->data();
+	assert(pcmFormat.numPlanes == 1);
 	for(int i=0; i < (int)out->size()/bytesPerSample; ++i) {
 		auto const fVal = nextSample();
 		auto const val = int(fVal * 32767.0f);

@@ -54,9 +54,9 @@ std::raise(SIGABRT);
 
 #define ASSERT(expr) \
 	if(!(expr)) { \
-		std::stringstream ss; \
-		ss << "assertion failed: " << #expr; \
-		Fail(__FILE__, __LINE__, ss.str().c_str()); \
+		std::stringstream exprStringStream; \
+		exprStringStream << "assertion failed: " << #expr; \
+		Fail(__FILE__, __LINE__, exprStringStream.str().c_str()); \
  	}
 
 #define ASSERT_EQUALS(expected, actual) \
