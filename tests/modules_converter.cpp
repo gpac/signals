@@ -12,7 +12,7 @@ namespace {
 class Recorder : public Module {
 public:
 	~Recorder() {
-		record.clear();
+		record.push(nullptr);
 	}
 	void process(std::shared_ptr<Data> data) override {
 		record.push(data);

@@ -172,14 +172,16 @@ public:
 	void setPlane(uint8_t planeIdx, uint8_t *plane, uint64_t size) {
 		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
-		//TODO: use realloc
-		if ((planes[planeIdx] == nullptr) || (plane != planes[planeIdx])) {
+		//TODO: use std::vector
+		if ((planes[planeIdx] == nullptr) ||
+			(plane != planes[planeIdx]) ||
+			((plane == planes[planeIdx]) && (size > planeSize[planeIdx]))) {
 			freePlane(planeIdx);
 			planes[planeIdx] = new uint8_t[(size_t)size];
 		}
 		planeSize[planeIdx] = size;
-		if (plane) {
-			memmove(planes[planeIdx], plane, (size_t)size);
+		if (plane && (plane != planes[planeIdx])) {
+			memcpy(planes[planeIdx], plane, (size_t)size);
 		}
 	}
 
