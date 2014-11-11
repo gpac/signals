@@ -14,7 +14,7 @@ public:
 	PacketAllocator(size_t numBlocks = 10)
 		: deleter(this) {
 		for(size_t i=0; i < numBlocks; ++i) {
-			freeBlocks.push(false);
+			freeBlocks.push(OneBufferIsFree);
 		}
 	}
 
@@ -30,27 +30,36 @@ public:
 	};
 
 	std::shared_ptr<DataType> getBuffer(size_t size) {
-		auto eos = freeBlocks.tryPop();
-		if (eos) {
+		auto event = freeBlocks.pop(); 
+		switch(event) {
+		case OneBufferIsFree: {
+			std::shared_ptr<DataType> data(new DataType(size), deleter);
+			return data;
+			}
+		case Exit:
 			return nullptr;
 		}
-		std::shared_ptr<DataType> data(new DataType(size), deleter);
-		return data;
+		return nullptr;
 	}
 
 	void flush() {
-		freeBlocks.push(true);
+		freeBlocks.push(Exit);
 	}
 
 private:
 	PacketAllocator& operator= (const PacketAllocator&) = delete;
 
+	enum Event {
+		OneBufferIsFree,
+		Exit,
+	};
+
 	Deleter deleter;
-	Signals::QueueThreadSafe<bool> freeBlocks;
+	Signals::QueueThreadSafe<Event> freeBlocks;
 
 	void recycle(DataType* p) {
 		delete p;
-		freeBlocks.push(false);
+		freeBlocks.push(OneBufferIsFree);
 	}
 
 };
