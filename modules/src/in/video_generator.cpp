@@ -16,8 +16,7 @@ VideoGenerator::VideoGenerator()
 
 void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const dim = VIDEO_RESOLUTION;
-	auto const picSize = dim.yv12size();
-	auto pic = safe_cast<Picture>(pins[0]->getBuffer(picSize));
+	auto pic = safe_cast<Picture>(pins[0]->getBuffer(0));
 
 	pic->setResolution(dim);
 
@@ -26,7 +25,7 @@ void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
 	auto const FLASH_PERIOD = FRAMERATE;
 	auto const flash = (m_numFrames % FLASH_PERIOD) == 0;
 	auto const val = flash ? 0xCC : 0x80;
-	memset(p, val, picSize);
+	memset(p, val, dim.yv12size());
 
 	auto const framePeriodIn180k = IClock::Rate / FRAMERATE;
 	pic->setTime(m_numFrames * framePeriodIn180k);
