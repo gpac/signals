@@ -65,7 +65,7 @@ public:
 	std::shared_ptr<Data> getBuffer(size_t size) {
 		return std::shared_ptr<Data>(new Data(size));
 	}
-	Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>>& getSignal() {
+	Signal<void(std::shared_ptr<Data>), ResultQueue<NotVoid<void>>>& getSignal() {
 		return signal;
 	}
 	IProps* getProps() const {
@@ -73,7 +73,7 @@ public:
 	}
 
 private:
-	Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>> signal;
+	Signal<void(std::shared_ptr<Data>), ResultQueue<NotVoid<void>>> signal;
 	std::unique_ptr<IProps> props;
 };
 

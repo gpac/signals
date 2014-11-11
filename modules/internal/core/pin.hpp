@@ -15,7 +15,7 @@ namespace Modules {
 using namespace Signals;
 
 //FIXME: to be removed when modules and mm are clearly separated. In this case the result may not even need to be checked.
-typedef Signal<void(std::shared_ptr<Data>), ResultQueueThreadSafe<NotVoid<void>>> SignalAsync;
+typedef Signal<void(std::shared_ptr<Data>), ResultQueue<NotVoid<void>>> SignalAsync;
 typedef Signal<void(std::shared_ptr<Data>), ResultVector<NotVoid<void>>> SignalSync;
 
 template<typename Allocator, typename Signal> class PinT;

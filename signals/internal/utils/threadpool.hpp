@@ -71,7 +71,7 @@ private:
 	}
 
 	std::atomic_bool done, waitAndExit;
-	QueueThreadSafe<std::function<void(void)>> workQueue;
+	Queue<std::function<void(void)>> workQueue;
 	std::vector<std::thread> threads;
 };
 }

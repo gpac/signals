@@ -25,8 +25,8 @@ private:
 	void DASHThread();
 	void GenerateMPD(uint64_t segNum, std::shared_ptr<Data> audio, std::shared_ptr<Data> video);
 
-	QueueThreadSafe<std::shared_ptr<Data>> audioDataQueue;
-	QueueThreadSafe<std::shared_ptr<Data>> videoDataQueue;
+	Queue<std::shared_ptr<Data>> audioDataQueue;
+	Queue<std::shared_ptr<Data>> videoDataQueue;
 	Type type;
 	std::thread workingThread;
 };

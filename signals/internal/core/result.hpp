@@ -14,14 +14,14 @@ public:
 
 
 template<typename ResultType>
-class ResultQueueThreadSafe : public IResult {
+class ResultQueue : public IResult {
 public:
-	typedef std::shared_ptr<QueueThreadSafe<ResultType>> ResultValue;
+	typedef std::shared_ptr<Queue<ResultType>> ResultValue;
 
-	explicit ResultQueueThreadSafe() : results(new QueueThreadSafe<ResultType>()) {
+	explicit ResultQueue() : results(new Queue<ResultType>()) {
 	}
 
-	virtual ~ResultQueueThreadSafe() {
+	virtual ~ResultQueue() {
 	}
 
 	void set(ResultType r) {
@@ -42,14 +42,14 @@ private:
 
 //specialized for void
 template<>
-class ResultQueueThreadSafe<void> : public IResult {
+class ResultQueue<void> : public IResult {
 public:
 	typedef std::shared_ptr<void> ResultValue;
 
-	explicit ResultQueueThreadSafe() {
+	explicit ResultQueue() {
 	}
 
-	virtual ~ResultQueueThreadSafe() {
+	virtual ~ResultQueue() {
 	}
 
 	void set(int) {

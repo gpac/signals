@@ -114,19 +114,19 @@ unittest("unsafe emit dummy  on  lazy") {
 
 //dummy safe
 unittest("safe emit dummy  on async") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAsync, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorAsync, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on auto") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAuto, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorAuto, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on pool") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorThreadPool, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorThreadPool, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on  sync") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorSync, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorSync, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on  lazy") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorLazy, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorLazy, int>(Util::dummy, 1789);
 }
 
 //dummy unsafe - the result type is set to void to avoid crashed
@@ -148,19 +148,19 @@ unittest("unsafe emit dummy  on  lazy") {
 
 //dummy safe
 unittest("safe emit dummy  on async") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAsync, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorAsync, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on auto") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAuto, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorAuto, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on pool") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorThreadPool, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorThreadPool, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on  sync") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorSync, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorSync, int>(Util::dummy, 1789);
 }
 unittest("safe emit dummy  on  lazy") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorLazy, int>(Util::dummy, 1789);
+	emitTest<int(int), ResultQueue<int>, ExecutorLazy, int>(Util::dummy, 1789);
 }
 
 //light computation (~1us) unsafe - the result type is set to void to avoid crashed
@@ -182,19 +182,19 @@ unittest("unsafe emit light computation on  lazy") {
 
 //light computation (~1us) safe
 unittest("safe emit light computation on async") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAsync, int>(Util::compute, 12);
+	emitTest<int(int), ResultQueue<int>, ExecutorAsync, int>(Util::compute, 12);
 }
 unittest("safe emit light computation on auto") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAuto, int>(Util::compute, 12);
+	emitTest<int(int), ResultQueue<int>, ExecutorAuto, int>(Util::compute, 12);
 }
 unittest("safe emit light computation on pool") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorThreadPool, int>(Util::compute, 12);
+	emitTest<int(int), ResultQueue<int>, ExecutorThreadPool, int>(Util::compute, 12);
 }
 unittest("safe emit light computation on  sync") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorSync, int>(Util::compute, 12);
+	emitTest<int(int), ResultQueue<int>, ExecutorSync, int>(Util::compute, 12);
 }
 unittest("safe emit light computation on  lazy") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorLazy, int>(Util::compute, 12);
+	emitTest<int(int), ResultQueue<int>, ExecutorLazy, int>(Util::compute, 12);
 }
 
 //heavy computation (~40ms) unsafe - the result type is set to void to avoid crashed
@@ -216,19 +216,19 @@ unittest("unsafe emit heavy computation on  lazy") {
 
 //heavy computation (~40ms) safe
 unittest("safe emit heavy computation on async") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAsync, int>(Util::compute, 25);
+	emitTest<int(int), ResultQueue<int>, ExecutorAsync, int>(Util::compute, 25);
 }
 unittest("safe emit heavy computation on auto") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorAuto, int>(Util::compute, 25);
+	emitTest<int(int), ResultQueue<int>, ExecutorAuto, int>(Util::compute, 25);
 }
 unittest("safe emit heavy computation on pool") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorThreadPool, int>(Util::compute, 25);
+	emitTest<int(int), ResultQueue<int>, ExecutorThreadPool, int>(Util::compute, 25);
 }
 unittest("safe emit heavy computation on  sync") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorSync, int>(Util::compute, 25);
+	emitTest<int(int), ResultQueue<int>, ExecutorSync, int>(Util::compute, 25);
 }
 unittest("safe emit heavy computation on  lazy") {
-	emitTest<int(int), ResultQueueThreadSafe<int>, ExecutorLazy, int>(Util::compute, 25);
+	emitTest<int(int), ResultQueue<int>, ExecutorLazy, int>(Util::compute, 25);
 }
 
 //sleep unsafe
@@ -250,19 +250,19 @@ unittest("unsafe emit sleep   on  lazy") {
 
 //sleep safe
 unittest("safe emit sleep   on async") {
-	emitTest<void(int), ResultQueueThreadSafe<void>, ExecutorAsync, int>(Util::sleepInMs, 100);
+	emitTest<void(int), ResultQueue<void>, ExecutorAsync, int>(Util::sleepInMs, 100);
 }
 unittest("safe emit sleep   on  auto") {
-	emitTest<void(int), ResultQueueThreadSafe<void>, ExecutorAuto, int>(Util::sleepInMs, 100);
+	emitTest<void(int), ResultQueue<void>, ExecutorAuto, int>(Util::sleepInMs, 100);
 }
 unittest("safe emit sleep   on  pool") {
-	emitTest<void(int), ResultQueueThreadSafe<void>, ExecutorThreadPool, int>(Util::sleepInMs, 100);
+	emitTest<void(int), ResultQueue<void>, ExecutorThreadPool, int>(Util::sleepInMs, 100);
 }
 unittest("safe emit sleep   on  sync") {
-	emitTest<void(int), ResultQueueThreadSafe<void>, ExecutorSync, int>(Util::sleepInMs, 100);
+	emitTest<void(int), ResultQueue<void>, ExecutorSync, int>(Util::sleepInMs, 100);
 }
 unittest("safe emit sleep   on  lazy") {
-	emitTest<void(int), ResultQueueThreadSafe<void>, ExecutorLazy, int>(Util::sleepInMs, 100);
+	emitTest<void(int), ResultQueue<void>, ExecutorLazy, int>(Util::sleepInMs, 100);
 }
 }
 
