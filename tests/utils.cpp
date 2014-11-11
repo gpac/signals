@@ -33,8 +33,15 @@ unittest("makeVector: vector elements") {
 }
 
 unittest("format: one argument") {
-	auto const s = format("%s", 45);
-	ASSERT(s == "45");
+	ASSERT_EQUALS("45", format("%s", 45));
+}
+
+unittest("format: one uint8_t argument") {
+	ASSERT_EQUALS("45", format("%s", (uint8_t)45));
+}
+
+unittest("format: one char argument") {
+	ASSERT_EQUALS("A", format("%s", 'A'));
 }
 
 unittest("format: vector argument") {

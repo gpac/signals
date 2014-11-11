@@ -12,6 +12,12 @@ ss << val;
 return ss.str();
 }
 
+inline std::string toString(uint8_t val) {
+std::stringstream ss;
+ss << (int)val;
+return ss.str();
+}
+
 template<typename T>
 std::string toString(std::vector<T> const& val) {
 	std::stringstream ss;
