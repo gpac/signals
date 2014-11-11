@@ -28,6 +28,7 @@ unittest("audio converter: interleaved to planar to interleaved") {
 	ConnectPin(converter2->getPin(0), comparator.get(), &Utils::PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
+	SLEEP_IN_MS(200); // HACK: allow time for the data to reach the comparator ...
 	bool thrown = false;
 	try {
 		comparator->process(nullptr);
@@ -55,6 +56,7 @@ unittest("audio converter: 44100 to 48000") {
 	ConnectPin(converter2->getPin(0), comparator.get(), &Utils::PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
+	SLEEP_IN_MS(200); // HACK: allow time for the data to reach the comparator ...
 	bool thrown = false;
 	try {
 		comparator->process(nullptr);
