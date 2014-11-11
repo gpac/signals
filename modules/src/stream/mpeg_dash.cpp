@@ -2,10 +2,8 @@
 #include "../utils/log.hpp"
 #include "../utils/tools.hpp"
 #include "../out/file.hpp"
-#include "../common/libav.hpp" //FIXME: for DataAVPacket
 #include <fstream>
 
-#include "ffpp.hpp" //FIXME: remove once not based on libav anymore
 
 #define DASH_DUR_IN_MS 10000
 

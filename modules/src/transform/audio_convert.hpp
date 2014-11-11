@@ -2,9 +2,6 @@
 
 #include "internal/core/module.hpp"
 #include "../common/pcm.hpp"
-extern "C" {
-#include <libavutil/samplefmt.h> //TODO: remove when media types
-}
 
 
 namespace ffpp {

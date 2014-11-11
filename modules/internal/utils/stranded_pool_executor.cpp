@@ -16,7 +16,6 @@ StrandedPoolModuleExecutor::StrandedPoolModuleExecutor(asio::thread_pool &thread
 }
 
 std::shared_future<NotVoid<void>> StrandedPoolModuleExecutor::operator() (const std::function<void(std::shared_ptr<Data>)> &fn, std::shared_ptr<Data> data) {
-	//FIXME: could be better if executors didn't retrieved shared_ptr for void
 	std::shared_future<NotVoid<void>> future = std::async(std::launch::deferred, [] { return NotVoid<void>(); });
 	auto closure = [future, &fn, data]() -> void {
 		fn(data);

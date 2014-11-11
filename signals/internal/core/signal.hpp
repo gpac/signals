@@ -25,10 +25,9 @@ public:
 
 	virtual IExecutor<Callback(Args...)>& getExecutor() const = 0;
 
-	//TODO write test based on the shared_ptr reflector
 	/**
-	* Some implementations (such as MSVC std::launch) don't destroy the copy of
-	* 'Args... args' they hold. When using reference counted Args, they'only be
+	* When relying on shared_future (i.e. with non-void types), some implementations (such as MSVC std::launch)
+	* don't destroy the copy of 'Args... args' they hold. When using reference counted Args, they'only be
 	* released when calling this function or when getting the results().
 	*/
 	virtual void flushAvailableResults() = 0;

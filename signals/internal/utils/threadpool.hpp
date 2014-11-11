@@ -35,22 +35,12 @@ public:
 
 	template<typename Callback, typename... Args>
 	std::shared_future<Callback> submit(const std::function<Callback(Args...)> &callback, Args... args)	{
-#if 0 //FIXME: better but crashes
-		std::packaged_task<Callback(Args...)> task(callback);
-		const std::shared_future<Callback> future = task.get_future();
-		std::function<void(void)> f = [&task, Args...]() {
-			task(args...);
-		};
-		workQueue.push(f);
-		return future;
-#else
 		const std::shared_future<Callback> &future = std::async(std::launch::deferred, callback, args...);
 		std::function<void(void)> f = [future]() {
 			future.get();
 		};
 		workQueue.push(f);
 		return future;
-#endif
 	}
 
 private:

@@ -203,7 +203,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
 		declareStream.emit(stream);
 	} else {
-		assert(0); //TODO test with anythng esle than audio and video
+		assert(0); //TODO test with anythng else than audio and video
 	}
 }
 
