@@ -7,7 +7,7 @@
 
 namespace Modules {
 
-class IPin;
+struct IPin;
 class Data;
 
 template<typename Class>
