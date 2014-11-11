@@ -8,7 +8,6 @@
 namespace Modules {
 namespace Transform {
 
-//Romain: move bool to enum
 AudioConvert::AudioConvert(AudioSampleFormat srcFmt, AudioLayout srcChannelLayout, uint32_t srcSampleRate, AudioStruct srcStruct,
 	AudioSampleFormat dstFmt, AudioLayout dstChannelLayout, uint32_t dstSampleRate, AudioStruct dstStruct)
 	: srcAudioCfg(new PcmFormat(srcSampleRate, srcChannelLayout, srcFmt, srcStruct)),
@@ -46,11 +45,15 @@ void AudioConvert::process(std::shared_ptr<Data> data) {
 	auto const dstNumSamples = divUp(srcNumSamples * dstAudioCfg->sampleRate, srcAudioCfg->sampleRate);
 
 	const int bufferSize = av_samples_get_buffer_size(nullptr, aFrame->get()->channels, aFrame->get()->nb_samples, (AVSampleFormat)aFrame->get()->format, 0);
-	auto out(pins[0]->getBuffer(bufferSize * 10));//Romain: pourquoi *10?
+	auto out(pins[0]->getBuffer(bufferSize * 10)); //Romain: pourquoi *10?
 	uint8_t* pDst = out->data();
 
-	m_Swr->convert(&pDst, dstNumSamples, (const uint8_t**)aFrame->get()->data, srcNumSamples);
+	/*auto const numSamples = */m_Swr->convert(&pDst, dstNumSamples, (const uint8_t**)aFrame->get()->data, srcNumSamples);
+	assert(m_Swr->getDelay(IClock::Rate) == 0);
+	//auto const sampleSize = numSamples * dstAudioCfg->getBytesPerSample();
+	//assert(data->getTime() == sampleSize * IClock::Rate / dstAudioCfg->sampleRate);
 	
+	out->setTime(data->getTime());
 	pins[0]->emit(out);
 }
 

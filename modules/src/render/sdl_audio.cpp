@@ -30,7 +30,7 @@ SDLAudio* SDLAudio::create() {
 	return new SDLAudio();
 }
 
-SDLAudio::SDLAudio() : pcmFormat(new PcmFormat()), m_FifoTime(0) {
+SDLAudio::SDLAudio() : pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)), m_FifoTime(0) {
 	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(pcmFormat.get());
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
@@ -89,17 +89,17 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	int64_t numSamplesToProduce = len / bytesPerSample;
 
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
-	auto const relativeSamplePosition = relativeTimePosition * AUDIO_SAMPLERATE / IClock::Rate;
+	auto const relativeSamplePosition = relativeTimePosition * pcmFormat->sampleRate / IClock::Rate;
 
 	if (relativeSamplePosition < -audioJitterTolerance) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
-		Log::msg(Log::Warning, "[SDLAudio render] must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / AUDIO_SAMPLERATE);
+		Log::msg(Log::Warning, "[SDLAudio render] must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / pcmFormat->sampleRate);
 		fifoConsumeSamples((size_t)numSamplesToDrop);
 	}
 
 	if (relativeSamplePosition > audioJitterTolerance) {
 		auto const numSilenceSamples = std::min<int64_t>(numSamplesToProduce, relativeSamplePosition);
-		Log::msg(Log::Warning, "[SDLAudio render] insert silence (%s ms)", numSilenceSamples * 1000.0f / AUDIO_SAMPLERATE);
+		Log::msg(Log::Warning, "[SDLAudio render] insert silence (%s ms)", numSilenceSamples * 1000.0f / pcmFormat->sampleRate);
 		silenceSamples(stream, (size_t)numSilenceSamples);
 		numSamplesToProduce -= numSilenceSamples;
 	}

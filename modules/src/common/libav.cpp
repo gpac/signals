@@ -61,12 +61,6 @@ namespace Modules {
 void libavAudioCtxConvertLibav(const Modules::PcmFormat *cfg, int &sampleRate, int &format, int &numChannels, uint64_t &layout) {
 	sampleRate = cfg->sampleRate;
 
-	switch (cfg->sampleFormat) {
-	case Modules::S16: format = AV_SAMPLE_FMT_S16; break;
-	case Modules::F32: format = AV_SAMPLE_FMT_FLT; break;
-	default: throw std::runtime_error("Unknown libav audio format");
-	}
-
 	switch (cfg->layout) {
 	case Modules::Mono: layout = AV_CH_LAYOUT_MONO; break;
 	case Modules::Stereo: layout = AV_CH_LAYOUT_STEREO; break;
@@ -74,6 +68,12 @@ void libavAudioCtxConvertLibav(const Modules::PcmFormat *cfg, int &sampleRate, i
 	}
 	numChannels = av_get_channel_layout_nb_channels(layout);
 	assert(numChannels == cfg->numChannels);
+
+	switch (cfg->sampleFormat) {
+	case Modules::S16: format = av_get_alt_sample_fmt(AV_SAMPLE_FMT_S16, cfg->numPlanes > 1); break;
+	case Modules::F32: format = av_get_alt_sample_fmt(AV_SAMPLE_FMT_FLT, cfg->numPlanes > 1); break;
+	default: throw std::runtime_error("Unknown libav audio format");
+	}
 }
 
 void libavAudioCtxConvert(const PcmFormat *cfg, AVCodecContext *codecCtx) {

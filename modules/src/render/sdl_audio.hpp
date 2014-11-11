@@ -33,7 +33,7 @@ private:
 
 	void fifoConsumeSamples(size_t n) {
 		m_Fifo.consume(n * bytesPerSample);
-		m_FifoTime += (n * IClock::Rate) / AUDIO_SAMPLERATE;
+		m_FifoTime += (n * IClock::Rate) / pcmFormat->sampleRate;
 	}
 
 	void writeSamples(uint8_t*& dst, uint8_t const* src, size_t n) {
