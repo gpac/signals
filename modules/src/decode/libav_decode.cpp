@@ -45,7 +45,7 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	PinLibavFrameFactory factory;
+	PinRawDataFactory factory;
 	pins.push_back(uptr(factory.createPin(new PropsDecoder(codecCtx))));
 }
 

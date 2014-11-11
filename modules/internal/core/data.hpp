@@ -11,7 +11,7 @@
 namespace Modules {
 
 /**
- * A generic data container.
+ * A generic timed data container.
  */
 class Data {
 public:
