@@ -91,4 +91,28 @@ unittest("video converter: pass-through") {
 	ASSERT_EQUALS(1, numFrames);
 }
 
+unittest("video converter: different sizes") {
+	auto srcRes = Resolution(16, 32);
+	auto dstRes = Resolution(24, 8);
+	int numFrames = 0;
+
+	auto onFrame = [&](std::shared_ptr<Data> data) {
+		ASSERT_EQUALS(data->size(), dstRes.yv12size());
+		numFrames++;
+	};
+
+	{
+		auto convert = uptr(new Transform::VideoConvert(
+					srcRes, AV_PIX_FMT_YUV420P,
+					dstRes, AV_PIX_FMT_YUV420P
+					));
+		ConnectPin(convert->getPin(0), onFrame);
+
+		std::shared_ptr<Data> pic = uptr(new Picture(srcRes));
+		convert->process(pic);
+	}
+
+	ASSERT_EQUALS(1, numFrames);
+}
+
 }
