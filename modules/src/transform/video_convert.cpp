@@ -6,9 +6,9 @@
 namespace Modules {
 namespace Transform {
 
-VideoConvert::VideoConvert(int srcW, int srcH, AVPixelFormat srcFormat, int dstW, int dstH, AVPixelFormat dstFormat)
-	: srcW(srcW), srcH(srcH), dstW(dstW), dstH(dstH), dstFormat(dstFormat) {
-	m_SwContext = sws_getContext(srcW, srcH, srcFormat, dstW, dstH, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
+VideoConvert::VideoConvert(Resolution srcRes, AVPixelFormat srcFormat, Resolution dstRes, AVPixelFormat dstFormat)
+	: srcRes(srcRes), dstRes(dstRes), dstFormat(dstFormat) {
+	m_SwContext = sws_getContext(srcRes.width, srcRes.height, srcFormat, dstRes.width, dstRes.height, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
 	PinDefaultFactory pinFactory;
 	pins.push_back(uptr(pinFactory.createPin()));
 }
@@ -28,7 +28,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
 
-	const int dstFrameSize = avpicture_get_size(dstFormat, dstW, dstH);
+	const int dstFrameSize = avpicture_get_size(dstFormat, dstRes.width, dstRes.height);
 	auto out(pins[0]->getBuffer(dstFrameSize));
 
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
@@ -36,15 +36,15 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 	switch (dstFormat) {
 	case AV_PIX_FMT_YUV420P:
 		pDst[0] = out->data();
-		pDst[1] = out->data() + dstW * dstH;
-		pDst[2] = out->data() + dstW * dstH * 5 / 4;
-		dstStride[0] = dstW;
-		dstStride[1] = dstW / 2;
-		dstStride[2] = dstW / 2;
+		pDst[1] = out->data() + dstRes.width * dstRes.height;
+		pDst[2] = out->data() + dstRes.width * dstRes.height * 5 / 4;
+		dstStride[0] = dstRes.width;
+		dstStride[1] = dstRes.width / 2;
+		dstStride[2] = dstRes.width / 2;
 		break;
 	case AV_PIX_FMT_RGB24:
 		pDst[0] = out->data();
-		dstStride[0] = dstW * 3;
+		dstStride[0] = dstRes.width * 3;
 		break;
 	default:
 		assert(0);
@@ -52,7 +52,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 		return;
 	}
 
-	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcH, pDst, dstStride);
+	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcRes.height, pDst, dstStride);
 
 	pins[0]->emit(out);
 }

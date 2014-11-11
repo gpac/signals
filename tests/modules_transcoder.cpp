@@ -135,9 +135,12 @@ unittest("transcoder: jpg to resized jpg") {
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 
+	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
+	auto dstRes = Resolution(srcCtx->width / 2, srcCtx->height / 2);
+
 	auto reader = uptr(In::File::create(filename));
-	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width / 2, srcCtx->height / 2, srcCtx->pix_fmt));
-	auto encoder = uptr(new Encode::JPEGTurboEncode(srcCtx->width/2, srcCtx->height/2));
+	auto converter = uptr(new Transform::VideoConvert(srcRes, srcCtx->pix_fmt, dstRes, srcCtx->pix_fmt));
+	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes.width, dstRes.height));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
 	ConnectPinToModule(reader->getPin(0), decoder);
@@ -159,7 +162,10 @@ unittest("transcoder: h264/mp4 to jpg") {
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
 	auto srcCtx = decoderProps->getAVCodecContext();
-	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width, srcCtx->height, /*FIXME: hardcoded*/ AV_PIX_FMT_RGB24));
+	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
+	auto converter = uptr(new Transform::VideoConvert(
+				srcRes, srcCtx->pix_fmt,
+			 	srcRes, AV_PIX_FMT_RGB24));
 
 	ConnectPinToModule(demux->getPin(0), decoder);
 	ConnectPinToModule(decoder->getPin(0), converter);
@@ -182,9 +188,13 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	ASSERT(props != nullptr);
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
+	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
 
 	auto reader = uptr(In::File::create(filename));
-	auto converter = uptr(new Transform::VideoConvert(srcCtx->width, srcCtx->height, srcCtx->pix_fmt, srcCtx->width, srcCtx->height, /*FIXME: hardcoded*/AV_PIX_FMT_YUV420P));
+	auto converter = uptr(new Transform::VideoConvert(
+				srcRes, srcCtx->pix_fmt,
+			 	srcRes, AV_PIX_FMT_YUV420P));
+
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));
 	Connect(encoder->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
