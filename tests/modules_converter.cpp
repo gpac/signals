@@ -106,7 +106,7 @@ private:
 unittest("audio converter: interleaved to planar to interleaved") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto comparator = uptr(new PcmComparator);
-	Connect(soundGen->getPin(0)->getSignal(), comparator.get(), &PcmComparator::pushOriginal);
+	ConnectPin(soundGen->getPin(0), comparator.get(), &PcmComparator::pushOriginal);
 
 	auto converter1 = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved,
 	                                                   AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Planar));
@@ -115,7 +115,7 @@ unittest("audio converter: interleaved to planar to interleaved") {
 
 	ConnectPinToModule(soundGen->getPin(0), converter1);
 	ConnectPinToModule(converter1->getPin(0), converter2);
-	Connect(converter2->getPin(0)->getSignal(), comparator.get(), &PcmComparator::pushOther);
+	ConnectPin(converter2->getPin(0), comparator.get(), &PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
 	bool thrown = false;
@@ -132,7 +132,7 @@ unittest("audio converter: interleaved to planar to interleaved") {
 unittest("audio converter: 44100 to 48000") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto comparator = uptr(new PcmComparator);
-	Connect(soundGen->getPin(0)->getSignal(), comparator.get(), &PcmComparator::pushOriginal);
+	ConnectPin(soundGen->getPin(0), comparator.get(), &PcmComparator::pushOriginal);
 
 	auto converter1 = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved,
 	                                                   AudioSampleFormat::S16, AudioLayout::Stereo, 48000, AudioStruct::Interleaved));
@@ -141,7 +141,7 @@ unittest("audio converter: 44100 to 48000") {
 
 	ConnectPinToModule(soundGen->getPin(0), converter1);
 	ConnectPinToModule(converter1->getPin(0), converter2);
-	Connect(converter2->getPin(0)->getSignal(), comparator.get(), &PcmComparator::pushOther);
+	ConnectPin(converter2->getPin(0), comparator.get(), &PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
 	bool thrown = false;
