@@ -89,9 +89,6 @@ public:
 	Module() : defaultPinFactory(new PinFactory), pinFactory(defaultPinFactory.get()) {}
 	virtual ~Module() noexcept(false) {}
 	virtual void process(std::shared_ptr<Data> data) = 0;
-	size_t getNumPin() const {
-		return 1;
-	}
 	Pin* getPin(size_t i) {
 		return signals[i].get();
 	}
