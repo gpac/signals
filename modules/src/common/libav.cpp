@@ -172,12 +172,12 @@ void avLog(void* /*avcl*/, int level, const char *fmt, va_list vl) {
 #endif
 }
 
-Pin* PinLibavPacketFactory::createPin(IProps *props) {
+IPin* PinLibavPacketFactory::createPin(IProps *props) {
 	return new PinLibavPacket(props);
 }
 
 //Romain: move out of libav.cpp when props are independent
-Pin* PinRawDataFactory::createPin(IProps *props) {
+IPin* PinRawDataFactory::createPin(IProps *props) {
 	auto p = dynamic_cast<PropsDecoder*>(props);
 	if (!p)
 		throw std::runtime_error("dynamic cast error");
@@ -185,7 +185,7 @@ Pin* PinRawDataFactory::createPin(IProps *props) {
 	switch (p->getAVCodecContext()->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: return new PinPicture(props);
 	case AVMEDIA_TYPE_AUDIO: return new PinPcm(props);
-	default: throw std::runtime_error("[PinRawDataFactory] Invalid Pin type.");
+	default: throw std::runtime_error("[PinRawDataFactory] Invalid IPin type.");
 }
 
 }

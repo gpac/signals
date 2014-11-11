@@ -20,7 +20,7 @@ public:
 		return pins.size();
 	}
 
-	Pin* getPin(size_t i) {
+	IPin* getPin(size_t i) {
 		return pins[i].get();
 	}
 
@@ -28,7 +28,7 @@ protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
 
-	std::vector<std::unique_ptr<Pin>> pins;
+	std::vector<std::unique_ptr<IPin>> pins;
 };
 
 }

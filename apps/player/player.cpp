@@ -20,7 +20,7 @@ struct Stream {
 		pin = nullptr;
 	}
 	std::shared_ptr<Module> fromModule;
-	Pin* pin;
+	IPin* pin;
 
 	Stream(Stream const& s) = delete;
 	Stream(Stream&& s) = default;

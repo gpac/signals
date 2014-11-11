@@ -208,7 +208,7 @@ class PinPcmFactory : public PinFactory {
 public:
 	PinPcmFactory() {
 	}
-	Pin* createPin(IProps *props = nullptr) {
+	IPin* createPin(IProps *props = nullptr) {
 		return new PinPcm(props);
 	}
 };

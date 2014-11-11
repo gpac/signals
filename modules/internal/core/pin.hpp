@@ -27,9 +27,8 @@ typedef PinDataAsync<RawData> PinAsync;
 typedef PinDataSync<RawData> PinSync;
 typedef PinDataDefault<RawData> PinDefault;
 
-class Pin {
-public:
-	virtual ~Pin() {
+struct IPin {
+	virtual ~IPin() {
 	}
 	virtual size_t emit(std::shared_ptr<Data> data) = 0;
 	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
@@ -38,22 +37,22 @@ public:
 	virtual ISignal<void(std::shared_ptr<Data>)>& getSignal() = 0;
 };
 
-inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor) {
+inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<Data>)> functor) {
 return p->getSignal().connect(functor);
 }
 
 template<typename C, typename D>
-size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot) {
+size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot) {
 auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
 return ConnectPin(p, functor);
 }
 
-inline size_t ConnectPin(Pin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
+inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
 return p->getSignal().connect(functor, executor);
 }
 
 template<typename C, typename D, typename E>
-size_t ConnectPin(Pin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
+size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
 auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
 return ConnectPin(p, functor, executor);
 }
@@ -63,17 +62,17 @@ class PinFactory {
 public:
 	virtual ~PinFactory() {
 	}
-	virtual Pin* createPin(IProps *props = nullptr) = 0;
+	virtual IPin* createPin(IProps *props = nullptr) = 0;
 };
 
 class PinDefaultFactory : public PinFactory {
 public:
-	Pin* createPin(IProps *props = nullptr);
+	IPin* createPin(IProps *props = nullptr);
 };
 
 //TODO: the pin could check the bool result (currently done by the allocator) and retry on failure (but is it its role?)
 template<typename Allocator, typename Signal>
-class PinT : public Pin {
+class PinT : public IPin {
 public:
 	PinT(IProps *props = nullptr)
 		: props(props) {
@@ -86,7 +85,7 @@ public:
 	size_t emit(std::shared_ptr<Data> data) {
 		size_t numReceivers = signal.emit(data);
 		if (numReceivers == 0) {
-			Log::msg(Log::Debug, "emit(): Pin had no receiver");
+			Log::msg(Log::Debug, "emit(): IPin had no receiver");
 		}
 		return numReceivers;
 	}

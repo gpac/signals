@@ -59,14 +59,14 @@ typedef PinDataDefault<DataAVPacket> PinLibavPacket;
 
 class PinLibavPacketFactory : public PinFactory {
 public:
-	Pin* createPin(IProps *props = nullptr);
+	IPin* createPin(IProps *props = nullptr);
 };
 
 typedef PinDataDefault<Picture> PinPicture;
 
 class PinRawDataFactory : public PinFactory {
 public:
-	Pin* createPin(IProps *props = nullptr);
+	IPin* createPin(IProps *props = nullptr);
 };
 
 }
