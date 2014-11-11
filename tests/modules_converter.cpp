@@ -3,6 +3,7 @@
 
 #include "in/sound_generator.hpp"
 #include "transform/audio_convert.hpp"
+#include "transform/video_convert.hpp"
 #include "utils/comparator.hpp"
 #include "utils/recorder.hpp"
 #include "tools.hpp"
@@ -66,6 +67,28 @@ unittest("audio converter: 44100 to 48000") {
 		thrown = true;
 	}
 	ASSERT(!thrown);
+}
+
+unittest("video converter: pass-through") {
+	auto res = Resolution(16, 32);
+	int numFrames = 0;
+
+	auto onFrame = [&](std::shared_ptr<Data> data) {
+		numFrames++;
+	};
+
+	{
+		auto convert = uptr(new Transform::VideoConvert(
+					res, AV_PIX_FMT_YUV420P,
+					res, AV_PIX_FMT_YUV420P
+					));
+		ConnectPin(convert->getPin(0), onFrame);
+
+		std::shared_ptr<Data> pic = uptr(new Picture(res));
+		convert->process(pic);
+	}
+
+	ASSERT_EQUALS(1, numFrames);
 }
 
 }
