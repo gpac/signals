@@ -62,9 +62,9 @@ public:
 	Pin* createPin(IProps *props = nullptr);
 };
 
-typedef PinDataDefault<Picture> PinLibavFrame;
+typedef PinDataDefault<Picture> PinPicture;
 
-class PinLibavFrameFactory : public PinFactory {
+class PinRawDataFactory : public PinFactory {
 public:
 	Pin* createPin(IProps *props = nullptr);
 };
