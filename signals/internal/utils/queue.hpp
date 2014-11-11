@@ -9,9 +9,9 @@
 namespace Signals {
 
 template<typename T>
-class QueueThreadSafe {
+class Queue {
 public:
-	QueueThreadSafe() {
+	Queue() {
 	}
 
 	void push(T data) {
@@ -79,8 +79,8 @@ public:
 #endif
 
 private:
-	QueueThreadSafe(const QueueThreadSafe&) = delete;
-	QueueThreadSafe& operator= (const QueueThreadSafe&) = delete;
+	Queue(const Queue&) = delete;
+	Queue& operator= (const Queue&) = delete;
 
 	mutable std::mutex mutex;
 	std::queue<T> dataQueue;

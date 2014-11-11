@@ -8,7 +8,7 @@ using namespace Signals;
 namespace {
 template<typename T>
 bool test() {
-	ResultQueueThreadSafe<T> result;
+	ResultQueue<T> result;
 	auto res = result.get();
 
 	return true;

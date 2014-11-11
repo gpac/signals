@@ -8,7 +8,7 @@ namespace {
 
 #ifdef ENABLE_FAILING_TESTS
 unittest("Thread-safe queue with non-pointer types") {
-	QueueThreadSafe<int> queue;
+	Queue<int> queue;
 	const int val = 1;
 
 	queue.push(val);
@@ -34,7 +34,7 @@ unittest("Thread-safe queue with non-pointer types") {
 #endif
 
 unittest("Thread-safe queue can be cleared while a blocking pop() is waiting") {
-	QueueThreadSafe<int> queue;
+	Queue<int> queue;
 	auto f = [&]() {
 		auto data = queue.pop();
 		ASSERT_EQUALS(7, data);
@@ -46,7 +46,7 @@ unittest("Thread-safe queue can be cleared while a blocking pop() is waiting") {
 }
 
 unittest("Thread-safe queue can be cleared while several blocking pop() are waiting") {
-	QueueThreadSafe<int> queue;
+	Queue<int> queue;
 	auto f = [&]() {
 		auto data = queue.pop();
 		ASSERT_EQUALS(9, data);

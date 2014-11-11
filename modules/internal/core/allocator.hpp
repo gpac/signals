@@ -55,7 +55,7 @@ private:
 	};
 
 	Deleter deleter;
-	Signals::QueueThreadSafe<Event> freeBlocks;
+	Signals::Queue<Event> freeBlocks;
 
 	void recycle(DataType* p) {
 		delete p;

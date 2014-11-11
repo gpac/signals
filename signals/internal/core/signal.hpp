@@ -145,7 +145,7 @@ private:
 	IExecutor<Callback(Args...)> &executor;
 };
 
-template <typename SignalSignature, typename Result = ResultQueueThreadSafe<typename std::function<SignalSignature>::result_type >>
+template <typename SignalSignature, typename Result = ResultQueue<typename std::function<SignalSignature>::result_type >>
 class Signal : public PSignal<Result, SignalSignature> {
 public:
 	Signal() : PSignal<Result, SignalSignature>() {}

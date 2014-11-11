@@ -37,7 +37,7 @@ private:
 
 	int64_t m_NumFrames;
 
-	QueueThreadSafe<std::shared_ptr<Data>> m_dataQueue;
+	Queue<std::shared_ptr<Data>> m_dataQueue;
 	std::thread workingThread;
 };
 
