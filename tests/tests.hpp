@@ -11,12 +11,12 @@
 #include <sys/time.h>
 #endif
 
-#include <cassert>
 #include <cmath>
 #include <csignal>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 
 #define TESTS
@@ -47,13 +47,24 @@
 	unittestLine(__COUNTER__, prettyName)
 
 namespace Tests {
-inline void Fail(char const* file, int line, const char* expr) {
-std::cerr << "TEST FAILED: " << file << "(" << line << "): (" << expr << ")" << std::endl;
+inline void Fail(char const* file, int line, const char* msg) {
+std::cerr << "TEST FAILED: " << file << "(" << line << "): " << msg << std::endl;
 std::raise(SIGABRT);
 }
 
 #define ASSERT(expr) \
-	if(!(expr)) { Fail(__FILE__, __LINE__, #expr); }
+	if(!(expr)) { \
+		std::stringstream ss; \
+		ss << "assertion failed: " << #expr; \
+		Fail(__FILE__, __LINE__, ss.str().c_str()); \
+ 	}
+
+#define ASSERT_EQUALS(expected, actual) \
+	if((expected) != (actual)) { \
+		std::stringstream ss; \
+		ss << "assertion failed for expression: '" << #actual << "' , expected '" << (expected) << "' got '" << (actual) << "'"; \
+		Fail(__FILE__, __LINE__, ss.str().c_str()); \
+	}
 
 int RegisterTest(void (*f)(), const char* testName, int& dummy);
 void RunAll();

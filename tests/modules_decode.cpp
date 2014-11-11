@@ -103,13 +103,13 @@ unittest("decoder: video simple") {
 	auto onPic = [&](std::shared_ptr<Data> data) {
 		auto const pic = safe_cast<Picture>(data);
 		auto const res = pic->getResolution();
-		assert(res.width == 16);
-		assert(res.height == 16);
+		ASSERT_EQUALS(16, res.width);
+		ASSERT_EQUALS(16, res.height);
 
 		auto const firstPixel = *pic->getComp(0);
 		auto const lastPixel = *(pic->getComp(0) + res.width * res.height - 1);
-		assert(firstPixel == 0x80);
-		assert(lastPixel == 0x80);
+		ASSERT_EQUALS(0x80, firstPixel);
+		ASSERT_EQUALS(0x80, lastPixel);
 	};
 
 	ConnectPin(decoder->getPin(0), onPic);
