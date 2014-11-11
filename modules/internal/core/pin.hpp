@@ -80,7 +80,7 @@ public:
 	}
 
 	~PinT() {
-		allocator.flush();
+		allocator.unblock();
 	}
 
 	size_t emit(std::shared_ptr<Data> data) {
@@ -92,16 +92,7 @@ public:
 	}
 
 	std::shared_ptr<Data> getBuffer(size_t size) {
-		//FIXME awful hack: infinite loop to wait for available results, otherwise we are blocked
-		for (uint64_t i = 0; ; ++i) {
-			signal.results(false); //see if results are ready
-			auto data = allocator.getBuffer(size);
-			if (data.get()) {
-				return data;
-			}
-			const std::chrono::milliseconds dur(10);
-			std::this_thread::sleep_for(dur);
-		}
+		return allocator.getBuffer(size);
 	}
 
 	Signal& getSignal() {
