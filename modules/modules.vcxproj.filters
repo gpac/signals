@@ -40,14 +40,14 @@
     <Filter Include="includes\internal\core">
       <UniqueIdentifier>{c81eaab6-4326-41f2-b4f3-aad1df7b8076}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\probe">
-      <UniqueIdentifier>{91962d09-56bd-4858-a19c-3e5bfeffd0cd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\stream">
       <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\decode\demux">
       <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{90efad11-c1ad-4a9b-86ba-8008ba2676ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +147,12 @@
     <ClInclude Include="src\stream\mpeg_dash.hpp">
       <Filter>src\stream</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\comparator.hpp">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\recorder.hpp">
+      <Filter>src\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">
@@ -223,6 +229,9 @@
     </ClCompile>
     <ClCompile Include="src\stream\mpeg_dash.cpp">
       <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\recorder.cpp">
+      <Filter>src\utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

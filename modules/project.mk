@@ -23,6 +23,7 @@ MODULES_SRCS:=\
   $(ProjectName)/src/stream/mpeg_dash.cpp\
   $(ProjectName)/src/transform/audio_convert.cpp\
   $(ProjectName)/src/transform/video_convert.cpp\
+  $(ProjectName)/src/utils/recorder.cpp\
   $(ProjectName)/internal/utils/stranded_pool_executor.cpp\
 
 LIB_MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
