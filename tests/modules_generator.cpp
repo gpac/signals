@@ -17,11 +17,8 @@ namespace {
 unittest("sound generator") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto render = uptr(Render::SDLAudio::create());
-	auto converter = uptr(new Transform::AudioConvert(AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Interleaved,
-		AudioSampleFormat::S16, AudioLayout::Stereo, 44100, AudioStruct::Planar));
 
-	ConnectPinToModule(soundGen->getPin(0), converter);
-	ConnectPinToModule(converter->getPin(0), render);
+	ConnectPinToModule(soundGen->getPin(0),  render);
 
 	for(int i=0; i < 25; ++i) {
 		soundGen->process(nullptr);
