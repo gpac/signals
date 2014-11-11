@@ -133,9 +133,11 @@ public:
 	}
 
 	virtual uint64_t size() const override {
-		if (format.numPlanes > 1)
-			throw std::runtime_error("Forbidden operation. Use audio planes to retrieve the size.");
-		return planeSize[0];
+		uint64_t size = 0;
+		for (size_t i = 0; i < format.numPlanes; ++i) {
+			size += planeSize[i];
+		}
+		return size;
 	}
 
 	virtual void resize(size_t size) override {
@@ -152,6 +154,10 @@ public:
 		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
 		return planeSize[planeIdx];
+	}
+
+	uint8_t * const * getPlanes() const {
+		return planes;
 	}
 
 	void setPlanes(uint8_t numAudioPlanes, uint8_t* audioPlanes[AUDIO_PCM_PLANES_MAX], uint64_t audioPlaneSize[AUDIO_PCM_PLANES_MAX]) {

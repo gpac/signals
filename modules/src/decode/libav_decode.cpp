@@ -69,7 +69,7 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 		libavFrame2pcmConvert(avFrame->get(), &pcmFormat);
 		out->setFormat(pcmFormat);
 		for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i) {
-			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0]);
+			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0] / pcmFormat.numPlanes);
 		}
 		setTimestamp(out, avFrame->get()->nb_samples);
 		pins[0]->emit(out);
