@@ -26,6 +26,7 @@
     <ClInclude Include="internal\core\pin.hpp" />
     <ClInclude Include="internal\core\props.hpp" />
     <ClInclude Include="internal\utils\helper.hpp" />
+    <ClInclude Include="internal\utils\semaphore.hpp" />
     <ClInclude Include="internal\utils\stranded_pool_executor.hpp" />
     <ClInclude Include="modules.hpp" />
     <ClInclude Include="src\common\libav.hpp" />
