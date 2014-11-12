@@ -153,6 +153,9 @@
     <ClInclude Include="src\utils\recorder.hpp">
       <Filter>src\utils</Filter>
     </ClInclude>
+    <ClInclude Include="internal\utils\semaphore.hpp">
+      <Filter>includes\internal\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\in\file.cpp">

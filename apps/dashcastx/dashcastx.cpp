@@ -61,12 +61,6 @@ public:
 	void connect(IPin* pin) {
 		ConnectToModule(pin->getSignal(), delegate, executor);
 	}
-	
-	template<typename B, typename C, typename D, typename E>
-	void connect(B& sig, C objectSlot, D memberFunctionSlot) {
-		auto functor = MEMBER_FUNCTOR(objectSlot, memberFunctionSlot);
-		sig.connect(functor, executor);
-	}
 
 	/* Receiving nullptr stops the execution */
 	void process(std::shared_ptr<Data> data) {
