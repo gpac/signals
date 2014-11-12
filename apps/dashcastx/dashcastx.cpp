@@ -261,7 +261,7 @@ int safeMain(int argc, char const* argv[]) {
 		pipeline.addModule(std::move(muxer));
 	}
 
-	pipeline.addModule(std::move(dasher), true); //FIXME: the dasher is marked as a source because nobody connected to it...
+	pipeline.addModule(std::move(dasher));
 		
 	pipeline.start();
 
