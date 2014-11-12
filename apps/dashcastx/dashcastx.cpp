@@ -58,6 +58,10 @@ public:
 		state = Running;
 	}
 
+	~PipelinedModule() {
+		stop();
+	}
+
 	void connect(IPin* pin) {
 		ConnectToModule(pin->getSignal(), delegate, executor);
 	}
