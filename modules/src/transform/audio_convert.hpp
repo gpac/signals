@@ -13,15 +13,16 @@ namespace Modules {
 namespace Transform {
 
 class AudioConvert : public Module {
-	public:
-		AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat);
-		~AudioConvert();
-		void process(std::shared_ptr<Data> data) override;
+public:
+	AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat);
+	~AudioConvert();
+	void process(std::shared_ptr<Data> data) override;
+	void flush() override;
 
-	private:
-		PcmFormat srcPcmFormat, dstPcmFormat;
-		std::unique_ptr<ffpp::SwResampler> const m_Swr;
-		uint64_t accumulatedTimeInDstSR;
+private:
+	PcmFormat srcPcmFormat, dstPcmFormat;
+	std::unique_ptr<ffpp::SwResampler> const m_Swr;
+	uint64_t accumulatedTimeInDstSR;
 };
 
 }

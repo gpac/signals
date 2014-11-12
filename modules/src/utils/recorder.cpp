@@ -4,8 +4,11 @@
 namespace Modules {
 namespace Utils {
 
+void Recorder::flush() {
+	record.clear();
+}
+
 Recorder::~Recorder() {
-	record.push(nullptr);
 }
 
 void Recorder::process(std::shared_ptr<Data> data) {
