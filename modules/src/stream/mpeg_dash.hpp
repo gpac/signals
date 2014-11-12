@@ -18,6 +18,8 @@ public:
 	MPEG_DASH(Type type = Static);
 	~MPEG_DASH();
 	void process(std::shared_ptr<Data> data) override;
+	void flush() override;
+
 	void processAudio(std::shared_ptr<Data> data);
 	void processVideo(std::shared_ptr<Data> data);
 

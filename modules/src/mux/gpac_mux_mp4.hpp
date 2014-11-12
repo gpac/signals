@@ -19,6 +19,7 @@ public:
 	GPACMuxMP4(const std::string &baseName, bool useSegments = false);
 	~GPACMuxMP4();
 	void process(std::shared_ptr<Data> data) override;
+	void flush() override;
 
 	void declareStream(std::shared_ptr<Stream> stream);
 

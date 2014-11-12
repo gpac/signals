@@ -161,15 +161,23 @@ LibavEncode::LibavEncode(Type type)
 	pins.push_back(uptr(pinFactory.createPin()));
 }
 
-LibavEncode::~LibavEncode() {
-	//push possibly buffered frames
-#if 0 //FIXME: since the other connected modules may have been destroyed, we may crash
-	for (;;) {
-		//FIXME: infinite loop
-		process(nullptr);
+void LibavEncode::flush() {
+	if (codecCtx && (codecCtx->codec->capabilities & CODEC_CAP_DELAY)) {
+		switch (codecCtx->codec_type) {
+		case AVMEDIA_TYPE_VIDEO:
+			while (processVideo(nullptr)) {}
+			break;
+		case AVMEDIA_TYPE_AUDIO:
+			while (processAudio(nullptr)) {}
+			break;
+		default:
+			assert(0);
+			break;
+		}
 	}
-#endif
+}
 
+LibavEncode::~LibavEncode() {
 	if (codecCtx) {
 		avcodec_close(codecCtx);
 	}
@@ -210,12 +218,15 @@ void LibavEncode::sendOutputPinsInfo() {
 bool LibavEncode::processAudio(const PcmData *data) {
 	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
-
-	libavFrameDataConvert(data, avFrame->get());
-	avFrame->get()->pts = ++frameNum;
+	AVFrame *f = nullptr;
+	if (data) {
+		f = avFrame->get();
+		libavFrameDataConvert(data, f);
+		avFrame->get()->pts = ++frameNum;
+	}
 
 	int gotPkt = 0;
-	if (avcodec_encode_audio2(codecCtx, pkt, avFrame->get(), &gotPkt)) {
+	if (avcodec_encode_audio2(codecCtx, pkt, f, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %s.", frameNum);
 		return false;
 	}
@@ -224,28 +235,31 @@ bool LibavEncode::processAudio(const PcmData *data) {
 		out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 		assert(pkt->size);
 		pins[0]->emit(out);
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 bool LibavEncode::processVideo(const Picture *pic) {
 	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
 	AVPacket *pkt = out->getPacket();
 
-	ffpp::Frame frame;
-	AVFrame *f = frame.get();
-	f->pict_type = AV_PICTURE_TYPE_NONE;
-	f->pts = ++frameNum;
-	for (int i = 0; i < 3; ++i) {
-		f->width = pic->getResolution().width;
-		f->height = pic->getResolution().height;
-		f->data[i] = pic->getComp(i);
-		f->linesize[i] = (int)pic->getPitch(i);
+	std::shared_ptr<ffpp::Frame> f;
+	if (pic) {
+		f = std::make_shared<ffpp::Frame>();
+		f->get()->pict_type = AV_PICTURE_TYPE_NONE;
+		f->get()->pts = ++frameNum;
+		for (int i = 0; i < 3; ++i) {
+			f->get()->width = pic->getResolution().width;
+			f->get()->height = pic->getResolution().height;
+			f->get()->data[i] = pic->getComp(i);
+			f->get()->linesize[i] = (int)pic->getPitch(i);
+		}
 	}
 
 	int gotPkt = 0;
-	if (avcodec_encode_video2(codecCtx, pkt, f, &gotPkt)) {
+	if (avcodec_encode_video2(codecCtx, pkt, f ? f->get() : nullptr, &gotPkt)) {
 		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %s.", frameNum);
 		return false;
 	} else {
@@ -256,10 +270,11 @@ bool LibavEncode::processVideo(const Picture *pic) {
 			}
 			out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 			pins[0]->emit(out);
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 void LibavEncode::process(std::shared_ptr<Data> data) {

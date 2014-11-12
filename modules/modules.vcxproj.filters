@@ -43,11 +43,11 @@
     <Filter Include="src\stream">
       <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\decode\demux">
-      <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\utils">
       <UniqueIdentifier>{90efad11-c1ad-4a9b-86ba-8008ba2676ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\demux">
+      <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,7 +70,7 @@
       <Filter>src\decode</Filter>
     </ClInclude>
     <ClInclude Include="src\demux\libav_demux.hpp">
-      <Filter>src\decode\demux</Filter>
+      <Filter>src\demux</Filter>
     </ClInclude>
     <ClInclude Include="src\encode\libav_encode.hpp">
       <Filter>src\encode</Filter>
@@ -88,10 +88,10 @@
       <Filter>src\transform</Filter>
     </ClInclude>
     <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp">
-      <Filter>src\decode\demux</Filter>
+      <Filter>src\demux</Filter>
     </ClInclude>
     <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp">
-      <Filter>src\decode\demux</Filter>
+      <Filter>src\demux</Filter>
     </ClInclude>
     <ClInclude Include="src\mux\gpac_mux_mp4.hpp">
       <Filter>src\mux</Filter>
@@ -171,7 +171,7 @@
       <Filter>src\decode</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\libav_demux.cpp">
-      <Filter>src\decode\demux</Filter>
+      <Filter>src\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\encode\libav_encode.cpp">
       <Filter>src\encode</Filter>
@@ -189,10 +189,10 @@
       <Filter>src\transform</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp">
-      <Filter>src\decode\demux</Filter>
+      <Filter>src\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp">
-      <Filter>src\decode\demux</Filter>
+      <Filter>src\demux</Filter>
     </ClCompile>
     <ClCompile Include="src\mux\gpac_mux_mp4.cpp">
       <Filter>src\mux</Filter>

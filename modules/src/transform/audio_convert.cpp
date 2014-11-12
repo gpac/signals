@@ -31,12 +31,16 @@ AudioConvert::AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat)
 	pins.push_back(uptr(factory.createPin()));
 }
 
+void AudioConvert::flush() {
+	process(nullptr);
+}
+
 AudioConvert::~AudioConvert() {
-	//TODO: process(nullptr);
 }
 
 void AudioConvert::process(std::shared_ptr<Data> data) {
 	uint64_t srcNumSamples, dstNumSamples;
+	uint8_t * const * pSrc;
 	auto audioData = safe_cast<PcmData>(data);
 	if (audioData) {
 		if (audioData->getFormat() != srcPcmFormat)
@@ -44,11 +48,13 @@ void AudioConvert::process(std::shared_ptr<Data> data) {
 
 		srcNumSamples = audioData->size() / audioData->getFormat().getBytesPerSample();
 		dstNumSamples = divUp(srcNumSamples * dstPcmFormat.sampleRate, (uint64_t)srcPcmFormat.sampleRate);
+		pSrc = audioData->getPlanes();
 	} else {
-		srcNumSamples = 0;
 		dstNumSamples = m_Swr->getDelay(dstPcmFormat.sampleRate);
 		if (dstNumSamples == 0)
 			return;
+		pSrc = nullptr;
+		srcNumSamples = 0;
 	}
 
 	auto const dstBufferSize = dstNumSamples * dstPcmFormat.getBytesPerSample();
@@ -58,7 +64,7 @@ void AudioConvert::process(std::shared_ptr<Data> data) {
 		out->setPlane(i, nullptr, dstBufferSize / dstPcmFormat.numPlanes);
 	auto pDst = (uint8_t**)out->getPlanes();
 
-	auto const outNumSamples = m_Swr->convert(pDst, (int)dstNumSamples, (const uint8_t**)audioData->getPlanes(), (int)srcNumSamples);
+	auto const outNumSamples = m_Swr->convert(pDst, (int)dstNumSamples, (const uint8_t**)pSrc, (int)srcNumSamples);
 
 	auto const outPlaneSize = outNumSamples * dstPcmFormat.getBytesPerSample() / dstPcmFormat.numPlanes;
 	for (uint8_t i = 0; i < dstPcmFormat.numPlanes; ++i)

@@ -50,10 +50,14 @@ MPEG_DASH::MPEG_DASH(Type type)
 : type(type), workingThread(&MPEG_DASH::DASHThread, this) {
 }
 
-MPEG_DASH::~MPEG_DASH() {
+void MPEG_DASH::flush() {
 	audioDataQueue.push(nullptr);
 	videoDataQueue.push(nullptr);
-	workingThread.join();
+	if (workingThread.joinable())
+		workingThread.join();
+}
+
+MPEG_DASH::~MPEG_DASH() {
 }
 
 //FIXME: we would post/defer/schedule the whole module... but here we are already in our own thread

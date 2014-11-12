@@ -377,12 +377,15 @@ void GPACMuxMP4::closeSegment() {
 	}
 }
 
-GPACMuxMP4::~GPACMuxMP4() {
-	GF_Err e;
+void GPACMuxMP4::flush() {
 	if (m_useFragments) {
 		gf_isom_flush_fragments(m_iso, GF_TRUE);
 	}
 	closeSegment();
+}
+
+GPACMuxMP4::~GPACMuxMP4() {
+	GF_Err e;
 	e = gf_isom_close(m_iso);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));

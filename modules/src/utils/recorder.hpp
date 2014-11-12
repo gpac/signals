@@ -10,6 +10,8 @@ class Recorder : public Module {
 public:
 	~Recorder();
 	void process(std::shared_ptr<Data> data) override;
+	void flush() override;
+
 	std::shared_ptr<Data> pop();
 
 private:

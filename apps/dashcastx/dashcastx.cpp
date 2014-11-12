@@ -9,34 +9,184 @@
 #include "mux/gpac_mux_mp4.hpp"
 #include "stream/mpeg_dash.hpp"
 #include "transform/audio_convert.hpp"
+#include "transform/video_convert.hpp"
 #include "out/null.hpp"
 
 #include "../../utils/tools.hpp"
 
+#include <atomic>
 #include <sstream>
 
 using namespace Tests;
 using namespace Modules;
 
+
 namespace {
-std::unique_ptr<Encode::LibavEncode> createEncoder(IPin *pPin, PropsDecoder *decoderProps) {
+
+class EOSData : public Data {
+public:
+	virtual uint8_t* data() override {
+		return nullptr;
+	}
+	virtual uint64_t size() const override {
+		return 0;
+	}
+	virtual void resize(size_t size) override { }
+};
+
+struct Deleter {
+	Deleter() : sem(new Semaphore(0)) {
+	}
+	Deleter(const Deleter &deleter) {
+		sem = deleter.sem;
+	}
+	void operator()(Data* p) {
+		delete p;
+		sem->notify();
+	}
+	std::shared_ptr<Semaphore> sem;
+};
+
+#define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<Data>)>
+#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
+#define EXECUTOR EXECUTOR_ASYNC
+
+class PipelinedModule {
+public:
+	/* take ownership of module */
+	PipelinedModule(Module *module) : state(Running), type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor) {
+		state = Running;
+	}
+
+	template<typename SignalType>
+	void connect(SignalType& sig) {
+		ConnectToModule(sig, delegate, executor);
+	}
+
+	/* Receiving nullptr stops the execution */
+	void process(std::shared_ptr<Data> data) {
+		if (state == Running) {
+			if (data) {
+				delegate->process(data);
+			} else {
+				stop();
+			}
+		}
+	}
+
+	void stop() {
+		if (state == Running) {
+			delegate->flush();
+			for (size_t i = 0; i < delegate->getNumPin(); ++i) {
+				Deleter deleter;
+				delegate->getPin(i)->emit(std::shared_ptr<EOSData>(nullptr, deleter));
+				deleter.sem->wait();
+			}
+			state = Stopped;
+		}
+		assert(state == Stopped);
+	}
+
+	/* source modules are stopped manually - then the message propagates to other connected modules */
+	void setSource(bool isSource) {
+		type = isSource ? Source : None;
+	}
+
+	bool isSource() const {
+		return type == Source;
+	}
+
+	size_t getNumPin() const {
+		return delegate->getNumPin();
+	}
+
+	IPin* getPin(size_t i) {
+		return delegate->getPin(i);
+	}
+
+private:
+	enum State {
+		Running,
+		Stopped
+	};
+	enum Type {
+		None,
+		Source
+	};
+
+	std::atomic<State> state;
+	Type type;
+	std::unique_ptr<Module> delegate;
+	std::unique_ptr<IProcessExecutor> const localExecutor;
+	IProcessExecutor &executor;
+};
+
+class Pipeline {
+public:
+	Pipeline() {
+	}
+
+	~Pipeline() {
+		for (auto &m : modules) {
+			if (m->isSource())
+				m->stop();
+		}
+	}
+
+	void addModule(std::unique_ptr<PipelinedModule> module, bool isSource = false) {
+		module->setSource(isSource);
+		modules.push_back(std::move(module));
+	}
+
+	void start() {
+		for (auto &m : modules) {
+			if (m->isSource())
+				m->process(nullptr);
+		}
+	}
+
+	void connectPinToModule(IPin* pin, std::unique_ptr<PipelinedModule>& module) {
+		module->connect(pin->getSignal());
+	}
+
+private:
+	std::vector<std::unique_ptr<PipelinedModule>> modules;
+};
+
+Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps) {
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
-		Log::msg(Log::Info, "Found video stream");
-		auto r = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
-		ConnectPinToModule(pPin, r);
-		return std::move(r);
+		Log::msg(Log::Info, "[Encoder] Found video stream");
+		return new Encode::LibavEncode(Encode::LibavEncode::Video);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
-		Log::msg(Log::Info, "Found audio stream");
-		auto r = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
-		ConnectPinToModule(pPin, r);
-		return std::move(r);
+		Log::msg(Log::Info, "[Encoder] Found audio stream");
+		return new Encode::LibavEncode(Encode::LibavEncode::Audio);
 	} else {
-		Log::msg(Log::Info, "Found unknown stream");
+		Log::msg(Log::Info, "[Encoder] Found unknown stream");
+		return nullptr;
+	}
+}
+
+Module* createConverter(PropsDecoder *decoderProps) {
+	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
+	if (codecType == AVMEDIA_TYPE_VIDEO) {
+		Log::msg(Log::Info, "[Converter] Found video stream");
+		auto srcCtx = decoderProps->getAVCodecContext();
+		auto srcRes = Resolution(srcCtx->width, srcCtx->height);
+		auto dstRes = Resolution(320, 180);
+		return new Transform::VideoConvert(srcRes, srcCtx->pix_fmt, dstRes, srcCtx->pix_fmt);
+	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
+		Log::msg(Log::Info, "[Converter] Found audio stream");
+		auto baseFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
+		auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+		return new Transform::AudioConvert(baseFormat, otherFormat);
+	} else {
+		Log::msg(Log::Info, "[Converter] Found unknown stream");
 		return nullptr;
 	}
 }
 }
+
 
 int safeMain(int argc, char const* argv[]) {
 
@@ -45,65 +195,76 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto const inputURL = argv[1];
 
-	std::list<std::unique_ptr<Module>> modules;
+	Pipeline pipeline;
 
-	{
-		auto demux = uptr(Demux::LibavDemux::create(inputURL));
-		auto dasher = uptr(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
+	auto demux_ = Demux::LibavDemux::create(inputURL);
+	auto demux = uptr(new PipelinedModule(demux_));
+	pipeline.addModule(std::move(demux), true);
 
-		for (size_t i = 0; i < demux->getNumPin(); ++i) {
-			auto props = demux->getPin(i)->getProps();
-			PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-			ASSERT(decoderProps);
+	auto dasher_ = new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static);
+	auto dasher = uptr(new PipelinedModule(dasher_));
 
-			auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
-			ConnectPinToModule(demux->getPin(i), decoder);
+	for (size_t i = 0; i < demux_->getNumPin(); ++i) {
+		auto props = demux_->getPin(i)->getProps();
+		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+		ASSERT(decoderProps);
 
-			//FIXME: hardcoded converters
-			IPin *pPin;
-			if (i == 0) {
-				pPin = decoder->getPin(0);
-			} else {
-				auto baseFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
-				auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
-				auto converter = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
-				ConnectPinToModule(decoder->getPin(0), converter);
-				pPin = converter->getPin(0);
-				modules.push_back(std::move(converter));
-			}
+		auto decoder_ = new Decode::LibavDecode(*decoderProps);
+		auto decoder = uptr(new PipelinedModule(decoder_));
+		pipeline.connectPinToModule(demux_->getPin(i), decoder);
 
-			auto encoder = createEncoder(pPin, decoderProps);
-			if (!encoder) {
-				auto r = uptr(new Out::Null);
-				ConnectPinToModule(decoder->getPin(0), r);
-				modules.push_back(std::move(decoder));
-				modules.push_back(std::move(r));
-				continue;
-			}
+		//FIXME: hardcoded converters
+		auto converter_ = createConverter(decoderProps);
+		if (!converter_) {
+			auto r_ = new Out::Null;
+			auto r = uptr(new PipelinedModule(r_));
+			pipeline.connectPinToModule(decoder->getPin(0), r);
+			pipeline.addModule(std::move(decoder));
+			pipeline.addModule(std::move(r));
+			continue;
+		}
+		auto converter = uptr(new PipelinedModule(converter_));
+		pipeline.connectPinToModule(decoder->getPin(0), converter);
 
-			std::stringstream filename;
-			filename << i;
-			auto muxer = uptr(new Mux::GPACMuxMP4(filename.str(), true));
-			ConnectPinToModule(encoder->getPin(0), muxer);
+		auto encoder_ = createEncoder(decoderProps);
+		if (!encoder_) {
+			auto r_ = new Out::Null;
+			auto r = uptr(new PipelinedModule(r_));
+			pipeline.connectPinToModule(decoder->getPin(0), converter);
+			pipeline.connectPinToModule(converter->getPin(0), r);
+			pipeline.addModule(std::move(decoder));
+			pipeline.addModule(std::move(converter));
+			pipeline.addModule(std::move(r));
+			continue;
+		}
+		auto encoder = uptr(new PipelinedModule(encoder_));
+		pipeline.connectPinToModule(converter_->getPin(0), encoder);
 
-			Connect(encoder->declareStream, muxer.get(), &Mux::GPACMuxMP4::declareStream);
-			encoder->sendOutputPinsInfo();
+		std::stringstream filename;
+		filename << i;
+		auto muxer_ = new Mux::GPACMuxMP4(filename.str(), true);
+		auto muxer = uptr(new PipelinedModule(muxer_));
+		pipeline.connectPinToModule(encoder->getPin(0), muxer);
 
-			//FIXME: hardcoded => use declareStream above
-			if (i == 0) {
-				Connect(muxer->getPin(0)->getSignal(), dasher.get(), &Modules::Stream::MPEG_DASH::processVideo);
-			} else {
-				Connect(muxer->getPin(0)->getSignal(), dasher.get(), &Modules::Stream::MPEG_DASH::processAudio);
-			}
+		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
+		encoder_->sendOutputPinsInfo();
 
-			modules.push_back(std::move(decoder));
-			modules.push_back(std::move(encoder));
-			modules.push_back(std::move(muxer));
+		//FIXME: hardcoded => use declareStream above
+		if (i == 0) {
+			Connect(muxer->getPin(0)->getSignal(), dasher_, &Modules::Stream::MPEG_DASH::processVideo);
+		} else {
+			Connect(muxer->getPin(0)->getSignal(), dasher_, &Modules::Stream::MPEG_DASH::processAudio);
 		}
 
-		modules.push_back(std::move(dasher));
-		demux->process(nullptr);
+		pipeline.addModule(std::move(decoder));
+		pipeline.addModule(std::move(converter));
+		pipeline.addModule(std::move(encoder));
+		pipeline.addModule(std::move(muxer));
 	}
+
+	pipeline.addModule(std::move(dasher), true); //FIXME: the dasher is marked as a source because nobody connected to it...
+		
+	pipeline.start();
 
 	return 0;
 }
