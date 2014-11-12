@@ -55,7 +55,6 @@ class PipelinedModule {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module) : state(Running), type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor) {
-		state = Running;
 	}
 
 	~PipelinedModule() {
