@@ -58,9 +58,14 @@ public:
 		state = Running;
 	}
 
-	template<typename SignalType>
-	void connect(SignalType& sig) {
-		ConnectToModule(sig, delegate, executor);
+	void connect(IPin* pin) {
+		ConnectToModule(pin->getSignal(), delegate, executor);
+	}
+	
+	template<typename B, typename C, typename D, typename E>
+	void connect(B& sig, C objectSlot, D memberFunctionSlot) {
+		auto functor = MEMBER_FUNCTOR(objectSlot, memberFunctionSlot);
+		sig.connect(functor, executor);
 	}
 
 	/* Receiving nullptr stops the execution */
@@ -145,10 +150,6 @@ public:
 		}
 	}
 
-	void connectPinToModule(IPin* pin, std::unique_ptr<PipelinedModule>& module) {
-		module->connect(pin->getSignal());
-	}
-
 private:
 	std::vector<std::unique_ptr<PipelinedModule>> modules;
 };
@@ -211,40 +212,40 @@ int safeMain(int argc, char const* argv[]) {
 
 		auto decoder_ = new Decode::LibavDecode(*decoderProps);
 		auto decoder = uptr(new PipelinedModule(decoder_));
-		pipeline.connectPinToModule(demux_->getPin(i), decoder);
+		decoder->connect(demux_->getPin(i));
 
 		//FIXME: hardcoded converters
 		auto converter_ = createConverter(decoderProps);
 		if (!converter_) {
 			auto r_ = new Out::Null;
 			auto r = uptr(new PipelinedModule(r_));
-			pipeline.connectPinToModule(decoder->getPin(0), r);
+			r->connect(decoder->getPin(0));
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(r));
 			continue;
 		}
 		auto converter = uptr(new PipelinedModule(converter_));
-		pipeline.connectPinToModule(decoder->getPin(0), converter);
+		converter->connect(decoder->getPin(0));
 
 		auto encoder_ = createEncoder(decoderProps);
 		if (!encoder_) {
 			auto r_ = new Out::Null;
 			auto r = uptr(new PipelinedModule(r_));
-			pipeline.connectPinToModule(decoder->getPin(0), converter);
-			pipeline.connectPinToModule(converter->getPin(0), r);
+			converter->connect(decoder->getPin(0));
+			r->connect(converter->getPin(0));
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(converter));
 			pipeline.addModule(std::move(r));
 			continue;
 		}
 		auto encoder = uptr(new PipelinedModule(encoder_));
-		pipeline.connectPinToModule(converter_->getPin(0), encoder);
+		encoder->connect(converter_->getPin(0));
 
 		std::stringstream filename;
 		filename << i;
 		auto muxer_ = new Mux::GPACMuxMP4(filename.str(), true);
 		auto muxer = uptr(new PipelinedModule(muxer_));
-		pipeline.connectPinToModule(encoder->getPin(0), muxer);
+		muxer->connect(encoder->getPin(0));
 
 		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
 		encoder_->sendOutputPinsInfo();
