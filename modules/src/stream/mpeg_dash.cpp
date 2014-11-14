@@ -51,13 +51,12 @@ MPEG_DASH::MPEG_DASH(Type type)
 }
 
 void MPEG_DASH::flush() {
-	audioDataQueue.push(nullptr);
-	videoDataQueue.push(nullptr);
-	if (workingThread.joinable())
-		workingThread.join();
 }
 
 MPEG_DASH::~MPEG_DASH() {
+	audioDataQueue.push(nullptr);
+	videoDataQueue.push(nullptr);
+	workingThread.join();
 }
 
 //FIXME: we would post/defer/schedule the whole module... but here we are already in our own thread
