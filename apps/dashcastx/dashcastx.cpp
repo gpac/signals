@@ -34,31 +34,19 @@ public:
 	virtual void resize(size_t size) override { }
 };
 
-struct Deleter {
-	Deleter() : sem(new Semaphore(0)) {
-	}
-	Deleter(const Deleter &deleter) {
-		sem = deleter.sem;
-	}
-	void operator()(Data* p) {
-		delete p;
-		sem->notify();
-	}
-	std::shared_ptr<Semaphore> sem;
-};
 
 #define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
 #define EXECUTOR EXECUTOR_ASYNC
 
+struct ICompletionNotifier {
+	virtual void finished() = 0;
+};
+
 class PipelinedModule {
 public:
 	/* take ownership of module */
-	PipelinedModule(Module *module) : state(Running), type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor) {
-	}
-
-	~PipelinedModule() {
-		stop();
+	PipelinedModule(Module *module, ICompletionNotifier* notify) : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
 
 	void connect(IPin* pin) {
@@ -67,26 +55,11 @@ public:
 
 	/* Receiving nullptr stops the execution */
 	void process(std::shared_ptr<Data> data) {
-		if (state == Running) {
-			if (data) {
-				delegate->process(data);
-			} else {
-				stop();
-			}
+		if (data) {
+			delegate->process(data);
+		} else {
+			endOfStream();
 		}
-	}
-
-	void stop() {
-		if (state == Running) {
-			delegate->flush();
-			for (size_t i = 0; i < delegate->getNumPin(); ++i) {
-				Deleter deleter;
-				delegate->getPin(i)->emit(std::shared_ptr<EOSData>(nullptr, deleter));
-				deleter.sem->wait();
-			}
-			state = Stopped;
-		}
-		assert(state == Stopped);
 	}
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
@@ -98,6 +71,10 @@ public:
 		return type == Source;
 	}
 
+	bool isSink() const {
+		return delegate->getNumPin() == 0;
+	}
+
 	size_t getNumPin() const {
 		return delegate->getNumPin();
 	}
@@ -107,35 +84,34 @@ public:
 	}
 
 private:
-	enum State {
-		Running,
-		Stopped
-	};
+	void endOfStream() {
+		delegate->flush();
+		if(isSink()) {
+			m_notify->finished();
+		} else {
+			for (size_t i = 0; i < delegate->getNumPin(); ++i) {
+				delegate->getPin(i)->emit(std::shared_ptr<Data>(nullptr));
+			}
+		}
+	}
+
 	enum Type {
 		None,
 		Source
 	};
 
-	std::atomic<State> state;
 	Type type;
 	std::unique_ptr<Module> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;
 	IProcessExecutor &executor;
+	ICompletionNotifier* const m_notify;
 };
 
-class Pipeline {
+class Pipeline : public ICompletionNotifier {
 public:
-	Pipeline() {
-	}
-
-	~Pipeline() {
-		for (auto &m : modules) {
-			if (m->isSource())
-				m->stop();
-		}
-	}
-
 	void addModule(std::unique_ptr<PipelinedModule> module, bool isSource = false) {
+		if(module->isSink())
+			numRemainingNotifications++;
 		module->setSource(isSource);
 		modules.push_back(std::move(module));
 	}
@@ -147,8 +123,26 @@ public:
 		}
 	}
 
+	void waitForCompletion() {
+		std::unique_lock<std::mutex> lock(mutex);
+		while (numRemainingNotifications > 0) {
+			condition.wait(lock);
+		}
+	}
+
+	virtual void finished() override {
+		std::unique_lock<std::mutex> lock(mutex);
+		--numRemainingNotifications;
+		condition.notify_one();
+	}
+
 private:
+
 	std::vector<std::unique_ptr<PipelinedModule>> modules;
+	int numRemainingNotifications;
+
+	std::mutex mutex;
+	std::condition_variable condition;
 };
 
 Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps) {
@@ -196,11 +190,11 @@ int safeMain(int argc, char const* argv[]) {
 	Pipeline pipeline;
 
 	auto demux_ = Demux::LibavDemux::create(inputURL);
-	auto demux = uptr(new PipelinedModule(demux_));
+	auto demux = uptr(new PipelinedModule(demux_, &pipeline));
 	pipeline.addModule(std::move(demux), true);
 
 	auto dasher_ = new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static);
-	auto dasher = uptr(new PipelinedModule(dasher_));
+	auto dasher = uptr(new PipelinedModule(dasher_, &pipeline));
 
 	for (size_t i = 0; i < demux_->getNumPin(); ++i) {
 		auto props = demux_->getPin(i)->getProps();
@@ -208,26 +202,26 @@ int safeMain(int argc, char const* argv[]) {
 		ASSERT(decoderProps);
 
 		auto decoder_ = new Decode::LibavDecode(*decoderProps);
-		auto decoder = uptr(new PipelinedModule(decoder_));
+		auto decoder = uptr(new PipelinedModule(decoder_, &pipeline));
 		decoder->connect(demux_->getPin(i));
 
 		//FIXME: hardcoded converters
 		auto converter_ = createConverter(decoderProps);
 		if (!converter_) {
 			auto r_ = new Out::Null;
-			auto r = uptr(new PipelinedModule(r_));
+			auto r = uptr(new PipelinedModule(r_, &pipeline));
 			r->connect(decoder->getPin(0));
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(r));
 			continue;
 		}
-		auto converter = uptr(new PipelinedModule(converter_));
+		auto converter = uptr(new PipelinedModule(converter_, &pipeline));
 		converter->connect(decoder->getPin(0));
 
 		auto encoder_ = createEncoder(decoderProps);
 		if (!encoder_) {
 			auto r_ = new Out::Null;
-			auto r = uptr(new PipelinedModule(r_));
+			auto r = uptr(new PipelinedModule(r_, &pipeline));
 			converter->connect(decoder->getPin(0));
 			r->connect(converter->getPin(0));
 			pipeline.addModule(std::move(decoder));
@@ -235,13 +229,13 @@ int safeMain(int argc, char const* argv[]) {
 			pipeline.addModule(std::move(r));
 			continue;
 		}
-		auto encoder = uptr(new PipelinedModule(encoder_));
+		auto encoder = uptr(new PipelinedModule(encoder_, &pipeline));
 		encoder->connect(converter_->getPin(0));
 
 		std::stringstream filename;
 		filename << i;
 		auto muxer_ = new Mux::GPACMuxMP4(filename.str(), true);
-		auto muxer = uptr(new PipelinedModule(muxer_));
+		auto muxer = uptr(new PipelinedModule(muxer_, &pipeline));
 		muxer->connect(encoder->getPin(0));
 
 		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
