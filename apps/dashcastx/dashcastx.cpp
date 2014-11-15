@@ -39,7 +39,7 @@ public:
 
 #define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_SYNC
+#define EXECUTOR EXECUTOR_ASYNC
 
 struct ICompletionNotifier {
 	virtual void finished() = 0;
@@ -65,6 +65,10 @@ public:
 	}
 
 	void dispatch(std::shared_ptr<Data> data) {
+		if (isSource()) {
+			assert(data == nullptr);
+			executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
+		}
 		executor(MEMBER_FUNCTOR(this, &PipelinedModule::process), data);
 	}
 
@@ -205,10 +209,11 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto demux_ = Demux::LibavDemux::create(inputURL);
 	auto demux = uptr(new PipelinedModule(demux_, &pipeline));
-	pipeline.addModule(std::move(demux), true);
 
 	auto dasher_ = new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static);
 	auto dasher = uptr(new PipelinedModule(dasher_, &pipeline));
+	auto dasher__ = dasher.get();
+	pipeline.addModule(std::move(dasher));
 
 	for (size_t i = 0; i < demux_->getNumPin(); ++i) {
 		auto props = demux_->getPin(i)->getProps();
@@ -254,15 +259,15 @@ int safeMain(int argc, char const* argv[]) {
 		encoder_->sendOutputPinsInfo();
 
 		pipeline.connect(encoder->getPin(0), muxer.get());
-		pipeline.connect(muxer->getPin(0), dasher.get());
+		pipeline.connect(muxer->getPin(0), dasher__);
 
-		pipeline.addModule(std::move(decoder));
-		pipeline.addModule(std::move(converter));
-		pipeline.addModule(std::move(encoder));
 		pipeline.addModule(std::move(muxer));
+		pipeline.addModule(std::move(encoder));
+		pipeline.addModule(std::move(converter));
+		pipeline.addModule(std::move(decoder));
 	}
 
-	pipeline.addModule(std::move(dasher));
+	pipeline.addModule(std::move(demux), true);
 		
 	pipeline.start();
 	pipeline.waitForCompletion();
