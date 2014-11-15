@@ -31,7 +31,9 @@ public:
 	virtual uint64_t size() const override {
 		return 0;
 	}
-	virtual void resize(size_t size) override { }
+	virtual void resize(size_t size) override {
+		assert(0);
+	}
 };
 
 
@@ -46,11 +48,11 @@ struct ICompletionNotifier {
 class PipelinedModule {
 public:
 	/* take ownership of module */
-	PipelinedModule(Module *module, ICompletionNotifier* notify) : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
+	PipelinedModule(Module *module, ICompletionNotifier *notify) : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
 
 	void connect(IPin* pin) {
-		ConnectToModule(pin->getSignal(), delegate, executor);
+		ConnectToModule(pin->getSignal(), this, executor);
 	}
 
 	/* Receiving nullptr stops the execution */
@@ -86,7 +88,7 @@ public:
 private:
 	void endOfStream() {
 		delegate->flush();
-		if(isSink()) {
+		if (isSink()) {
 			m_notify->finished();
 		} else {
 			for (size_t i = 0; i < delegate->getNumPin(); ++i) {
@@ -99,8 +101,8 @@ private:
 		None,
 		Source
 	};
-
 	Type type;
+
 	std::unique_ptr<Module> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;
 	IProcessExecutor &executor;
@@ -110,7 +112,7 @@ private:
 class Pipeline : public ICompletionNotifier {
 public:
 	void addModule(std::unique_ptr<PipelinedModule> module, bool isSource = false) {
-		if(module->isSink())
+		if (module->isSink())
 			numRemainingNotifications++;
 		module->setSource(isSource);
 		modules.push_back(std::move(module));
@@ -137,12 +139,11 @@ public:
 	}
 
 private:
-
 	std::vector<std::unique_ptr<PipelinedModule>> modules;
-	int numRemainingNotifications;
 
 	std::mutex mutex;
 	std::condition_variable condition;
+	std::atomic<int> numRemainingNotifications = 0;
 };
 
 Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps) {
@@ -182,7 +183,7 @@ Module* createConverter(PropsDecoder *decoderProps) {
 
 int safeMain(int argc, char const* argv[]) {
 
-	if(argc != 2)
+	if (argc != 2)
 		throw std::runtime_error("usage: dashcastx <URL>");
 
 	auto const inputURL = argv[1];
@@ -257,6 +258,7 @@ int safeMain(int argc, char const* argv[]) {
 	pipeline.addModule(std::move(dasher));
 		
 	pipeline.start();
+	pipeline.waitForCompletion();
 
 	return 0;
 }
