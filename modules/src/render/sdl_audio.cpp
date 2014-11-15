@@ -89,7 +89,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	int64_t numSamplesToProduce = len / bytesPerSample;
 
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
-	auto const relativeSamplePosition = relativeTimePosition * pcmFormat->sampleRate / IClock::Rate;
+	auto const relativeSamplePosition = int64_t(relativeTimePosition * pcmFormat->sampleRate / IClock::Rate);
 
 	if (relativeSamplePosition < -audioJitterTolerance) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
