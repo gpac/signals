@@ -39,7 +39,7 @@ public:
 
 #define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_ASYNC
+#define EXECUTOR EXECUTOR_SYNC
 
 struct ICompletionNotifier {
 	virtual void finished() = 0;
@@ -194,11 +194,12 @@ Module* createConverter(PropsDecoder *decoderProps) {
 
 
 int safeMain(int argc, char const* argv[]) {
-
 	if (argc != 2)
 		throw std::runtime_error("usage: dashcastx <URL>");
 
 	auto const inputURL = argv[1];
+
+	Tools::Profiler profiler("Dashcast X");
 
 	Pipeline pipeline;
 

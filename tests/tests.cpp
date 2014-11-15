@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <stdlib.h>
+#include "../utils/tools.hpp"
 #include "tests.hpp"
 
 namespace {
@@ -47,7 +48,7 @@ void listAll() {
 }
 
 int main(int argc, const char* argv[]) {
-	Tests::Util::Profiler p("TESTS TOTAL TIME");
+	Tools::Profiler p("TESTS TOTAL TIME");
 	if(argc == 1)
 		Tests::RunAll();
 	else if(argc == 2) {
