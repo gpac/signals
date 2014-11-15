@@ -55,7 +55,7 @@ public:
 		ConnectToModule(pin->getSignal(), this, executor);
 	}
 
-	/* Receiving nullptr stops the execution */
+	/* direct call: receiving nullptr stops the execution */
 	void process(std::shared_ptr<Data> data) {
 		if (data) {
 			delegate->process(data);
@@ -64,6 +64,7 @@ public:
 		}
 	}
 
+	/* same as process() but uses the executor (may defer the call) */
 	void dispatch(std::shared_ptr<Data> data) {
 		if (isSource()) {
 			assert(data == nullptr);
@@ -83,14 +84,6 @@ public:
 
 	bool isSink() const {
 		return delegate->getNumPin() == 0;
-	}
-
-	size_t getNumPin() const {
-		return delegate->getNumPin();
-	}
-
-	IPin* getPin(size_t i) {
-		return delegate->getPin(i);
 	}
 
 private:
@@ -224,25 +217,24 @@ int safeMain(int argc, char const* argv[]) {
 		auto decoder = uptr(new PipelinedModule(decoder_, &pipeline));
 		pipeline.connect(demux_->getPin(i), decoder.get());
 
-		//FIXME: hardcoded converters
 		auto converter_ = createConverter(decoderProps);
 		if (!converter_) {
 			auto r_ = new Out::Null;
 			auto r = uptr(new PipelinedModule(r_, &pipeline));
-			pipeline.connect(decoder->getPin(0), r.get());
+			pipeline.connect(decoder_->getPin(0), r.get());
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(r));
 			continue;
 		}
 		auto converter = uptr(new PipelinedModule(converter_, &pipeline));
-		pipeline.connect(decoder->getPin(0), converter.get());
+		pipeline.connect(decoder_->getPin(0), converter.get());
 
 		auto encoder_ = createEncoder(decoderProps);
 		if (!encoder_) {
 			auto r_ = new Out::Null;
 			auto r = uptr(new PipelinedModule(r_, &pipeline));
-			pipeline.connect(decoder->getPin(0), converter.get());
-			pipeline.connect(converter->getPin(0), r.get());
+			pipeline.connect(decoder_->getPin(0), converter.get());
+			pipeline.connect(converter_->getPin(0), r.get());
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(converter));
 			pipeline.addModule(std::move(r));
@@ -258,8 +250,8 @@ int safeMain(int argc, char const* argv[]) {
 		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
 		encoder_->sendOutputPinsInfo();
 
-		pipeline.connect(encoder->getPin(0), muxer.get());
-		pipeline.connect(muxer->getPin(0), dasher__);
+		pipeline.connect(encoder_->getPin(0), muxer.get());
+		pipeline.connect(muxer_->getPin(0), dasher__);
 
 		pipeline.addModule(std::move(muxer));
 		pipeline.addModule(std::move(encoder));
