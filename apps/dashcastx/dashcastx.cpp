@@ -64,6 +64,10 @@ public:
 		}
 	}
 
+	void dispatch(std::shared_ptr<Data> data) {
+		executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
+	}
+
 	/* source modules are stopped manually - then the message propagates to other connected modules */
 	void setSource(bool isSource) {
 		type = isSource ? Source : None;
@@ -121,7 +125,7 @@ public:
 	void start() {
 		for (auto &m : modules) {
 			if (m->isSource())
-				m->process(nullptr);
+				m->dispatch(nullptr);
 		}
 	}
 
