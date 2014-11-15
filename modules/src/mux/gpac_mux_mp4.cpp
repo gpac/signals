@@ -10,7 +10,7 @@ extern "C" {
 
 #include "gpacpp.hpp"
 
-#define FRAG_DURATION_IN_180K (10*180000ULL)
+#define FRAG_DURATION_IN_180K (10*IClock::Rate)
 
 
 namespace {
