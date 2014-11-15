@@ -9,6 +9,8 @@ extern "C" {
 }
 
 #include "gpacpp.hpp"
+#include "ffpp.hpp" //TODO: remove DataAVPacket
+#include "../common/libav.hpp" //TODO: remove DataAVPacket
 
 #define FRAG_DURATION_IN_180K (1*IClock::Rate)
 
@@ -353,12 +355,6 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 		Log::msg(Log::Warning, "Cannot make iso file %s interleaved", fileName.str());
 		throw std::runtime_error("Cannot make iso file interleaved.");
 	}
-
-	//FIXME: this is a signalling pin only for segment availability (no data)
-	if (m_useSegments) {
-		PinDefaultFactory pinFactory;
-		pins.push_back(uptr(pinFactory.createPin()));
-	}
 }
 
 void GPACMuxMP4::closeSegment() {
@@ -369,7 +365,8 @@ void GPACMuxMP4::closeSegment() {
 			throw std::runtime_error("Cannot close output segment.");
 		}
 
-		auto out = pins[0]->getBuffer(0);
+		auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
+		out->getPacket()->stream_index = gf_isom_get_media_type(m_iso, 1);
 		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 		out->setTime((m_DTS * IClock::Rate + mediaTimescale / 2) / mediaTimescale);
 		out->setDuration(m_curFragDur, mediaTimescale);
@@ -428,8 +425,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 
 		/*e = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
 		assert(e == GF_OK);*/
-	}
-	else {
+	} else {
 		if (stream->codecName != "mp2") {
 			Log::msg(Log::Warning, "Unlisted codec, setting GPAC_OTI_AUDIO_MPEG1 descriptor.\n");
 		}
@@ -525,6 +521,10 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 			Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
 			throw std::runtime_error("Impossible to create the moof");
 		}
+
+		//this is a signalling pin only for segment availability (no data)
+		PinLibavPacketFactory pinFactory;
+		pins.push_back(uptr(pinFactory.createPin()));
 	}
 }
 
@@ -619,6 +619,10 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
 			throw std::runtime_error("Impossible to create the moof");
 		}
 	}
+
+	//this is a signalling pin only for segment availability (no data)
+	PinLibavPacketFactory pinFactory;
+	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
