@@ -133,9 +133,6 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) cons
 
 void LibavDecode::process(std::shared_ptr<Data> data) {
 	auto decoderData = safe_cast<DataAVPacket>(data);
-	if (!decoderData)
-		return;
-
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
 		return processVideo(decoderData.get());
