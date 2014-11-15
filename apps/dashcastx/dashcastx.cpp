@@ -119,10 +119,14 @@ public:
 	}
 
 	void addModule(std::unique_ptr<PipelinedModule> module, bool isSource = false) {
-		if (module->isSink())
-			numRemainingNotifications++;
 		module->setSource(isSource);
 		modules.push_back(std::move(module));
+	}
+
+	void connect(IPin* pin, PipelinedModule *module) {
+		if (module->isSink())
+			numRemainingNotifications++;
+		module->connect(pin);
 	}
 
 	void start() {
@@ -212,45 +216,44 @@ int safeMain(int argc, char const* argv[]) {
 
 		auto decoder_ = new Decode::LibavDecode(*decoderProps);
 		auto decoder = uptr(new PipelinedModule(decoder_, &pipeline));
-		decoder->connect(demux_->getPin(i));
+		pipeline.connect(demux_->getPin(i), decoder.get());
 
 		//FIXME: hardcoded converters
 		auto converter_ = createConverter(decoderProps);
 		if (!converter_) {
 			auto r_ = new Out::Null;
 			auto r = uptr(new PipelinedModule(r_, &pipeline));
-			r->connect(decoder->getPin(0));
+			pipeline.connect(decoder->getPin(0), r.get());
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(r));
 			continue;
 		}
 		auto converter = uptr(new PipelinedModule(converter_, &pipeline));
-		converter->connect(decoder->getPin(0));
+		pipeline.connect(decoder->getPin(0), converter.get());
 
 		auto encoder_ = createEncoder(decoderProps);
 		if (!encoder_) {
 			auto r_ = new Out::Null;
 			auto r = uptr(new PipelinedModule(r_, &pipeline));
-			converter->connect(decoder->getPin(0));
-			r->connect(converter->getPin(0));
+			pipeline.connect(decoder->getPin(0), converter.get());
+			pipeline.connect(converter->getPin(0), r.get());
 			pipeline.addModule(std::move(decoder));
 			pipeline.addModule(std::move(converter));
 			pipeline.addModule(std::move(r));
 			continue;
 		}
 		auto encoder = uptr(new PipelinedModule(encoder_, &pipeline));
-		encoder->connect(converter_->getPin(0));
+		pipeline.connect(converter_->getPin(0), encoder.get());
 
 		std::stringstream filename;
 		filename << i;
 		auto muxer_ = new Mux::GPACMuxMP4(filename.str(), true);
 		auto muxer = uptr(new PipelinedModule(muxer_, &pipeline));
-		muxer->connect(encoder->getPin(0));
-
 		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
 		encoder_->sendOutputPinsInfo();
 
-		dasher->connect(muxer->getPin(0));
+		pipeline.connect(encoder->getPin(0), muxer.get());
+		pipeline.connect(muxer->getPin(0), dasher.get());
 
 		pipeline.addModule(std::move(decoder));
 		pipeline.addModule(std::move(converter));
