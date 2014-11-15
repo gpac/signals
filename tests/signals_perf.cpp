@@ -21,7 +21,7 @@ void emitTest(std::function<SignalSignature> f, ValType val) {
 				if (i > 0) {
 					id[i - 1] = sig.connect(f);
 				}
-				Util::Profiler p(ss.str());
+				Tools::Profiler p(ss.str());
 				sig.emit(val);
 				auto res = sig.results();
 				if (p.elapsedInUs() > TEST_TIMEOUT_IN_US) {
@@ -31,7 +31,7 @@ void emitTest(std::function<SignalSignature> f, ValType val) {
 			{
 				std::stringstream ss;
 				ss << FORMAT(i, TEST_MAX_SIZE) << " direct calls                     ";
-				Util::Profiler p(ss.str());
+				Tools::Profiler p(ss.str());
 				for (int j = 0; j < i; ++j) {
 					f(val);
 				}
@@ -51,17 +51,17 @@ void emitTest(std::function<SignalSignature> f, ValType val) {
 
 unittest("create a signal") {
 	{
-		Util::Profiler p("Create void(void)");
+		Tools::Profiler p("Create void(void)");
 		Signal<void(void)> sig;
 	}
 	{
-		Util::Profiler p("Create int(int)");
+		Tools::Profiler p("Create int(int)");
 		for (int i = 0; i < TEST_MAX_SIZE; ++i) {
 			Signal<int(int)> sig;
 		}
 	}
 	{
-		Util::Profiler p("Create int(int x 8)");
+		Tools::Profiler p("Create int(int x 8)");
 		for (int i = 0; i < TEST_MAX_SIZE; ++i) {
 			Signal<int(int, int, int, int, int, int, int, int)> sig;
 		}
@@ -75,7 +75,7 @@ unittest("connect and disconnect a high number of callbacks on one signal") {
 		std::stringstream ss;
 		if (Util::isPow2(i)) {
 			ss << "Connect number    " << FORMAT(i, TEST_MAX_SIZE);
-			Util::Profiler p(ss.str());
+			Tools::Profiler p(ss.str());
 			id[i] = sig.connect(Util::dummy);
 		} else {
 			id[i] = sig.connect(Util::dummy);
@@ -85,7 +85,7 @@ unittest("connect and disconnect a high number of callbacks on one signal") {
 		std::stringstream ss;
 		if (Util::isPow2(i)) {
 			ss << "Disconnect number " << FORMAT(i, TEST_MAX_SIZE);
-			Util::Profiler p(ss.str());
+			Tools::Profiler p(ss.str());
 			bool res = sig.disconnect(id[i]);
 			ASSERT(res);
 		} else {
