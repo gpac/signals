@@ -115,6 +115,9 @@ private:
 
 class Pipeline : public ICompletionNotifier {
 public:
+	Pipeline() : numRemainingNotifications(0) {
+	}
+
 	void addModule(std::unique_ptr<PipelinedModule> module, bool isSource = false) {
 		if (module->isSink())
 			numRemainingNotifications++;
@@ -147,7 +150,7 @@ private:
 
 	std::mutex mutex;
 	std::condition_variable condition;
-	std::atomic<int> numRemainingNotifications = 0;
+	std::atomic<int> numRemainingNotifications;
 };
 
 Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps) {
