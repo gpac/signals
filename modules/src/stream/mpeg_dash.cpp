@@ -4,6 +4,12 @@
 #include "../out/file.hpp"
 #include <fstream>
 
+extern "C" {
+#include <gpac/isomedia.h>
+}
+#include "ffpp.hpp" //TODO: remove DataAVPacket
+#include "../common/libav.hpp" //TODO: remove DataAVPacket
+
 
 #define DASH_DUR_IN_MS 1000
 
@@ -50,10 +56,9 @@ MPEG_DASH::MPEG_DASH(Type type)
 : type(type), workingThread(&MPEG_DASH::DASHThread, this) {
 }
 
-void MPEG_DASH::flush() {
-}
-
 MPEG_DASH::~MPEG_DASH() {
+	audioDataQueue.clear();
+	videoDataQueue.clear();
 	audioDataQueue.push(nullptr);
 	videoDataQueue.push(nullptr);
 	workingThread.join();
@@ -106,36 +111,23 @@ void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<Data> /*audio*/, st
 }
 
 void MPEG_DASH::process(std::shared_ptr<Data> data) {
-#if 0
 	/* TODO:
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time
 	 */
 	auto inputData = safe_cast<DataAVPacket>(data);
-	AVPacket *pkt = inputData->getPacket();
-	switch (pkt->stream_index) {
-	//FIXME: arbitrary
-	case 0:
+	switch (inputData->getPacket()->stream_index) {
+	case GF_ISOM_MEDIA_AUDIO:
 		audioDataQueue.push(data);
 		break;
-	case 1:
+	case GF_ISOM_MEDIA_VISUAL:
 		videoDataQueue.push(data);
 		break;
 	default:
+		assert(0);
 		Log::msg(Log::Warning, "[MPEG_DASH] undeclared data. Discarding.");
 		return;
 	}
-#else
-	assert(0);
-#endif
-}
-
-void MPEG_DASH::processAudio(std::shared_ptr<Data> data) {
-	audioDataQueue.push(data);
-}
-
-void MPEG_DASH::processVideo(std::shared_ptr<Data> data) {
-	videoDataQueue.push(data);
 }
 
 }

@@ -65,7 +65,7 @@ public:
 	}
 
 	void dispatch(std::shared_ptr<Data> data) {
-		executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
+		executor(MEMBER_FUNCTOR(this, &PipelinedModule::process), data);
 	}
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
@@ -141,6 +141,7 @@ public:
 
 	virtual void finished() override {
 		std::unique_lock<std::mutex> lock(mutex);
+		assert(numRemainingNotifications > 0);
 		--numRemainingNotifications;
 		condition.notify_one();
 	}
@@ -249,12 +250,7 @@ int safeMain(int argc, char const* argv[]) {
 		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
 		encoder_->sendOutputPinsInfo();
 
-		//FIXME: hardcoded => use declareStream above
-		if (i == 0) {
-			Connect(muxer->getPin(0)->getSignal(), dasher_, &Modules::Stream::MPEG_DASH::processVideo);
-		} else {
-			Connect(muxer->getPin(0)->getSignal(), dasher_, &Modules::Stream::MPEG_DASH::processAudio);
-		}
+		dasher->connect(muxer->getPin(0));
 
 		pipeline.addModule(std::move(decoder));
 		pipeline.addModule(std::move(converter));
