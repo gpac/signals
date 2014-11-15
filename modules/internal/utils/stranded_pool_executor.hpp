@@ -29,7 +29,6 @@ public:
 	std::shared_future<NotVoid<void>> operator() (const std::function<void(std::shared_ptr<Data>)> &fn, std::shared_ptr<Data>);
 
 private:
-	asio::thread_pool &threadPool;
 	asio::strand<asio::thread_pool::executor_type> strand;
 };
 
