@@ -5,7 +5,7 @@
 namespace Modules {
 
 struct IClock {
-static auto const Rate = 180000LL;
+static auto const Rate = 180000ULL;
 virtual uint64_t now() const = 0;
 };
 
