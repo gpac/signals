@@ -5,14 +5,14 @@
 #include <fstream>
 
 
-#define DASH_DUR_IN_MS 10000
+#define DASH_DUR_IN_MS 1000
 
 namespace {
 	class MPD {
 	public:
 		//FIXME: hardcoded
 		static void serialize(std::ostream &os) {
-			static_assert(DASH_DUR_IN_MS == 10000, "FIXME: Segment duration is fixed to 10s");
+			static_assert(DASH_DUR_IN_MS == 1000, "FIXME: Segment duration is fixed to 10s"); //Romain
 			writeLine(os, "<?xml version=\"1.0\"?>");
 			writeLine(os, "<!--MPD file Generated with GPAC version 0.5.1-DEV-rev5478 on 2014-11-06T11:32:18Z-->");
 			writeLine(os, "<MPD xmlns=\"urn:mpeg:dash:schema:mpd:2011\" minBufferTime=\"PT1.500000S\" type=\"static\" mediaPresentationDuration=\"PT0H0M47.68S\" profiles=\"urn:mpeg:dash:profile:full:2011\">");
