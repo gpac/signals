@@ -15,9 +15,7 @@ public:
 	}
 
 	virtual void process(std::shared_ptr<Data> data) = 0;
-	virtual void flush() {
-		process(nullptr);
-	}
+	virtual void flush() { };
 
 	size_t getNumPin() const {
 		return pins.size();
