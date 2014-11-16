@@ -260,9 +260,12 @@ int safeMain(int argc, char const* argv[]) {
 	}
 
 	pipeline.addModule(std::move(demux), true);
-		
-	pipeline.start();
-	pipeline.waitForCompletion();
+
+	{
+		Tools::Profiler profilerProcessing("Dashcast X - processing time");
+		pipeline.start();
+		pipeline.waitForCompletion();
+	}
 
 	return 0;
 }
