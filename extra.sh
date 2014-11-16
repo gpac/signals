@@ -52,6 +52,7 @@ then
 	rm -rf extra/src/vo-aacenc
 	wget http://sourceforge.net/projects/opencore-amr/files/vo-aacenc/vo-aacenc-0.1.3.tar.gz/download -O vo-aacenc.tar.gz
 	tar xvlf vo-aacenc.tar.gz -C extra/src
+	rm vo-aacenc.tar.gz
 fi
 
 if [ ! -f extra/build/vo-aacenc/buildOk ] ;
@@ -61,9 +62,10 @@ then
 	../../src/vo-aacenc-0.1.3/configure \
 		--host=$HOST \
 		--prefix=$EXTRA_DIR
-	make
-	make install
+	$MAKE
+	$MAKE install
 	popd
+	touch extra/build/vo-aacenc/buildOk
 fi
 
 #-------------------------------------------------------------------------------
