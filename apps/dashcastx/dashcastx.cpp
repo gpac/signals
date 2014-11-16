@@ -25,19 +25,19 @@ namespace {
 
 class EOSData : public Data {
 public:
-	virtual uint8_t* data() override {
+	uint8_t* data() override {
 		return nullptr;
 	}
-	virtual uint64_t size() const override {
+	uint64_t size() const override {
 		return 0;
 	}
-	virtual void resize(size_t size) override {
+	void resize(size_t size) override {
 		assert(0);
 	}
 };
 
 
-#define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<Data>)>
+#define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
 #define EXECUTOR EXECUTOR_ASYNC
 
@@ -56,7 +56,7 @@ public:
 	}
 
 	/* direct call: receiving nullptr stops the execution */
-	void process(std::shared_ptr<Data> data) {
+	void process(std::shared_ptr<const Data> data) {
 		if (data) {
 			delegate->process(data);
 		} else {
@@ -65,7 +65,7 @@ public:
 	}
 
 	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(std::shared_ptr<Data> data) {
+	void dispatch(std::shared_ptr<const Data> data) {
 		if (isSource()) {
 			assert(data == nullptr);
 			executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
@@ -93,7 +93,7 @@ private:
 			m_notify->finished();
 		} else {
 			for (size_t i = 0; i < delegate->getNumPin(); ++i) {
-				delegate->getPin(i)->emit(std::shared_ptr<Data>(nullptr));
+				delegate->getPin(i)->emit(std::shared_ptr<const Data>(nullptr));
 			}
 		}
 	}
@@ -140,7 +140,7 @@ public:
 		}
 	}
 
-	virtual void finished() override {
+	void finished() override {
 		std::unique_lock<std::mutex> lock(mutex);
 		assert(numRemainingNotifications > 0);
 		--numRemainingNotifications;
@@ -196,7 +196,7 @@ int safeMain(int argc, char const* argv[]) {
 
 	auto const inputURL = argv[1];
 
-	Tools::Profiler profiler("Dashcast X");
+	Tools::Profiler profilerGlobal("Dashcast X");
 
 	Pipeline pipeline;
 

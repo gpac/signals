@@ -5,12 +5,12 @@
 namespace Modules {
 namespace Utils {
 
-void IComparator::process(std::shared_ptr<Data> data) {
+void IComparator::process(std::shared_ptr<const Data> data) {
 	if (data != nullptr)
 		throw std::runtime_error("[Comparator] data not expected");
 
 	for (;;) {
-		std::shared_ptr<Data> aData, bData;
+		std::shared_ptr<const Data> aData, bData;
 		auto a = original.tryPop(aData);
 		auto b = other.tryPop(bData);
 		if (!a || !b) {
@@ -26,18 +26,18 @@ void IComparator::process(std::shared_ptr<Data> data) {
 	}
 }
 
-void IComparator::pushOriginal(std::shared_ptr<Data> data) {
+void IComparator::pushOriginal(std::shared_ptr<const Data> data) {
 	original.push(data);
 }
 
-void IComparator::pushOther(std::shared_ptr<Data> data) {
+void IComparator::pushOther(std::shared_ptr<const Data> data) {
 	other.push(data);
 }
 
 
-bool PcmComparator::compare(std::shared_ptr<Data> data1, std::shared_ptr<Data> data2) const {
-	auto pcm1 = safe_cast<PcmData>(data1);
-	auto pcm2 = safe_cast<PcmData>(data2);
+bool PcmComparator::compare(std::shared_ptr<const Data> data1, std::shared_ptr<const Data> data2) const {
+	auto pcm1 = safe_cast<const PcmData>(data1);
+	auto pcm2 = safe_cast<const PcmData>(data2);
 	if (pcm1->getFormat() != pcm2->getFormat())
 		throw std::runtime_error("[PcmComparator] Incompatible audio data");
 
@@ -45,7 +45,7 @@ bool PcmComparator::compare(std::shared_ptr<Data> data1, std::shared_ptr<Data> d
 	auto const size2 = pcm2->size();
 	if (size1 != size2)
 		Log::msg(Log::Warning, "[PcmComparator] Sample sizes are different, comparing the overlap.");
-	PcmData *data;
+	const PcmData *data;
 	if (size1 < size2)
 		data = pcm1.get();
 	else
@@ -65,11 +65,11 @@ bool PcmComparator::compare(std::shared_ptr<Data> data1, std::shared_ptr<Data> d
 	return true;
 }
 
-void PcmComparator::pushOriginal(std::shared_ptr<Data> data) {
+void PcmComparator::pushOriginal(std::shared_ptr<const Data> data) {
 	IComparator::pushOriginal(data);
 }
 
-void PcmComparator::pushOther(std::shared_ptr<Data> data) {
+void PcmComparator::pushOther(std::shared_ptr<const Data> data) {
 	IComparator::pushOther(data);
 }
 

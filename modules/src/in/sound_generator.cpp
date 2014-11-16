@@ -22,7 +22,7 @@ SoundGenerator::SoundGenerator()
 	pins.push_back(uptr(pinFactory.createPin()));
 }
 
-void SoundGenerator::process(std::shared_ptr<Data> /*data*/) {
+void SoundGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	auto const bytesPerSample = pcmFormat.getBytesPerSample();
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.sampleRate / 1000;

@@ -47,7 +47,7 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {
 }
 
-void GPACDemuxMP4Simple::process(std::shared_ptr<Data> /*data*/) {
+void GPACDemuxMP4Simple::process(std::shared_ptr<const Data> /*data*/) {
 	for (;;) {
 		try {
 			int sampleDescriptionIndex;

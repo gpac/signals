@@ -11,9 +11,9 @@ struct IPin;
 class Data;
 
 template<typename Class>
-Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)>
+Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<const Data>)>
 MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
-	return Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<Data>)>(objectPtr, &Class::process);
+	return Signals::MemberFunctor<void, Class, void(Class::*)(std::shared_ptr<const Data>)>(objectPtr, &Class::process);
 }
 
 template<typename ModuleType>

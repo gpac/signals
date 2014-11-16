@@ -100,8 +100,8 @@ unittest("decoder: video simple") {
 	auto decoder = uptr(createVideoDecoder());
 	auto data = getTestH24Frame();
 
-	auto onPic = [&](std::shared_ptr<Data> data) {
-		auto const pic = safe_cast<Picture>(data);
+	auto onPic = [&](std::shared_ptr<const Data> data) {
+		auto const pic = safe_cast<const Picture>(data);
 		auto const res = pic->getResolution();
 		ASSERT_EQUALS(16, res.width);
 		ASSERT_EQUALS(16, res.height);

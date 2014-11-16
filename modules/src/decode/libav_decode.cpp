@@ -78,29 +78,27 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 }
 
 namespace {
-	void copyToPicture(AVFrame const* avFrame, Picture* pic) {
+void copyToPicture(AVFrame const* avFrame, Picture* pic) {
+	pic->setResolution(Resolution(avFrame->width, avFrame->height));
 
-		pic->setResolution(Resolution(avFrame->width, avFrame->height));
+	for (int comp=0; comp<3; ++comp) {
+		auto subsampling = comp == 0 ? 1 : 2;
+		auto src = avFrame->data[comp];
+		auto srcPitch = avFrame->linesize[comp];
 
-		for(int comp=0;comp < 3;++comp) {
+		auto dst = pic->getComp(comp);
+		auto dstPitch = pic->getPitch(comp);
 
-			auto subsampling = comp == 0 ? 1 : 2;
-			auto src = avFrame->data[comp];
-			auto srcPitch = avFrame->linesize[comp];
+		auto const h = avFrame->height / subsampling;
+		auto const w = avFrame->width / subsampling;
 
-			auto dst = pic->getComp(comp);
-			auto dstPitch = pic->getPitch(comp);
-
-			auto const h = avFrame->height / subsampling;
-			auto const w = avFrame->width / subsampling;
-
-			for(int y=0;y < h; ++y) {
-				memcpy(dst, src, w);
-				src += srcPitch;
-				dst += dstPitch;
-			}
+		for (int y=0; y<h; ++y) {
+			memcpy(dst, src, w);
+			src += srcPitch;
+			dst += dstPitch;
 		}
 	}
+}
 }
 
 void LibavDecode::processVideo(const DataAVPacket *decoderData) {
@@ -131,8 +129,8 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) cons
 	s->setTime(t);
 }
 
-void LibavDecode::process(std::shared_ptr<Data> data) {
-	auto decoderData = safe_cast<DataAVPacket>(data);
+void LibavDecode::process(std::shared_ptr<const Data> data) {
+	auto decoderData = safe_cast<const DataAVPacket>(data);
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
 		return processVideo(decoderData.get());

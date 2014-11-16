@@ -14,8 +14,8 @@ namespace Modules {
 
 using namespace Signals;
 
-typedef Signal<void(std::shared_ptr<Data>), ResultQueue<NotVoid<void>>> SignalAsync;
-typedef Signal<void(std::shared_ptr<Data>), ResultVector<NotVoid<void>>> SignalSync;
+typedef Signal<void(std::shared_ptr<const Data>), ResultQueue<NotVoid<void>>> SignalAsync;
+typedef Signal<void(std::shared_ptr<const Data>), ResultVector<NotVoid<void>>> SignalSync;
 
 template<typename Allocator, typename Signal> class PinT;
 template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>, SignalAsync>;
@@ -27,14 +27,14 @@ typedef PinDataDefault<RawData> PinDefault;
 struct IPin {
 	virtual ~IPin() {
 	}
-	virtual size_t emit(std::shared_ptr<Data> data) = 0;
+	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
 	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
 	virtual IProps* getProps() const = 0;
 	virtual void setProps(IProps *props) = 0; /*TODO: attached with every emitted packet. shared_data<>?*/
-	virtual ISignal<void(std::shared_ptr<Data>)>& getSignal() = 0;
+	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
 };
 
-inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<Data>)> functor) {
+inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<const Data>)> functor) {
 	return p->getSignal().connect(functor);
 }
 
@@ -44,7 +44,7 @@ size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot) {
 	return ConnectPin(p, functor);
 }
 
-inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<Data>)> functor, IProcessExecutor& executor) {
+inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<const Data>)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
 }
 
@@ -71,7 +71,7 @@ public:
 		allocator.unblock();
 	}
 
-	size_t emit(std::shared_ptr<Data> data) {
+	size_t emit(std::shared_ptr<const Data> data) {
 		size_t numReceivers = signal.emit(data);
 		if (numReceivers == 0) {
 			Log::msg(Log::Debug, "emit(): Pin had no receiver");
@@ -79,11 +79,11 @@ public:
 		return numReceivers;
 	}
 
-	std::shared_ptr<Data> getBuffer(size_t size) {
+	std::shared_ptr<Data> getBuffer(size_t size) override {
 		return allocator.getBuffer(size);
 	}
 
-	ISignal<void(std::shared_ptr<Data>)>& getSignal() override {
+	ISignal<void(std::shared_ptr<const Data>)>& getSignal() override {
 		return signal;
 	}
 

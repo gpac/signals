@@ -5,7 +5,7 @@
 namespace Modules {
 namespace Out {
 
-void Print::process(std::shared_ptr<Data> data) {
+void Print::process(std::shared_ptr<const Data> data) {
 	os << "Print: Received data of size: " << data->size() << std::endl;
 }
 

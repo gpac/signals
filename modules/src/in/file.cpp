@@ -33,7 +33,7 @@ File* File::create(std::string const& fn) {
 	return new File(f);
 }
 
-void File::process(std::shared_ptr<Data> /*data*/) {
+void File::process(std::shared_ptr<const Data> /*data*/) {
 	for(;;) {
 		auto out(pins[0]->getBuffer(IOSIZE));
 		size_t read = fread(out->data(), 1, IOSIZE, file);

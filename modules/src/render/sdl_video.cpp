@@ -50,7 +50,7 @@ void SDLVideo::doRender() {
 	SDL_DestroyWindow(window);
 }
 
-void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
+void SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 	/* Loop, waiting for QUIT or RESIZE */
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -69,7 +69,7 @@ void SDLVideo::processOneFrame(std::shared_ptr<Data> data) {
 	}
 
 	// sanity check
-	auto pic = safe_cast<Picture>(data);
+	auto pic = safe_cast<const Picture>(data);
 
 	auto const now = m_clock->now();
 	auto const timestamp = pic->getTime() + PREROLL_DELAY; // assume timestamps start at zero
@@ -110,7 +110,7 @@ SDLVideo::~SDLVideo() {
 	workingThread.join();
 }
 
-void SDLVideo::process(std::shared_ptr<Data> data) {
+void SDLVideo::process(std::shared_ptr<const Data> data) {
 	m_dataQueue.push(data);
 }
 

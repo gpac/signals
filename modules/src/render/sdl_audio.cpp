@@ -66,8 +66,8 @@ SDLAudio::~SDLAudio() {
 	SDL_CloseAudio();
 }
 
-void SDLAudio::process(std::shared_ptr<Data> data) {
-	auto pcmData = safe_cast<PcmData>(data);
+void SDLAudio::process(std::shared_ptr<const Data> data) {
+	auto pcmData = safe_cast<const PcmData>(data);
 	if (pcmData->getFormat() != *pcmFormat)
 		throw std::runtime_error("[SDLAudio] Incompatible audio data");
 
@@ -76,7 +76,8 @@ void SDLAudio::process(std::shared_ptr<Data> data) {
 		if(m_Fifo.bytesToRead() == 0) {
 			m_FifoTime = pcmData->getTime() + PREROLL_DELAY;
 		}
-		m_Fifo.write(pcmData->data(), (size_t)pcmData->size());
+		auto const constPcmData = const_cast<PcmData*>(pcmData.get()); //TODO: add a const accessor for Data
+		m_Fifo.write(constPcmData->data(), (size_t)pcmData->size());
 	}
 }
 
@@ -89,7 +90,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	int64_t numSamplesToProduce = len / bytesPerSample;
 
 	auto const relativeTimePosition = int64_t(m_FifoTime) - int64_t(bufferTimeIn180k);
-	auto const relativeSamplePosition = int64_t(relativeTimePosition * pcmFormat->sampleRate / IClock::Rate);
+	auto const relativeSamplePosition = relativeTimePosition * int64_t(pcmFormat->sampleRate) / int64_t(IClock::Rate);
 
 	if (relativeSamplePosition < -audioJitterTolerance) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);

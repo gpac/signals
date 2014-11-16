@@ -112,8 +112,8 @@ void LibavMux::ensureHeader() {
 	}
 }
 
-void LibavMux::process(std::shared_ptr<Data> data) {
-	auto encoderData = safe_cast<DataAVPacket>(data);
+void LibavMux::process(std::shared_ptr<const Data> data) {
+	auto encoderData = safe_cast<const DataAVPacket>(data);
 	auto pkt = encoderData->getPacket();
 
 	ensureHeader();

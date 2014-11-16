@@ -11,7 +11,7 @@ namespace Out {
 class Null : public Module {
 public:
 	Null();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 };
 
 }

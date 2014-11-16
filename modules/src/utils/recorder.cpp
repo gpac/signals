@@ -11,11 +11,11 @@ void Recorder::flush() {
 Recorder::~Recorder() {
 }
 
-void Recorder::process(std::shared_ptr<Data> data) {
+void Recorder::process(std::shared_ptr<const Data> data) {
 	record.push(data);
 }
 
-std::shared_ptr<Data> Recorder::pop() {
+std::shared_ptr<const Data> Recorder::pop() {
 	return record.pop();
 }
 

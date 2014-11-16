@@ -9,13 +9,13 @@ namespace Utils {
 class Recorder : public Module {
 public:
 	~Recorder();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 
-	std::shared_ptr<Data> pop();
+	std::shared_ptr<const Data> pop();
 
 private:
-	Queue<std::shared_ptr<Data>> record;
+	Queue<std::shared_ptr<const Data>> record;
 };
 
 }

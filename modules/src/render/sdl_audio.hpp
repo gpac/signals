@@ -20,7 +20,7 @@ class SDLAudio : public Module {
 public:
 	static SDLAudio* create(IClock* clock = g_DefaultClock);
 	~SDLAudio();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 
 private:
 	SDLAudio(IClock* clock);

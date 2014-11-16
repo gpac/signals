@@ -11,7 +11,7 @@ unittest("encoder: video simple") {
 	std::shared_ptr<Data> picture = uptr(new Picture(VIDEO_RESOLUTION));
 
 	int numEncodedFrames = 0;
-	auto onFrame = [&](std::shared_ptr<Data> data) {
+	auto onFrame = [&](std::shared_ptr<const Data> data) {
 		numEncodedFrames++;
 	};
 

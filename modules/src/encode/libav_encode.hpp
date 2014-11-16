@@ -24,7 +24,7 @@ public:
 
 	LibavEncode(Type type);
 	~LibavEncode();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 
 	void sendOutputPinsInfo(); //FIXME: temporary until modules have a manager

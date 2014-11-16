@@ -277,15 +277,15 @@ bool LibavEncode::processVideo(const Picture *pic) {
 	return false;
 }
 
-void LibavEncode::process(std::shared_ptr<Data> data) {
+void LibavEncode::process(std::shared_ptr<const Data> data) {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
-		const auto encoderData = safe_cast<Picture>(data);
+		const auto encoderData = safe_cast<const Picture>(data);
 		processVideo(encoderData.get());
 		break;
 	}
 	case AVMEDIA_TYPE_AUDIO: {
-		const auto pcmData = safe_cast<PcmData>(data);
+		const auto pcmData = safe_cast<const PcmData>(data);
 		if (pcmData->getFormat() != *pcmFormat)
 			throw std::runtime_error("[SDLAudio] Incompatible audio data");
 		processAudio(pcmData.get());

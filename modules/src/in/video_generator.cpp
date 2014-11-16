@@ -14,7 +14,7 @@ VideoGenerator::VideoGenerator()
 	pins.push_back(uptr(new PinDataDefault<Picture>));
 }
 
-void VideoGenerator::process(std::shared_ptr<Data> /*data*/) {
+void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	auto const dim = VIDEO_RESOLUTION;
 	auto pic = safe_cast<Picture>(pins[0]->getBuffer(0));
 

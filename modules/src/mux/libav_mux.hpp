@@ -13,7 +13,7 @@ class LibavMux : public Module {
 public:
 	static LibavMux* create(const std::string &baseName);
 	~LibavMux();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 
 	void declareStream(std::shared_ptr<Stream> stream);
 

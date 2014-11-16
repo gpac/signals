@@ -64,15 +64,16 @@ void JPEGTurboDecode::ensureProps(int width, int height, int pixelFmt) {
 	}
 }
 
-void JPEGTurboDecode::process(std::shared_ptr<Data> data) {
+void JPEGTurboDecode::process(std::shared_ptr<const Data> data) {
 	const int pixelFmt = TJPF_RGB;
 	int w, h, jpegSubsamp;
-	if (tjDecompressHeader2(jtHandle->get(), data->data(), (unsigned long)data->size(), &w, &h, &jpegSubsamp) < 0) {
+	unsigned char *jpegBuf = const_cast<Data*>(data.get())->data();
+	if (tjDecompressHeader2(jtHandle->get(), jpegBuf, (unsigned long)data->size(), &w, &h, &jpegSubsamp) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing header.");
 		return;
 	}
 	auto out = pins[0]->getBuffer(w*h*3);
-	if (tjDecompress2(jtHandle->get(), data->data(), (unsigned long)data->size(), out->data(), w, 0/*pitch*/, h, pixelFmt, TJFLAG_FASTDCT) < 0) {
+	if (tjDecompress2(jtHandle->get(), jpegBuf, (unsigned long)data->size(), out->data(), w, 0/*pitch*/, h, pixelFmt, TJFLAG_FASTDCT) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing frame.");
 		return;
 	}

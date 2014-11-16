@@ -17,7 +17,7 @@ namespace Modules {
 
 class Data;
 
-typedef IExecutor<void(std::shared_ptr<Data>)> IProcessExecutor;
+typedef IExecutor<void(std::shared_ptr<const Data>)> IProcessExecutor;
 
 //tasks occur in the default thread pool
 //when tasks belong to a strand, they are processed non-concurrently in FIFO order
@@ -26,13 +26,13 @@ public:
 	StrandedPoolModuleExecutor(); //uses the default Modules thread pool
 	StrandedPoolModuleExecutor(asio::thread_pool &threadPool);
 	~StrandedPoolModuleExecutor();
-	std::shared_future<NotVoid<void>> operator() (const std::function<void(std::shared_ptr<Data>)> &fn, std::shared_ptr<Data>);
+	std::shared_future<NotVoid<void>> operator() (const std::function<void(std::shared_ptr<const Data>)> &fn, std::shared_ptr<const Data>);
 
 private:
 	asio::strand<asio::thread_pool::executor_type> strand;
 };
 
-static ExecutorSync<void(std::shared_ptr<Data>)> defaultExecutor;
+static ExecutorSync<void(std::shared_ptr<const Data>)> defaultExecutor;
 //TODO: static StrandedPoolModuleExecutor defaultExecutor;
 
 }
