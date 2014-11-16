@@ -19,7 +19,7 @@ class LibavDecode : public Module {
 public:
 	LibavDecode(const PropsDecoder &props);
 	~LibavDecode();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 
 private:
 	void processAudio(const DataAVPacket*);

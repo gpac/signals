@@ -298,7 +298,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 	return GF_OK;
 }
 
-void fillVideoSample(u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
+void fillVideoSample(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 	u32 scSize = 0;
 	u32 NALUSize = 0;
 	GF_BitStream *out_bs = gf_bs_new(NULL, 2 * bufLen, GF_BITSTREAM_WRITE);
@@ -635,14 +635,15 @@ void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
 	}
 }
 
-void GPACMuxMP4::process(std::shared_ptr<Data> data) {
+void GPACMuxMP4::process(std::shared_ptr<const Data> data) {
 	GF_ISOSample sample;
 	memset(&sample, 0, sizeof(sample));
 	bool sampleDataMustBeDeleted = false;
 
 	{
 		u32 bufLen = (u32)data->size();
-		u8 *bufPtr = data->data();
+		auto const constData = const_cast<Data*>(data.get()); //TODO: add a const accessor for Data
+		const u8 *bufPtr = constData->data();
 
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
 		if (mediaType == GF_ISOM_MEDIA_VISUAL) {

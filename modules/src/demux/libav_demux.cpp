@@ -55,7 +55,7 @@ LibavDemux::~LibavDemux() {
 	avformat_close_input(&m_formatCtx);
 }
 
-void LibavDemux::process(std::shared_ptr<Data> /*data*/) {
+void LibavDemux::process(std::shared_ptr<const Data> /*data*/) {
 	for (;;) {
 		auto out = safe_cast<DataAVPacket>(pins[0/*FIXME: pkt->stream_index*/]->getBuffer(0));
 		AVPacket *pkt = out->getPacket();

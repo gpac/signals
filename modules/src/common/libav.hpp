@@ -35,8 +35,8 @@ class DataAVPacket : public Data {
 public:
 	DataAVPacket(size_t size = 0);
 	~DataAVPacket();
-	uint8_t* data()  override;
-	uint64_t size() const  override;
+	uint8_t* data() override;
+	uint64_t size() const override;
 	AVPacket* getPacket() const;
 	void resize(size_t size)  override;
 

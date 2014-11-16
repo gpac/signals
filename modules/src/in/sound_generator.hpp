@@ -10,7 +10,7 @@ namespace In {
 class SoundGenerator : public Module {
 public:
 	SoundGenerator();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 
 private:
 	double nextSample();

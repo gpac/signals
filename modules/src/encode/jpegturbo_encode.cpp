@@ -35,11 +35,12 @@ JPEGTurboEncode::JPEGTurboEncode(int width, int height, int JPEGQuality)
 JPEGTurboEncode::~JPEGTurboEncode() {
 }
 
-void JPEGTurboEncode::process(std::shared_ptr<Data> data) {
+void JPEGTurboEncode::process(std::shared_ptr<const Data> data) {
 	auto out = pins[0]->getBuffer(tjBufSize(width, height, TJSAMP_420));
 	unsigned long jpegSize;
 	unsigned char *buf = (unsigned char*)out->data();
-	if (tjCompress2(jtHandle->get(), data->data(), width, 0/*pitch*/, height, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
+	unsigned char *jpegBuf = const_cast<Data*>(data.get())->data();
+	if (tjCompress2(jtHandle->get(), jpegBuf, width, 0/*pitch*/, height, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_encode] error encountered while compressing.");
 		return;
 	}

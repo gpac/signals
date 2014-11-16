@@ -17,13 +17,12 @@ VideoConvert::~VideoConvert() {
 	sws_freeContext(m_SwContext);
 }
 
-void VideoConvert::process(std::shared_ptr<Data> data) {
+void VideoConvert::process(std::shared_ptr<const Data> data) {
 	uint8_t *srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	int srcStride[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	auto videoData = safe_cast<Picture>(data);
-	for(int i=0;i < 3; ++i)
-	{
+	auto videoData = safe_cast<const Picture>(data);
+	for (int i=0; i<3; ++i) {
 		srcSlice[i] = videoData->getComp(i);
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
@@ -36,7 +35,7 @@ void VideoConvert::process(std::shared_ptr<Data> data) {
 	case AV_PIX_FMT_YUV420P: {
 			auto pic = picAlloc.getBuffer(0);
 			pic->setResolution(dstRes);
-			for(int i=0; i<3; ++i) {
+			for (int i=0; i<3; ++i) {
 				pDst[i] = pic->getComp(i);
 				dstStride[i] = (int)pic->getPitch(i);
 			}

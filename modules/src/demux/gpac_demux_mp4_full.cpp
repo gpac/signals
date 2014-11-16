@@ -163,14 +163,15 @@ bool GPACDemuxMP4Full::processData() {
 	return true;
 }
 
-void GPACDemuxMP4Full::process(std::shared_ptr<Data> data) {
+void GPACDemuxMP4Full::process(std::shared_ptr<const Data> data) {
 #if 0 //TODO: zero copy mode, or at least improve the current system
 	reader->validDataSize = reader->dataSize = data->size();
 	reader->data.data() = data->data();
 #else
 	const size_t currSize = reader->data.size();
 	reader->data.resize(reader->data.size() + (size_t)data->size());
-	memcpy(reader->data.data() + currSize, data->data(), (size_t)data->size());
+	auto const constData = const_cast<Data*>(data.get()); //TODO: add a const accessor for Data
+	memcpy(reader->data.data() + currSize, constData->data(), (size_t)data->size());
 #endif
 	std::stringstream ss;
 	ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();

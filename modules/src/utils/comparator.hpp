@@ -7,21 +7,21 @@ namespace Utils {
 
 class IComparator : public Module {
 public:
-	void process(std::shared_ptr<Data> data) override;
-	virtual bool compare(std::shared_ptr<Data> original, std::shared_ptr<Data> other) const = 0;
-	virtual void pushOriginal(std::shared_ptr<Data> data);
-	virtual void pushOther(std::shared_ptr<Data> data);
+	void process(std::shared_ptr<const Data> data) override;
+	virtual bool compare(std::shared_ptr<const Data> original, std::shared_ptr<const Data> other) const = 0;
+	virtual void pushOriginal(std::shared_ptr<const Data> data);
+	virtual void pushOther(std::shared_ptr<const Data> data);
 
 private:
-	Queue<std::shared_ptr<Data>> original, other;
+	Queue<std::shared_ptr<const Data>> original, other;
 };
 
 
 class PcmComparator : public IComparator {
 public:
-	bool compare(std::shared_ptr<Data> data1, std::shared_ptr<Data> data2) const override;
-	virtual void pushOriginal(std::shared_ptr<Data> data) override;
-	virtual void pushOther(std::shared_ptr<Data> data) override;
+	bool compare(std::shared_ptr<const Data> data1, std::shared_ptr<const Data> data2) const override;
+	void pushOriginal(std::shared_ptr<const Data> data) override;
+	void pushOther(std::shared_ptr<const Data> data) override;
 
 private:
 	const float tolerance = 0.0;

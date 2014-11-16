@@ -18,12 +18,12 @@ class SDLVideo : public Module {
 public:
 	SDLVideo(IClock* clock = g_DefaultClock);
 	~SDLVideo();
-	void process(std::shared_ptr<Data> data) override;
+	void process(std::shared_ptr<const Data> data) override;
 
 private:
 
 	void doRender();
-	void processOneFrame(std::shared_ptr<Data> data);
+	void processOneFrame(std::shared_ptr<const Data> data);
 	void createTexture();
 
 	IClock* const m_clock;
@@ -37,7 +37,7 @@ private:
 
 	int64_t m_NumFrames;
 
-	Queue<std::shared_ptr<Data>> m_dataQueue;
+	Queue<std::shared_ptr<const Data>> m_dataQueue;
 	std::thread workingThread;
 };
 

@@ -38,10 +38,10 @@ void AudioConvert::flush() {
 AudioConvert::~AudioConvert() {
 }
 
-void AudioConvert::process(std::shared_ptr<Data> data) {
+void AudioConvert::process(std::shared_ptr<const Data> data) {
 	uint64_t srcNumSamples, dstNumSamples;
 	uint8_t * const * pSrc;
-	auto audioData = safe_cast<PcmData>(data);
+	auto audioData = safe_cast<const PcmData>(data);
 	if (audioData) {
 		if (audioData->getFormat() != srcPcmFormat)
 			throw std::runtime_error("[AudioConvert] Incompatible input audio data");

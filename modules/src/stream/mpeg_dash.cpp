@@ -18,7 +18,7 @@ namespace {
 	public:
 		//FIXME: hardcoded
 		static void serialize(std::ostream &os) {
-			static_assert(DASH_DUR_IN_MS == 1000, "FIXME: Segment duration is fixed to 10s"); //Romain
+			static_assert(DASH_DUR_IN_MS == 1000, "FIXME: Segment duration is fixed to 1s"); //Romain
 			writeLine(os, "<?xml version=\"1.0\"?>");
 			writeLine(os, "<!--MPD file Generated with GPAC version 0.5.1-DEV-rev5478 on 2014-11-06T11:32:18Z-->");
 			writeLine(os, "<MPD xmlns=\"urn:mpeg:dash:schema:mpd:2011\" minBufferTime=\"PT1.500000S\" type=\"static\" mediaPresentationDuration=\"PT0H0M47.68S\" profiles=\"urn:mpeg:dash:profile:full:2011\">");
@@ -91,7 +91,7 @@ void MPEG_DASH::DASHThread() {
 	}
 }
 
-void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<Data> /*audio*/, std::shared_ptr<Data> /*video*/) {
+void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> /*audio*/, std::shared_ptr<const Data> /*video*/) {
 #if 0
 	//Print the segments to the appropriate threads
 	std::stringstream ssa, ssv;
@@ -110,12 +110,12 @@ void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<Data> /*audio*/, st
 #endif
 }
 
-void MPEG_DASH::process(std::shared_ptr<Data> data) {
+void MPEG_DASH::process(std::shared_ptr<const Data> data) {
 	/* TODO:
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time
 	 */
-	auto inputData = safe_cast<DataAVPacket>(data);
+	auto inputData = safe_cast<const DataAVPacket>(data);
 	switch (inputData->getPacket()->stream_index) {
 	case GF_ISOM_MEDIA_AUDIO:
 		audioDataQueue.push(data);

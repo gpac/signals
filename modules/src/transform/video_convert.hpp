@@ -10,7 +10,7 @@ class VideoConvert : public Module {
 	public:
 		VideoConvert(Resolution srcRes, AVPixelFormat srcFormat, Resolution dstRes, AVPixelFormat dstFormat);
 		~VideoConvert();
-		void process(std::shared_ptr<Data> data) override;
+		void process(std::shared_ptr<const Data> data) override;
 
 	private:
 		SwsContext *m_SwContext;

@@ -51,15 +51,15 @@ public:
 	RawData(size_t size) : buffer(size) {
 	}
 
-	virtual uint8_t* data() override {
+	uint8_t* data() override {
 		return buffer.data();
 	}
 
-	virtual uint64_t size() const override {
+	uint64_t size() const override {
 		return buffer.size();
 	}
 
-	virtual void resize(size_t size) override {
+	void resize(size_t size) override {
 		buffer.resize(size);
 	}
 

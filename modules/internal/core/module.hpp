@@ -14,7 +14,7 @@ public:
 	virtual ~Module() noexcept(false) {
 	}
 
-	virtual void process(std::shared_ptr<Data> data) = 0;
+	virtual void process(std::shared_ptr<const Data> data) = 0;
 	virtual void flush() { };
 
 	size_t getNumPin() const {
