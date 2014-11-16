@@ -114,7 +114,7 @@ if [ ! -f extra/src/gpac/Changelog ] ;
 then
 	mkdir -p extra/src
 	rm -rf extra/src/gpac
-	svn checkout svn://svn.code.sf.net/p/gpac/code/trunk/gpac -r 5442 extra/src/gpac
+	svn checkout svn://svn.code.sf.net/p/gpac/code/trunk/gpac -r 5507 extra/src/gpac
 fi
 
 if [ ! -f extra/build/gpac/buildOk ] ;
