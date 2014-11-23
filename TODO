@@ -6,18 +6,19 @@ Mid Term apps:
 Tasks (from higher to lower priority):
 - typedef shared_ptr<Data> (would allow sending signals on Data deletion for example, which is needed to remove sleep() in the pin/allocator waitforCompletion())
 - SDL and renderers should be able to run in thread 0
+ * http://stackoverflow.com/questions/20530218/check-if-current-thread-is-main-thread
+ * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c
+ * http://stackoverflow.com/questions/1969579/getting-a-handle-to-the-processs-main-thread
 - investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
 - be able to draw the graph of connections (and allocator states?)
-- check constness of the data being shared (once emitted) or duplicate
 - remove create() and use C++ exceptions in constructors
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
-- muxer example with two inputs
+- muxer example with two inputs of the same type (e.g. video)
 
 Questions (from higher to lower priority):
-- eligibility of tasks
+- eligibility of tasks / ASIO scheduler?
 - how to dynamically connect filters
-- use C++ strong typing for data (would prevent from connecting dynamically, like an external DLL)
 - how to expose an interface to older compilers
 - how to expose parameters so that we can plug it with a GUI?
