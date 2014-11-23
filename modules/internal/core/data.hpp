@@ -124,7 +124,7 @@ private:
 	uint8_t* m_comp[3];
 };
 
-static const Resolution VIDEO_RESOLUTION(320, 200);
+static const Resolution VIDEO_RESOLUTION(320, 180);
 static const int VIDEO_FPS = 24;
 
 }
