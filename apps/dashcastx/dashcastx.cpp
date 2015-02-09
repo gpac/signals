@@ -41,6 +41,14 @@ public:
 		ConnectToModule(pin->getSignal(), this, executor);
 	}
 
+	size_t getNumPin() const {
+		return delegate->getNumPin();
+	}
+
+	IPin* getPin(int i) const {
+		return delegate->getPin(i);
+	}
+
 	/* direct call: receiving nullptr stops the execution */
 	void process(std::shared_ptr<const Data> data) {
 		if (data) {
@@ -101,9 +109,14 @@ public:
 	Pipeline() : numRemainingNotifications(0) {
 	}
 
-	void addModule(std::unique_ptr<PipelinedModule> module, bool isSource = false) {
+	PipelinedModule* addModule(Module* rawModule, bool isSource = false) {
+		if(!rawModule)
+			return nullptr;
+		auto module = uptr(new PipelinedModule(rawModule, this));
+		auto ret = module.get();
 		module->setSource(isSource);
 		modules.push_back(std::move(module));
+		return ret;
 	}
 
 	void connect(IPin* pin, PipelinedModule *module) {
@@ -186,64 +199,40 @@ int safeMain(int argc, char const* argv[]) {
 
 	Pipeline pipeline;
 
-	auto demux_ = Demux::LibavDemux::create(inputURL);
-	auto demux = uptr(new PipelinedModule(demux_, &pipeline));
+	auto demux = pipeline.addModule(Demux::LibavDemux::create(inputURL), true);
+	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
 
-	auto dasher_ = new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static);
-	auto dasher = uptr(new PipelinedModule(dasher_, &pipeline));
-	auto dasher__ = dasher.get();
-	pipeline.addModule(std::move(dasher));
-
-	for (size_t i = 0; i < demux_->getNumPin(); ++i) {
-		auto props = demux_->getPin(i)->getProps();
+	for (size_t i = 0; i < demux->getNumPin(); ++i) {
+		auto props = demux->getPin(i)->getProps();
 		auto decoderProps = safe_cast<PropsDecoder>(props);
 
-		auto decoder_ = new Decode::LibavDecode(*decoderProps);
-		auto decoder = uptr(new PipelinedModule(decoder_, &pipeline));
-		pipeline.connect(demux_->getPin(i), decoder.get());
+		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
+		pipeline.connect(demux->getPin(i), decoder);
 
-		auto converter_ = createConverter(decoderProps);
-		if (!converter_) {
-			auto r_ = new Out::Null;
-			auto r = uptr(new PipelinedModule(r_, &pipeline));
-			pipeline.connect(decoder_->getPin(0), r.get());
-			pipeline.addModule(std::move(decoder));
-			pipeline.addModule(std::move(r));
+		auto converter = pipeline.addModule(createConverter(decoderProps));
+		if (!converter) {
 			continue;
 		}
-		auto converter = uptr(new PipelinedModule(converter_, &pipeline));
-		pipeline.connect(decoder_->getPin(0), converter.get());
 
-		auto encoder_ = createEncoder(decoderProps);
-		if (!encoder_) {
-			auto r_ = new Out::Null;
-			auto r = uptr(new PipelinedModule(r_, &pipeline));
-			pipeline.connect(decoder_->getPin(0), converter.get());
-			pipeline.connect(converter_->getPin(0), r.get());
-			pipeline.addModule(std::move(decoder));
-			pipeline.addModule(std::move(converter));
-			pipeline.addModule(std::move(r));
+		pipeline.connect(decoder->getPin(0), converter);
+
+		auto rawEncoder = createEncoder(decoderProps);
+		auto encoder = pipeline.addModule(rawEncoder);
+		if (!encoder) {
 			continue;
 		}
-		auto encoder = uptr(new PipelinedModule(encoder_, &pipeline));
-		pipeline.connect(converter_->getPin(0), encoder.get());
+
+		pipeline.connect(converter->getPin(0), encoder);
 
 		std::stringstream filename;
 		filename << i;
-		auto muxer_ = new Mux::GPACMuxMP4(filename.str(), true);
-		auto muxer = uptr(new PipelinedModule(muxer_, &pipeline));
+		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true));
 
-		pipeline.connect(encoder_->getPin(0), muxer.get());
-		encoder_->sendOutputPinsInfo();
-		pipeline.connect(muxer_->getPin(0), dasher__);
+		pipeline.connect(encoder->getPin(0), muxer);
+		pipeline.connect(muxer->getPin(0), dasher);
 
-		pipeline.addModule(std::move(muxer));
-		pipeline.addModule(std::move(encoder));
-		pipeline.addModule(std::move(converter));
-		pipeline.addModule(std::move(decoder));
+		rawEncoder->sendOutputPinsInfo();
 	}
-
-	pipeline.addModule(std::move(demux), true);
 
 	{
 		Tools::Profiler profilerProcessing("Dashcast X - processing time");
