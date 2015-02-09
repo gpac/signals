@@ -95,6 +95,24 @@ std::shared_ptr<T> safe_cast(std::shared_ptr<U> p)
 	return r;
 }
 
+template<typename T, typename U>
+T* safe_cast(U* p)
+{
+	if (!p)
+		return nullptr;
+	auto r = dynamic_cast<T*>(p);
+	if(!r)
+	{
+		std::string s;
+		s += "dynamic cast error: could not convert from ";
+		s += typeid(U).name();
+		s += " to ";
+		s += typeid(T).name();
+		throw std::runtime_error(s.c_str());
+	}
+	return r;
+}
+
 namespace Tools {
 
 class Profiler {

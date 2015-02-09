@@ -196,8 +196,7 @@ int safeMain(int argc, char const* argv[]) {
 
 	for (size_t i = 0; i < demux_->getNumPin(); ++i) {
 		auto props = demux_->getPin(i)->getProps();
-		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		ASSERT(decoderProps);
+		auto decoderProps = safe_cast<PropsDecoder>(props);
 
 		auto decoder_ = new Decode::LibavDecode(*decoderProps);
 		auto decoder = uptr(new PipelinedModule(decoder_, &pipeline));
