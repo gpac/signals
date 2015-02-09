@@ -2,6 +2,7 @@
 
 #include "internal/core/clock.hpp"
 #include "internal/core/module.hpp"
+#include "src/common/libav.hpp"
 
 namespace Modules {
 
@@ -14,7 +15,7 @@ public:
 
 private:
 	uint64_t m_numFrames;
-	PinDataDefault<Picture>* output;
+	PinPicture* output;
 };
 
 }
