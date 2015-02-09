@@ -23,20 +23,6 @@ using namespace Modules;
 
 namespace {
 
-class EOSData : public Data {
-public:
-	uint8_t* data() override {
-		return nullptr;
-	}
-	uint64_t size() const override {
-		return 0;
-	}
-	void resize(size_t size) override {
-		assert(0);
-	}
-};
-
-
 #define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
 #define EXECUTOR EXECUTOR_ASYNC
