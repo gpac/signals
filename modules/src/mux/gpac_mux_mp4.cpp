@@ -355,6 +355,8 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
 		Log::msg(Log::Warning, "Cannot make iso file %s interleaved", fileName.str());
 		throw std::runtime_error("Cannot make iso file interleaved.");
 	}
+
+	output = addPin(new PinDataDefault<DataAVPacket>);
 }
 
 void GPACMuxMP4::closeSegment() {
@@ -634,7 +636,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 	if(declareStream(data_))
 		return;
 
-	auto data = safe_cast<const RawData>(data_);
+	auto data = safe_cast<const DataAVPacket>(data_);
 
 	GF_ISOSample sample;
 	memset(&sample, 0, sizeof(sample));
@@ -642,7 +644,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 
 	{
 		u32 bufLen = (u32)data->size();
-		auto const constData = const_cast<RawData*>(data.get()); //TODO: add a const accessor for Data
+		auto const constData = const_cast<DataAVPacket*>(data.get()); //TODO: add a const accessor for Data
 		const u8 *bufPtr = constData->data();
 
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
