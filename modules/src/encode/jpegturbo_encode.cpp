@@ -40,8 +40,8 @@ void JPEGTurboEncode::process(std::shared_ptr<const Data> data_) {
 	auto out = output->getBuffer(dataSize);
 	unsigned long jpegSize;
 	unsigned char *buf = (unsigned char*)out->data();
-	unsigned char *jpegBuf = const_cast<RawData*>(data.get())->data();
-	if (tjCompress2(jtHandle->get(), jpegBuf, resolution.width, 0/*pitch*/, resolution.height, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
+	auto jpegBuf = data->data();
+	if (tjCompress2(jtHandle->get(), (unsigned char*)jpegBuf, resolution.width, 0/*pitch*/, resolution.height, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_encode] error encountered while compressing.");
 		return;
 	}

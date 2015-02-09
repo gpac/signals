@@ -644,8 +644,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 
 	{
 		u32 bufLen = (u32)data->size();
-		auto const constData = const_cast<DataAVPacket*>(data.get()); //TODO: add a const accessor for Data
-		const u8 *bufPtr = constData->data();
+		const u8 *bufPtr = data->data();
 
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
 		if (mediaType == GF_ISOM_MEDIA_VISUAL) {
