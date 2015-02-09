@@ -28,15 +28,15 @@ class JPEGTurbo {
 
 JPEGTurboEncode::JPEGTurboEncode(Resolution resolution, int JPEGQuality)
 	: jtHandle(new JPEGTurbo), JPEGQuality(JPEGQuality), resolution(resolution) {
-	PinDefaultFactory pinFactory;
-	pins.push_back(uptr(pinFactory.createPin()));
+	output = addPin(new PinDefault);
 }
 
 JPEGTurboEncode::~JPEGTurboEncode() {
 }
 
 void JPEGTurboEncode::process(std::shared_ptr<const Data> data) {
-	auto out = pins[0]->getBuffer(tjBufSize(resolution.width, resolution.height, TJSAMP_420));
+	auto const dataSize = tjBufSize(resolution.width, resolution.height, TJSAMP_420);
+	auto out = output->getBuffer(dataSize);
 	unsigned long jpegSize;
 	unsigned char *buf = (unsigned char*)out->data();
 	unsigned char *jpegBuf = const_cast<Data*>(data.get())->data();
@@ -45,7 +45,7 @@ void JPEGTurboEncode::process(std::shared_ptr<const Data> data) {
 		return;
 	}
 	out->resize(jpegSize);
-	pins[0]->emit(out);
+	output->emit(out);
 }
 
 }

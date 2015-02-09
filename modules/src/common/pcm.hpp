@@ -141,7 +141,7 @@ public:
 		return size;
 	}
 
-	virtual void resize(size_t size) override {
+	virtual void resize(size_t size) {
 		throw std::runtime_error("Forbidden operation. You cannot resize PCM data.");
 	}
 

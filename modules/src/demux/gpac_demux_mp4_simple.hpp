@@ -21,6 +21,7 @@ private:
 	GPACDemuxMP4Simple(GF_ISOFile *movie);
 
 	std::unique_ptr<ISOFileReader> reader;
+	PinDefault* output;
 };
 
 }

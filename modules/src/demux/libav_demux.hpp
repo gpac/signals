@@ -1,6 +1,7 @@
 #pragma once
 
 #include "internal/core/module.hpp"
+#include "src/common/libav.hpp"
 
 struct AVFormatContext;
 
@@ -18,6 +19,7 @@ private:
 	LibavDemux(struct AVFormatContext *formatCtx);
 
 	struct AVFormatContext *m_formatCtx;
+	std::vector<PinDataDefault<DataAVPacket>*> outputs;
 };
 
 }

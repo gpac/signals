@@ -19,7 +19,7 @@ SoundGenerator::SoundGenerator()
 	pcmFormat.sampleRate = SAMPLE_RATE;
 	pcmFormat.numPlanes = 1;
 	PinPcmFactory pinFactory;
-	pins.push_back(uptr(pinFactory.createPin()));
+	output = addPin(new PinPcm);
 }
 
 void SoundGenerator::process(std::shared_ptr<const Data> /*data*/) {
@@ -27,7 +27,7 @@ void SoundGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.sampleRate / 1000;
 	
-	auto out = safe_cast<PcmData>(pins[0]->getBuffer(0));
+	auto out = output->getBuffer(0);
 	out->setFormat(pcmFormat);
 	for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i)
 		out->setPlane(i, nullptr, bufferSize / pcmFormat.numPlanes);
@@ -49,7 +49,7 @@ void SoundGenerator::process(std::shared_ptr<const Data> /*data*/) {
 		p[i*bytesPerSample+3] = (val >> 8) & 0xFF;
 	}
 
-	pins[0]->emit(out);
+	output->emit(out);
 }
 
 double SoundGenerator::nextSample() {

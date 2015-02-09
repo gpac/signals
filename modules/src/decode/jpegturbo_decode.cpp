@@ -40,12 +40,11 @@ AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {
 
 JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
-	PinDefaultFactory pinFactory;
-	pins.push_back(uptr(pinFactory.createPin()));
+	output = addPin(new PinDefault);
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
-	auto p = dynamic_cast<PropsDecoder*>(pins[0]->getProps());
+	auto p = dynamic_cast<PropsDecoder*>(output->getProps());
 	if (p) {
 		auto ctx = p->getAVCodecContext();
 		avcodec_close(ctx);
@@ -54,13 +53,13 @@ JPEGTurboDecode::~JPEGTurboDecode() {
 }
 
 void JPEGTurboDecode::ensureProps(int width, int height, int pixelFmt) {
-	if (!pins[0]->getProps()) {
+	if (!output->getProps()) {
 		auto codec = avcodec_find_decoder_by_name("jpg");
 		auto ctx = avcodec_alloc_context3(codec);
 		ctx->width = width;
 		ctx->height = height;
 		ctx->pix_fmt = getAVPF(pixelFmt);
-		pins[0]->setProps(new PropsDecoder(ctx));
+		output->setProps(new PropsDecoder(ctx));
 	}
 }
 
@@ -72,13 +71,13 @@ void JPEGTurboDecode::process(std::shared_ptr<const Data> data) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing header.");
 		return;
 	}
-	auto out = pins[0]->getBuffer(w*h*3);
+	auto out = output->getBuffer(w*h*3);
 	if (tjDecompress2(jtHandle->get(), jpegBuf, (unsigned long)data->size(), out->data(), w, 0/*pitch*/, h, pixelFmt, TJFLAG_FASTDCT) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing frame.");
 		return;
 	}
 	ensureProps(w, h, pixelFmt);
-	pins[0]->emit(out);
+	output->emit(out);
 }
 
 }

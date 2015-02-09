@@ -16,6 +16,7 @@ private:
 	File(FILE *file);
 
 	FILE *file;
+	PinDefault* output;
 };
 
 }

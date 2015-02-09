@@ -22,6 +22,7 @@ private:
 	bool processData();
 
 	std::unique_ptr<ISOProgressiveReader> reader;
+	PinDefault* output;
 };
 
 }

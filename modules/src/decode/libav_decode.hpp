@@ -2,6 +2,7 @@
 
 #include "internal/core/module.hpp"
 #include "../common/libav.hpp"
+#include "src/common/pcm.hpp"
 
 struct AVCodecContext;
 
@@ -29,6 +30,8 @@ private:
 
 	AVCodecContext * const codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;
+	PinPicture* videoPin;
+	PinPcm* audioPin;
 	uint64_t m_numFrames;
 };
 
