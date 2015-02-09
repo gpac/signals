@@ -17,12 +17,7 @@ using namespace Signals;
 typedef Signal<void(std::shared_ptr<const Data>), ResultQueue<NotVoid<void>>> SignalAsync;
 typedef Signal<void(std::shared_ptr<const Data>), ResultVector<NotVoid<void>>> SignalSync;
 
-template<typename Allocator, typename Signal> class PinT;
-template<typename DataType> using PinDataAsync = PinT<PacketAllocator<DataType>, SignalAsync>;
-template<typename DataType> using PinDataSync = PinT<PacketAllocator<DataType>, SignalSync>;
-template<typename DataType> using PinDataDefault = PinDataSync<DataType>;
-
-typedef PinDataDefault<RawData> PinDefault;
+typedef SignalSync SignalDefaultSync;
 
 struct IPin {
 	virtual ~IPin() {
@@ -103,5 +98,9 @@ private:
 	Signal signal;
 	std::unique_ptr<IProps> props;
 };
+
+template<typename DataType> using PinDataDefault = PinT<PacketAllocator<DataType>, SignalDefaultSync>;
+
+typedef PinDataDefault<RawData> PinDefault;
 
 }
