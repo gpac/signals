@@ -18,7 +18,6 @@ SoundGenerator::SoundGenerator()
 	: m_numSamples(20000) {
 	pcmFormat.sampleRate = SAMPLE_RATE;
 	pcmFormat.numPlanes = 1;
-	PinPcmFactory pinFactory;
 	output = addPin(new PinPcm);
 }
 

@@ -9,8 +9,7 @@ namespace Transform {
 VideoConvert::VideoConvert(Resolution srcRes, AVPixelFormat srcFormat, Resolution dstRes, AVPixelFormat dstFormat)
 	: srcRes(srcRes), dstRes(dstRes), dstFormat(dstFormat) {
 	m_SwContext = sws_getContext(srcRes.width, srcRes.height, srcFormat, dstRes.width, dstRes.height, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
-	PinDefaultFactory pinFactory;
-	pins.push_back(uptr(pinFactory.createPin()));
+	addPin(new PinDefault);
 }
 
 VideoConvert::~VideoConvert() {
