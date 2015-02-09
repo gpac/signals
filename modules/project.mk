@@ -1,5 +1,4 @@
 MODULES_SRCS:=\
-  $(ProjectName)/internal/core/pin.cpp\
   $(ProjectName)/internal/core/system_clock.cpp\
   $(ProjectName)/src/common/libav.cpp\
   $(ProjectName)/src/decode/jpegturbo_decode.cpp\
