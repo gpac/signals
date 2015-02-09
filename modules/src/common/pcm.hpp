@@ -133,6 +133,12 @@ public:
 		return planes[0];
 	}
 
+	uint8_t const* data() const {
+		if (format.numPlanes > 1)
+			throw std::runtime_error("Forbidden operation. Use audio planes to access the data.");
+		return planes[0];
+	}
+
 	uint64_t size() const {
 		uint64_t size = 0;
 		for (size_t i = 0; i < format.numPlanes; ++i) {

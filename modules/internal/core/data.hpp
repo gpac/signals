@@ -51,6 +51,10 @@ public:
 		return buffer.data();
 	}
 
+	uint8_t const* data() const {
+		return buffer.data();
+	}
+
 	uint64_t size() const {
 		return buffer.size();
 	}

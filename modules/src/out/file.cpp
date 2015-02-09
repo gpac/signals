@@ -24,8 +24,7 @@ File* File::create(std::string const& fn) {
 
 void File::process(std::shared_ptr<const Data> data_) {
 	auto data = safe_cast<const RawData>(data_);
-	auto const constData = const_cast<RawData*>(data.get()); //TODO: add a const accessor for Data
-	fwrite(constData->data(), 1, (size_t)data->size(), file);
+	fwrite(data->data(), 1, (size_t)data->size(), file);
 }
 
 }

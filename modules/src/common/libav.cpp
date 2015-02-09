@@ -131,6 +131,10 @@ uint8_t* DataAVPacket::data() {
 	return pkt->data;
 }
 
+uint8_t const* DataAVPacket::data() const {
+	return pkt->data;
+}
+
 uint64_t DataAVPacket::size() const {
 	return pkt->size;
 }

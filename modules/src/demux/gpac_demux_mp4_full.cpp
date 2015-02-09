@@ -170,8 +170,7 @@ void GPACDemuxMP4Full::process(std::shared_ptr<const Data> data_) {
 	auto data = safe_cast<const RawData>(data_);
 	const size_t currSize = reader->data.size();
 	reader->data.resize(reader->data.size() + (size_t)data->size());
-	auto const constData = const_cast<RawData*>(data.get()); //TODO: add a const accessor for Data
-	memcpy(reader->data.data() + currSize, constData->data(), (size_t)data->size());
+	memcpy(reader->data.data() + currSize, data->data(), (size_t)data->size());
 #endif
 	std::stringstream ss;
 	ss << "gmem://" << reader->data.size() << "@" << (void*)reader->data.data();

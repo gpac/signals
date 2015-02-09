@@ -76,8 +76,7 @@ void SDLAudio::process(std::shared_ptr<const Data> data) {
 		if(m_Fifo.bytesToRead() == 0) {
 			m_FifoTime = pcmData->getTime() + PREROLL_DELAY;
 		}
-		auto const constPcmData = const_cast<PcmData*>(pcmData.get()); //TODO: add a const accessor for Data
-		m_Fifo.write(constPcmData->data(), (size_t)pcmData->size());
+		m_Fifo.write(pcmData->data(), (size_t)pcmData->size());
 	}
 }
 

@@ -36,6 +36,7 @@ public:
 	DataAVPacket(size_t size = 0);
 	~DataAVPacket();
 	uint8_t* data();
+	uint8_t const* data() const;
 	uint64_t size() const;
 	AVPacket* getPacket() const;
 	void resize(size_t size);
