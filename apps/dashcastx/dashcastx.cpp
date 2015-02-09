@@ -232,10 +232,9 @@ int safeMain(int argc, char const* argv[]) {
 		filename << i;
 		auto muxer_ = new Mux::GPACMuxMP4(filename.str(), true);
 		auto muxer = uptr(new PipelinedModule(muxer_, &pipeline));
-		Connect(encoder_->declareStream, muxer_, &Mux::GPACMuxMP4::declareStream);
-		encoder_->sendOutputPinsInfo();
 
 		pipeline.connect(encoder_->getPin(0), muxer.get());
+		encoder_->sendOutputPinsInfo();
 		pipeline.connect(muxer_->getPin(0), dasher__);
 
 		pipeline.addModule(std::move(muxer));

@@ -390,7 +390,7 @@ GPACMuxMP4::~GPACMuxMP4() {
 	}
 }
 
-void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
+void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 	GF_Err e;
 	u32 di, trackNum;
 	GF_M4ADecSpecInfo acfg;
@@ -524,7 +524,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<StreamAudio> stream) {
 	}
 }
 
-void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
+void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
 	GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
 	if (!avccfg) {
 		Log::msg(Log::Warning, "Cannot create AVCConfig");
@@ -617,18 +617,25 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<StreamVideo> stream) {
 	}
 }
 
-void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
-	if (std::dynamic_pointer_cast<StreamVideo>(stream)) {
-		declareStreamVideo(std::dynamic_pointer_cast<StreamVideo>(stream));
-	} else if (std::dynamic_pointer_cast<StreamAudio>(stream)) {
-		declareStreamAudio(std::dynamic_pointer_cast<StreamAudio>(stream));
-	} else {
-		Log::msg(Log::Warning, "[GPACMuxMP4] Invalid stream declared. Ignoring.");
+bool GPACMuxMP4::declareStream(std::shared_ptr<const Data> stream) {
+	if (auto video = std::dynamic_pointer_cast<const StreamVideo>(stream)) {
+		declareStreamVideo(video);
+		return true;
+	} else if (auto audio = std::dynamic_pointer_cast<const StreamAudio>(stream)) {
+		declareStreamAudio(audio);
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 
 void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
+	if(declareStream(data_))
+		return;
+
 	auto data = safe_cast<const RawData>(data_);
+
 	GF_ISOSample sample;
 	memset(&sample, 0, sizeof(sample));
 	bool sampleDataMustBeDeleted = false;

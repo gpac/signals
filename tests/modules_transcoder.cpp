@@ -48,13 +48,10 @@ unittest("transcoder: video simple (libav mux)") {
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(Mux::LibavMux::create("output_video_libav"));
 
-	//pass meta data between encoder and mux
-	Connect(encode->declareStream, mux.get(), &Mux::LibavMux::declareStream);
-	encode->sendOutputPinsInfo();
-
 	ConnectPinToModule(demux->getPin(videoIndex), decode);
 	ConnectPinToModule(decode->getPin(0), encode);
 	ConnectPinToModule(encode->getPin(0), mux);
+	encode->sendOutputPinsInfo();
 
 	demux->process(nullptr);
 }
@@ -87,13 +84,10 @@ unittest("transcoder: video simple (gpac mux)") {
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("output_video_gpac"));
 
-	//pass meta data between encoder and mux
-	Connect(encode->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
-	encode->sendOutputPinsInfo();
-
 	ConnectPinToModule(demux->getPin(videoIndex), decode);
 	ConnectPinToModule(decode->getPin(0), encode);
 	ConnectPinToModule(encode->getPin(0), mux);
+	encode->sendOutputPinsInfo();
 
 	demux->process(nullptr);
 }
@@ -198,13 +192,12 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));
-	Connect(encoder->declareStream, mux.get(), &Mux::GPACMuxMP4::declareStream);
-	encoder->sendOutputPinsInfo();
 
 	ConnectPinToModule(reader->getPin(0), decoder);
 	ConnectPinToModule(decoder->getPin(0), converter);
 	ConnectPinToModule(converter->getPin(0), encoder);
 	ConnectPinToModule(encoder->getPin(0), mux);
+	encoder->sendOutputPinsInfo();
 
 	reader->process(nullptr);
 }

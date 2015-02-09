@@ -80,20 +80,24 @@ LibavMux::~LibavMux() {
 	}
 }
 
-void LibavMux::declareStream(std::shared_ptr<Stream> stream_) {
-	auto stream = safe_cast<StreamVideo>(stream_);
-	AVStream *avStream = avformat_new_stream(m_formatCtx, stream->codecCtx->codec);
-	if (!avStream) {
-		Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
-		throw std::runtime_error("Stream creation failed.");
-	}
-	if (stream->codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
-		m_formatCtx->streams[0]->codec->time_base = stream->codecCtx->time_base; //FIXME: [0]: not a mux yet...
-		m_formatCtx->streams[0]->codec->width = stream->codecCtx->width;
-		m_formatCtx->streams[0]->codec->height = stream->codecCtx->height;
-	}
-	if (m_formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
-		m_formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+bool LibavMux::declareStream(std::shared_ptr<const Data> stream_) {
+	if(auto stream = std::dynamic_pointer_cast<const StreamVideo>(stream_)) {
+		AVStream *avStream = avformat_new_stream(m_formatCtx, stream->codecCtx->codec);
+		if (!avStream) {
+			Log::msg(Log::Warning, "[libav_encode] could not create the stream, disable output.");
+			throw std::runtime_error("Stream creation failed.");
+		}
+		if (stream->codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
+			m_formatCtx->streams[0]->codec->time_base = stream->codecCtx->time_base; //FIXME: [0]: not a mux yet...
+			m_formatCtx->streams[0]->codec->width = stream->codecCtx->width;
+			m_formatCtx->streams[0]->codec->height = stream->codecCtx->height;
+		}
+		if (m_formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
+			m_formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+		}
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -113,6 +117,8 @@ void LibavMux::ensureHeader() {
 }
 
 void LibavMux::process(std::shared_ptr<const Data> data) {
+	if(declareStream(data))
+		return;
 	auto encoderData = safe_cast<const DataAVPacket>(data);
 	auto pkt = encoderData->getPacket();
 
