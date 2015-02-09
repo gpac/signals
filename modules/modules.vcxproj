@@ -55,7 +55,6 @@
     <ClInclude Include="src\utils\recorder.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="internal\core\pin.cpp" />
     <ClCompile Include="internal\core\system_clock.cpp" />
     <ClCompile Include="internal\utils\stranded_pool_executor.cpp" />
     <ClCompile Include="src\common\libav.cpp" />
