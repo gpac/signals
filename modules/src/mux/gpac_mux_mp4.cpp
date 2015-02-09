@@ -627,14 +627,15 @@ void GPACMuxMP4::declareStream(std::shared_ptr<Stream> stream) {
 	}
 }
 
-void GPACMuxMP4::process(std::shared_ptr<const Data> data) {
+void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
+	auto data = safe_cast<const RawData>(data_);
 	GF_ISOSample sample;
 	memset(&sample, 0, sizeof(sample));
 	bool sampleDataMustBeDeleted = false;
 
 	{
 		u32 bufLen = (u32)data->size();
-		auto const constData = const_cast<Data*>(data.get()); //TODO: add a const accessor for Data
+		auto const constData = const_cast<RawData*>(data.get()); //TODO: add a const accessor for Data
 		const u8 *bufPtr = constData->data();
 
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);

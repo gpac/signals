@@ -127,13 +127,13 @@ public:
 		this->format = format;
 	}
 
-	uint8_t* data() override {
+	uint8_t* data() {
 		if (format.numPlanes > 1)
 			throw std::runtime_error("Forbidden operation. Use audio planes to access the data.");
 		return planes[0];
 	}
 
-	uint64_t size() const override {
+	uint64_t size() const {
 		uint64_t size = 0;
 		for (size_t i = 0; i < format.numPlanes; ++i) {
 			size += planeSize[i];

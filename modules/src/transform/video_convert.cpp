@@ -43,9 +43,10 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 		}
 	case AV_PIX_FMT_RGB24: {
 			const int dstFrameSize = avpicture_get_size(dstFormat, dstRes.width, dstRes.height);
-			out = rawAlloc.getBuffer(dstFrameSize);
-			pDst[0] = out->data();
+			auto raw = rawAlloc.getBuffer(dstFrameSize);
+			pDst[0] = raw->data();
 			dstStride[0] = dstRes.width * 3;
+			out = raw;
 			break;
 		}
 	default:
