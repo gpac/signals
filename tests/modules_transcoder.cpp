@@ -112,7 +112,8 @@ unittest("transcoder: jpg to jpg") {
 	auto srcCtx = decoderProps->getAVCodecContext();
 
 	auto reader = uptr(In::File::create(filename));
-	auto encoder = uptr(new Encode::JPEGTurboEncode(decoderProps->getAVCodecContext()->width, srcCtx->height));
+	auto dstRes = Resolution(decoderProps->getAVCodecContext()->width, srcCtx->height);
+	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
 	ConnectPinToModule(reader->getPin(0), decoder);
@@ -140,7 +141,7 @@ unittest("transcoder: jpg to resized jpg") {
 
 	auto reader = uptr(In::File::create(filename));
 	auto converter = uptr(new Transform::VideoConvert(srcRes, srcCtx->pix_fmt, dstRes, srcCtx->pix_fmt));
-	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes.width, dstRes.height));
+	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
 	ConnectPinToModule(reader->getPin(0), decoder);
@@ -158,11 +159,11 @@ unittest("transcoder: h264/mp4 to jpg") {
 	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
 	auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 
-	auto encoder = uptr(new Encode::JPEGTurboEncode(decoderProps->getAVCodecContext()->width, decoderProps->getAVCodecContext()->height));
-	auto writer = uptr(Out::File::create("data/test.jpg"));
-
 	auto srcCtx = decoderProps->getAVCodecContext();
 	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
+	auto encoder = uptr(new Encode::JPEGTurboEncode(srcRes));
+	auto writer = uptr(Out::File::create("data/test.jpg"));
+
 	auto converter = uptr(new Transform::VideoConvert(
 				srcRes, srcCtx->pix_fmt,
 			 	srcRes, AV_PIX_FMT_RGB24));
