@@ -48,11 +48,6 @@ size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
 	return ConnectPin(p, functor, executor);
 }
 
-class PinDefaultFactory {
-public:
-	IPin* createPin(IProps *props = nullptr);
-};
-
 //TODO: the pin could check the bool result (currently done by the allocator) and retry on failure (but is it its role?)
 template<typename Allocator, typename Signal>
 class PinT : public IPin {
