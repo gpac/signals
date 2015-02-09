@@ -19,7 +19,6 @@ public:
 	}
 	virtual uint8_t* data() = 0;
 	virtual uint64_t size() const = 0;
-	virtual void resize(size_t size) = 0;
 
 	void setTime(uint64_t timeIn180k) {
 		m_TimeIn180k = timeIn180k;
@@ -59,7 +58,7 @@ public:
 		return buffer.size();
 	}
 
-	void resize(size_t size) override {
+	void resize(size_t size) {
 		buffer.resize(size);
 	}
 

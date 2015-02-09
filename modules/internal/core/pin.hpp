@@ -23,7 +23,6 @@ struct IPin {
 	virtual ~IPin() {
 	}
 	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
-	virtual std::shared_ptr<Data> getBuffer(size_t size) = 0;
 	virtual IProps* getProps() const = 0;
 	virtual void setProps(IProps *props) = 0; /*TODO: attached with every emitted packet. shared_data<>?*/
 	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
@@ -74,7 +73,7 @@ public:
 		return numReceivers;
 	}
 
-	std::shared_ptr<Data> getBuffer(size_t size) override {
+	std::shared_ptr<typename Allocator::MyType> getBuffer(size_t size) {
 		return allocator.getBuffer(size);
 	}
 

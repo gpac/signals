@@ -45,8 +45,13 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	PinRawDataFactory factory;
-	pins.push_back(uptr(factory.createPin(new PropsDecoder(codecCtx))));
+	auto props = new PropsDecoder(codecCtx);
+
+	switch (codecCtx->codec_type) {
+	case AVMEDIA_TYPE_VIDEO: videoPin = addPin(new PinPicture(props)); break;
+	case AVMEDIA_TYPE_AUDIO: audioPin = addPin(new PinPcm(props)); break;
+	default: throw std::runtime_error("[LibavDecode] Invalid Pin type.");
+	}
 }
 
 LibavDecode::~LibavDecode() {
@@ -56,7 +61,7 @@ LibavDecode::~LibavDecode() {
 
 void LibavDecode::processAudio(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
-	auto out = safe_cast<PcmData>(pins[0]->getBuffer(0));
+	auto out = audioPin->getBuffer(0);
 
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
@@ -103,7 +108,7 @@ void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 
 void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	AVPacket *pkt = decoderData->getPacket();
-	auto pic = safe_cast<Picture>(pins[0]->getBuffer(0));
+	auto pic = videoPin->getBuffer(0);
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");

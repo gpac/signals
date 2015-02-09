@@ -11,6 +11,7 @@ namespace Modules {
 template<typename DataType>
 class PacketAllocator {
 public:
+	typedef DataType MyType;
 	PacketAllocator(size_t numBlocks = 10)
 		: deleter(this) {
 		for(size_t i=0; i < numBlocks; ++i) {

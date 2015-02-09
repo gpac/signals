@@ -38,7 +38,7 @@ public:
 	uint8_t* data() override;
 	uint64_t size() const override;
 	AVPacket* getPacket() const;
-	void resize(size_t size)  override;
+	void resize(size_t size);
 
 private:
 	std::unique_ptr<AVPacket> const pkt;

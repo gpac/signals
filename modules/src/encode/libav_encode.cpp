@@ -56,6 +56,8 @@ LibavEncode::LibavEncode(Type type)
 		throw std::runtime_error("Unknown encoder type. Failed.");
 	}
 
+	output = addPin(new PinDataDefault<DataAVPacket>);
+
 	/* parse the codec optionsDict */
 	ffpp::Dict codecDict;
 	buildAVDictionary("[libav_encode]", &codecDict, codecOptions.c_str(), "codec");
@@ -156,9 +158,6 @@ LibavEncode::LibavEncode(Type type)
 		}
 		tok = strtok(NULL, "- ");
 	}
-
-	PinLibavPacketFactory pinFactory;
-	pins.push_back(uptr(pinFactory.createPin()));
 }
 
 void LibavEncode::flush() {
@@ -216,7 +215,7 @@ void LibavEncode::sendOutputPinsInfo() {
 }
 
 bool LibavEncode::processAudio(const PcmData *data) {
-	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
+	auto out = output->getBuffer(0);
 	AVPacket *pkt = out->getPacket();
 	AVFrame *f = nullptr;
 	if (data) {
@@ -242,7 +241,7 @@ bool LibavEncode::processAudio(const PcmData *data) {
 }
 
 bool LibavEncode::processVideo(const Picture *pic) {
-	auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
+	auto out = output->getBuffer(0);
 	AVPacket *pkt = out->getPacket();
 
 	std::shared_ptr<ffpp::Frame> f;

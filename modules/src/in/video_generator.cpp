@@ -11,12 +11,12 @@ namespace In {
 
 VideoGenerator::VideoGenerator()
 	: m_numFrames(0) {
-	pins.push_back(uptr(new PinDataDefault<Picture>));
+	output = addPin(new PinDataDefault<Picture>);
 }
 
 void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	auto const dim = VIDEO_RESOLUTION;
-	auto pic = safe_cast<Picture>(pins[0]->getBuffer(0));
+	auto pic = output->getBuffer(0);
 
 	pic->setResolution(dim);
 
@@ -31,7 +31,7 @@ void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	pic->setTime(m_numFrames * framePeriodIn180k);
 
 	if(m_numFrames % 25 < 2)
-		pins[0]->emit(pic);
+		output->emit(pic);
 
 	++m_numFrames;
 }

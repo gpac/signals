@@ -40,8 +40,7 @@ GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
 GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
 	: reader(new ISOFileReader) {
 	reader->init(movie);
-	PinDefaultFactory pin;
-	pins.push_back(uptr(pin.createPin()));
+	output = addPin(new PinDefault);
 }
 
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {
@@ -63,7 +62,7 @@ void GPACDemuxMP4Simple::process(std::shared_ptr<const Data> /*data*/) {
 			         ISOSample->DTS + ISOSample->CTS_Offset);
 			reader->sampleIndex++;
 
-			auto out(pins[0]->getBuffer(ISOSample->dataLength));
+			auto out = output->getBuffer(ISOSample->dataLength);
 			memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
 			pins[0]->emit(out);
 		} catch (gpacpp::Error const& err) {

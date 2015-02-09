@@ -365,7 +365,7 @@ void GPACMuxMP4::closeSegment() {
 			throw std::runtime_error("Cannot close output segment.");
 		}
 
-		auto out = safe_cast<DataAVPacket>(pins[0]->getBuffer(0));
+		auto out = output->getBuffer(0);
 		out->getPacket()->stream_index = gf_isom_get_media_type(m_iso, 1);
 		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 		out->setTime((m_DTS * IClock::Rate + mediaTimescale / 2) / mediaTimescale);

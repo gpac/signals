@@ -30,6 +30,11 @@ protected:
 	Module const& operator=(Module const&) = delete;
 
 	std::vector<std::unique_ptr<IPin>> pins;
+	template<typename T>
+	T* addPin(T* p) {
+		pins.push_back(uptr(p));
+		return p;
+	}
 };
 
 }

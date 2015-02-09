@@ -27,8 +27,7 @@ AudioConvert::AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat)
 	m_Swr->setOutputSampleRate(avDstSampleRate);
 	m_Swr->init();
 
-	PinPcmFactory factory;
-	pins.push_back(uptr(factory.createPin()));
+	output = addPin(new PinPcm);
 }
 
 void AudioConvert::flush() {
@@ -58,7 +57,7 @@ void AudioConvert::process(std::shared_ptr<const Data> data) {
 	}
 
 	auto const dstBufferSize = dstNumSamples * dstPcmFormat.getBytesPerSample();
-	auto out = safe_cast<PcmData>(pins[0]->getBuffer(0));
+	auto out = output->getBuffer(0);
 	out->setFormat(dstPcmFormat);
 	for (uint8_t i=0; i < dstPcmFormat.numPlanes; ++i)
 		out->setPlane(i, nullptr, dstBufferSize / dstPcmFormat.numPlanes);
@@ -74,7 +73,7 @@ void AudioConvert::process(std::shared_ptr<const Data> data) {
 	auto const accumulatedTimeIn180k = divUp<uint64_t>(accumulatedTimeInDstSR * IClock::Rate, dstPcmFormat.sampleRate);
 	out->setTime(accumulatedTimeIn180k);
 
-	pins[0]->emit(out);
+	output->emit(out);
 }
 
 }

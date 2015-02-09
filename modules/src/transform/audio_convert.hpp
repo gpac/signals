@@ -23,6 +23,7 @@ private:
 	PcmFormat srcPcmFormat, dstPcmFormat;
 	std::unique_ptr<ffpp::SwResampler> const m_Swr;
 	uint64_t accumulatedTimeInDstSR;
+	PinPcm* output;
 };
 
 }
