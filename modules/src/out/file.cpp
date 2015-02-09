@@ -22,8 +22,9 @@ File* File::create(std::string const& fn) {
 	return new File(f);
 }
 
-void File::process(std::shared_ptr<const Data> data) {
-	auto const constData = const_cast<Data*>(data.get()); //TODO: add a const accessor for Data
+void File::process(std::shared_ptr<const Data> data_) {
+	auto data = safe_cast<const RawData>(data_);
+	auto const constData = const_cast<RawData*>(data.get()); //TODO: add a const accessor for Data
 	fwrite(constData->data(), 1, (size_t)data->size(), file);
 }
 

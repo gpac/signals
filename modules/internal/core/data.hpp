@@ -17,9 +17,6 @@ class Data {
 public:
 	virtual ~Data() {
 	}
-	virtual uint8_t* data() = 0;
-	virtual uint64_t size() const = 0;
-
 	void setTime(uint64_t timeIn180k) {
 		m_TimeIn180k = timeIn180k;
 	}
@@ -50,11 +47,11 @@ public:
 	RawData(size_t size) : buffer(size) {
 	}
 
-	uint8_t* data() override {
+	uint8_t* data() {
 		return buffer.data();
 	}
 
-	uint64_t size() const override {
+	uint64_t size() const {
 		return buffer.size();
 	}
 
