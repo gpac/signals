@@ -15,11 +15,11 @@ public:
 	~LibavMux();
 	void process(std::shared_ptr<const Data> data) override;
 
-	void declareStream(std::shared_ptr<Stream> stream);
-
 private:
 	LibavMux(struct AVFormatContext *formatCtx);
 	void ensureHeader();
+
+	bool declareStream(std::shared_ptr<const Data> stream);
 
 	struct AVFormatContext *m_formatCtx;
 	bool m_headerWritten;

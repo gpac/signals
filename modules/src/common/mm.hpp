@@ -2,11 +2,12 @@
 
 #include <cstdint>
 #include <string>
+#include "internal/core/data.hpp"
 
 struct AVCodecContext;
 
 //FIXME: this class contains multimedia considerations, thus should be in libmm...
-class Stream {
+class Stream : public Modules::Data {
 public:
 	virtual ~Stream() {};
 };

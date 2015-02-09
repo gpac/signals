@@ -197,7 +197,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->extradata = codecCtx->extradata;
 		stream->extradataSize = codecCtx->extradata_size;
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-		declareStream.emit(stream);
+		pins[0]->emit(stream);
 	} else if (codecCtx->codec_type == AVMEDIA_TYPE_AUDIO) {
 		std::shared_ptr<StreamAudio> stream(new StreamAudio); //TODO: should use a constructor
 		stream->codecName = getCodecName();
@@ -208,7 +208,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->extradata = codecCtx->extradata;
 		stream->extradataSize = codecCtx->extradata_size;
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-		declareStream.emit(stream);
+		pins[0]->emit(stream);
 	} else {
 		assert(0); //TODO test with anythng else than audio and video
 	}

@@ -28,7 +28,6 @@ public:
 	void flush() override;
 
 	void sendOutputPinsInfo(); //FIXME: temporary until modules have a manager
-	Signal<void(std::shared_ptr<Stream>)> declareStream; //FIXME: temporary until modules have a type 'mux'
 
 private:
 	bool processAudio(const PcmData *data);
