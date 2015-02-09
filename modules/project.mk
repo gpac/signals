@@ -1,4 +1,5 @@
 MODULES_SRCS:=\
+  $(ProjectName)/internal/core/pipeline.cpp\
   $(ProjectName)/internal/core/system_clock.cpp\
   $(ProjectName)/src/common/libav.cpp\
   $(ProjectName)/src/decode/jpegturbo_decode.cpp\
