@@ -204,11 +204,4 @@ private:
 
 typedef PinDataDefault<PcmData> PinPcm;
 
-class PinPcmFactory {
-public:
-	IPin* createPin(IProps *props = nullptr) {
-		return new PinPcm(props);
-	}
-};
-
 }
