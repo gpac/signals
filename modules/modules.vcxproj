@@ -24,6 +24,7 @@
     <ClInclude Include="internal\core\data.hpp" />
     <ClInclude Include="internal\core\module.hpp" />
     <ClInclude Include="internal\core\pin.hpp" />
+    <ClInclude Include="internal\core\pipeline.hpp" />
     <ClInclude Include="internal\core\props.hpp" />
     <ClInclude Include="internal\utils\helper.hpp" />
     <ClInclude Include="internal\utils\stranded_pool_executor.hpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="src\utils\recorder.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="internal\core\pipeline.cpp" />
     <ClCompile Include="internal\core\system_clock.cpp" />
     <ClCompile Include="internal\utils\stranded_pool_executor.cpp" />
     <ClCompile Include="src\common\libav.cpp" />
