@@ -6,9 +6,9 @@ TEST_COMMON_OBJ:=\
 	$(OUTDIR)/utils.o
 DEPS+=$(TEST_COMMON_OBJ:%.o=%.deps)
 
-$(BIN)/tests/signals_%.o: CFLAGS+=-DUNIT
-$(BIN)/tests/modules_%.o: CFLAGS+=-DUNIT
-$(BIN)/tests/mm_%.o: CFLAGS+=-DUNIT
+$(BIN)/$(ProjectName)/signals_%.o: CFLAGS+=-DUNIT
+$(BIN)/$(ProjectName)/modules_%.o: CFLAGS+=-DUNIT
+$(BIN)/$(ProjectName)/mm_%.o: CFLAGS+=-DUNIT
 
 #---------------------------------------------------------------
 # signals.exe
@@ -53,12 +53,10 @@ $(OUTDIR)/modules.exe: $(EXE_MODULES_OBJS)
 # run tests
 #---------------------------------------------------------------
 
-run_from = PROGRAM=$(realpath $(2)) && cd $(1) && $$PROGRAM
-
 TestProjectName:=$(ProjectName)
 TestOutDir:=$(OUTDIR)
 
 run: unit
-	$(call run_from,$(TestProjectName),$(TestOutDir)/modules.exe)
-	$(call run_from,$(TestProjectName),$(TestOutDir)/signals.exe)
+	$(TestOutDir)/modules.exe
+	$(TestOutDir)/signals.exe
 
