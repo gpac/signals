@@ -35,9 +35,7 @@ else
   LDFLAGS += -s
 endif
 
-CFLAGS += -I$(SRC)/signals
-CFLAGS += -I$(SRC)/gpacpp
-CFLAGS += -I$(SRC)/ffpp
+CFLAGS += -I$(SRC)
 
 CFLAGS += -I$./extra/include
 LDFLAGS += -L$./extra/lib
@@ -74,11 +72,11 @@ CFLAGS+=-Umain
 TARGETS:=
 DEPS:=
 
-ProjectName:=$(SRC)/utils
+ProjectName:=$(SRC)/lib_utils
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
-ProjectName:=$(SRC)/modules
+ProjectName:=$(SRC)/lib_modules
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 CFLAGS+=-I$(ProjectName)/src

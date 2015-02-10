@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <stdlib.h>
-#include "../utils/tools.hpp"
+#include "lib_utils/tools.hpp"
 #include "tests.hpp"
 
 namespace {
