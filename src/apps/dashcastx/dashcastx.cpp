@@ -3,14 +3,14 @@
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
-#include "decode/libav_decode.hpp"
-#include "demux/libav_demux.hpp"
-#include "encode/libav_encode.hpp"
-#include "mux/gpac_mux_mp4.hpp"
-#include "stream/mpeg_dash.hpp"
-#include "transform/audio_convert.hpp"
-#include "transform/video_convert.hpp"
-#include "out/null.hpp"
+#include "lib_media/decode/libav_decode.hpp"
+#include "lib_media/demux/libav_demux.hpp"
+#include "lib_media/encode/libav_encode.hpp"
+#include "lib_media/mux/gpac_mux_mp4.hpp"
+#include "lib_media/stream/mpeg_dash.hpp"
+#include "lib_media/transform/audio_convert.hpp"
+#include "lib_media/transform/video_convert.hpp"
+#include "lib_media/out/null.hpp"
 
 #include "lib_utils/tools.hpp"
 

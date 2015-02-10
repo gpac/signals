@@ -3,12 +3,12 @@
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
-#include "decode/libav_decode.hpp"
-#include "demux/libav_demux.hpp"
-#include "out/null.hpp"
-#include "render/sdl_audio.hpp"
-#include "render/sdl_video.hpp"
-#include "transform/audio_convert.hpp"
+#include "lib_media/decode/libav_decode.hpp"
+#include "lib_media/demux/libav_demux.hpp"
+#include "lib_media/out/null.hpp"
+#include "lib_media/render/sdl_audio.hpp"
+#include "lib_media/render/sdl_video.hpp"
+#include "lib_media/transform/audio_convert.hpp"
 #include "tools.hpp"
 
 

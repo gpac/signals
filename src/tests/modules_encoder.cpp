@@ -1,7 +1,7 @@
 #include "tests.hpp"
 #include "modules.hpp"
 
-#include "encode/libav_encode.hpp"
+#include "lib_media/encode/libav_encode.hpp"
 #include "tools.hpp"
 
 using namespace Tests;

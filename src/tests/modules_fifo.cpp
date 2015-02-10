@@ -1,7 +1,7 @@
 #include "tests.hpp"
 #include "modules.hpp"
 
-#include "render/sdl_audio.hpp"
+#include "lib_media/render/sdl_audio.hpp"
 #include "tools.hpp"
 
 
