@@ -24,9 +24,6 @@ struct Stream {
 
 	Stream(Stream const& s) = delete;
 	Stream(Stream&& s) = default;
-
-	//FIXME: TO BE REMOVED
-	int codecType;
 };
 
 Module* createRenderer(int codecType, IClock* clock) {
@@ -64,14 +61,17 @@ Stream decode(Stream& input) {
 	auto decoder = new Decode::LibavDecode(*decoderProps);
 	Stream r(decoder);
 	r.pin = decoder->getPin(0);
-	r.codecType = decoderProps->getAVCodecContext()->codec_type;
 	ConnectPinToModule(input.pin, decoder, defaultExecutor);
 
 	return r;
 }
 
 Stream render(Stream& input, IClock* clock) {
-	Stream r(createRenderer(input.codecType, clock));
+	auto props = input.pin->getProps();
+	auto decoderProps = safe_cast<PropsDecoder>(props);
+	auto const codecType = decoderProps->getAVCodecContext()->codec_type;
+
+	Stream r(createRenderer(codecType, clock));
 	ConnectPinToModule(input.pin, r.fromModule.get(), defaultExecutor);
 	return r;
 }
