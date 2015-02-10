@@ -8,9 +8,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_signals", "src\tests\t
 		{2ECCB03E-D138-43B8-823F-C9CF1837D97A} = {2ECCB03E-D138-43B8-823F-C9CF1837D97A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "signals", "src\signals\signals.vcxproj", "{2ECCB03E-D138-43B8-823F-C9CF1837D97A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "signals", "src\lib_signals\signals.vcxproj", "{2ECCB03E-D138-43B8-823F-C9CF1837D97A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modules", "src\modules\modules.vcxproj", "{F6843994-F116-4E68-8EF8-C88149887D4C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modules", "src\lib_modules\modules.vcxproj", "{F6843994-F116-4E68-8EF8-C88149887D4C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2ECCB03E-D138-43B8-823F-C9CF1837D97A} = {2ECCB03E-D138-43B8-823F-C9CF1837D97A}
 	EndProjectSection
@@ -20,7 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_modules", "src\tests\t
 		{F6843994-F116-4E68-8EF8-C88149887D4C} = {F6843994-F116-4E68-8EF8-C88149887D4C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utils", "src\utils\utils.vcxproj", "{BBD0B4EB-5070-4ECF-B626-DA78ED6C8725}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utils", "src\lib_utils\utils.vcxproj", "{BBD0B4EB-5070-4ECF-B626-DA78ED6C8725}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{A290926A-109B-4AD8-99F0-469AB6EFCA0C}"
 EndProject
@@ -36,12 +36,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_utils", "src\tests\tes
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dashcastx", "src\apps\dashcastx\dashcastx.vcxproj", "{D0952093-7DEF-41AD-BA68-87FEEA688E95}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_modules_stub", "src\tests\test_modules_stub.vcxproj", "{22504DAB-00CE-4CD9-BB47-B4B4791D045D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2ECCB03E-D138-43B8-823F-C9CF1837D97A} = {2ECCB03E-D138-43B8-823F-C9CF1837D97A}
-		{BBD0B4EB-5070-4ECF-B626-DA78ED6C8725} = {BBD0B4EB-5070-4ECF-B626-DA78ED6C8725}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
