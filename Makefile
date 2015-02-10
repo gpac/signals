@@ -109,9 +109,5 @@ clean:
 
 #-------------------------------------------------------------------------------
 
-$(BIN)/alldeps: $(DEPS)
-	@mkdir -p "$(dir $@)"
-	cat $^ > "$@"
-
--include $(BIN)/alldeps
+-include $(DEPS)
 
