@@ -1,5 +1,5 @@
 #include "tests.hpp"
-#include "signals.hpp"
+#include "lib_signals/signals.hpp"
 
 using namespace Tests;
 using namespace Signals;

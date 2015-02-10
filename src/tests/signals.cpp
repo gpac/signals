@@ -1,6 +1,6 @@
 #include "tests.hpp"
-#include "signals.hpp"
-#include "../utils/tools.hpp"
+#include "lib_signals/signals.hpp"
+#include "lib_utils/tools.hpp"
 
 
 //#define ENABLE_FAILING_TESTS

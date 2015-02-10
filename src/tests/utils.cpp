@@ -1,7 +1,7 @@
 #include "tests.hpp"
 
-#include "../utils/tools.hpp"
-#include "../utils/log.hpp"
+#include "lib_utils/tools.hpp"
+#include "lib_utils/log.hpp"
 
 using namespace Tests;
 
