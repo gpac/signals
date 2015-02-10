@@ -9,7 +9,7 @@ namespace Transform {
 VideoConvert::VideoConvert(Resolution srcRes, AVPixelFormat srcFormat, Resolution dstRes, AVPixelFormat dstFormat)
 	: srcRes(srcRes), dstRes(dstRes), dstFormat(dstFormat) {
 	m_SwContext = sws_getContext(srcRes.width, srcRes.height, srcFormat, dstRes.width, dstRes.height, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
-	addPin(new PinDefault);
+	output = addPin(new PinDefault);
 }
 
 VideoConvert::~VideoConvert() {
@@ -57,7 +57,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 
 	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcRes.height, pDst, dstStride);
 
-	pins[0]->emit(out);
+	output->emit(out);
 }
 
 }

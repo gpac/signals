@@ -76,7 +76,7 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0] / pcmFormat.numPlanes);
 		}
 		setTimestamp(out, avFrame->get()->nb_samples);
-		pins[0]->emit(out);
+		audioPin->emit(out);
 		++m_numFrames;
 	}
 }
@@ -116,7 +116,7 @@ void LibavDecode::processVideo(const DataAVPacket *decoderData) {
 	if (gotPicture) {
 		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
-		pins[0]->emit(pic);
+		videoPin->emit(pic);
 		++m_numFrames;
 	}
 }

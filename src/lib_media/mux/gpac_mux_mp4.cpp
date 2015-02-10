@@ -372,7 +372,7 @@ void GPACMuxMP4::closeSegment() {
 		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 		out->setTime((m_DTS * IClock::Rate + mediaTimescale / 2) / mediaTimescale);
 		out->setDuration(m_curFragDur, mediaTimescale);
-		pins[0]->emit(out);
+		output->emit(out);
 	}
 }
 

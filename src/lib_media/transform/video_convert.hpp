@@ -18,6 +18,7 @@ class VideoConvert : public Module {
 		AVPixelFormat dstFormat;
 		PacketAllocator<Picture> picAlloc;
 		PacketAllocator<RawData> rawAlloc;
+		PinDefault* output;
 };
 
 }
