@@ -1,22 +1,12 @@
 CFLAGS:=$(CFLAGS)
 CFLAGS+=-std=c++11
 CFLAGS+=-Wall
+CFLAGS+=-Wextra
 CFLAGS+=-fvisibility=hidden
 CFLAGS+=-W
 CFLAGS+=-Wno-unused-parameter
 CFLAGS+=-Wno-unused-function
 CFLAGS+=-Wno-unused-label
-CFLAGS+=-Wpointer-arith
-CFLAGS+=-Wformat
-CFLAGS+=-Wreturn-type
-CFLAGS+=-Wsign-compare
-CFLAGS+=-Wmultichar
-CFLAGS+=-Wformat-nonliteral
-CFLAGS+=-Winit-self
-CFLAGS+=-Wuninitialized
-CFLAGS+=-Wno-deprecated
-CFLAGS+=-Wformat-security
-CFLAGS+=-Wno-format-nonliteral
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
