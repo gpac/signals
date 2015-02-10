@@ -1,5 +1,4 @@
-#ifndef _MODULES_HPP_
-#define _MODULES_HPP_
+#pragma once
 
 #include "internal/core/clock.hpp"
 #include "internal/core/module.hpp"
@@ -8,4 +7,3 @@
 
 #include "common/libav.hpp"
 
-#endif
