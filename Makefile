@@ -21,7 +21,7 @@ CFLAGS+=-Wno-format-nonliteral
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
 BIN=bin
-SRC=.
+SRC=src
 
 # default to debug mode
 DEBUG?=1
@@ -39,8 +39,8 @@ CFLAGS += -I$(SRC)/signals
 CFLAGS += -I$(SRC)/gpacpp
 CFLAGS += -I$(SRC)/ffpp
 
-CFLAGS += -I$(SRC)/extra/include
-LDFLAGS += -L$(SRC)/extra/lib
+CFLAGS += -I$./extra/include
+LDFLAGS += -L$./extra/lib
 
 LDFLAGS += $(LDLIBS)
 
@@ -49,7 +49,7 @@ all: targets
 $(BIN)/config.mk:
 	@echo "Configuring ..."
 	@set -e ; \
-	export PKG_CONFIG_PATH=$(SRC)/extra/lib/pkgconfig:$$PKG_CONFIG_PATH ; \
+	export PKG_CONFIG_PATH=./extra/lib/pkgconfig:$$PKG_CONFIG_PATH ; \
 	echo '# config file' > $(BIN)/config.mk.tmp ; \
 	echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --cflags libavcodec libavformat libswresample libswscale x264 sdl2 >> $(BIN)/config.mk.tmp ; \
@@ -58,7 +58,7 @@ $(BIN)/config.mk:
 	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --libs --static libavcodec libavformat libswresample libswscale x264 gpac >> $(BIN)/config.mk.tmp ; \
 	sed -i "s/-lgpac/-lgpac_static/" $(BIN)/config.mk.tmp ; \
-	echo 'CFLAGS+=-I$(SRC)/extra/include/asio' >> $(BIN)/config.mk.tmp
+	echo 'CFLAGS+=-I./extra/include/asio' >> $(BIN)/config.mk.tmp
 	echo 'LDFLAGS+=-lturbojpeg' >> $(BIN)/config.mk.tmp ; \
 	mv $(BIN)/config.mk.tmp $(BIN)/config.mk ; \
 
@@ -74,24 +74,24 @@ CFLAGS+=-Umain
 TARGETS:=
 DEPS:=
 
-ProjectName:=utils
+ProjectName:=$(SRC)/utils
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
-ProjectName:=modules
+ProjectName:=$(SRC)/modules
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 CFLAGS+=-I$(ProjectName)/src
 
-ProjectName:=tests
+ProjectName:=$(SRC)/tests
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
-ProjectName:=apps/player
+ProjectName:=$(SRC)/apps/player
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
-ProjectName:=apps/dashcastx
+ProjectName:=$(SRC)/apps/dashcastx
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
@@ -107,7 +107,7 @@ $(BIN)/%.exe:
 	@mkdir -p $(dir $@)
 	$(CXX) -o "$@" $^ $(LDFLAGS)
 	
-$(BIN)/%.o: $(SRC)/%.cpp
+$(BIN)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) "$<" -c $(CFLAGS) -o "$(BIN)/$*.deps" -MM -MT "$(BIN)/$*.o"
 	$(CXX) "$<" -c $(CFLAGS) -o "$@" 
