@@ -3,6 +3,8 @@
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
+#include "lib_utils/tools.hpp"
+
 #include "lib_media/decode/libav_decode.hpp"
 #include "lib_media/demux/libav_demux.hpp"
 #include "lib_media/out/null.hpp"
@@ -24,8 +26,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		ASSERT(decoderProps);
+		auto decoderProps = safe_cast<PropsDecoder>(props);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose types it somewhere else
 			videoIndex = i;
 		} else {
@@ -34,7 +35,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 	auto props = demux->getPin(videoIndex)->getProps();
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto render = uptr(new Render::SDLVideo);
 
@@ -51,8 +52,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		ASSERT(decoderProps);
+		auto decoderProps = safe_cast<PropsDecoder>(props);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) {
 			audioIndex = i;
 		} else {
@@ -61,7 +61,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
 	auto props = demux->getPin(audioIndex)->getProps();
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);

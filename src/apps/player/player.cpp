@@ -59,8 +59,7 @@ std::vector<Stream> demux(std::string filename) {
 
 Stream decode(Stream& input) {
 	auto props = input.pin->getProps();
-	auto decoderProps = dynamic_cast<PropsDecoder*>(props);
-	ASSERT(decoderProps);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 
 	auto decoder = new Decode::LibavDecode(*decoderProps);
 	Stream r(decoder);
