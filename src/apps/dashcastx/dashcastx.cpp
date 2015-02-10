@@ -68,6 +68,11 @@ int safeMain(int argc, char const* argv[]) {
 
 	Pipeline pipeline;
 
+	auto connect = [&](PipelinedModule* src, PipelinedModule* dst)
+	{
+		pipeline.connect(src->getPin(0), dst);
+	};
+
 	auto demux = pipeline.addModule(Demux::LibavDemux::create(inputURL), true);
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
 
@@ -83,7 +88,7 @@ int safeMain(int argc, char const* argv[]) {
 			continue;
 		}
 
-		pipeline.connect(decoder->getPin(0), converter);
+		connect(decoder, converter);
 
 		auto rawEncoder = createEncoder(decoderProps);
 		auto encoder = pipeline.addModule(rawEncoder);
@@ -91,16 +96,15 @@ int safeMain(int argc, char const* argv[]) {
 			continue;
 		}
 
-		pipeline.connect(converter->getPin(0), encoder);
+		connect(converter, encoder);
 
 		std::stringstream filename;
 		filename << i;
 		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true));
-
-		pipeline.connect(encoder->getPin(0), muxer);
-		pipeline.connect(muxer->getPin(0), dasher);
-
+		connect(encoder, muxer);
 		rawEncoder->sendOutputPinsInfo();
+
+		connect(muxer, dasher);
 	}
 
 	{
