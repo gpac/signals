@@ -64,7 +64,7 @@ void GPACDemuxMP4Simple::process(std::shared_ptr<const Data> /*data*/) {
 
 			auto out = output->getBuffer(ISOSample->dataLength);
 			memcpy(out->data(), ISOSample->data, ISOSample->dataLength);
-			pins[0]->emit(out);
+			output->emit(out);
 		} catch (gpacpp::Error const& err) {
 			if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 				u64 missingBytes = reader->movie->getMissingBytes(reader->trackNumber);

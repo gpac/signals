@@ -187,7 +187,6 @@ std::string LibavEncode::getCodecName() const {
 }
 
 void LibavEncode::sendOutputPinsInfo() {
-	assert(pins.size() == 1); //FIXME: tested with 1 output pin only
 	if (codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
 		std::shared_ptr<StreamVideo> stream(new StreamVideo);
 		stream->width = codecCtx->width;
@@ -197,7 +196,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->extradata = codecCtx->extradata;
 		stream->extradataSize = codecCtx->extradata_size;
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-		pins[0]->emit(stream);
+		output->emit(stream);
 	} else if (codecCtx->codec_type == AVMEDIA_TYPE_AUDIO) {
 		std::shared_ptr<StreamAudio> stream(new StreamAudio); //TODO: should use a constructor
 		stream->codecName = getCodecName();
@@ -208,7 +207,7 @@ void LibavEncode::sendOutputPinsInfo() {
 		stream->extradata = codecCtx->extradata;
 		stream->extradataSize = codecCtx->extradata_size;
 		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-		pins[0]->emit(stream);
+		output->emit(stream);
 	} else {
 		assert(0); //TODO test with anythng else than audio and video
 	}
@@ -233,7 +232,7 @@ bool LibavEncode::processAudio(const PcmData *data) {
 		pkt->pts = pkt->dts = frameNum * pkt->duration;
 		out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
 		assert(pkt->size);
-		pins[0]->emit(out);
+		output->emit(out);
 		return true;
 	}
 
@@ -268,7 +267,7 @@ bool LibavEncode::processVideo(const Picture *pic) {
 				pkt->duration = codecCtx->time_base.num;
 			}
 			out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
-			pins[0]->emit(out);
+			output->emit(out);
 			return true;
 		}
 	}
