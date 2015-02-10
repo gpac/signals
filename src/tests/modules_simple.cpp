@@ -2,9 +2,9 @@
 #include "modules.hpp"
 #include <stdexcept>
 
-#include "demux/gpac_demux_mp4_simple.hpp"
-#include "in/file.hpp"
-#include "out/print.hpp"
+#include "lib_media/demux/gpac_demux_mp4_simple.hpp"
+#include "lib_media/in/file.hpp"
+#include "lib_media/out/print.hpp"
 #include "tools.hpp"
 
 

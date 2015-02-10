@@ -1,9 +1,9 @@
 #include "tests.hpp"
 #include "modules.hpp"
 
-#include "decode/libav_decode.hpp"
-#include "demux/libav_demux.hpp"
-#include "out/print.hpp"
+#include "lib_media/decode/libav_decode.hpp"
+#include "lib_media/demux/libav_demux.hpp"
+#include "lib_media/out/print.hpp"
 #include "tools.hpp"
 
 

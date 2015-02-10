@@ -4,11 +4,11 @@
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
-#include "lib_modules/src/decode/libav_decode.hpp"
-#include "lib_modules/src/demux/libav_demux.hpp"
-#include "lib_modules/src/out/null.hpp"
-#include "lib_modules/src/render/sdl_audio.hpp"
-#include "lib_modules/src/render/sdl_video.hpp"
+#include "lib_media/decode/libav_decode.hpp"
+#include "lib_media/demux/libav_demux.hpp"
+#include "lib_media/out/null.hpp"
+#include "lib_media/render/sdl_audio.hpp"
+#include "lib_media/render/sdl_video.hpp"
 
 using namespace Tests;
 using namespace Modules;

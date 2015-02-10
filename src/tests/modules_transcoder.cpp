@@ -3,17 +3,17 @@
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
-#include "decode/jpegturbo_decode.hpp"
-#include "decode/libav_decode.hpp"
-#include "demux/libav_demux.hpp"
-#include "encode/jpegturbo_encode.hpp"
-#include "encode/libav_encode.hpp"
-#include "in/file.hpp"
-#include "mux/libav_mux.hpp"
-#include "mux/gpac_mux_mp4.hpp"
-#include "out/file.hpp"
-#include "out/null.hpp"
-#include "transform/video_convert.hpp"
+#include "lib_media/decode/jpegturbo_decode.hpp"
+#include "lib_media/decode/libav_decode.hpp"
+#include "lib_media/demux/libav_demux.hpp"
+#include "lib_media/encode/jpegturbo_encode.hpp"
+#include "lib_media/encode/libav_encode.hpp"
+#include "lib_media/in/file.hpp"
+#include "lib_media/mux/libav_mux.hpp"
+#include "lib_media/mux/gpac_mux_mp4.hpp"
+#include "lib_media/out/file.hpp"
+#include "lib_media/out/null.hpp"
+#include "lib_media/transform/video_convert.hpp"
 #include "tools.hpp"
 
 

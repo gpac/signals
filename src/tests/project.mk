@@ -27,6 +27,7 @@ $(OUTDIR)/signals.exe: $(SIGNALS_OBJS)
 EXE_MODULES_OBJS:=\
  	$(OUTDIR)/modules.o\
  	$(TEST_COMMON_OBJ)\
+ 	$(LIB_MEDIA_OBJS)\
  	$(LIB_MODULES_OBJS)\
  	$(UTILS_OBJS)
 DEPS+=$(EXE_MODULES_OBJS:%.o=%.deps)
