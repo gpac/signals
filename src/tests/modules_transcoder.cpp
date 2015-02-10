@@ -30,8 +30,7 @@ unittest("transcoder: video simple (libav mux)") {
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		ASSERT(decoderProps);
+		auto decoderProps = safe_cast<PropsDecoder>(props);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
@@ -42,7 +41,7 @@ unittest("transcoder: video simple (libav mux)") {
 
 	//create the video decoder
 	auto props = demux->getPin(videoIndex)->getProps();
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
@@ -66,8 +65,7 @@ unittest("transcoder: video simple (gpac mux)") {
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
-		ASSERT(decoderProps);
+		auto decoderProps = safe_cast<PropsDecoder>(props);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
@@ -78,7 +76,7 @@ unittest("transcoder: video simple (gpac mux)") {
 
 	//create the video decoder
 	auto props = demux->getPin(videoIndex)->getProps();
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
@@ -102,7 +100,7 @@ unittest("transcoder: jpg to jpg") {
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 
 	auto reader = uptr(In::File::create(filename));
@@ -127,7 +125,7 @@ unittest("transcoder: jpg to resized jpg") {
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 
 	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
@@ -150,7 +148,7 @@ unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(Demux::LibavDemux::create("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
 	auto props = demux->getPin(0)->getProps();
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 
 	auto srcCtx = decoderProps->getAVCodecContext();
@@ -181,7 +179,7 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
-	PropsDecoder *decoderProps = dynamic_cast<PropsDecoder*>(props);
+	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
 
