@@ -66,10 +66,15 @@ Stream decode(Stream& input) {
 	return r;
 }
 
-Stream render(Stream& input, IClock* clock) {
+int getCodecType(Stream& input)
+{
 	auto props = input.pin->getProps();
 	auto decoderProps = safe_cast<PropsDecoder>(props);
-	auto const codecType = decoderProps->getAVCodecContext()->codec_type;
+	return decoderProps->getAVCodecContext()->codec_type;
+}
+
+Stream render(Stream& input, IClock* clock) {
+	auto const codecType = getCodecType(input);
 
 	Stream r(createRenderer(codecType, clock));
 	ConnectPinToModule(input.pin, r.fromModule.get(), defaultExecutor);
