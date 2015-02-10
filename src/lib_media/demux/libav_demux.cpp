@@ -27,7 +27,7 @@ LibavDemux* LibavDemux::create(const std::string &url) {
 	}
 
 	if (avformat_open_input(&formatCtx, url.c_str(), NULL, NULL))  {
-		Log::msg(Log::Warning, "Module LibavDemux: Error when initializing the format context");
+		Log::msg(Log::Warning, "Module LibavDemux: Error when opening input '%s'", url);
 		if (formatCtx) avformat_close_input(&formatCtx);
 		throw std::runtime_error("Format Context init failed.");
 	}
