@@ -8,7 +8,7 @@
 namespace Modules {
 
 class Module;
-class IPin;
+struct IPin;
 
 #define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor

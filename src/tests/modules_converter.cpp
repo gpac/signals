@@ -1,12 +1,12 @@
 #include "tests.hpp"
-#include "modules.hpp"
+#include "lib_modules/modules.hpp"
 
 #include "lib_media/in/sound_generator.hpp"
 #include "lib_media/transform/audio_convert.hpp"
 #include "lib_media/transform/video_convert.hpp"
 #include "lib_media/utils/comparator.hpp"
 #include "lib_media/utils/recorder.hpp"
-#include "tools.hpp"
+#include "lib_utils/tools.hpp"
 
 using namespace Tests;
 using namespace Modules;

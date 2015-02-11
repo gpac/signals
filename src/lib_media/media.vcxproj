@@ -19,81 +19,72 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="internal\core\allocator.hpp" />
-    <ClInclude Include="internal\core\clock.hpp" />
-    <ClInclude Include="internal\core\data.hpp" />
-    <ClInclude Include="internal\core\module.hpp" />
-    <ClInclude Include="internal\core\pin.hpp" />
-    <ClInclude Include="internal\core\pipeline.hpp" />
-    <ClInclude Include="internal\core\props.hpp" />
-    <ClInclude Include="internal\utils\helper.hpp" />
-    <ClInclude Include="internal\utils\stranded_pool_executor.hpp" />
-    <ClInclude Include="modules.hpp" />
-    <ClInclude Include="src\common\libav.hpp" />
-    <ClInclude Include="src\common\mm.hpp" />
-    <ClInclude Include="src\common\pcm.hpp" />
-    <ClInclude Include="src\decode\jpegturbo_decode.hpp" />
-    <ClInclude Include="src\decode\libav_decode.hpp" />
-    <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp" />
-    <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp" />
-    <ClInclude Include="src\demux\libav_demux.hpp" />
-    <ClInclude Include="src\encode\jpegturbo_encode.hpp" />
-    <ClInclude Include="src\encode\libav_encode.hpp" />
-    <ClInclude Include="src\in\file.hpp" />
-    <ClInclude Include="src\in\sound_generator.hpp" />
-    <ClInclude Include="src\in\video_generator.hpp" />
-    <ClInclude Include="src\mux\gpac_mux_mp4.hpp" />
-    <ClInclude Include="src\mux\libav_mux.hpp" />
-    <ClInclude Include="src\out\file.hpp" />
-    <ClInclude Include="src\out\null.hpp" />
-    <ClInclude Include="src\out\print.hpp" />
-    <ClInclude Include="src\render\sdl_audio.hpp" />
-    <ClInclude Include="src\render\sdl_video.hpp" />
-    <ClInclude Include="src\stream\mpeg_dash.hpp" />
-    <ClInclude Include="src\transform\audio_convert.hpp" />
-    <ClInclude Include="src\transform\video_convert.hpp" />
-    <ClInclude Include="src\utils\comparator.hpp" />
-    <ClInclude Include="src\utils\recorder.hpp" />
+    <ClInclude Include="common\libav.hpp" />
+    <ClInclude Include="common\mm.hpp" />
+    <ClInclude Include="common\pcm.hpp" />
+    <ClInclude Include="decode\jpegturbo_decode.hpp" />
+    <ClInclude Include="decode\libav_decode.hpp" />
+    <ClInclude Include="demux\gpac_demux_mp4_full.hpp" />
+    <ClInclude Include="demux\gpac_demux_mp4_simple.hpp" />
+    <ClInclude Include="demux\libav_demux.hpp" />
+    <ClInclude Include="encode\jpegturbo_encode.hpp" />
+    <ClInclude Include="encode\libav_encode.hpp" />
+    <ClInclude Include="in\file.hpp" />
+    <ClInclude Include="in\sound_generator.hpp" />
+    <ClInclude Include="in\video_generator.hpp" />
+    <ClInclude Include="mux\gpac_mux_mp4.hpp" />
+    <ClInclude Include="mux\libav_mux.hpp" />
+    <ClInclude Include="out\file.hpp" />
+    <ClInclude Include="out\null.hpp" />
+    <ClInclude Include="out\print.hpp" />
+    <ClInclude Include="render\fifo.hpp" />
+    <ClInclude Include="render\sdl_audio.hpp" />
+    <ClInclude Include="render\sdl_video.hpp" />
+    <ClInclude Include="stream\mpeg_dash.hpp" />
+    <ClInclude Include="transform\audio_convert.hpp" />
+    <ClInclude Include="transform\video_convert.hpp" />
+    <ClInclude Include="utils\comparator.hpp" />
+    <ClInclude Include="utils\recorder.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="internal\core\pipeline.cpp" />
-    <ClCompile Include="internal\core\system_clock.cpp" />
-    <ClCompile Include="internal\utils\stranded_pool_executor.cpp" />
-    <ClCompile Include="src\common\libav.cpp" />
-    <ClCompile Include="src\decode\jpegturbo_decode.cpp" />
-    <ClCompile Include="src\decode\libav_decode.cpp" />
-    <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp" />
-    <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp" />
-    <ClCompile Include="src\demux\libav_demux.cpp" />
-    <ClCompile Include="src\encode\jpegturbo_encode.cpp" />
-    <ClCompile Include="src\encode\libav_encode.cpp" />
-    <ClCompile Include="src\in\file.cpp" />
-    <ClCompile Include="src\in\sound_generator.cpp" />
-    <ClCompile Include="src\in\video_generator.cpp" />
-    <ClCompile Include="src\mux\gpac_mux_mp4.cpp" />
-    <ClCompile Include="src\mux\libav_mux.cpp" />
-    <ClCompile Include="src\out\file.cpp" />
-    <ClCompile Include="src\out\null.cpp" />
-    <ClCompile Include="src\out\print.cpp" />
-    <ClCompile Include="src\render\sdl_audio.cpp" />
-    <ClCompile Include="src\render\sdl_common.cpp" />
-    <ClCompile Include="src\render\sdl_video.cpp" />
-    <ClCompile Include="src\stream\mpeg_dash.cpp" />
-    <ClCompile Include="src\transform\audio_convert.cpp" />
-    <ClCompile Include="src\transform\video_convert.cpp" />
-    <ClCompile Include="src\utils\comparator.cpp" />
-    <ClCompile Include="src\utils\recorder.cpp" />
+    <ClCompile Include="common\libav.cpp" />
+    <ClCompile Include="decode\jpegturbo_decode.cpp" />
+    <ClCompile Include="decode\libav_decode.cpp" />
+    <ClCompile Include="demux\gpac_demux_mp4_full.cpp" />
+    <ClCompile Include="demux\gpac_demux_mp4_simple.cpp" />
+    <ClCompile Include="demux\libav_demux.cpp" />
+    <ClCompile Include="encode\jpegturbo_encode.cpp" />
+    <ClCompile Include="encode\libav_encode.cpp" />
+    <ClCompile Include="in\file.cpp" />
+    <ClCompile Include="in\sound_generator.cpp" />
+    <ClCompile Include="in\video_generator.cpp" />
+    <ClCompile Include="mux\gpac_mux_mp4.cpp" />
+    <ClCompile Include="mux\libav_mux.cpp" />
+    <ClCompile Include="out\file.cpp" />
+    <ClCompile Include="out\null.cpp" />
+    <ClCompile Include="out\print.cpp" />
+    <ClCompile Include="render\sdl_audio.cpp" />
+    <ClCompile Include="render\sdl_common.cpp" />
+    <ClCompile Include="render\sdl_video.cpp" />
+    <ClCompile Include="stream\mpeg_dash.cpp" />
+    <ClCompile Include="transform\audio_convert.cpp" />
+    <ClCompile Include="transform\video_convert.cpp" />
+    <ClCompile Include="utils\comparator.cpp" />
+    <ClCompile Include="utils\recorder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\utils\utils.vcxproj">
+    <ProjectReference Include="..\lib_modules\modules.vcxproj">
+      <Project>{f6843994-f116-4e68-8ef8-c88149887d4c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\lib_utils\utils.vcxproj">
       <Project>{bbd0b4eb-5070-4ecf-b626-da78ed6c8725}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F6843994-F116-4E68-8EF8-C88149887D4C}</ProjectGuid>
+    <ProjectGuid>{3ED5C725-44B6-4E0B-A38C-73D85D8347CD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>signals</RootNamespace>
-    <ProjectName>modules</ProjectName>
+    <ProjectName>media</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -165,7 +156,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -188,7 +179,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
@@ -213,7 +204,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
@@ -238,7 +229,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;extra_lib\include;..\gpacpp;..\ffpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>

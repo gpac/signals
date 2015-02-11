@@ -1,5 +1,5 @@
 #include "tests.hpp"
-#include "modules.hpp"
+#include "lib_modules/modules.hpp"
 
 extern "C"
 {
@@ -11,7 +11,7 @@ extern "C"
 #include "lib_media/in/file.hpp"
 #include "lib_media/out/null.hpp"
 #include "lib_media/transform/audio_convert.hpp"
-#include "tools.hpp"
+#include "lib_utils/tools.hpp"
 
 using namespace Tests;
 using namespace Modules;

@@ -4,7 +4,6 @@
     <ClCompile Include="log.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.hpp" />
     <ClInclude Include="log.hpp" />
     <ClInclude Include="tools.hpp" />
     <ClInclude Include="..\gpacpp\gpacpp.hpp">

@@ -1,5 +1,5 @@
 #include "tests.hpp"
-#include "modules.hpp"
+#include "lib_modules/modules.hpp"
 
 //#define ENABLE_FAILING_TESTS
 

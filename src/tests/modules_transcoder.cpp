@@ -1,5 +1,5 @@
 #include "tests.hpp"
-#include "modules.hpp"
+#include "lib_modules/modules.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
@@ -14,7 +14,7 @@
 #include "lib_media/out/file.hpp"
 #include "lib_media/out/null.hpp"
 #include "lib_media/transform/video_convert.hpp"
-#include "tools.hpp"
+#include "lib_utils/tools.hpp"
 
 
 using namespace Tests;

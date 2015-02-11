@@ -1,240 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="includes">
-      <UniqueIdentifier>{60b9021d-d140-4d60-bbf1-f45ea34e06b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src">
-      <UniqueIdentifier>{22a3d231-ad2c-47ab-ae2a-99b76ea5919f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\in">
-      <UniqueIdentifier>{a3f6e730-3170-425f-819d-cc94e02e576b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\out">
-      <UniqueIdentifier>{c0fba10d-1043-4ef0-a075-207627a0576e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\decode">
-      <UniqueIdentifier>{4642fa78-d96d-4584-a1ad-36ce4e4aa4f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\common">
-      <UniqueIdentifier>{7b279ce3-3778-402b-b35c-baf5278f3f13}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\render">
-      <UniqueIdentifier>{314ce482-d82e-42a3-ae9c-a57026a2ebe2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\encode">
-      <UniqueIdentifier>{b775b346-d3d6-4233-a42d-4d3ce6b3e5e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\mux">
-      <UniqueIdentifier>{3de33cfa-90b5-4be0-ba73-dc2b10db1970}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\transform">
-      <UniqueIdentifier>{ae8eabc9-587b-4dbf-868c-b02d323ccdfc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="includes\internal">
-      <UniqueIdentifier>{c1310a27-6c14-4808-84a1-4ca97125b74c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="includes\internal\utils">
-      <UniqueIdentifier>{a9a45a49-8b26-4546-83bd-e21018ca24b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="includes\internal\core">
+    <Filter Include="core">
       <UniqueIdentifier>{c81eaab6-4326-41f2-b4f3-aad1df7b8076}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\stream">
-      <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\utils">
-      <UniqueIdentifier>{90efad11-c1ad-4a9b-86ba-8008ba2676ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\demux">
-      <UniqueIdentifier>{105b0dc4-faa1-484a-9cda-871641ea5319}</UniqueIdentifier>
+    <Filter Include="utils">
+      <UniqueIdentifier>{a9a45a49-8b26-4546-83bd-e21018ca24b6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules.hpp">
-      <Filter>includes</Filter>
+    <ClInclude Include="modules.hpp" />
+    <ClInclude Include="core\allocator.hpp">
+      <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\in\file.hpp">
-      <Filter>src\in</Filter>
+    <ClInclude Include="core\clock.hpp">
+      <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\out\print.hpp">
-      <Filter>src\out</Filter>
+    <ClInclude Include="core\data.hpp">
+      <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\common\libav.hpp">
-      <Filter>src\common</Filter>
+    <ClInclude Include="utils\helper.hpp">
+      <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\out\null.hpp">
-      <Filter>src\out</Filter>
+    <ClInclude Include="utils\stranded_pool_executor.hpp">
+      <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\decode\libav_decode.hpp">
-      <Filter>src\decode</Filter>
+    <ClInclude Include="core\module.hpp">
+      <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\demux\libav_demux.hpp">
-      <Filter>src\demux</Filter>
+    <ClInclude Include="core\pin.hpp">
+      <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\encode\libav_encode.hpp">
-      <Filter>src\encode</Filter>
+    <ClInclude Include="core\pipeline.hpp">
+      <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="src\mux\libav_mux.hpp">
-      <Filter>src\mux</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\sdl_audio.hpp">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\sdl_video.hpp">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="src\transform\audio_convert.hpp">
-      <Filter>src\transform</Filter>
-    </ClInclude>
-    <ClInclude Include="src\demux\gpac_demux_mp4_full.hpp">
-      <Filter>src\demux</Filter>
-    </ClInclude>
-    <ClInclude Include="src\demux\gpac_demux_mp4_simple.hpp">
-      <Filter>src\demux</Filter>
-    </ClInclude>
-    <ClInclude Include="src\mux\gpac_mux_mp4.hpp">
-      <Filter>src\mux</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\mm.hpp">
-      <Filter>src\common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\in\sound_generator.hpp">
-      <Filter>src\in</Filter>
-    </ClInclude>
-    <ClInclude Include="src\in\video_generator.hpp">
-      <Filter>src\in</Filter>
-    </ClInclude>
-    <ClInclude Include="src\common\pcm.hpp">
-      <Filter>src\common</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\core\allocator.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\core\clock.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\core\data.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\core\module.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\core\pin.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\core\props.hpp">
-      <Filter>includes\internal\core</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\utils\helper.hpp">
-      <Filter>includes\internal\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="internal\utils\stranded_pool_executor.hpp">
-      <Filter>includes\internal\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\decode\jpegturbo_decode.hpp">
-      <Filter>src\decode</Filter>
-    </ClInclude>
-    <ClInclude Include="src\encode\jpegturbo_encode.hpp">
-      <Filter>src\encode</Filter>
-    </ClInclude>
-    <ClInclude Include="src\out\file.hpp">
-      <Filter>src\out</Filter>
-    </ClInclude>
-    <ClInclude Include="src\transform\video_convert.hpp">
-      <Filter>src\transform</Filter>
-    </ClInclude>
-    <ClInclude Include="src\stream\mpeg_dash.hpp">
-      <Filter>src\stream</Filter>
-    </ClInclude>
-    <ClInclude Include="src\utils\comparator.hpp">
-      <Filter>src\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\utils\recorder.hpp">
-      <Filter>src\utils</Filter>
+    <ClInclude Include="core\props.hpp">
+      <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\in\file.cpp">
-      <Filter>src\in</Filter>
+    <ClCompile Include="utils\stranded_pool_executor.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\out\print.cpp">
-      <Filter>src\out</Filter>
+    <ClCompile Include="core\pipeline.cpp">
+      <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="src\common\libav.cpp">
-      <Filter>src\common</Filter>
-    </ClCompile>
-    <ClCompile Include="src\out\null.cpp">
-      <Filter>src\out</Filter>
-    </ClCompile>
-    <ClCompile Include="src\decode\libav_decode.cpp">
-      <Filter>src\decode</Filter>
-    </ClCompile>
-    <ClCompile Include="src\demux\libav_demux.cpp">
-      <Filter>src\demux</Filter>
-    </ClCompile>
-    <ClCompile Include="src\encode\libav_encode.cpp">
-      <Filter>src\encode</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mux\libav_mux.cpp">
-      <Filter>src\mux</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\sdl_audio.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\sdl_video.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="src\transform\audio_convert.cpp">
-      <Filter>src\transform</Filter>
-    </ClCompile>
-    <ClCompile Include="src\demux\gpac_demux_mp4_full.cpp">
-      <Filter>src\demux</Filter>
-    </ClCompile>
-    <ClCompile Include="src\demux\gpac_demux_mp4_simple.cpp">
-      <Filter>src\demux</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mux\gpac_mux_mp4.cpp">
-      <Filter>src\mux</Filter>
-    </ClCompile>
-    <ClCompile Include="src\in\sound_generator.cpp">
-      <Filter>src\in</Filter>
-    </ClCompile>
-    <ClCompile Include="src\in\video_generator.cpp">
-      <Filter>src\in</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\sdl_common.cpp">
-      <Filter>src\common</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\core\pin.cpp">
-      <Filter>includes\internal\core</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\core\system_clock.cpp">
-      <Filter>includes\internal\core</Filter>
-    </ClCompile>
-    <ClCompile Include="internal\utils\stranded_pool_executor.cpp">
-      <Filter>includes\internal\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\decode\jpegturbo_decode.cpp">
-      <Filter>src\decode</Filter>
-    </ClCompile>
-    <ClCompile Include="src\encode\jpegturbo_encode.cpp">
-      <Filter>src\encode</Filter>
-    </ClCompile>
-    <ClCompile Include="src\out\file.cpp">
-      <Filter>src\out</Filter>
-    </ClCompile>
-    <ClCompile Include="src\transform\video_convert.cpp">
-      <Filter>src\transform</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stream\mpeg_dash.cpp">
-      <Filter>src\stream</Filter>
-    </ClCompile>
-    <ClCompile Include="src\utils\recorder.cpp">
-      <Filter>src\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\utils\comparator.cpp">
-      <Filter>src\utils</Filter>
+    <ClCompile Include="core\system_clock.cpp">
+      <Filter>core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
