@@ -27,8 +27,8 @@ endif
 
 CFLAGS += -I$(SRC)
 
-CFLAGS += -I$./extra/include
-LDFLAGS += -L$./extra/lib
+CFLAGS += -I./extra/include
+LDFLAGS += -L./extra/lib
 
 LDFLAGS += $(LDLIBS)
 

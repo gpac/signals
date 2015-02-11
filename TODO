@@ -16,9 +16,24 @@ Tasks (from higher to lower priority):
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
 - muxer example with two inputs of the same type (e.g. video)
+- 'modules' could be renamed 'components'?
+- use operators (https://github.com/klmr/named-operator) to describe graphs as pipes?
+- GUI: use angular.js? "gui, angular.js, end-point rest, agplv3" @Ffrenchm
 
 Questions (from higher to lower priority):
 - eligibility of tasks / ASIO scheduler?
 - how to dynamically connect filters
 - how to expose an interface to older compilers
 - how to expose parameters so that we can plug it with a GUI?
+
+Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?ArticleID=101789
+Pipeline -> Containers
+DashCast
+4K60:10/IntelTranscodingSupport
+Muxing
+OSGi/Pipe/Mesos?/Angular.js?(http://www.freecodecamp.com/)
+zenbuild to NaCl
+integrate GStreamer etc.
+License should remain compatible with piping
+ASAM, PVSStudio, CPPCheck
+tests: separer lib_modules et lib_media

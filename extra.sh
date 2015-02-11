@@ -194,9 +194,9 @@ then
 	mkdir -p extra/src
 	rm -rf extra/src/libjpeg_turbo_1.3.x
 	pushd extra/src
-	svn co svn://svn.code.sf.net/p/libjpeg-turbo/code/branches/1.3.x libjpeg_turbo_1.3.x
+	svn co svn://svn.code.sf.net/p/libjpeg-turbo/code/branches/1.3.x -r 1397 libjpeg_turbo_1.3.x
 	pushd libjpeg_turbo_1.3.x
-	autoreconf -i
+	autoreconf -fivcd ..cd
 	popd
 	popd
 fi

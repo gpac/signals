@@ -1,5 +1,5 @@
 #include "../../tests/tests.hpp"
-#include "modules.hpp"
+#include "lib_modules/modules.hpp"
 
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 
@@ -10,11 +10,9 @@
 #include "lib_media/stream/mpeg_dash.hpp"
 #include "lib_media/transform/audio_convert.hpp"
 #include "lib_media/transform/video_convert.hpp"
-#include "lib_media/out/null.hpp"
 
 #include "lib_utils/tools.hpp"
 
-#include <atomic>
 #include <sstream>
 
 using namespace Tests;
@@ -76,7 +74,7 @@ int safeMain(int argc, char const* argv[]) {
 	auto demux = pipeline.addModule(Demux::LibavDemux::create(inputURL), true);
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
 
-	for (size_t i = 0; i < demux->getNumPin(); ++i) {
+	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
 		auto decoderProps = safe_cast<PropsDecoder>(props);
 

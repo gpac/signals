@@ -1,5 +1,5 @@
 #include "tests.hpp"
-#include "modules.hpp"
+#include "lib_modules/modules.hpp"
 
 using namespace Tests;
 using namespace Modules;
