@@ -54,33 +54,70 @@ include $(BIN)/config.mk
 
 CFLAGS+=-Umain
 
-
-
-# include sub-projects here
-#
-
 TARGETS:=
 DEPS:=
 
-ProjectName:=$(SRC)/lib_utils
-include $(ProjectName)/project.mk
-CFLAGS+=-I$(ProjectName)
+#------------------------------------------------------------------------------
 
-ProjectName:=$(SRC)/lib_modules
-include $(ProjectName)/project.mk
-CFLAGS+=-I$(ProjectName)
-CFLAGS+=-I$(ProjectName)/src
+UTILS_SRCS:=\
+  $(ProjectName)/log.cpp\
 
-ProjectName:=$(SRC)/lib_media
-include $(ProjectName)/project.mk
+UTILS_OBJS:=$(UTILS_SRCS:%.cpp=$(BIN)/%.o)
+
+#------------------------------------------------------------------------------
+
+MEDIA_SRCS:=\
+  $(ProjectName)/common/libav.cpp\
+  $(ProjectName)/decode/jpegturbo_decode.cpp\
+  $(ProjectName)/decode/libav_decode.cpp\
+  $(ProjectName)/demux/gpac_demux_mp4_simple.cpp\
+  $(ProjectName)/demux/gpac_demux_mp4_full.cpp\
+  $(ProjectName)/demux/libav_demux.cpp\
+  $(ProjectName)/encode/jpegturbo_encode.cpp\
+  $(ProjectName)/encode/libav_encode.cpp\
+  $(ProjectName)/in/file.cpp\
+  $(ProjectName)/in/sound_generator.cpp\
+  $(ProjectName)/in/video_generator.cpp\
+  $(ProjectName)/mux/gpac_mux_mp4.cpp\
+  $(ProjectName)/mux/libav_mux.cpp\
+  $(ProjectName)/out/file.cpp\
+  $(ProjectName)/out/null.cpp\
+  $(ProjectName)/out/print.cpp\
+  $(ProjectName)/render/sdl_audio.cpp\
+  $(ProjectName)/render/sdl_common.cpp\
+  $(ProjectName)/render/sdl_video.cpp\
+  $(ProjectName)/stream/mpeg_dash.cpp\
+  $(ProjectName)/transform/audio_convert.cpp\
+  $(ProjectName)/transform/video_convert.cpp\
+  $(ProjectName)/utils/comparator.cpp\
+  $(ProjectName)/utils/recorder.cpp\
+
+LIB_MEDIA_OBJS:=$(MEDIA_SRCS:%.cpp=$(BIN)/%.o)
+DEPS+=$(LIB_MEDIA_OBJS:%.o=%.deps)
+
+#------------------------------------------------------------------------------
+
+MODULES_SRCS:=\
+  $(ProjectName)/core/pipeline.cpp\
+  $(ProjectName)/core/system_clock.cpp\
+  $(ProjectName)/utils/stranded_pool_executor.cpp\
+
+LIB_MODULES_OBJS:=$(MODULES_SRCS:%.cpp=$(BIN)/%.o)
+DEPS+=$(LIB_MODULES_OBJS:%.o=%.deps)
+
+#------------------------------------------------------------------------------
 
 ProjectName:=$(SRC)/tests
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 
+#------------------------------------------------------------------------------
+
 ProjectName:=$(SRC)/apps/player
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
+
+#------------------------------------------------------------------------------
 
 ProjectName:=$(SRC)/apps/dashcastx
 include $(ProjectName)/project.mk
