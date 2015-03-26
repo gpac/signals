@@ -76,7 +76,7 @@ if [ ! -f extra/src/ffmpeg/ffmpeg.c ] ;
 then
 	mkdir -p extra/src
 	rm -rf extra/src/ffmpeg
-	git clone --depth 3500 git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
+	git clone git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
 	pushd extra/src/ffmpeg
 	git checkout 27f936eca8a1703a5c203f5d2cbc76862c9219fc
 	popd
