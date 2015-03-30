@@ -61,9 +61,7 @@ Module* createConverter(PropsDecoder *decoderProps) {
 int safeMain(int argc, char const* argv[]) {
 	dashcastXOptions opt = processArgs(argc, argv);
 
-	auto const inputURL = argv[1];
-
-	Tools::Profiler profilerGlobal("Dashcast X");
+	Tools::Profiler profilerGlobal("DashcastX");
 
 	Pipeline pipeline;
 
@@ -72,7 +70,7 @@ int safeMain(int argc, char const* argv[]) {
 		pipeline.connect(src->getPin(0), dst);
 	};
 
-	auto demux = pipeline.addModule(Demux::LibavDemux::create(inputURL), true);
+	auto demux = pipeline.addModule(Demux::LibavDemux::create(opt.url), true);
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
 
 	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
