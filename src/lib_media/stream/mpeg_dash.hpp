@@ -20,10 +20,12 @@ public:
 	MPEG_DASH(Type type, uint64_t segDurationInMs);
 	~MPEG_DASH();
 	void process(std::shared_ptr<const Data> data) override;
+	void flush() override;
 
 private:
 	void DASHThread();
 	void GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> audio, std::shared_ptr<const Data> video);
+	void endOfStream();
 
 	Queue<std::shared_ptr<const Data>> audioDataQueue;
 	Queue<std::shared_ptr<const Data>> videoDataQueue;

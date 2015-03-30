@@ -71,7 +71,8 @@ int safeMain(int argc, char const* argv[]) {
 	};
 
 	auto demux = pipeline.addModule(Demux::LibavDemux::create(opt.url), true);
-	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
+	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(
+		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
 	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
