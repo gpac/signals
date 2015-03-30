@@ -27,9 +27,10 @@ Questions (from higher to lower priority):
 - how to expose parameters so that we can plug it with a GUI?
 
 Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?ArticleID=101789
+http://dlib.net/
 Pipeline -> Containers
-DashCast
-4K60:10/IntelTranscodingSupport
+DashCast:
+4K60:10/IntelTranscodingSupport->libMFX
 Muxing
 OSGi/Pipe/Mesos?/Angular.js?(http://www.freecodecamp.com/)
 zenbuild to NaCl
@@ -37,3 +38,4 @@ integrate GStreamer etc.
 License should remain compatible with piping
 ASAM, PVSStudio, CPPCheck
 tests: separer lib_modules et lib_media
+GPU: http://on-demand.gputechconf.com/gtc/2015/presentation/S5613-Abhijit-Patait.pdf
