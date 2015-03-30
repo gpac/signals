@@ -20,19 +20,18 @@ public:
 	void setTime(uint64_t timeIn180k) {
 		m_TimeIn180k = timeIn180k;
 	}
-
+	void setTime(uint64_t timeIn180k, uint64_t timescale) {
+		m_TimeIn180k = timescaleToClock(timeIn180k, timescale);
+	}
 	uint64_t getTime() const {
 		return m_TimeIn180k;
 	}
-
 	void setDuration(uint64_t DurationIn180k) {
 		m_DurationIn180k = DurationIn180k;
 	}
-
 	void setDuration(uint64_t DurationInTimescale, uint64_t timescale) {
-		m_DurationIn180k = (DurationInTimescale * IClock::Rate + timescale / 2) / timescale;
+		m_DurationIn180k = timescaleToClock(DurationInTimescale, timescale);
 	}
-
 	uint64_t getDuration() const {
 		return m_DurationIn180k;
 	}

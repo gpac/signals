@@ -17,7 +17,7 @@ namespace Mux {
 
 class GPACMuxMP4 : public Module {
 public:
-	GPACMuxMP4(const std::string &baseName, bool useSegments = false);
+	GPACMuxMP4(const std::string &baseName, bool useSegments = false, uint64_t segDurationInMs = 2000);
 	~GPACMuxMP4();
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
@@ -32,6 +32,7 @@ private:
 	uint64_t m_DTS, m_curFragDur, m_segNum;
 	uint32_t m_trackId;
 	bool m_useSegments, m_useFragments;
+	uint64_t m_segDuration;
 	PinDataDefault<DataAVPacket>* output;
 };
 

@@ -71,7 +71,7 @@ int safeMain(int argc, char const* argv[]) {
 	};
 
 	auto demux = pipeline.addModule(Demux::LibavDemux::create(opt.url), true);
-	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static));
+	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
 	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
@@ -97,7 +97,7 @@ int safeMain(int argc, char const* argv[]) {
 
 		std::stringstream filename;
 		filename << i;
-		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true));
+		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true, opt.segmentDuration));
 		connect(encoder, muxer);
 		rawEncoder->sendOutputPinsInfo();
 

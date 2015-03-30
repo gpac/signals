@@ -104,7 +104,7 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 
 	dashcastXOptions opt;
 	opt.url = parse.nonOption(0);
-	if (options[NUMERIC].first()->name) throw std::runtime_error("Internal error when parsing '-s'. Please conctact your reseller.");
+	if (options[NUMERIC].first()->desc->shortopt != std::string("s")) throw std::runtime_error("Internal error when parsing '-s'. Please contact your reseller.");
 	opt.segmentDuration = atol(options[NUMERIC].first()->arg);
 
 	return opt;
