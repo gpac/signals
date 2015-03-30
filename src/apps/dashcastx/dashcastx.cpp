@@ -13,6 +13,8 @@
 
 #include "lib_utils/tools.hpp"
 
+#include "options.hpp"
+
 #include <sstream>
 
 using namespace Tests;
@@ -57,8 +59,7 @@ Module* createConverter(PropsDecoder *decoderProps) {
 
 
 int safeMain(int argc, char const* argv[]) {
-	if (argc != 2)
-		throw std::runtime_error("usage: dashcastx <URL>");
+	dashcastXOptions opt = processArgs(argc, argv);
 
 	auto const inputURL = argv[1];
 
