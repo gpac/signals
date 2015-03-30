@@ -25,7 +25,7 @@ else
   LDFLAGS += -s
 endif
 
-CFLAGS += -I$(SRC)
+CFLAGS += -I$(SRC) -I$(SRC)/lib_modules
 
 CFLAGS += -I./extra/include
 LDFLAGS += -L./extra/lib
@@ -59,6 +59,7 @@ DEPS:=
 
 #------------------------------------------------------------------------------
 
+ProjectName:=$(SRC)/lib_utils
 UTILS_SRCS:=\
   $(ProjectName)/log.cpp\
 
@@ -66,6 +67,7 @@ UTILS_OBJS:=$(UTILS_SRCS:%.cpp=$(BIN)/%.o)
 
 #------------------------------------------------------------------------------
 
+ProjectName:=$(SRC)/lib_media
 MEDIA_SRCS:=\
   $(ProjectName)/common/libav.cpp\
   $(ProjectName)/decode/jpegturbo_decode.cpp\
@@ -97,6 +99,7 @@ DEPS+=$(LIB_MEDIA_OBJS:%.o=%.deps)
 
 #------------------------------------------------------------------------------
 
+ProjectName:=$(SRC)/lib_modules
 MODULES_SRCS:=\
   $(ProjectName)/core/pipeline.cpp\
   $(ProjectName)/core/system_clock.cpp\
