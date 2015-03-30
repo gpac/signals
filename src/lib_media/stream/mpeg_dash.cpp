@@ -17,13 +17,13 @@ namespace Stream {
 
 class MPD {
 public:
-	MPD(uint64_t segDurationInMs) : m_segDuration(timescaleToClock(segDurationInMs, 1000)) {
-		if (m_segDuration == 0)
+	MPD(uint64_t segDurationInMs) : m_segDurationInMs(segDurationInMs) {
+		if (m_segDurationInMs == 0)
 			throw std::runtime_error("[MPEG-DASH] Segment duration too small. Please check your settings.");
 	}
 
-	uint64_t getSegDuration() {
-		return m_segDuration;
+	uint64_t getSegDurationInMs() {
+		return m_segDurationInMs;
 	}
 
 	void serialize(std::ostream &os) {
@@ -41,7 +41,7 @@ public:
 		//Audio AS
 		writeLine(os, "  <AdaptationSet segmentAlignment=\"true\">");
 		auto audioTimescale = 90000;
-		writeLine(os, "   <SegmentTemplate timescale=\"%s\" media=\"$RepresentationID$.mp4_$Number$\" startNumber=\"0\" duration=\"%s\" initialization=\"$RepresentationID$.mp4\"/>", audioTimescale, clockToTimescale(m_segDuration, audioTimescale));
+		writeLine(os, "   <SegmentTemplate timescale=\"%s\" media=\"$RepresentationID$.mp4_$Number$\" startNumber=\"0\" duration=\"%s\" initialization=\"$RepresentationID$.mp4\"/>", audioTimescale, convertToTimescale(m_segDurationInMs, 1000, audioTimescale));
 		/*ret = gf_media_get_rfc_6381_codec_name(video_output_file->isof, track, video_output_file->video_data_conf->codec6381, GF_FALSE);
 		if (ret != GF_OK) {
 		GF_LOG(GF_LOG_ERROR, GF_LOG_DASH, ("%s: gf_isom_finalize_for_fragment\n", gf_error_to_string(ret)));
@@ -58,7 +58,7 @@ public:
 		//Video AS
 		writeLine(os, "  <AdaptationSet segmentAlignment=\"true\" maxWidth=\"1280\" maxHeight=\"720\" maxFrameRate=\"24\" par=\"16:9\">");
 		auto videoTimescale = audioTimescale;
-		writeLine(os, "   <SegmentTemplate timescale=\"%s\" media=\"$RepresentationID$.mp4_$Number$\" startNumber=\"0\" duration=\"%s\" initialization=\"$RepresentationID$.mp4\"/>", videoTimescale, clockToTimescale(m_segDuration, videoTimescale));
+		writeLine(os, "   <SegmentTemplate timescale=\"%s\" media=\"$RepresentationID$.mp4_$Number$\" startNumber=\"0\" duration=\"%s\" initialization=\"$RepresentationID$.mp4\"/>", videoTimescale, convertToTimescale(m_segDurationInMs, 1000, videoTimescale));
 		auto const videoCodec = "avc1.64001f";
 		auto const videoWidth = 1280;
 		auto const videoHeight = 720;
@@ -80,21 +80,25 @@ private:
 		os.flush();
 	}
 
-	uint64_t m_segDuration;
+	uint64_t m_segDurationInMs;
 };
 
 MPEG_DASH::MPEG_DASH(Type type, uint64_t segDurationInMs)
 : workingThread(&MPEG_DASH::DASHThread, this), type(type), mpd(new MPD(segDurationInMs)) {
-	if (type != Static)
-		throw std::runtime_error("[MPEG-DASH] Only static type is supported.");
+}
+
+void MPEG_DASH::endOfStream() {
+	if (workingThread.joinable()) {
+		audioDataQueue.push(nullptr);
+		videoDataQueue.push(nullptr);
+		workingThread.join();
+	}
 }
 
 MPEG_DASH::~MPEG_DASH() {
 	audioDataQueue.clear();
 	videoDataQueue.clear();
-	audioDataQueue.push(nullptr);
-	videoDataQueue.push(nullptr);
-	workingThread.join();
+	endOfStream();
 }
 
 //FIXME: we would post/defer/schedule the whole module... but here we are already in our own thread
@@ -111,9 +115,10 @@ void MPEG_DASH::DASHThread() {
 
 		if (type == Live) {
 			auto now = std::chrono::steady_clock::now();
-			auto next = startTime + std::chrono::milliseconds(mpd->getSegDuration() * n);
+			auto next = startTime + std::chrono::milliseconds(mpd->getSegDurationInMs() * n);
 			if (next > now) {
 				auto dur = next - now;
+				Log::msg(Log::Info, "[MPEG_DASH] Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 				std::this_thread::sleep_for(dur);
 			} else {
 				Log::msg(Log::Warning, "[MPEG_DASH] Next MPD update (%s) is in the past. Are we running too slow?", n);
@@ -161,6 +166,11 @@ void MPEG_DASH::process(std::shared_ptr<const Data> data) {
 		Log::msg(Log::Warning, "[MPEG_DASH] undeclared data. Discarding.");
 		return;
 	}
+}
+
+void MPEG_DASH::flush() {
+	if (type == Live)
+		endOfStream();
 }
 
 }
