@@ -12,8 +12,6 @@ extern "C" {
 #include "lib_ffpp/ffpp.hpp" //TODO: remove DataAVPacket
 #include "../common/libav.hpp" //TODO: remove DataAVPacket
 
-#define FRAG_DURATION_IN_180K (1*IClock::Rate)
-
 
 namespace {
 static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSize, GF_AVCConfig *dstcfg) {
@@ -333,8 +331,12 @@ void fillVideoSample(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 namespace Mux {
 
 //TODO: segments start with RAP
-GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments)
-	: m_DTS(0), m_curFragDur(0), m_segNum(0), m_useSegments(useSegments), m_useFragments(useSegments) {
+GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t segDurationInMs)
+: m_DTS(0), m_curFragDur(0), m_segNum(0), m_useSegments(useSegments), m_useFragments(useSegments),
+  m_segDuration(timescaleToClock(segDurationInMs, 1000)) {
+	if (m_segDuration == 0)
+		throw std::runtime_error("[GPAC Mux] Segment duration too small. Please check your settings.");
+
 	std::stringstream fileName;
 	fileName << baseName;
 	fileName << ".mp4";
@@ -370,7 +372,7 @@ void GPACMuxMP4::closeSegment() {
 		auto out = output->getBuffer(0);
 		out->getPacket()->stream_index = gf_isom_get_media_type(m_iso, 1);
 		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
-		out->setTime((m_DTS * IClock::Rate + mediaTimescale / 2) / mediaTimescale);
+		out->setTime(m_DTS, mediaTimescale);
 		out->setDuration(m_curFragDur, mediaTimescale);
 		output->emit(out);
 	}
@@ -674,7 +676,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 			return;
 		}
 
-		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * FRAG_DURATION_IN_180K)) {
+		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_segDuration)) {
 			e = gf_isom_flush_fragments(m_iso, GF_FALSE); //Romain: Jean me dit que flush ne sert pas dans notre cas
 			if (e != GF_OK) {
 				Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
@@ -699,7 +701,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 				return;
 			}
 
-			const u64 oneFragDurInTimescale = (FRAG_DURATION_IN_180K * mediaTimescale + IClock::Rate / 2) / IClock::Rate;
+			const u64 oneFragDurInTimescale = (m_segDuration * mediaTimescale + IClock::Rate / 2) / IClock::Rate;
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
 		}
 	} else {

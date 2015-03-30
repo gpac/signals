@@ -5,6 +5,8 @@
 namespace Modules {
 namespace Stream {
 
+class MPD;
+
 /**
  * Open bar output. Thread-safe by design ©
  */
@@ -15,7 +17,7 @@ public:
 		Static
 	};
 
-	MPEG_DASH(Type type = Static);
+	MPEG_DASH(Type type, uint64_t segDurationInMs);
 	~MPEG_DASH();
 	void process(std::shared_ptr<const Data> data) override;
 
@@ -25,8 +27,9 @@ private:
 
 	Queue<std::shared_ptr<const Data>> audioDataQueue;
 	Queue<std::shared_ptr<const Data>> videoDataQueue;
-	Type type;
 	std::thread workingThread;
+	Type type;
+	std::unique_ptr<MPD> mpd;
 };
 
 }
