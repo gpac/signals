@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="includes">
-      <UniqueIdentifier>{60b9021d-d140-4d60-bbf1-f45ea34e06b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{22a3d231-ad2c-47ab-ae2a-99b76ea5919f}</UniqueIdentifier>
     </Filter>
@@ -27,15 +24,6 @@
     </Filter>
     <Filter Include="src\transform">
       <UniqueIdentifier>{ae8eabc9-587b-4dbf-868c-b02d323ccdfc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="includes\internal">
-      <UniqueIdentifier>{c1310a27-6c14-4808-84a1-4ca97125b74c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="includes\internal\utils">
-      <UniqueIdentifier>{a9a45a49-8b26-4546-83bd-e21018ca24b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="includes\internal\core">
-      <UniqueIdentifier>{c81eaab6-4326-41f2-b4f3-aad1df7b8076}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\stream">
       <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
