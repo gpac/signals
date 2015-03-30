@@ -196,7 +196,7 @@ then
 	pushd extra/src
 	svn co svn://svn.code.sf.net/p/libjpeg-turbo/code/branches/1.3.x -r 1397 libjpeg_turbo_1.3.x
 	pushd libjpeg_turbo_1.3.x
-	autoreconf -fivcd ..cd
+	autoreconf -fiv
 	popd
 	popd
 fi
