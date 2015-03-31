@@ -53,12 +53,12 @@ struct Arg : public option::Arg
 	}
 };
 
-enum optionIndex { UNKNOWN, HELP, OPTIONAL, REQUIRED, NUMERIC, NONEMPTY };
+enum optionIndex { UNKNOWN, HELP, OPT, REQUIRED, NUMERIC, NONEMPTY };
 const option::Descriptor usage[] = {
 		{ UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
 		"Options:" },
 		{ HELP, 0, "h", "help", Arg::None, "  \t--help, -h  \tPrint usage and exit." },
-		{ OPTIONAL, 0, "live", "live", Arg::None, "  --live, -live \tRun at system clock pace (otherwise runs as fast as possible)." },
+		{ OPT, 0, "live", "live", Arg::None, "  --live, -live \tRun at system clock pace (otherwise runs as fast as possible)." },
 		{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur, -s \tSet the segment duration in millisecond (default value: 2000)." },
 		{ UNKNOWN, 0, "", "", Arg::None,
 		"\nExamples:\n"
@@ -105,7 +105,7 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 
 	dashcastXOptions opt;
 	opt.url = parse.nonOption(0);
-	if (options[OPTIONAL].first()->desc && options[OPTIONAL].first()->desc->shortopt == std::string("l"))
+	if (options[OPT].first()->desc && options[OPT].first()->desc->shortopt == std::string("l"))
 		opt.isLive = true;
 	if (options[NUMERIC].first()->desc->shortopt != std::string("s")) throw std::runtime_error("Internal error when parsing '-s'. Please contact your reseller.");
 	opt.segmentDuration = atol(options[NUMERIC].first()->arg);
