@@ -1,0 +1,15 @@
+* text=auto
+
+*.c text
+*.cpp text
+*.h text
+*.hpp text
+Makefile text
+
+#unix
+*.sh text eol=lf
+
+#windows
+*.bat text eol=crlf
+*.sln text eol=crlf
+*.vcxproj text eol=crlf
