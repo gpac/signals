@@ -169,7 +169,8 @@ void MPEG_DASH::process(std::shared_ptr<const Data> data) {
 }
 
 void MPEG_DASH::flush() {
-	if (type == Live)
+	numDataQueueNotify--;
+	if ((type == Live) && (numDataQueueNotify == 0))
 		endOfStream();
 }
 

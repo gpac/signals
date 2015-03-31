@@ -27,6 +27,7 @@ private:
 	void GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> audio, std::shared_ptr<const Data> video);
 	void endOfStream();
 
+	int numDataQueueNotify = 2;
 	Queue<std::shared_ptr<const Data>> audioDataQueue;
 	Queue<std::shared_ptr<const Data>> videoDataQueue;
 	std::thread workingThread;
