@@ -394,6 +394,51 @@ GPACMuxMP4::~GPACMuxMP4() {
 	}
 }
 
+void GPACMuxMP4::setupFragments() {
+	GF_Err e;
+
+	if (m_useFragments) {
+		e = gf_isom_setup_track_fragment(m_iso, m_trackId, 1, 1, 0, 0, 0, 0);
+		if (e != GF_OK) {
+			Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
+			throw std::runtime_error("Cannot setup track as fragmented");
+		}
+	}
+
+	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
+
+	if (m_useFragments) {
+		if (m_useSegments) {
+			e = gf_isom_finalize_for_fragment(m_iso, 1);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
+				throw std::runtime_error("Cannot prepare track for movie fragmentation");
+			}
+
+			std::stringstream ss;
+			ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
+			e = gf_isom_start_segment(m_iso, (char*)ss.str().c_str(), GF_TRUE);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
+				throw std::runtime_error("Impossible to start the segment");
+			}
+		}
+		else {
+			e = gf_isom_finalize_for_fragment(m_iso, 0);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
+				throw std::runtime_error("Cannot prepare track for movie fragmentation");
+			}
+		}
+
+		e = gf_isom_start_fragment(m_iso, GF_TRUE);
+		if (e != GF_OK) {
+			Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
+			throw std::runtime_error("Impossible to create the moof");
+		}
+	}
+}
+
 void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 	GF_Err e;
 	u32 di, trackNum;
@@ -459,7 +504,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 
 	m_trackId = gf_isom_get_track_id(m_iso, trackNum);
 
-	e = gf_isom_set_track_enabled(m_iso, trackNum, 1);
+	e = gf_isom_set_track_enabled(m_iso, trackNum, GF_TRUE);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_set_track_enabled");
@@ -486,46 +531,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 		throw std::runtime_error("Container format import failed");
 	}
 
-	if (m_useFragments) { //FIXME: this is duplicated for audio and video
-		e = gf_isom_setup_track_fragment(m_iso, m_trackId, 1, 1, 0, 0, 0, 0);
-		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
-			throw std::runtime_error("Cannot setup track as fragmented");
-		}
-	}
-
-	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
-
-	if (m_useFragments) {
-		if (m_useSegments) {
-			e = gf_isom_finalize_for_fragment(m_iso, 1);
-			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-				throw std::runtime_error("Cannot prepare track for movie fragmentation");
-			}
-
-			std::stringstream ss;
-			ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
-			e = gf_isom_start_segment(m_iso, (char*)ss.str().c_str(), GF_TRUE);
-			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
-				throw std::runtime_error("Impossible to start the segment");
-			}
-		}
-		else {
-			e = gf_isom_finalize_for_fragment(m_iso, 0);
-			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-				throw std::runtime_error("Cannot prepare track for movie fragmentation");
-			}
-		}
-
-		e = gf_isom_start_fragment(m_iso, GF_TRUE);
-		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
-			throw std::runtime_error("Impossible to create the moof");
-		}
-	}
+	setupFragments();
 }
 
 void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
@@ -579,46 +585,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
 	}
 #endif
 
-	if (m_useFragments) { //FIXME: this is duplicated for audio and video
-		e = gf_isom_setup_track_fragment(m_iso, m_trackId, 1, 1, 0, 0, 0, 0);
-		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
-			throw std::runtime_error("Cannot setup track as fragmented");
-		}
-	}
-
-	//gf_isom_add_track_to_root_od(video_output_file->isof, 1);
-
-	if (m_useFragments) {
-		if (m_useSegments) {
-			e = gf_isom_finalize_for_fragment(m_iso, 1);
-			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-				throw std::runtime_error("Cannot prepare track for movie fragmentation");
-			}
-
-			std::stringstream ss;
-			ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
-			e = gf_isom_start_segment(m_iso, (char*)ss.str().c_str(), GF_TRUE);
-			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
-				throw std::runtime_error("Impossible to start the segment");
-			}
-		}
-		else {
-			e = gf_isom_finalize_for_fragment(m_iso, 0);
-			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-				throw std::runtime_error("Cannot prepare track for movie fragmentation");
-			}
-		}
-
-		e = gf_isom_start_fragment(m_iso, GF_TRUE);
-		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
-			throw std::runtime_error("Impossible to create the moof");
-		}
-	}
+	setupFragments();
 }
 
 bool GPACMuxMP4::declareStream(std::shared_ptr<const Data> stream) {
