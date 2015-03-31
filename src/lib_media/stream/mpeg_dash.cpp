@@ -94,8 +94,8 @@ struct MPD {
 		os.flush();
 	}
 
-	uint64_t segDurationInMs;
 	bool isLive;
+	uint64_t segDurationInMs;
 };
 
 MPEG_DASH::MPEG_DASH(Type type, uint64_t segDurationInMs)

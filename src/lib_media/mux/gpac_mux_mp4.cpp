@@ -659,11 +659,6 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 		}
 
 		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_segDuration)) {
-			e = gf_isom_flush_fragments(m_iso, GF_FALSE); //Romain: Jean me dit que flush ne sert pas dans notre cas
-			if (e != GF_OK) {
-				Log::msg(Log::Error, "%s: gf_isom_add_sample", gf_error_to_string(e));
-				return;
-			}
 			closeSegment();
 			if (m_useSegments) {
 				m_segNum++;
