@@ -127,7 +127,8 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) cons
 	} else if (codecCtx->time_base.den == 0) {
 		throw std::runtime_error("[LibavDecode] Unknown frame rate. Cannot set the timestamp.");
 	} else {
-		t = (m_numFrames * increment * IClock::Rate * codecCtx->time_base.num * codecCtx->ticks_per_frame + (codecCtx->time_base.den / 2)) / codecCtx->time_base.den;
+		auto const curTime = m_numFrames * increment * codecCtx->time_base.num * codecCtx->ticks_per_frame;
+		t = timescaleToClock(curTime, codecCtx->time_base.den);
 	}
 	s->setTime(t);
 }
