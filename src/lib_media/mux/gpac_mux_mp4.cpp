@@ -701,7 +701,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 				return;
 			}
 
-			const u64 oneFragDurInTimescale = (m_segDuration * mediaTimescale + IClock::Rate / 2) / IClock::Rate;
+			const u64 oneFragDurInTimescale = clockToTimescale(m_segDuration, mediaTimescale);
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
 		}
 	} else {
