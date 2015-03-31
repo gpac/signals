@@ -21,10 +21,11 @@ public:
 	LibavDecode(const PropsDecoder &props);
 	~LibavDecode();
 	void process(std::shared_ptr<const Data> data) override;
+	void flush() override;
 
 private:
-	void processAudio(const DataAVPacket*);
-	void processVideo(const DataAVPacket*);
+	bool processAudio(const DataAVPacket*);
+	bool processVideo(const DataAVPacket*);
 
 	void setTimestamp(std::shared_ptr<Data> s, uint64_t increment = 1) const;
 
