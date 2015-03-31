@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lib_utils/tools.hpp"
 #include <stdint.h>
 
 namespace Modules {
@@ -14,7 +15,7 @@ IClock* createSystemClock(); // move elsewhere
 extern IClock* const g_DefaultClock;
 
 static uint64_t convertToTimescale(uint64_t time, uint64_t timescaleSrc, uint64_t timescaleDst) {
-	return (time * timescaleDst + timescaleSrc / 2) / timescaleSrc;
+	return divUp<uint64_t>(time * timescaleDst, timescaleSrc);
 }
 
 static uint64_t timescaleToClock(uint64_t time, uint64_t timescale) {

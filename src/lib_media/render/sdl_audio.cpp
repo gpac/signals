@@ -44,7 +44,7 @@ SDLAudio::SDLAudio(IClock* clock) : m_clock(clock), pcmFormat(new PcmFormat(4410
 		throw std::runtime_error("Audio output creation failed");
 	}
 
-	m_Latency = realSpec.samples * IClock::Rate / realSpec.freq;
+	m_Latency = timescaleToClock(realSpec.samples, realSpec.freq);
 	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency * 1000.0f / IClock::Rate);
 
 	SDL_PauseAudio(0);

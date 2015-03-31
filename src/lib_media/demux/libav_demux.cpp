@@ -68,7 +68,7 @@ void LibavDemux::process(std::shared_ptr<const Data> /*data*/) {
 		}
 
 		auto const base = m_formatCtx->streams[pkt->stream_index]->time_base;
-		auto const time = pkt->pts * base.num * IClock::Rate / base.den;
+		auto const time = timescaleToClock(pkt->pts * base.num, base.den);
 		out->setTime(time);
 		outputs[pkt->stream_index]->emit(out);
 	}
