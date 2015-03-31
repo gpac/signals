@@ -5,7 +5,7 @@
 namespace Modules {
 namespace Stream {
 
-class MPD;
+struct MPD;
 
 /**
  * Open bar output. Thread-safe by design ©
