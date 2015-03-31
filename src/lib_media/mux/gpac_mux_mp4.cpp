@@ -14,6 +14,15 @@ extern "C" {
 
 
 namespace {
+static u64 getNTP() {
+	u32 sec, frac;
+	gf_net_get_ntp(&sec, &frac);
+	u64 ntpts = sec;
+	ntpts <<= 32;
+	ntpts |= frac;
+	return ntpts;
+}
+
 static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSize, GF_AVCConfig *dstcfg) {
 	u8 nalSize;
 	AVCState avc;
@@ -436,6 +445,12 @@ void GPACMuxMP4::setupFragments() {
 			Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
 			throw std::runtime_error("Impossible to create the moof");
 		}
+
+		e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), 0);
+		if (e != GF_OK) {
+			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_segNum);
+			throw std::runtime_error("Impossible to create UTC marquer");
+		}
 	}
 }
 
@@ -666,6 +681,12 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 			if (e != GF_OK) {
 				Log::msg(Log::Error, "%s: gf_isom_start_fragment", gf_error_to_string(e));
 				return;
+			}
+
+			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), m_DTS);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_segNum);
+				throw std::runtime_error("Impossible to set the UTC marquer");
 			}
 
 			const u64 oneFragDurInTimescale = clockToTimescale(m_segDuration, mediaTimescale);

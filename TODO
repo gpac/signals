@@ -30,7 +30,7 @@ Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?Articl
 http://dlib.net/
 Pipeline -> Containers
 DashCast:
-- UTC marker
+- EODS marker
 - dshow input
 - low latency
 - resolution as a param
