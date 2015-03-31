@@ -74,7 +74,7 @@ void SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 	auto const now = m_clock->now();
 	auto const timestamp = pic->getTime() + PREROLL_DELAY; // assume timestamps start at zero
 	auto const delay = (Uint32)std::max<int64_t>(0, timestamp - now);
-	auto const delayInMs = (delay * 1000) / IClock::Rate;
+	auto const delayInMs = clockToTimescale(delay, 1000);
 	SDL_Delay((Uint32)delayInMs);
 
 	if(pic->getResolution() != resolution) {

@@ -1,4 +1,5 @@
 #include "clock.hpp"
+#include <cassert>
 #include <chrono>
 
 namespace Modules {
@@ -12,6 +13,7 @@ class SystemClock : public IClock {
 		virtual uint64_t now() const {
 			auto const timeNow = high_resolution_clock::now();
 			auto const timeNowInMs = duration_cast<milliseconds>(timeNow - m_Start);
+			assert(IClock::Rate % 1000 == 0);
 			return timeNowInMs.count() * (IClock::Rate / 1000LL);
 		}
 	private:

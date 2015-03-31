@@ -645,7 +645,7 @@ void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
 	}
 
 	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
-	u32 deltaDTS = u32(data->getDuration() * mediaTimescale) / IClock::Rate;
+	u32 deltaDTS = (u32)clockToTimescale(data->getDuration(), mediaTimescale);
 	m_DTS += deltaDTS;
 
 	if (m_useFragments) {

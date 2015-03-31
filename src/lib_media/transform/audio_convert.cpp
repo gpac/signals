@@ -70,7 +70,7 @@ void AudioConvert::process(std::shared_ptr<const Data> data) {
 		out->setPlane(i, out->getPlane(i), outPlaneSize);
 
 	accumulatedTimeInDstSR += outNumSamples;
-	auto const accumulatedTimeIn180k = divUp<uint64_t>(accumulatedTimeInDstSR * IClock::Rate, dstPcmFormat.sampleRate);
+	auto const accumulatedTimeIn180k = timescaleToClock(accumulatedTimeInDstSR, dstPcmFormat.sampleRate);
 	out->setTime(accumulatedTimeIn180k);
 
 	output->emit(out);

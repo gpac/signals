@@ -28,6 +28,7 @@ void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	memset(p, val, dim.yv12size());
 
 	auto const framePeriodIn180k = IClock::Rate / FRAMERATE;
+	assert(IClock::Rate % FRAMERATE == 0);
 	pic->setTime(m_numFrames * framePeriodIn180k);
 
 	if(m_numFrames % 25 < 2)
