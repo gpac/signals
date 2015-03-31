@@ -105,7 +105,7 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 
 	dashcastXOptions opt;
 	opt.url = parse.nonOption(0);
-	if (options[OPT].first()->desc && options[OPT].first()->desc->shortopt == std::string("l"))
+	if (options[OPT].first()->desc && options[OPT].first()->desc->shortopt == std::string("live"))
 		opt.isLive = true;
 	if (options[NUMERIC].first()->desc->shortopt != std::string("s")) throw std::runtime_error("Internal error when parsing '-s'. Please contact your reseller.");
 	opt.segmentDuration = atol(options[NUMERIC].first()->arg);
