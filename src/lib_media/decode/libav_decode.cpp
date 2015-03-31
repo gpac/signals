@@ -57,14 +57,13 @@ LibavDecode::~LibavDecode() {
 	av_free(codecCtx);
 }
 
-void LibavDecode::processAudio(const DataAVPacket *data) {
+bool LibavDecode::processAudio(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
 	auto out = audioPin->getBuffer(0);
-
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
-		return;
+		return false;
 	}
 	if (gotFrame) {
 		//TODO: not supposed to change across the session but the pin doesn't hold the right type
@@ -77,7 +76,10 @@ void LibavDecode::processAudio(const DataAVPacket *data) {
 		setTimestamp(out, avFrame->get()->nb_samples);
 		audioPin->emit(out);
 		++m_numFrames;
+		return true;
 	}
+
+	return false;
 }
 
 namespace {
@@ -104,20 +106,23 @@ void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 }
 }
 
-void LibavDecode::processVideo(const DataAVPacket *decoderData) {
-	AVPacket *pkt = decoderData->getPacket();
+bool LibavDecode::processVideo(const DataAVPacket *data) {
+	AVPacket *pkt = data->getPacket();
 	auto pic = videoPin->getBuffer(0);
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
-		return;
+		return false;
 	}
 	if (gotPicture) {
 		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
 		videoPin->emit(pic);
 		++m_numFrames;
+		return true;
 	}
+
+	return false;
 }
 
 void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) const {
@@ -137,14 +142,29 @@ void LibavDecode::process(std::shared_ptr<const Data> data) {
 	auto decoderData = safe_cast<const DataAVPacket>(data);
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:
-		return processVideo(decoderData.get());
+		processVideo(decoderData.get());
 		break;
 	case AVMEDIA_TYPE_AUDIO:
-		return processAudio(decoderData.get());
+		processAudio(decoderData.get());
 		break;
 	default:
 		assert(0);
 		return;
+	}
+}
+
+void LibavDecode::flush() {
+	auto nullPkt = uptr(new DataAVPacket(0));
+	switch (codecCtx->codec_type) {
+	case AVMEDIA_TYPE_VIDEO:
+		while (processVideo(nullPkt.get())) {}
+		break;
+	case AVMEDIA_TYPE_AUDIO:
+		while (processAudio(nullPkt.get())) {}
+		break;
+	default:
+		assert(0);
+		break;
 	}
 }
 
