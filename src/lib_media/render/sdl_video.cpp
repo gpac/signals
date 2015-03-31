@@ -10,6 +10,7 @@ namespace Render {
 
 SDLVideo::SDLVideo(IClock* clock)
 	: m_clock(clock), texture(nullptr), displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
+	m_dataQueue.pop();
 }
 
 void SDLVideo::doRender() {
@@ -19,6 +20,7 @@ void SDLVideo::doRender() {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
 		throw std::runtime_error("Window creation failed");
 	}
+	m_dataQueue.push(nullptr); //unlock the constructor
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
