@@ -30,10 +30,9 @@ Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?Articl
 http://dlib.net/
 Pipeline -> Containers
 DashCast:
-- EODS marker
-- dshow input
 - low latency
 - resolution as a param
+- dshow input -> webcam
 - multi-rep
 4K60:10/IntelTranscodingSupport->libMFX
 Muxing
