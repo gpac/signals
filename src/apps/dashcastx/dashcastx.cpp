@@ -23,11 +23,11 @@ using namespace Modules;
 
 namespace {
 
-Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps) {
+Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps, bool isLowLatency) {
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
-		return new Encode::LibavEncode(Encode::LibavEncode::Video);
+		return new Encode::LibavEncode(Encode::LibavEncode::Video, isLowLatency);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "[Encoder] Found audio stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Audio);
@@ -88,7 +88,7 @@ int safeMain(int argc, char const* argv[]) {
 
 		connect(decoder, converter);
 
-		auto rawEncoder = createEncoder(decoderProps);
+		auto rawEncoder = createEncoder(decoderProps, opt.isLive);
 		auto encoder = pipeline.addModule(rawEncoder);
 		if (!encoder) {
 			continue;

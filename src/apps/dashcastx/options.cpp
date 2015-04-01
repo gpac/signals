@@ -58,7 +58,7 @@ const option::Descriptor usage[] = {
 		{ UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
 		"Options:" },
 		{ HELP, 0, "h", "help", Arg::None, "  \t--help, -h  \tPrint usage and exit." },
-		{ OPT, 0, "live", "live", Arg::None, "  --live, -live \tRun at system clock pace (otherwise runs as fast as possible)." },
+		{ OPT, 0, "live", "live", Arg::None, "  --live, -live \tRun at system clock pace (otherwise runs as fast as possible) with low latency settings (quality may be degraded)." },
 		{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur, -s \tSet the segment duration in millisecond (default value: 2000)." },
 		{ UNKNOWN, 0, "", "", Arg::None,
 		"\nExamples:\n"

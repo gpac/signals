@@ -22,7 +22,7 @@ public:
 		Unknown
 	};
 
-	LibavEncode(Type type);
+	LibavEncode(Type type, bool isLowLatency = false);
 	~LibavEncode();
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
@@ -39,6 +39,7 @@ private:
 	std::unique_ptr<PcmFormat> pcmFormat;
 	std::unique_ptr<ffpp::Frame> const avFrame;
 	int frameNum;
+	bool isLowLatency;
 	PinDataDefault<DataAVPacket>* output;
 };
 
