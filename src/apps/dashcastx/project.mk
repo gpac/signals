@@ -6,6 +6,7 @@ EXE_DASHCASTX_OBJS:=\
 	$(LIB_MODULES_OBJS)\
 	$(UTILS_OBJS)\
  	$(OUTDIR)/dashcastx.o\
- 	$(OUTDIR)/options.o
+ 	$(OUTDIR)/options.o\
+ 	$(OUTDIR)/pipeliner.o
 $(OUTDIR)/dashcastx.exe:  $(EXE_DASHCASTX_OBJS)
 DEPS+=$(EXE_DASHASTX_OBJS:%.o=%.deps)
