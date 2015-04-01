@@ -1,6 +1,12 @@
 #include "modules.hpp"
 #include "pipeline.hpp"
 
+
+#define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
+#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
+#define EXECUTOR EXECUTOR_ASYNC
+
+
 namespace Modules {
 
 /* take ownership of module */
