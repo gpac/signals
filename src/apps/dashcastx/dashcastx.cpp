@@ -55,18 +55,9 @@ Module* createConverter(PropsDecoder *decoderProps) {
 		return nullptr;
 	}
 }
-}
 
-
-int safeMain(int argc, char const* argv[]) {
-	dashcastXOptions opt = processArgs(argc, argv);
-
-	Tools::Profiler profilerGlobal("DashcastX");
-
-	Pipeline pipeline(opt.isLive);
-
-	auto connect = [&](PipelinedModule* src, PipelinedModule* dst)
-	{
+void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
+	auto connect = [&](PipelinedModule* src, PipelinedModule* dst) {
 		pipeline.connect(src->getPin(0), dst);
 	};
 
@@ -79,6 +70,7 @@ int safeMain(int argc, char const* argv[]) {
 		auto decoderProps = safe_cast<PropsDecoder>(props);
 
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
+
 		pipeline.connect(demux->getPin(i), decoder);
 
 		auto converter = pipeline.addModule(createConverter(decoderProps));
@@ -104,12 +96,20 @@ int safeMain(int argc, char const* argv[]) {
 
 		connect(muxer, dasher);
 	}
+}
+}
 
-	{
-		Tools::Profiler profilerProcessing("Dashcast X - processing time");
-		pipeline.start();
-		pipeline.waitForCompletion();
-	}
+
+int safeMain(int argc, char const* argv[]) {
+	dashcastXOptions opt = processArgs(argc, argv);
+	
+	Tools::Profiler profilerGlobal("DashcastX");
+
+	Pipeline pipeline(opt.isLive);
+	declarePipeline(pipeline, opt);
+	Tools::Profiler profilerProcessing("Dashcast X - processing time");
+	pipeline.start();
+	pipeline.waitForCompletion();
 
 	return 0;
 }
