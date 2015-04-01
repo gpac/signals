@@ -1,20 +1,12 @@
 #include "../../tests/tests.hpp"
+#include "lib_media/media.hpp"
 #include "lib_utils/tools.hpp"
-#include "lib_modules/modules.hpp"
-
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-
-#include "lib_media/decode/libav_decode.hpp"
-#include "lib_media/demux/libav_demux.hpp"
-#include "lib_media/out/null.hpp"
-#include "lib_media/render/sdl_audio.hpp"
-#include "lib_media/render/sdl_video.hpp"
 
 using namespace Tests;
 using namespace Modules;
 
-//-----------------------------------------------------------------------------
-
+namespace {
 struct Stream {
 	Stream(Module* from) : fromModule(from) {
 		pin = nullptr;
@@ -38,8 +30,6 @@ Module* createRenderer(int codecType, IClock* clock) {
 		return new Out::Null;
 	}
 }
-
-//-----------------------------------------------------------------------------
 
 std::vector<Stream> demux(std::string filename) {
 	std::vector<Stream> r;
@@ -80,17 +70,15 @@ Stream render(Stream& input, IClock* clock) {
 	ConnectPinToModule(input.pin, r.fromModule.get(), defaultExecutor);
 	return r;
 }
+}
 
 int safeMain(int argc, char const* argv[]) {
-
 	if(argc != 2)
 		throw std::runtime_error("usage: player <file>");
-
 	auto const inputFile = argv[1];
 
-	auto clock = uptr(createSystemClock());
-
 	// construct pipeline
+	auto clock = uptr(createSystemClock());
 	auto es = demux(inputFile);
 	auto decodedStreams = apply(&decode, es);
 	auto renderedStreams = apply(&render, decodedStreams, clock.get());
@@ -110,5 +98,3 @@ int main(int argc, char const* argv[]) {
 		return 0;
 	}
 }
-
-
