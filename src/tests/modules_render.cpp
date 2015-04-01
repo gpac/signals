@@ -18,11 +18,6 @@ unittest("render: A/V sync, one thread") {
 	auto videoRender = uptr(new Render::SDLVideo(clock.get()));
 	ConnectPinToModule(videoGen->getPin(0), videoRender);
 
-	//FIXME: avoid SDL audio and video parallel creations
-	const int sleepDurInMs = 100;
-	const std::chrono::milliseconds dur(sleepDurInMs);
-	std::this_thread::sleep_for(dur);
-
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto soundRender = uptr(Render::SDLAudio::create(clock.get()));
 	ConnectPinToModule(soundGen->getPin(0), soundRender);
@@ -66,11 +61,6 @@ unittest("render: A/V sync: separate threads") {
 	};
 
 	std::thread tf(f);
-
-	//FIXME: avoid SDL audio and video parallel creations
-	const int sleepDurInMs = 100;
-	const std::chrono::milliseconds dur(sleepDurInMs);
-	std::this_thread::sleep_for(dur);
 
 	std::thread tg(g);
 

@@ -59,6 +59,17 @@ public:
 		return !(*this == other);
 	}
 
+	PcmFormat& operator=(const PcmFormat& other) {
+		if (this != &other) {
+			sampleRate = other.sampleRate;
+			numChannels = other.numChannels;
+			layout = other.layout;
+			sampleFormat = other.sampleFormat;
+			numPlanes = other.numPlanes;
+		}
+		return *this;
+	}
+
 	bool operator==(const PcmFormat& other) const {
 		if (other.sampleRate != sampleRate) {
 			Log::msg(Log::Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", other.sampleRate, sampleRate);

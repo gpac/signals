@@ -6,7 +6,7 @@
 
 struct AVCodecContext;
 
-//FIXME: this class contains multimedia considerations, thus should be in libmm...
+//FIXME: this class contains multimedia considerations
 class Stream : public Modules::Data {
 public:
 	virtual ~Stream() {};
