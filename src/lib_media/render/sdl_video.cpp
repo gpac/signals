@@ -20,7 +20,6 @@ void SDLVideo::doRender() {
 		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
 		throw std::runtime_error("Window creation failed");
 	}
-	m_dataQueue.push(nullptr); //unlock the constructor
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
@@ -28,6 +27,7 @@ void SDLVideo::doRender() {
 		SDL_DestroyWindow(window);
 		throw std::runtime_error("Renderer creation failed");
 	}
+	m_dataQueue.push(nullptr); //unlock the constructor
 
 	createTexture();
 
@@ -60,8 +60,8 @@ void SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
 				SDL_RenderSetViewport(renderer, NULL);
-				//displayrect->w = width  = event.window.data1;
-				//displayrect->h = height = event.window.data2;
+				displayrect->w = event.window.data1;
+				displayrect->h = event.window.data2;
 			}
 			break;
 		case SDL_QUIT:
