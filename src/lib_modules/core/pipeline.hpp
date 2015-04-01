@@ -10,10 +10,6 @@ namespace Modules {
 class Module;
 struct IPin;
 
-#define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
-#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_ASYNC
-
 struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
