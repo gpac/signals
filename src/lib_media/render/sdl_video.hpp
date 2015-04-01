@@ -13,7 +13,6 @@ struct SDL_Window;
 namespace Modules {
 namespace Render {
 
-//FIXME: check it doesn't need to run in thread 0, like most render on Unix do because of X11...
 class SDLVideo : public Module {
 public:
 	SDLVideo(IClock* clock = g_DefaultClock);
@@ -28,7 +27,6 @@ private:
 
 	IClock* const m_clock;
 
-	/* Video */
 	SDL_Window* window;
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
