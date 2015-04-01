@@ -31,7 +31,8 @@ http://dlib.net/
 Pipeline -> Containers
 DashCast:
 - test player
-- low latency -> codec ok, allocator to be optimized
+- test libav muxer (broken?)
+- low latency -> allow fine-grain threading
 - resolution as a param
 - dshow input -> webcam : https://trac.ffmpeg.org/wiki/Capture/Desktop
 - multi-rep
