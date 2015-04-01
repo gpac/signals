@@ -63,7 +63,7 @@ int safeMain(int argc, char const* argv[]) {
 
 	Tools::Profiler profilerGlobal("DashcastX");
 
-	Pipeline pipeline;
+	Pipeline pipeline(opt.isLive);
 
 	auto connect = [&](PipelinedModule* src, PipelinedModule* dst)
 	{

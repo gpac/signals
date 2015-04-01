@@ -10,7 +10,8 @@
 namespace Modules {
 
 /* take ownership of module */
-PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify) : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
+PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
+: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
 
 void PipelinedModule::connect(IPin* pin) {
@@ -66,12 +67,13 @@ void PipelinedModule::endOfStream() {
 	}
 }
 
-Pipeline::Pipeline() : numRemainingNotifications(0) {
+Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
 PipelinedModule* Pipeline::addModule(Module* rawModule, bool isSource) {
 	if(!rawModule)
 		return nullptr;
+	rawModule->setLowLatency(isLowLatency);
 	auto module = uptr(new PipelinedModule(rawModule, this));
 	auto ret = module.get();
 	module->setSource(isSource);

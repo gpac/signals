@@ -50,7 +50,7 @@ private:
 
 class Pipeline : public ICompletionNotifier {
 public:
-	Pipeline();
+	Pipeline(bool isLowLatency);
 	PipelinedModule* addModule(Module* rawModule, bool isSource = false);
 	void connect(IPin* pin, PipelinedModule *module);
 	void start();
@@ -59,6 +59,7 @@ public:
 
 private:
 	std::vector<std::unique_ptr<PipelinedModule>> modules;
+	bool isLowLatency;
 
 	std::mutex mutex;
 	std::condition_variable condition;

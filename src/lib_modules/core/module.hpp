@@ -25,18 +25,25 @@ public:
 		return pins[i].get();
 	}
 
+	void setLowLatency(bool isLowLatency) {
+		m_isLowLatency = isLowLatency;
+	}
+
 protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
 
 	template<typename T>
 	T* addPin(T* p) {
+		if (m_isLowLatency)
+			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
 		pins.push_back(uptr(p));
 		return p;
 	}
 
 private:
 	std::vector<std::unique_ptr<IPin>> pins;
+	bool m_isLowLatency = false;
 };
 
 }

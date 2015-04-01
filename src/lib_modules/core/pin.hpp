@@ -24,7 +24,7 @@ struct IPin {
 	}
 	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
 	virtual IProps* getProps() const = 0;
-	virtual void setProps(IProps *props) = 0; /*TODO: attached with every emitted packet. shared_data<>?*/
+	virtual void setProps(IProps *props) = 0;
 	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
 };
 
@@ -48,16 +48,17 @@ size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
 	return ConnectPin(p, functor, executor);
 }
 
-//TODO: the pin could check the bool result (currently done by the allocator) and retry on failure (but is it its role?)
 template<typename Allocator, typename Signal>
 class PinT : public IPin {
 public:
+	typedef Allocator AllocatorType;
+
 	PinT(IProps *props = nullptr)
-		: props(props) {
+		: allocator(new Allocator), props(props) {
 	}
 
 	~PinT() {
-		allocator.unblock();
+		allocator->unblock();
 	}
 
 	size_t emit(std::shared_ptr<const Data> data) {
@@ -69,7 +70,7 @@ public:
 	}
 
 	std::shared_ptr<typename Allocator::MyType> getBuffer(size_t size) {
-		return allocator.getBuffer(size);
+		return allocator->getBuffer(size);
 	}
 
 	ISignal<void(std::shared_ptr<const Data>)>& getSignal() override {
@@ -86,10 +87,13 @@ public:
 	void setProps(IProps *props) {
 		this->props = uptr(props);
 	}
+	void setAllocator(Allocator *props) {
+		this->allocator = uptr(props);
+	}
 
 private:
-	Allocator allocator;
 	Signal signal;
+	std::unique_ptr<Allocator> allocator;
 	std::unique_ptr<IProps> props;
 };
 

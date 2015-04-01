@@ -7,7 +7,7 @@ namespace Modules {
 namespace Transform {
 
 VideoConvert::VideoConvert(Resolution srcRes, AVPixelFormat srcFormat, Resolution dstRes, AVPixelFormat dstFormat)
-	: srcRes(srcRes), dstRes(dstRes), dstFormat(dstFormat) {
+: srcRes(srcRes), dstRes(dstRes), dstFormat(dstFormat), picAlloc(ALLOC_NUM_BLOCKS_DEFAULT), rawAlloc(ALLOC_NUM_BLOCKS_DEFAULT) {
 	m_SwContext = sws_getContext(srcRes.width, srcRes.height, srcFormat, dstRes.width, dstRes.height, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
 	output = addPin(new PinDefault);
 }
