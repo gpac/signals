@@ -59,13 +59,13 @@ LibavDecode::~LibavDecode() {
 
 bool LibavDecode::processAudio(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
-	auto out = audioPin->getBuffer(0);
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
 		return false;
 	}
 	if (gotFrame) {
+		auto out = audioPin->getBuffer(0);
 		//TODO: not supposed to change across the session but the pin doesn't hold the right type
 		PcmFormat pcmFormat;
 		libavFrame2pcmConvert(avFrame->get(), &pcmFormat);
@@ -108,13 +108,13 @@ void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 
 bool LibavDecode::processVideo(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
-	auto pic = videoPin->getBuffer(0);
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return false;
 	}
 	if (gotPicture) {
+		auto pic = videoPin->getBuffer(0);
 		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
 		videoPin->emit(pic);
