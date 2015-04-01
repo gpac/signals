@@ -8,11 +8,14 @@
 
 namespace Modules {
 
+static const size_t ALLOC_NUM_BLOCKS_DEFAULT = 10;
+static const size_t ALLOC_NUM_BLOCKS_LOW_LATENCY = 1;
+
 template<typename DataType>
 class PacketAllocator {
 public:
 	typedef DataType MyType;
-	PacketAllocator(size_t numBlocks = 10)
+	PacketAllocator(size_t numBlocks = ALLOC_NUM_BLOCKS_DEFAULT)
 		: deleter(this) {
 		for(size_t i=0; i < numBlocks; ++i) {
 			freeBlocks.push(OneBufferIsFree);
