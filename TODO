@@ -30,9 +30,10 @@ Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?Articl
 http://dlib.net/
 Pipeline -> Containers
 DashCast:
-- low latency
+- test player
+- low latency -> codec ok, allocator to be optimized
 - resolution as a param
-- dshow input -> webcam
+- dshow input -> webcam : https://trac.ffmpeg.org/wiki/Capture/Desktop
 - multi-rep
 4K60:10/IntelTranscodingSupport->libMFX
 Muxing

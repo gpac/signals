@@ -38,18 +38,22 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Encode {
 
-LibavEncode::LibavEncode(Type type)
-	: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1) {
+LibavEncode::LibavEncode(Type type, bool isLowLatency)
+: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1), isLowLatency(isLowLatency) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
 		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
 		generalOptions = "-vcodec libx264 -r 25 -pass 1"; //TODO
+		if (isLowLatency)
+			codecOptions += " -preset ultrafast -tune zerolatency";
 		codecName = "vcodec";
 		break;
 	case Audio:
 		codecOptions = "-b 192000"; //TODO
 		generalOptions = "-acodec libvo_aacenc"; //TODO
+		if (isLowLatency)
+			Log::msg(Log::Info, "[libav_encode] low latency has no effect for audio.");
 		codecName = "acodec";
 		break;
 	default:
