@@ -117,6 +117,7 @@
     <ClInclude Include="transform\video_convert.hpp">
       <Filter>src\transform</Filter>
     </ClInclude>
+    <ClInclude Include="media.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common\libav.cpp">

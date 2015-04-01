@@ -186,6 +186,7 @@
   <ItemGroup>
     <ClCompile Include="dashcastx.cpp" />
     <ClCompile Include="options.cpp" />
+    <ClCompile Include="pipeliner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib_media\media.vcxproj">
@@ -200,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="options.hpp" />
+    <ClInclude Include="pipeliner.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
