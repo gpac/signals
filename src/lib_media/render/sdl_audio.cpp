@@ -12,6 +12,7 @@ namespace Modules {
 namespace {
 SDL_AudioSpec SDLAudioSpecConvert(const PcmFormat *cfg) {
 	SDL_AudioSpec audioSpec;
+	memset(&audioSpec, 0, sizeof(audioSpec));
 	audioSpec.freq = cfg->sampleRate;
 	audioSpec.channels = cfg->numChannels;
 	switch (cfg->sampleFormat) {
@@ -30,24 +31,34 @@ SDLAudio* SDLAudio::create(IClock* clock) {
 	return new SDLAudio(clock);
 }
 
-SDLAudio::SDLAudio(IClock* clock) : m_clock(clock), pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)), m_FifoTime(0) {
-	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(pcmFormat.get());
+bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
+	SDL_CloseAudio();
+
+	SDL_AudioSpec realSpec;
+	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(pcmData);
 	audioSpec.samples = 1024;  /* Good low-latency value for callback */
 	audioSpec.callback = &SDLAudio::staticFillAudio;
 	audioSpec.userdata = this;
-	bytesPerSample = pcmFormat->getBytesPerSample();
-
-	SDL_AudioSpec realSpec;
+	bytesPerSample = pcmData->getBytesPerSample();
 
 	if (SDL_OpenAudio(&audioSpec, &realSpec) < 0) {
 		Log::msg(Log::Warning, "[SDLAudio render] Couldn't open audio: %s", SDL_GetError());
-		throw std::runtime_error("Audio output creation failed");
+		return false;
 	}
 
 	m_Latency = timescaleToClock(realSpec.samples, realSpec.freq);
 	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency * 1000.0f / IClock::Rate);
 
+	*pcmFormat.get() = *pcmData;
+
 	SDL_PauseAudio(0);
+
+	return true;
+}
+
+SDLAudio::SDLAudio(IClock* clock) : m_clock(clock), pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)), m_FifoTime(0) {
+	if (!reconfigure(pcmFormat.get()))
+		throw std::runtime_error("Audio output creation failed");
 }
 
 SDLAudio::~SDLAudio() {
@@ -68,15 +79,20 @@ SDLAudio::~SDLAudio() {
 
 void SDLAudio::process(std::shared_ptr<const Data> data) {
 	auto pcmData = safe_cast<const PcmData>(data);
-	if (pcmData->getFormat() != *pcmFormat)
-		throw std::runtime_error("[SDLAudio] Incompatible audio data");
+	if (pcmData->getFormat() != *pcmFormat) {
+		Log::msg(Log::Warning, "[SDLAudio render] Incompatible audio data: reconfigure.");
+		if (!reconfigure(&pcmData->getFormat())) {
+			throw std::runtime_error("[SDLAudio] Reconfigure failed: incompatible audio data. Instantiate a converter.");
+		}
+	}
 
 	{
 		std::lock_guard<std::mutex> lg(m_Mutex);
 		if(m_Fifo.bytesToRead() == 0) {
 			m_FifoTime = pcmData->getTime() + PREROLL_DELAY;
 		}
-		m_Fifo.write(pcmData->data(), (size_t)pcmData->size());
+		for (int i = 0; i < pcmData->getFormat().numPlanes; ++i)
+			m_Fifo.write(pcmData->getPlane(i), (size_t)pcmData->getPlaneSize(i));
 	}
 }
 

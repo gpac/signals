@@ -15,7 +15,6 @@ struct SDL_Texture;
 namespace Modules {
 namespace Render {
 
-//FIXME: check it doesn't need to run in thread 0, like most render on Unix do because of X11...
 class SDLAudio : public Module {
 public:
 	static SDLAudio* create(IClock* clock = g_DefaultClock);
@@ -24,6 +23,7 @@ public:
 
 private:
 	SDLAudio(IClock* clock);
+	bool reconfigure(PcmFormat const * const pcmFormat);
 	static void staticFillAudio(void *udata, uint8_t *stream, int len);
 	void fillAudio(uint8_t *stream, int len);
 
