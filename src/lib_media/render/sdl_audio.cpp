@@ -33,6 +33,10 @@ SDLAudio* SDLAudio::create(IClock* clock) {
 
 bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
 	SDL_CloseAudio();
+	if (pcmData->numPlanes > 1) {
+		Log::msg(Log::Warning, "[SDLAudio render] Support for planar audio is buggy. Please set an audio converter.");
+		return false;
+	}
 
 	SDL_AudioSpec realSpec;
 	SDL_AudioSpec audioSpec = SDLAudioSpecConvert(pcmData);
