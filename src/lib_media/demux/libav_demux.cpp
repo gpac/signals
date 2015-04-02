@@ -22,19 +22,19 @@ namespace Demux {
 LibavDemux* LibavDemux::create(const std::string &url) {
 	struct AVFormatContext *formatCtx = NULL;
 	if (!(formatCtx = avformat_alloc_context())) {
-		Log::msg(Log::Warning, "Module LibavDemux: Can't allocate format context");
+		Log::msg(Log::Warning, "[LibavDemux] Can't allocate format context");
 		throw std::runtime_error("Format Context allocation failed.");
 	}
 
 	if (avformat_open_input(&formatCtx, url.c_str(), NULL, NULL))  {
-		Log::msg(Log::Warning, "Module LibavDemux: Error when opening input '%s'", url);
+		Log::msg(Log::Warning, "[LibavDemux] Error when opening input '%s'", url);
 		if (formatCtx) avformat_close_input(&formatCtx);
 		throw std::runtime_error("Format Context init failed.");
 	}
 
 	//if you don't call you may miss the first frames
 	if (avformat_find_stream_info(formatCtx, NULL) < 0) {
-		Log::msg(Log::Warning, "Module LibavDemux: Couldn't get additional video stream info");
+		Log::msg(Log::Warning, "[LibavDemux] Couldn't get additional video stream info");
 		avformat_close_input(&formatCtx);
 		throw std::runtime_error("Couldn't find stream info.");
 	}
@@ -62,7 +62,7 @@ void LibavDemux::process(std::shared_ptr<const Data> /*data*/) {
 		if (status < 0) {
 			if (status == (int)AVERROR_EOF || (m_formatCtx->pb && m_formatCtx->pb->eof_reached)) {
 			} else if (m_formatCtx->pb && m_formatCtx->pb->error) {
-				Log::msg(Log::Warning, "[Libavcodec_55] Stream contains an irrecoverable error - leaving");
+				Log::msg(Log::Warning, "[LibavDemux] Stream contains an irrecoverable error - leaving");
 			}
 			return;
 		}
