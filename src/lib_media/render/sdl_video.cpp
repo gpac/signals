@@ -17,13 +17,13 @@ void SDLVideo::doRender() {
 	resolution = VIDEO_RESOLUTION;
 	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resolution.width, resolution.height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
-		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create window: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create window: %s", SDL_GetError());
 		throw std::runtime_error("Window creation failed");
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
-		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create renderer: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create renderer: %s", SDL_GetError());
 		SDL_DestroyWindow(window);
 		throw std::runtime_error("Renderer creation failed");
 	}
@@ -44,7 +44,8 @@ void SDLVideo::doRender() {
 		auto data = m_dataQueue.pop();
 		if(!data)
 			break;
-		processOneFrame(data);
+		if (!processOneFrame(data))
+			break;
 	}
 
 	SDL_DestroyTexture(texture);
@@ -52,8 +53,7 @@ void SDLVideo::doRender() {
 	SDL_DestroyWindow(window);
 }
 
-void SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
-	/* Loop, waiting for QUIT or RESIZE */
+bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
@@ -65,8 +65,8 @@ void SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 			}
 			break;
 		case SDL_QUIT:
-			exit(1);
-			return;
+			exit(1); //Romain: improve with pipeline (null termination data)
+			return false;
 		}
 	}
 
@@ -92,6 +92,8 @@ void SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 	SDL_RenderPresent(renderer);
 
 	m_NumFrames++;
+
+	return true;
 }
 
 void SDLVideo::createTexture() {
@@ -102,7 +104,7 @@ void SDLVideo::createTexture() {
 
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STATIC, resolution.width, resolution.height);
 	if (!texture) {
-		Log::msg(Log::Warning, "[SDLVideo render]Couldn't set create texture: %s", SDL_GetError());
+		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create texture: %s", SDL_GetError());
 		throw std::runtime_error("Texture creation failed");
 	}
 }

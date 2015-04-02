@@ -22,7 +22,7 @@ public:
 private:
 
 	void doRender();
-	void processOneFrame(std::shared_ptr<const Data> data);
+	bool processOneFrame(std::shared_ptr<const Data> data);
 	void createTexture();
 
 	IClock* const m_clock;

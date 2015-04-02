@@ -66,7 +66,6 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 	}
 	if (gotFrame) {
 		auto out = audioPin->getBuffer(0);
-		//TODO: not supposed to change across the session but the pin doesn't hold the right type
 		PcmFormat pcmFormat;
 		libavFrame2pcmConvert(avFrame->get(), &pcmFormat);
 		out->setFormat(pcmFormat);
