@@ -5,7 +5,6 @@
 #include "../common/pcm.hpp"
 #include "fifo.hpp"
 #include <mutex>
-#include <vector>
 #include <memory.h>
 
 struct SDL_Rect;
