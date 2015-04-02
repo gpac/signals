@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <memory.h>
+#include <vector>
 
 template<typename T>
 class GenericFifo {
