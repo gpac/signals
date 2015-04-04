@@ -19,7 +19,7 @@ unittest("render: A/V sync, one thread") {
 	ConnectPinToModule(videoGen->getPin(0), videoRender);
 
 	auto soundGen = uptr(new In::SoundGenerator);
-	auto soundRender = uptr(Render::SDLAudio::create(clock.get()));
+	auto soundRender = uptr(new Render::SDLAudio(clock.get()));
 	ConnectPinToModule(soundGen->getPin(0), soundRender);
 
 	for(int i=0; i < 25*5; ++i) {
@@ -53,7 +53,7 @@ unittest("render: A/V sync: separate threads") {
 	};
 	auto g = [&]() {
 		auto soundGen = uptr(new In::SoundGenerator);
-		auto soundRender = uptr(Render::SDLAudio::create());
+		auto soundRender = uptr(new Render::SDLAudio());
 		ConnectPinToModule(soundGen->getPin(0), soundRender);
 		for(int i=0; i < 25*5; ++i) {
 			soundGen->process(nullptr);

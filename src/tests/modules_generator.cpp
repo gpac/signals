@@ -15,7 +15,7 @@ namespace {
 
 unittest("sound generator") {
 	auto soundGen = uptr(new In::SoundGenerator);
-	auto render = uptr(Render::SDLAudio::create());
+	auto render = uptr(new Render::SDLAudio());
 
 	ConnectPinToModule(soundGen->getPin(0),  render);
 

@@ -27,10 +27,6 @@ SDL_AudioSpec SDLAudioSpecConvert(const PcmFormat *cfg) {
 
 namespace Render {
 
-SDLAudio* SDLAudio::create(IClock* clock) {
-	return new SDLAudio(clock);
-}
-
 bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
 	SDL_CloseAudio();
 	if (pcmData->numPlanes > 1) {

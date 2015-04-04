@@ -28,14 +28,12 @@ Module* createConverter(PropsDecoder *decoderProps) {
 		auto srcRes = Resolution(srcCtx->width, srcCtx->height);
 		auto dstRes = Resolution(320, 180);
 		return new Transform::VideoConvert(srcRes, srcCtx->pix_fmt, dstRes, srcCtx->pix_fmt);
-	}
-	else if (codecType == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "[Converter] Found audio stream");
 		auto baseFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 		auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 		return new Transform::AudioConvert(baseFormat, otherFormat);
-	}
-	else {
+	} else {
 		Log::msg(Log::Info, "[Converter] Found unknown stream");
 		return nullptr;
 	}
