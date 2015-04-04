@@ -15,9 +15,6 @@ StrandedPoolModuleExecutor::StrandedPoolModuleExecutor() : strand(g_threadPool.g
 StrandedPoolModuleExecutor::StrandedPoolModuleExecutor(asio::thread_pool &threadPool) : strand(threadPool.get_executor()) {
 }
 
-StrandedPoolModuleExecutor::~StrandedPoolModuleExecutor() {
-}
-
 std::shared_future<NotVoid<void>> StrandedPoolModuleExecutor::operator() (const std::function<void(std::shared_ptr<const Data>)> &fn, std::shared_ptr<const Data> data) {
 	std::shared_future<NotVoid<void>> future = std::async(std::launch::deferred, [] { return NotVoid<void>(); });
 	auto closure = [future, fn, data]() -> void {
