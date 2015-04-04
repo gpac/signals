@@ -5,8 +5,8 @@
 
 
 namespace ffpp {
-struct SwResampler;
-struct Frame;
+class SwResampler;
+class Frame;
 }
 
 namespace Modules {
@@ -14,16 +14,19 @@ namespace Transform {
 
 class AudioConvert : public Module {
 public:
-	AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat);
-	~AudioConvert();
+	AudioConvert(PcmFormat &dstFormat);
+	AudioConvert(PcmFormat &srcFormat, PcmFormat &dstFormat);
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 
 private:
+	void configure(const PcmFormat &srcFormat);
+	void reconfigure(const PcmFormat &srcFormat);
 	PcmFormat srcPcmFormat, dstPcmFormat;
-	std::unique_ptr<ffpp::SwResampler> const m_Swr;
+	std::unique_ptr<ffpp::SwResampler> m_Swr;
 	uint64_t accumulatedTimeInDstSR;
 	PinPcm* output;
+	bool autoConfigure;
 };
 
 }
