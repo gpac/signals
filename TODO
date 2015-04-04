@@ -30,10 +30,10 @@ Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?Articl
 http://dlib.net/
 Pipeline -> Containers
 DashCast:
-- pipeline the player
-- low latency -> allow fine-grain threading
 - resolution as a param
 - dshow input -> webcam : https://trac.ffmpeg.org/wiki/Capture/Desktop
+- DTSC support
+- low latency -> allow fine-grain threading
 - multi-rep
 4K60:10/IntelTranscodingSupport->libMFX
 Muxing
