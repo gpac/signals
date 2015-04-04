@@ -32,7 +32,8 @@ private:
 	asio::strand<asio::thread_pool::executor_type> strand;
 };
 
-static ExecutorSync<void(std::shared_ptr<const Data>)> defaultExecutor;
-//TODO: static StrandedPoolModuleExecutor defaultExecutor;
+static ExecutorSync<void(std::shared_ptr<const Data>)> g_executorSync;
+//static StrandedPoolModuleExecutor g_StrandedExecutor;
+#define defaultExecutor g_executorSync
 
 }
