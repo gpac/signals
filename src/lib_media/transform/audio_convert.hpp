@@ -14,8 +14,8 @@ namespace Transform {
 
 class AudioConvert : public Module {
 public:
-	AudioConvert(PcmFormat &dstFormat);
-	AudioConvert(PcmFormat &srcFormat, PcmFormat &dstFormat);
+	AudioConvert(const PcmFormat &dstFormat);
+	AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstFormat);
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 

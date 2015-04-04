@@ -22,6 +22,7 @@ public:
 
 private:
 	bool reconfigure(PcmFormat const * const pcmFormat);
+	void push(std::shared_ptr<const Data> data);
 	static void staticFillAudio(void *udata, uint8_t *stream, int len);
 	void fillAudio(uint8_t *stream, int len);
 
@@ -33,7 +34,8 @@ private:
 	IClock* const m_clock;
 	static auto const audioJitterTolerance = 500;
 	uint8_t bytesPerSample;
-	std::unique_ptr<PcmFormat> pcmFormat;
+	std::unique_ptr<const PcmFormat> pcmFormat;
+	std::unique_ptr<Module> m_converter;
 	std::mutex m_Mutex;
 	Fifo m_Fifo;
 	uint64_t m_FifoTime;
