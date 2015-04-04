@@ -11,7 +11,7 @@ public:
 
 	void write(const T* data, size_t len) {
 		if (!len) return;
-		m_data.resize(m_writePos + len); //Romain: the pb may come from multiple pushes here?
+		m_data.resize(m_writePos + len);
 		memcpy(&m_data[m_writePos], data, len);
 		m_writePos += len;
 	}
