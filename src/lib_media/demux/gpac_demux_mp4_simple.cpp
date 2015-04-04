@@ -7,18 +7,18 @@
 namespace Demux {
 
 class ISOFileReader {
-	public:
-		void init(GF_ISOFile* m) {
-			movie.reset(new gpacpp::IsoFile(m));
-			u32 trackId = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
-			trackNumber = movie->getTrackById(trackId);
-			sampleCount = movie->getSampleCount(trackNumber);
-			sampleIndex = 1;
-		}
+public:
+	void init(GF_ISOFile* m) {
+		movie.reset(new gpacpp::IsoFile(m));
+		u32 trackId = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
+		trackNumber = movie->getTrackById(trackId);
+		sampleCount = movie->getSampleCount(trackNumber);
+		sampleIndex = 1;
+	}
 
-		std::unique_ptr<gpacpp::IsoFile> movie;
-		uint32_t trackNumber;
-		uint32_t sampleIndex, sampleCount;
+	std::unique_ptr<gpacpp::IsoFile> movie;
+	uint32_t trackNumber;
+	uint32_t sampleIndex, sampleCount;
 };
 
 
@@ -38,7 +38,7 @@ GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
 }
 
 GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
-	: reader(new ISOFileReader) {
+: reader(new ISOFileReader) {
 	reader->init(movie);
 	output = addPin(new PinDefault);
 }

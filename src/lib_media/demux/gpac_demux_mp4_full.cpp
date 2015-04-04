@@ -11,30 +11,30 @@ namespace Demux {
 //TODO: set appropriate CCO credits
 //see http://sourceforge.net/p/gpac/code/HEAD/tree/trunk/gpac/applications/testapps/fmp4demux/main.c
 class ISOProgressiveReader {
-	public:
-		ISOProgressiveReader()
-			: data(0), refreshBoxes(GF_TRUE), samplesProcessed(0), sampleIndex(1), sampleCount(0), trackNumber(1) {
-		}
+public:
+	ISOProgressiveReader()
+		: data(0), refreshBoxes(GF_TRUE), samplesProcessed(0), sampleIndex(1), sampleCount(0), trackNumber(1) {
+	}
 
-		~ISOProgressiveReader() {
-		}
+	~ISOProgressiveReader() {
+	}
 
-		/* data buffer to be read by the parser */
-		std::vector<u8> data;
-		/* URL used to pass a buffer to the parser */
-		std::string dataUrl;
-		/* The ISO file structure created for the parsing of data */
-		std::unique_ptr<gpacpp::IsoFile> movie;
-		/* Boolean state to indicate if the needs to be parsed */
-		Bool refreshBoxes;
-		u32 samplesProcessed;
-		u32 sampleIndex; /* samples are numbered starting from 1 */
-		u32 sampleCount;
-		int trackNumber; //TODO: multi-tracks
+	/* data buffer to be read by the parser */
+	std::vector<u8> data;
+	/* URL used to pass a buffer to the parser */
+	std::string dataUrl;
+	/* The ISO file structure created for the parsing of data */
+	std::unique_ptr<gpacpp::IsoFile> movie;
+	/* Boolean state to indicate if the needs to be parsed */
+	Bool refreshBoxes;
+	u32 samplesProcessed;
+	u32 sampleIndex; /* samples are numbered starting from 1 */
+	u32 sampleCount;
+	int trackNumber; //TODO: multi-tracks
 };
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
-	: reader(new ISOProgressiveReader) {
+: reader(new ISOProgressiveReader) {
 	output = addPin(new PinDefault);
 }
 
