@@ -7,7 +7,7 @@
 struct AVCodecContext;
 
 namespace ffpp {
-struct Frame;
+class Frame;
 }
 
 class AudioConverter;
