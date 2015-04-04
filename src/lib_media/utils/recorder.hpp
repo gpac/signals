@@ -8,7 +8,6 @@ namespace Utils {
 
 class Recorder : public Module {
 public:
-	~Recorder();
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 

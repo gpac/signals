@@ -8,17 +8,33 @@
 namespace Modules {
 namespace Transform {
 
-//TODO: we don't need the src format since it is attached to the data
-AudioConvert::AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat)
+AudioConvert::AudioConvert(PcmFormat &dstFormat)
+: dstPcmFormat(dstFormat), m_Swr(nullptr), accumulatedTimeInDstSR(0), autoConfigure(true) {
+	memset(&srcPcmFormat, 0, sizeof(srcPcmFormat));
+	output = addPin(new PinPcm);
+}
+
+AudioConvert::AudioConvert(PcmFormat &srcFormat, PcmFormat &dstFormat)
 : srcPcmFormat(srcFormat), dstPcmFormat(dstFormat),
-	m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0) {
+  m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0), autoConfigure(false) {
+	configure(srcPcmFormat);
+	output = addPin(new PinPcm);
+}
+
+void AudioConvert::reconfigure(const PcmFormat &srcFormat) {
+	flush();
+	m_Swr = uptr(new ffpp::SwResampler);
+	configure(srcFormat);
+	srcPcmFormat = srcFormat;
+}
+
+void AudioConvert::configure(const PcmFormat &srcFormat) {
 	AVSampleFormat avSrcFmt, avDstFmt;
 	uint64_t avSrcChannelLayout, avDstChannelLayout;
 	int avSrcNumChannels, avDstNumChannels, avSrcSampleRate, avDstSampleRate;
-
-	libavAudioCtxConvertLibav(&srcPcmFormat, avSrcSampleRate, (int&)avSrcFmt, avSrcNumChannels, avSrcChannelLayout);
+	libavAudioCtxConvertLibav(&srcFormat   , avSrcSampleRate, (int&)avSrcFmt, avSrcNumChannels, avSrcChannelLayout);
 	libavAudioCtxConvertLibav(&dstPcmFormat, avDstSampleRate, (int&)avDstFmt, avDstNumChannels, avDstChannelLayout);
-	
+
 	m_Swr->setInputSampleFmt(avSrcFmt);
 	m_Swr->setInputLayout(avSrcChannelLayout);
 	m_Swr->setInputSampleRate(avSrcSampleRate);
@@ -26,15 +42,11 @@ AudioConvert::AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat)
 	m_Swr->setOutputLayout(avDstChannelLayout);
 	m_Swr->setOutputSampleRate(avDstSampleRate);
 	m_Swr->init();
-
-	output = addPin(new PinPcm);
 }
 
 void AudioConvert::flush() {
-	process(nullptr);
-}
-
-AudioConvert::~AudioConvert() {
+	if (m_Swr.get())
+		process(nullptr);
 }
 
 void AudioConvert::process(std::shared_ptr<const Data> data) {
@@ -42,8 +54,14 @@ void AudioConvert::process(std::shared_ptr<const Data> data) {
 	uint8_t * const * pSrc;
 	auto audioData = safe_cast<const PcmData>(data);
 	if (audioData) {
-		if (audioData->getFormat() != srcPcmFormat)
-			throw std::runtime_error("[AudioConvert] Incompatible input audio data");
+		if (audioData->getFormat() != srcPcmFormat) {
+			if (autoConfigure) {
+				Log::msg(Log::Info, "[AudioConvert] Incompatible input audio data. Reconfiguring.");
+				reconfigure(audioData->getFormat());
+			} else {
+				throw std::runtime_error("[AudioConvert] Incompatible input audio data.");
+			}
+		}
 
 		srcNumSamples = audioData->size() / audioData->getFormat().getBytesPerSample();
 		dstNumSamples = divUp(srcNumSamples * dstPcmFormat.sampleRate, (uint64_t)srcPcmFormat.sampleRate);
@@ -61,8 +79,8 @@ void AudioConvert::process(std::shared_ptr<const Data> data) {
 	out->setFormat(dstPcmFormat);
 	for (uint8_t i=0; i < dstPcmFormat.numPlanes; ++i)
 		out->setPlane(i, nullptr, dstBufferSize / dstPcmFormat.numPlanes);
-	auto pDst = (uint8_t**)out->getPlanes();
 
+	auto pDst = (uint8_t**)out->getPlanes();
 	auto const outNumSamples = m_Swr->convert(pDst, (int)dstNumSamples, (const uint8_t**)pSrc, (int)srcNumSamples);
 
 	auto const outPlaneSize = outNumSamples * dstPcmFormat.getBytesPerSample() / dstPcmFormat.numPlanes;

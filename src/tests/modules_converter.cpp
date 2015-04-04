@@ -68,6 +68,62 @@ unittest("audio converter: 44100 to 48000") {
 	ASSERT(!thrown);
 }
 
+unittest("audio converter: dynamic formats") {
+	auto soundGen = uptr(new In::SoundGenerator);
+	auto recorder = uptr(new Utils::Recorder);
+
+	PcmFormat format;;
+	auto converter = uptr(new Transform::AudioConvert(format));
+
+	ConnectPinToModule(soundGen->getPin(0), converter);
+	ConnectPinToModule(converter->getPin(0), recorder);
+
+	{
+		bool thrown = false;
+		try {
+			soundGen->process(nullptr);
+		}
+		catch (std::exception const& e) {
+			std::cerr << "Expected error: " << e.what() << std::endl;
+			thrown = true;
+		}
+		ASSERT(!thrown);
+	}
+
+	{
+		bool thrown = false;
+		try {
+			Tools::Profiler profilerGlobal("  Send to converter");
+			soundGen->process(nullptr);
+		}
+		catch (std::exception const& e) {
+			std::cerr << "Expected error: " << e.what() << std::endl;
+			thrown = true;
+		}
+		ASSERT(!thrown);
+	}
+
+	converter->flush();
+	converter->getPin(0)->getSignal().disconnect(0);
+	recorder->process(nullptr);
+
+	{
+		bool thrown = false;
+		try {
+			Tools::Profiler profilerGlobal("  Passthru");
+			std::shared_ptr<const Data> data;
+			while (data = recorder->pop()) {
+				converter->process(data);
+			}
+		}
+		catch (std::exception const& e) {
+			std::cerr << "Expected error: " << e.what() << std::endl;
+			thrown = true;
+		}
+		ASSERT(!thrown);
+	}
+}
+
 unittest("video converter: pass-through") {
 	auto res = Resolution(16, 32);
 	int numFrames = 0;

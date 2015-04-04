@@ -8,9 +8,6 @@ void Recorder::flush() {
 	record.clear();
 }
 
-Recorder::~Recorder() {
-}
-
 void Recorder::process(std::shared_ptr<const Data> data) {
 	record.push(data);
 }
