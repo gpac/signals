@@ -23,9 +23,8 @@ typedef IExecutor<void(std::shared_ptr<const Data>)> IProcessExecutor;
 //when tasks belong to a strand, they are processed non-concurrently in FIFO order
 class StrandedPoolModuleExecutor : public IProcessExecutor {
 public:
-	StrandedPoolModuleExecutor(); //uses the default Modules thread pool
+	StrandedPoolModuleExecutor();
 	StrandedPoolModuleExecutor(asio::thread_pool &threadPool);
-	~StrandedPoolModuleExecutor();
 	std::shared_future<NotVoid<void>> operator() (const std::function<void(std::shared_ptr<const Data>)> &fn, std::shared_ptr<const Data>);
 
 private:
