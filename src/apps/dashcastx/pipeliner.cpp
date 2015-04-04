@@ -54,23 +54,20 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
 		auto decoderProps = safe_cast<PropsDecoder>(props);
-
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
 
 		pipeline.connect(demux->getPin(i), decoder);
 
 		auto converter = pipeline.addModule(createConverter(decoderProps));
-		if (!converter) {
+		if (!converter)
 			continue;
-		}
 
 		connect(decoder, converter);
 
 		auto rawEncoder = createEncoder(decoderProps, opt.isLive);
 		auto encoder = pipeline.addModule(rawEncoder);
-		if (!encoder) {
+		if (!encoder)
 			continue;
-		}
 
 		connect(converter, encoder);
 
