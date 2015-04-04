@@ -4,7 +4,6 @@
 namespace Signals {
 
 /* member function helper */
-
 template<typename Result, typename Class, typename MemberFunction>
 class MemberFunctor {
 public:
@@ -29,7 +28,7 @@ MEMBER_FUNCTOR(Class* objectPtr, Result (Class::*memberFunction) (Args...)) {
 
 template<typename B, typename C, typename D, typename E>
 size_t Connect(B& sig, C objectSlot, D memberFunctionSlot, E& executor) {
-auto functor = MEMBER_FUNCTOR(objectSlot, memberFunctionSlot);
+	auto functor = MEMBER_FUNCTOR(objectSlot, memberFunctionSlot);
 	return sig.connect(functor, executor);
 }
 
