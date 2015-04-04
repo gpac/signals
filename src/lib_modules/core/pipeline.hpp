@@ -50,7 +50,7 @@ private:
 
 class Pipeline : public ICompletionNotifier {
 public:
-	Pipeline(bool isLowLatency);
+	Pipeline(bool isLowLatency = false);
 	PipelinedModule* addModule(Module* rawModule, bool isSource = false);
 	void connect(IPin* pin, PipelinedModule *module);
 	void start();

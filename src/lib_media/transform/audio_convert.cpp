@@ -9,9 +9,9 @@ namespace Modules {
 namespace Transform {
 
 //TODO: we don't need the src format since it is attached to the data
-	: srcPcmFormat(srcFormat),
-	  dstPcmFormat(dstFormat),
-	  m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0) {
+AudioConvert::AudioConvert(PcmFormat srcFormat, PcmFormat dstFormat)
+: srcPcmFormat(srcFormat), dstPcmFormat(dstFormat),
+	m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0) {
 	AVSampleFormat avSrcFmt, avDstFmt;
 	uint64_t avSrcChannelLayout, avDstChannelLayout;
 	int avSrcNumChannels, avDstNumChannels, avSrcSampleRate, avDstSampleRate;
