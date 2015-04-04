@@ -66,7 +66,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
-	auto render = uptr(Render::SDLAudio::create());
+	auto render = uptr(new Render::SDLAudio());
 
 	ConnectPinToModule(demux->getPin(audioIndex), decode);
 	ConnectPinToModule(decode->getPin(0), converter);

@@ -16,12 +16,11 @@ namespace Render {
 
 class SDLAudio : public Module {
 public:
-	static SDLAudio* create(IClock* clock = g_DefaultClock);
+	SDLAudio(IClock* clock = g_DefaultClock);
 	~SDLAudio();
 	void process(std::shared_ptr<const Data> data) override;
 
 private:
-	SDLAudio(IClock* clock);
 	bool reconfigure(PcmFormat const * const pcmFormat);
 	static void staticFillAudio(void *udata, uint8_t *stream, int len);
 	void fillAudio(uint8_t *stream, int len);

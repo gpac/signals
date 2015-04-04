@@ -10,7 +10,7 @@ Module* createRenderer(int codecType) {
 		return new Render::SDLVideo();
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "Found audio stream");
-		return Render::SDLAudio::create();
+		return new Render::SDLAudio();
 	} else {
 		Log::msg(Log::Info, "Found unknown stream");
 		return new Out::Null;
