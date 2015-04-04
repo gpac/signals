@@ -7,7 +7,7 @@
 struct AVStream;
 
 namespace ffpp {
-struct Frame;
+class Frame;
 }
 
 using namespace Modules;
