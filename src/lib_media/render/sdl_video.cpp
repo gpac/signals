@@ -65,7 +65,7 @@ bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 			}
 			break;
 		case SDL_QUIT:
-			exit(1); //Romain: improve with pipeline (null termination data)
+			exit(1);
 			return false;
 		}
 	}
