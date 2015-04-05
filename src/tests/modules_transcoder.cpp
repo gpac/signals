@@ -128,11 +128,10 @@ unittest("transcoder: jpg to resized jpg") {
 	auto decoderProps = safe_cast<PropsDecoder>(props);
 	auto srcCtx = decoderProps->getAVCodecContext();
 
-	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
-	auto dstRes = Resolution(srcCtx->width / 2, srcCtx->height / 2);
-
 	auto reader = uptr(In::File::create(filename));
-	auto converter = uptr(new Transform::VideoConvert(srcRes, srcCtx->pix_fmt, dstRes, srcCtx->pix_fmt));
+	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
+	auto dstRes = Resolution(srcCtx->width / 2, srcCtx->height / 2);
+	auto converter = uptr(new Transform::VideoConvert(dstRes, srcCtx->pix_fmt));
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
@@ -156,9 +155,8 @@ unittest("transcoder: h264/mp4 to jpg") {
 	auto encoder = uptr(new Encode::JPEGTurboEncode(srcRes));
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
-	auto converter = uptr(new Transform::VideoConvert(
-				srcRes, srcCtx->pix_fmt,
-			 	srcRes, AV_PIX_FMT_RGB24));
+	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
+	auto converter = uptr(new Transform::VideoConvert(srcRes, AV_PIX_FMT_RGB24));
 
 	ConnectPinToModule(demux->getPin(0), decoder);
 	ConnectPinToModule(decoder->getPin(0), converter);
@@ -184,9 +182,8 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
 
 	auto reader = uptr(In::File::create(filename));
-	auto converter = uptr(new Transform::VideoConvert(
-				srcRes, srcCtx->pix_fmt,
-			 	srcRes, AV_PIX_FMT_YUV420P));
+	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
+	auto converter = uptr(new Transform::VideoConvert(srcRes, AV_PIX_FMT_YUV420P));
 
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));

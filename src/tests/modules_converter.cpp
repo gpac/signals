@@ -135,10 +135,7 @@ unittest("video converter: pass-through") {
 	};
 
 	{
-		auto convert = uptr(new Transform::VideoConvert(
-					res, AV_PIX_FMT_YUV420P,
-					res, AV_PIX_FMT_YUV420P
-					));
+		auto convert = uptr(new Transform::VideoConvert(res, AV_PIX_FMT_YUV420P));
 		ConnectPin(convert->getPin(0), onFrame);
 
 		std::shared_ptr<Data> pic = uptr(new Picture(res));
@@ -160,10 +157,7 @@ unittest("video converter: different sizes") {
 	};
 
 	{
-		auto convert = uptr(new Transform::VideoConvert(
-					srcRes, AV_PIX_FMT_YUV420P,
-					dstRes, AV_PIX_FMT_YUV420P
-					));
+		auto convert = uptr(new Transform::VideoConvert(dstRes, AV_PIX_FMT_YUV420P));
 		ConnectPin(convert->getPin(0), onFrame);
 
 		std::shared_ptr<Data> pic = uptr(new Picture(srcRes));

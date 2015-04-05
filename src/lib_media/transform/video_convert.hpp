@@ -8,13 +8,15 @@ namespace Transform {
 
 class VideoConvert : public Module {
 	public:
-		VideoConvert(Resolution srcRes, AVPixelFormat srcFormat, Resolution dstRes, AVPixelFormat dstFormat);
+		VideoConvert(Resolution dstRes, AVPixelFormat dstFormat);
 		~VideoConvert();
 		void process(std::shared_ptr<const Data> data) override;
 
 	private:
+		void reconfigure(const Resolution &srcRes, const AVPixelFormat &srcFormat);
+
 		SwsContext *m_SwContext;
-		Resolution srcRes, dstRes;
+		Resolution m_srcRes, dstRes;
 		AVPixelFormat dstFormat;
 		PacketAllocator<Picture> picAlloc;
 		PacketAllocator<RawData> rawAlloc;
