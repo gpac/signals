@@ -33,6 +33,7 @@ DashCast:
 - resolution as a param
 - dshow input -> webcam : https://trac.ffmpeg.org/wiki/Capture/Desktop
 - DTSC support
+- DASH GPAC input
 - low latency -> allow fine-grain threading
 - multi-rep
 4K60:10/IntelTranscodingSupport->libMFX

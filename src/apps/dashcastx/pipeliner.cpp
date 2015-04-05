@@ -25,9 +25,9 @@ Module* createConverter(PropsDecoder *decoderProps) {
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
 		auto srcCtx = decoderProps->getAVCodecContext();
-		auto srcRes = Resolution(srcCtx->width, srcCtx->height);
 		auto dstRes = Resolution(320, 180);
-		return new Transform::VideoConvert(srcRes, srcCtx->pix_fmt, dstRes, srcCtx->pix_fmt);
+		assert(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
+		return new Transform::VideoConvert(dstRes, srcCtx->pix_fmt);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "[Converter] Found audio stream");
 		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
