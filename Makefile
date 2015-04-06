@@ -70,6 +70,7 @@ UTILS_OBJS:=$(UTILS_SRCS:%.cpp=$(BIN)/%.o)
 ProjectName:=$(SRC)/lib_media
 MEDIA_SRCS:=\
   $(ProjectName)/common/libav.cpp\
+  $(ProjectName)/common/picture.cpp\
   $(ProjectName)/decode/jpegturbo_decode.cpp\
   $(ProjectName)/decode/libav_decode.cpp\
   $(ProjectName)/demux/gpac_demux_mp4_simple.cpp\
@@ -101,7 +102,6 @@ DEPS+=$(LIB_MEDIA_OBJS:%.o=%.deps)
 
 ProjectName:=$(SRC)/lib_modules
 MODULES_SRCS:=\
-  $(ProjectName)/core/data.cpp\
   $(ProjectName)/core/pipeline.cpp\
   $(ProjectName)/core/system_clock.cpp\
   $(ProjectName)/utils/stranded_pool_executor.cpp\
