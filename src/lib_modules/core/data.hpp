@@ -48,7 +48,7 @@ public:
 	uint8_t* data() {
 		return buffer.data();
 	}
-	uint8_t const* data() const {
+	const uint8_t* data() const {
 		return buffer.data();
 	}
 	uint64_t size() const {

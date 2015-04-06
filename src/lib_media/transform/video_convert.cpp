@@ -42,10 +42,10 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 		reconfigure(videoData->getFormat());
 	}
 
-	uint8_t *srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+	uint8_t const* srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	int srcStride[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	for (int i=0; i<3; ++i) {
-		srcSlice[i] = videoData->getComp(i);
+		srcSlice[i] = videoData->getCompConst(i);
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
 

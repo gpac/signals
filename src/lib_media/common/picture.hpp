@@ -70,7 +70,8 @@ public:
 		return m_format.getSize();
 	}
 
-	virtual uint8_t* getComp(int comp) const = 0;
+	virtual const uint8_t* getComp(int comp) const = 0;
+	virtual uint8_t* getComp(int comp) = 0;
 	virtual size_t getPitch(int comp) const = 0;
 	virtual void setResolution(const Resolution &res) = 0;
 
@@ -90,7 +91,10 @@ public:
 	: Picture(res, YUV420) {
 		setResolution(res);
 	}
-	uint8_t* getComp(int comp) const override {
+	const uint8_t* getComp(int comp) const override {
+		return m_comp[comp];
+	}
+	uint8_t* getComp(int comp) override {
 		return m_comp[comp];
 	}
 	size_t getPitch(int comp) const override {
@@ -111,6 +115,28 @@ public:
 private:
 	size_t m_pitch[3];
 	uint8_t* m_comp[3];
+};
+
+class PictureRGB24 : public Picture {
+public:
+	PictureRGB24(size_t unused) : Picture(0) {}
+	PictureRGB24(const Resolution &res)
+		: Picture(res, RGB24) {
+		setResolution(res);
+	}
+	const uint8_t* getComp(int comp) const {
+		return data();
+	}
+	uint8_t* getComp(int comp) {
+		return data();
+	}
+	size_t getPitch(int comp) const override {
+		return m_format.res.width * 3;
+	}
+	void setResolution(const Resolution &res) override {
+		m_format.res = res;
+		resize(m_format.getSize());
+	}
 };
 
 static const Resolution VIDEO_RESOLUTION(320, 180);
