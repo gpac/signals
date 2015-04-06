@@ -27,7 +27,8 @@ Module* createConverter(PropsDecoder *decoderProps) {
 		auto srcCtx = decoderProps->getAVCodecContext();
 		auto dstRes = Resolution(320, 180);
 		assert(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
-		return new Transform::VideoConvert(dstRes, srcCtx->pix_fmt);
+		auto dstFormat = PictureFormat(dstRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
+		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
 		Log::msg(Log::Info, "[Converter] Found audio stream");
 		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);

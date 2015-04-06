@@ -126,16 +126,17 @@ unittest("audio converter: dynamic formats") {
 
 unittest("video converter: pass-through") {
 	auto res = Resolution(16, 32);
+	auto format = PictureFormat(res, YUV420);
 	int numFrames = 0;
 
 	auto onFrame = [&](std::shared_ptr<const Data> data) {
 		auto pic = safe_cast<const Picture>(data);
-		ASSERT(pic->getResolution() == res);
+		ASSERT(pic->getFormat() == format);
 		numFrames++;
 	};
 
 	{
-		auto convert = uptr(new Transform::VideoConvert(res, AV_PIX_FMT_YUV420P));
+		auto convert = uptr(new Transform::VideoConvert(format));
 		ConnectPin(convert->getPin(0), onFrame);
 
 		std::shared_ptr<Data> pic = uptr(new PictureYUV420(res));
@@ -148,6 +149,7 @@ unittest("video converter: pass-through") {
 unittest("video converter: different sizes") {
 	auto srcRes = Resolution(16, 32);
 	auto dstRes = Resolution(24, 8);
+	auto format = PictureFormat(dstRes, YUV420);
 	int numFrames = 0;
 
 	auto onFrame = [&](std::shared_ptr<const Data> data) {
@@ -157,7 +159,7 @@ unittest("video converter: different sizes") {
 	};
 
 	{
-		auto convert = uptr(new Transform::VideoConvert(dstRes, AV_PIX_FMT_YUV420P));
+		auto convert = uptr(new Transform::VideoConvert(format));
 		ConnectPin(convert->getPin(0), onFrame);
 
 		std::shared_ptr<Data> pic = uptr(new PictureYUV420(srcRes));
