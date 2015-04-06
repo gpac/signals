@@ -32,7 +32,7 @@ private:
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
 	std::unique_ptr<SDL_Rect> displayrect;
-	Resolution resolution;
+	PictureFormat pictureFormat;
 
 	int64_t m_NumFrames;
 

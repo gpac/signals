@@ -102,12 +102,13 @@ unittest("decoder: video simple") {
 
 	auto onPic = [&](std::shared_ptr<const Data> data) {
 		auto const pic = safe_cast<const Picture>(data);
-		auto const res = pic->getResolution();
-		ASSERT_EQUALS(16, res.width);
-		ASSERT_EQUALS(16, res.height);
+		auto const format = pic->getFormat();
+		ASSERT_EQUALS(16, format.res.width);
+		ASSERT_EQUALS(16, format.res.height);
+		ASSERT_EQUALS(YUV420, format.format);
 
 		auto const firstPixel = *pic->getComp(0);
-		auto const lastPixel = *(pic->getComp(0) + res.width * res.height - 1);
+		auto const lastPixel = *(pic->getComp(0) + format.res.width * format.res.height - 1);
 		ASSERT_EQUALS(0x80, firstPixel);
 		ASSERT_EQUALS(0x80, lastPixel);
 	};
