@@ -18,7 +18,7 @@ class VideoConvert : public Module {
 		SwsContext *m_SwContext;
 		Resolution m_srcRes, dstRes;
 		AVPixelFormat dstFormat;
-		PacketAllocator<Picture> picAlloc;
+		PacketAllocator<PictureYUV420> picAlloc;
 		PacketAllocator<RawData> rawAlloc;
 		PinDefault* output;
 };
