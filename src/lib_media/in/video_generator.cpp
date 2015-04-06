@@ -25,7 +25,7 @@ void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {
 	auto const FLASH_PERIOD = FRAMERATE;
 	auto const flash = (m_numFrames % FLASH_PERIOD) == 0;
 	auto const val = flash ? 0xCC : 0x80;
-	memset(p, val, dim.yv12size());
+	memset(p, val, pic->getSize());
 
 	auto const framePeriodIn180k = IClock::Rate / FRAMERATE;
 	assert(IClock::Rate % FRAMERATE == 0);

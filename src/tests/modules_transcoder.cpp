@@ -129,7 +129,7 @@ unittest("transcoder: jpg to resized jpg") {
 	auto srcCtx = decoderProps->getAVCodecContext();
 
 	auto reader = uptr(In::File::create(filename));
-	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
+	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_RGB24);
 	auto dstRes = Resolution(srcCtx->width / 2, srcCtx->height / 2);
 	auto converter = uptr(new Transform::VideoConvert(dstRes, srcCtx->pix_fmt));
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
