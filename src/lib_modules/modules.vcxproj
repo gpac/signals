@@ -31,7 +31,6 @@
     <ClInclude Include="modules.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\data.cpp" />
     <ClCompile Include="core\pipeline.cpp" />
     <ClCompile Include="core\system_clock.cpp" />
     <ClCompile Include="utils\stranded_pool_executor.cpp" />

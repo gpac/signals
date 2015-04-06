@@ -48,8 +48,5 @@
     <ClCompile Include="core\system_clock.cpp">
       <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="core\data.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

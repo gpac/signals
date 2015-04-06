@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/picture.hpp"
 #include "lib_modules/core/module.hpp"
 
 #define JPEG_DEFAULT_QUALITY 70

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/picture.hpp"
 #include "lib_modules/core/module.hpp"
 #include "lib_modules/core/clock.hpp"
 #include <mutex>
