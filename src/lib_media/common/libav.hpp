@@ -11,8 +11,15 @@ struct AVFormatContext;
 struct AVFrame;
 struct AVPacket;
 struct AVDictionary;
+#ifdef _MSC_VER
 enum AVPixelFormat;
 #undef PixelFormat
+#else
+extern "C" {
+#include <libavcodec/avcodec.h>
+#undef PixelFormat
+}
+#endif
 
 namespace Modules {
 
