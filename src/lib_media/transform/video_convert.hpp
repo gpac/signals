@@ -19,7 +19,7 @@ private:
 	SwsContext *m_SwContext;
 	PictureFormat srcFormat, dstFormat;
 	PacketAllocator<PictureYUV420> picAlloc;
-	PacketAllocator<RawData> rawAlloc;
+	PacketAllocator<PictureRGB24> rawAlloc;
 	PinDefault* output;
 };
 

@@ -45,15 +45,15 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	uint8_t const* srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	int srcStride[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	for (int i=0; i<3; ++i) {
-		srcSlice[i] = videoData->getCompConst(i);
+		srcSlice[i] = videoData->getComp(i);
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
 
 	std::shared_ptr<Data> out;
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
-	switch (libavPixFmtConvert(dstFormat.format)) {
-	case AV_PIX_FMT_YUV420P: {
+	switch (dstFormat.format) {
+	case YUV420: {
 			auto pic = picAlloc.getBuffer(0);
 			pic->setResolution(dstFormat.res);
 			for (int i=0; i<3; ++i) {
@@ -63,7 +63,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 			out = pic;
 			break;
 		}
-	case AV_PIX_FMT_RGB24: {
+	case RGB24: {
 			const int dstFrameSize = avpicture_get_size(AV_PIX_FMT_RGB24, dstFormat.res.width, dstFormat.res.height);
 			auto raw = rawAlloc.getBuffer(dstFrameSize);
 			pDst[0] = raw->data();
