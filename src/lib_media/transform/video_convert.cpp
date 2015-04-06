@@ -3,22 +3,31 @@
 #include "video_convert.hpp"
 #include "../common/libav.hpp"
 
+namespace {
+AVPixelFormat libavPixFmtConvert(const Modules::PixelFormat format) {
+	AVPixelFormat pixFmt;
+	pixelFormat2libavPixFmt(format, pixFmt);
+	return pixFmt;
+}
+}
+
 namespace Modules {
 namespace Transform {
 
-VideoConvert::VideoConvert(Resolution dstRes, AVPixelFormat dstFormat)
-: m_SwContext(nullptr), dstRes(dstRes), dstFormat(dstFormat), picAlloc(ALLOC_NUM_BLOCKS_DEFAULT), rawAlloc(ALLOC_NUM_BLOCKS_DEFAULT) {
-	memset(&m_srcRes, 0, sizeof(m_srcRes));
+VideoConvert::VideoConvert(const PictureFormat &dstFormat)
+: m_SwContext(nullptr), dstFormat(dstFormat), picAlloc(ALLOC_NUM_BLOCKS_DEFAULT), rawAlloc(ALLOC_NUM_BLOCKS_DEFAULT) {
 	output = addPin(new PinDefault);
 }
 
-void VideoConvert::reconfigure(const Resolution &srcRes, const AVPixelFormat &srcFormat) {
+void VideoConvert::reconfigure(const PictureFormat &format) {
 	if (m_SwContext)
 		sws_freeContext(m_SwContext);
-	m_SwContext = sws_getContext(srcRes.width, srcRes.height, srcFormat, dstRes.width, dstRes.height, dstFormat, SWS_BILINEAR, nullptr, nullptr, nullptr);
+	m_SwContext = sws_getContext(format.res.width, format.res.height, libavPixFmtConvert(format.format),
+		                         dstFormat.res.width, dstFormat.res.height, libavPixFmtConvert(dstFormat.format),
+								 SWS_BILINEAR, nullptr, nullptr, nullptr);
 	if (!m_SwContext)
 		throw std::runtime_error("[VideoConvert] Impossible to set up video converter.");
-	m_srcRes = srcRes;
+	srcFormat = format;
 }
 
 VideoConvert::~VideoConvert() {
@@ -27,10 +36,10 @@ VideoConvert::~VideoConvert() {
 
 void VideoConvert::process(std::shared_ptr<const Data> data) {
 	auto videoData = safe_cast<const Picture>(data);
-	if (videoData->getResolution() != m_srcRes) {
+	if (videoData->getFormat() != srcFormat) {
 		if (m_SwContext)
 			Log::msg(Log::Info, "[VideoConvert] Incompatible input video data. Reconfiguring.");
-		reconfigure(videoData->getResolution(), AV_PIX_FMT_YUV420P);
+		reconfigure(videoData->getFormat());
 	}
 
 	uint8_t *srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
@@ -43,10 +52,10 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	std::shared_ptr<Data> out;
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
-	switch (dstFormat) {
+	switch (libavPixFmtConvert(dstFormat.format)) {
 	case AV_PIX_FMT_YUV420P: {
 			auto pic = picAlloc.getBuffer(0);
-			pic->setResolution(dstRes);
+			pic->setResolution(dstFormat.res);
 			for (int i=0; i<3; ++i) {
 				pDst[i] = pic->getComp(i);
 				dstStride[i] = (int)pic->getPitch(i);
@@ -55,10 +64,10 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 			break;
 		}
 	case AV_PIX_FMT_RGB24: {
-			const int dstFrameSize = avpicture_get_size(dstFormat, dstRes.width, dstRes.height);
+			const int dstFrameSize = avpicture_get_size(AV_PIX_FMT_RGB24, dstFormat.res.width, dstFormat.res.height);
 			auto raw = rawAlloc.getBuffer(dstFrameSize);
 			pDst[0] = raw->data();
-			dstStride[0] = dstRes.width * 3;
+			dstStride[0] = dstFormat.res.width * 3;
 			out = raw;
 			break;
 		}
@@ -68,7 +77,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 		return;
 	}
 
-	sws_scale(m_SwContext, srcSlice, srcStride, 0, m_srcRes.height, pDst, dstStride);
+	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcFormat.res.height, pDst, dstStride);
 
 	output->emit(out);
 }

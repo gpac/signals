@@ -11,6 +11,8 @@ struct AVFormatContext;
 struct AVFrame;
 struct AVPacket;
 struct AVDictionary;
+enum AVPixelFormat;
+#undef PixelFormat
 
 namespace Modules {
 
@@ -51,6 +53,10 @@ void libavAudioCtxConvertLibav(const PcmFormat *cfg, int &sampleRate, int &forma
 void libavAudioCtxConvert(const PcmFormat *cfg, AVCodecContext *codecCtx);
 void libavFrameDataConvert(const PcmData *data, AVFrame *frame);
 void libavFrame2pcmConvert(const AVFrame *frame, PcmFormat *cfg);
+
+
+void pixelFormat2libavPixFmt(const enum PixelFormat format, enum AVPixelFormat &avPixfmt);
+enum PixelFormat libavPixFmt2PixelFormat(const enum AVPixelFormat &avPixfmt);
 
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 

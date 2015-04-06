@@ -8,6 +8,7 @@
 
 extern "C" {
 #include <libavcodec/avcodec.h>
+#undef PixelFormat
 }
 
 namespace {
@@ -112,6 +113,24 @@ void libavFrameDataConvert(const PcmData *pcmData, AVFrame *frame) {
 		frame->linesize[i] = (int)pcmData->getPlaneSize(i);
 	}
 	frame->nb_samples = (int)(pcmData->size() / format.getBytesPerSample());
+}
+
+void pixelFormat2libavPixFmt(const enum PixelFormat format, AVPixelFormat &avPixfmt) {
+	switch (format) {
+	case YUV420:
+		avPixfmt = AV_PIX_FMT_YUV420P;
+	default:
+		throw std::runtime_error("Unknown pixel format to convert (1). Please contact your vendor.");
+	}
+}
+
+enum PixelFormat libavPixFmt2PixelFormat(const AVPixelFormat &avPixfmt) {
+	switch (avPixfmt) {
+	case AV_PIX_FMT_YUV420P:
+		return YUV420;
+	default:
+		throw std::runtime_error("Unknown pixel format to convert (2). Please contact your vendor.");
+	}
 }
 
 DataAVPacket::DataAVPacket(size_t size)

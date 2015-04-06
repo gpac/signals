@@ -24,22 +24,28 @@ struct Resolution {
 };
 
 enum PixelFormat {
-	UNKNOWN2 = 0,
+	UNKNOWN = 0,
 	YUV420,
 	RGB24
 };
 
 class PictureFormat {
 public:
-	PictureFormat() = default;
+	PictureFormat() : format(UNKNOWN) {
+	}
 	PictureFormat(const Resolution &res, const PixelFormat &format)
 	: res(res), format(format) {
+	}
+	bool operator==(PictureFormat const& other) const {
+		return res == other.res && format == other.format;
+	}
+	bool operator!=(PictureFormat const& other) const {
+		return !(*this == other);
 	}
 
 	size_t getSize() const {
 		return getSize(res, format);
 	}
-
 	static size_t getSize(const Resolution &res, const PixelFormat &format) {
 		switch (format) {
 		case YUV420:
@@ -57,11 +63,11 @@ class Picture : public RawData {
 public:
 	Picture(size_t unused) : RawData(0) {}
 	static Picture* create(const Resolution &res, const PixelFormat &format);
-	Resolution getResolution() const {
+	Resolution getResolution() const { //Romain: remove
 		return m_format.res;
 	}
-	PixelFormat getFormat() const {
-		return m_format.format;
+	PictureFormat getFormat() const {
+		return m_format;
 	}
 	size_t getSize() const {
 		return m_format.getSize();
