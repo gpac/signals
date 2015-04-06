@@ -253,8 +253,8 @@ bool LibavEncode::processVideo(const Picture *pic) {
 		f->get()->pict_type = AV_PICTURE_TYPE_NONE;
 		f->get()->pts = ++frameNum;
 		for (int i = 0; i < 3; ++i) {
-			f->get()->width = pic->getResolution().width;
-			f->get()->height = pic->getResolution().height;
+			f->get()->width = pic->getFormat().res.width;
+			f->get()->height = pic->getFormat().res.height;
 			f->get()->data[i] = pic->getComp(i);
 			f->get()->linesize[i] = (int)pic->getPitch(i);
 		}

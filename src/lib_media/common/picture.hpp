@@ -63,9 +63,6 @@ class Picture : public RawData {
 public:
 	Picture(size_t unused) : RawData(0) {}
 	static Picture* create(const Resolution &res, const PixelFormat &format);
-	Resolution getResolution() const { //Romain: remove
-		return m_format.res;
-	}
 	PictureFormat getFormat() const {
 		return m_format;
 	}

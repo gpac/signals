@@ -154,7 +154,7 @@ unittest("video converter: different sizes") {
 
 	auto onFrame = [&](std::shared_ptr<const Data> data) {
 		auto pic = safe_cast<const Picture>(data);
-		ASSERT(pic->getResolution() == dstRes);
+		ASSERT(pic->getFormat() == format);
 		numFrames++;
 	};
 
