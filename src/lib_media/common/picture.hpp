@@ -23,6 +23,7 @@ struct Resolution {
 	}
 };
 
+#undef PixelFormat //FIXME: there are collisions with FFmpeg here
 enum PixelFormat {
 	UNKNOWN = 0,
 	YUV420,

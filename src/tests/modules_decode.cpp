@@ -1,11 +1,8 @@
-#include "tests.hpp"
-#include "lib_modules/modules.hpp"
-
-extern "C"
-{
+extern "C" {
 #include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
 }
-
+#include "tests.hpp"
+#include "lib_modules/modules.hpp"
 #include "lib_media/decode/libav_decode.hpp"
 #include "lib_media/encode/libav_encode.hpp"
 #include "lib_media/in/file.hpp"
