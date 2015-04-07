@@ -130,6 +130,33 @@ private:
 	uint8_t* m_planes[3];
 };
 
+class PictureYUYV422 : public Picture {
+public:
+	PictureYUYV422(size_t unused) : Picture(0) {
+		m_format.format = YUYV422;
+	}
+	PictureYUYV422(const Resolution &res)
+		: Picture(res, YUYV422) {
+		setResolution(res);
+	}
+	size_t getNumPlanes() const override {
+		return 1;
+	}
+	const uint8_t* getPlane(size_t planeIdx) const {
+		return data();
+	}
+	uint8_t* getPlane(size_t planeIdx) {
+		return data();
+	}
+	size_t getPitch(size_t planeIdx) const override {
+		return m_format.res.width * 2;
+	}
+	void setResolution(const Resolution &res) override {
+		m_format.res = res;
+		resize(m_format.getSize());
+	}
+};
+
 class PictureRGB24 : public Picture {
 public:
 	PictureRGB24(size_t unused) : Picture(0) {

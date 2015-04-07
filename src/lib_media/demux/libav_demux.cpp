@@ -67,13 +67,13 @@ LibavDemux::LibavDemux(const std::string &url) {
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
 			throw std::runtime_error("Format Context init failed.");
 		}
-	}
 
-	//if you don't call you may miss the first frames
-	if (avformat_find_stream_info(m_formatCtx, nullptr) < 0) {
-		Log::msg(Log::Warning, "[LibavDemux] Couldn't get additional video stream info");
-		avformat_close_input(&m_formatCtx);
-		throw std::runtime_error("Couldn't find stream info.");
+		//if you don't call you may miss the first frames
+		if (avformat_find_stream_info(m_formatCtx, nullptr) < 0) {
+			Log::msg(Log::Warning, "[LibavDemux] Couldn't get additional video stream info");
+			avformat_close_input(&m_formatCtx);
+			throw std::runtime_error("Couldn't find stream info.");
+		}
 	}
 
 	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {
