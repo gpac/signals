@@ -22,8 +22,8 @@
     <ClCompile Include="log.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ffpp\ffpp.hpp" />
-    <ClInclude Include="..\gpacpp\gpacpp.hpp" />
+    <ClInclude Include="..\lib_ffpp\ffpp.hpp" />
+    <ClInclude Include="..\lib_gpacpp\gpacpp.hpp" />
     <ClInclude Include="log.hpp" />
     <ClInclude Include="tools.hpp" />
   </ItemGroup>
