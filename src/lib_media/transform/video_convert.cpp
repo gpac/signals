@@ -52,21 +52,14 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
 	switch (dstFormat.format) {
-	case YUV420: {
+	case YUV420:
+	case RGB24: {
 			auto pic = picAlloc.getBuffer(0);
 			pic->setResolution(dstFormat.res);
-			for (int i=0; i<3; ++i) {
+			for (int i=0; i<pic->getNumPlanes(); ++i) {
 				pDst[i] = pic->getComp(i);
 				dstStride[i] = (int)pic->getPitch(i);
 			}
-			out = pic;
-			break;
-		}
-	case RGB24: {
-			auto pic = rawAlloc.getBuffer(0);
-			pic->setResolution(dstFormat.res);
-			pDst[0] = pic->getComp(0);
-			dstStride[0] = (int)pic->getPitch(0);
 			out = pic;
 			break;
 		}
