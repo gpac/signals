@@ -2,9 +2,8 @@
 #include "../common/pcm.hpp"
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
-#include <cassert>
-
 #include "lib_ffpp/ffpp.hpp"
+#include <cassert>
 
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
@@ -85,7 +84,7 @@ namespace {
 void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 	pic->setResolution(Resolution(avFrame->width, avFrame->height));
 
-	for (int comp=0; comp<3; ++comp) {
+	for (size_t comp=0; comp<pic->getNumPlanes(); ++comp) {
 		auto subsampling = comp == 0 ? 1 : 2;
 		auto src = avFrame->data[comp];
 		auto srcPitch = avFrame->linesize[comp];
@@ -110,6 +109,10 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
+		return false;
+	}
+	if (avFrame->get()->format != AV_PIX_FMT_YUV420P){
+		Log::msg(Log::Warning, "[LibavDecode] Unsupported pixel format.");
 		return false;
 	}
 	if (gotPicture) {
