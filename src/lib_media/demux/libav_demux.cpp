@@ -64,7 +64,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			throw std::runtime_error("Webcam init failed.");
 		}
 	} else {
-		if (avformat_open_input(&m_formatCtx, url.c_str(), NULL, NULL)) {
+		if (avformat_open_input(&m_formatCtx, url.c_str(), nullptr, nullptr)) {
 			Log::msg(Log::Warning, "[LibavDemux] Error when opening input '%s'", url);
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
 			throw std::runtime_error("Format Context init failed.");
@@ -72,7 +72,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 	}
 
 	//if you don't call you may miss the first frames
-	if (avformat_find_stream_info(m_formatCtx, NULL) < 0) {
+	if (avformat_find_stream_info(m_formatCtx, nullptr) < 0) {
 		Log::msg(Log::Warning, "[LibavDemux] Couldn't get additional video stream info");
 		avformat_close_input(&m_formatCtx);
 		throw std::runtime_error("Couldn't find stream info.");

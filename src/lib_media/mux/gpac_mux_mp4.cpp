@@ -43,7 +43,7 @@ static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSiz
 	//SPS
 	{
 		s32 idx;
-		char *buffer = NULL;
+		char *buffer = nullptr;
 		const u64 nalStart = 4;
 		nalSize = gf_media_nalu_next_start_code_bs(bs);
 		if (nalStart + nalSize > extradataSize) {
@@ -59,7 +59,7 @@ static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSiz
 			return GF_BAD_PARAM;
 		}
 
-		idx = gf_media_avc_read_sps(buffer, nalSize, &avc, 0, NULL);
+		idx = gf_media_avc_read_sps(buffer, nalSize, &avc, 0, nullptr);
 		if (idx < 0) {
 			gf_bs_del(bs);
 			gf_free(buffer);
@@ -86,7 +86,7 @@ static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSiz
 	//PPS
 	{
 		s32 idx;
-		char *buffer = NULL;
+		char *buffer = nullptr;
 		const u64 nalStart = 4 + nalSize + 4;
 		gf_bs_seek(bs, nalStart);
 		nalSize = gf_media_nalu_next_start_code_bs(bs);
@@ -132,9 +132,9 @@ static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSiz
 */
 static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_size, GF_HEVCConfig *dstCfg) {
 	HEVCState hevc;
-	GF_HEVCParamArray *vpss = NULL, *spss = NULL, *ppss = NULL;
+	GF_HEVCParamArray *vpss = nullptr, *spss = nullptr, *ppss = nullptr;
 	GF_BitStream *bs;
-	char *buffer = NULL;
+	char *buffer = nullptr;
 	u32 bufferSize = 0;
 	if (!extradata || (extradata_size < sizeof(u32)))
 		return GF_BAD_PARAM;
@@ -308,7 +308,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 void fillVideoSample(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 	u32 scSize = 0;
 	u32 NALUSize = 0;
-	GF_BitStream *out_bs = gf_bs_new(NULL, 2 * bufLen, GF_BITSTREAM_WRITE);
+	GF_BitStream *out_bs = gf_bs_new(nullptr, 2 * bufLen, GF_BITSTREAM_WRITE);
 	NALUSize = gf_media_nalu_next_start_code(bufPtr, bufLen, &scSize);
 	if (NALUSize != 0) {
 		gf_bs_write_u32(out_bs, NALUSize);
@@ -354,7 +354,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 		//TODO: open in memory - apparently we have to use the gmem:// protocol
 		assert(0);
 	} else {
-		m_iso = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, NULL);
+		m_iso = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, nullptr);
 		if (!m_iso) {
 			Log::msg(Log::Warning, "Cannot open iso file %s", fileName.str());
 			throw std::runtime_error("Cannot open output file.");
@@ -372,7 +372,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 
 void GPACMuxMP4::closeSegment() {
 	if (m_useSegments) {
-		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, GF_4CC('e', 'o', 'd', 's'), NULL, NULL);
+		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, GF_4CC('e', 'o', 'd', 's'), nullptr, nullptr);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
 			throw std::runtime_error("Cannot close output segment.");
@@ -525,14 +525,14 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 		throw std::runtime_error("gf_isom_set_track_enabled");
 	}
 
-	e = gf_isom_new_mpeg4_description(m_iso, trackNum, esd, NULL, NULL, &di);
+	e = gf_isom_new_mpeg4_description(m_iso, trackNum, esd, nullptr, nullptr, &di);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_new_mpeg4_description\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_new_mpeg4_description");
 	}
 
 	gf_odf_desc_del((GF_Descriptor *)esd);
-	esd = NULL;
+	esd = nullptr;
 
 	e = gf_isom_set_audio_info(m_iso, trackNum, di, stream->sampleRate, stream->numChannels, stream->bitsPerSample);
 	if (e != GF_OK) {
@@ -578,7 +578,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
 	}
 
 	u32 di;
-	e = gf_isom_avc_config_new(m_iso, trackNum, avccfg, NULL, NULL, &di);
+	e = gf_isom_avc_config_new(m_iso, trackNum, avccfg, nullptr, nullptr, &di);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
 		throw std::runtime_error("Cannot create AVC config");

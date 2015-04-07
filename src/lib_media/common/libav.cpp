@@ -175,12 +175,12 @@ void DataAVPacket::resize(size_t /*size*/) {
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
 	auto opt = stringDup(options);
 	char *tok = strtok(opt.data(), "- ");
-	char *tokval = NULL;
-	while (tok && (tokval = strtok(NULL, "- "))) {
+	char *tokval = nullptr;
+	while (tok && (tokval = strtok(nullptr, "- "))) {
 		if (av_dict_set(dict, tok, tokval, 0) < 0) {
 			Log::msg(Log::Warning, "[%s] unknown %s option \"%s\" with value \"%s\"", moduleName.c_str(), type, tok, tokval);
 		}
-		tok = strtok(NULL, "- ");
+		tok = strtok(nullptr, "- ");
 	}
 }
 

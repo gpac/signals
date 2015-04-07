@@ -26,7 +26,7 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(std::string const& path)
 	GF_ISOFile *movie;
 	u64 missingBytes;
 	GF_Err e = gf_isom_open_progressive(path.c_str(), 0, 0, &movie, &missingBytes);
-	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || movie == NULL) {
+	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || movie == nullptr) {
 		Log::msg(Log::Error, "Could not open file %s for reading (%s).", path, gf_error_to_string(e));
 		throw std::runtime_error("File not found");
 	}

@@ -106,7 +106,7 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 			av_opt_set(codecCtx->priv_data, "rc-lookahead", "0", 0);
 		}
 		codecCtx->flags |= CODEC_FLAG_PASS1;
-		if (atoi(av_dict_get(generalDict, "pass", NULL, 0)->value) == 2) {
+		if (atoi(av_dict_get(generalDict, "pass", nullptr, 0)->value) == 2) {
 			codecCtx->flags |= CODEC_FLAG_PASS2;
 		}
 #endif
@@ -154,13 +154,13 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 	/* check all optionsDict have been consumed */
 	auto opt = stringDup(codecOptions.c_str());
 	char *tok = strtok(opt.data(), "- ");
-	while (tok && strtok(NULL, "- ")) {
+	while (tok && strtok(nullptr, "- ")) {
 		AVDictionaryEntry *avde = nullptr;
 		avde = codecDict.get(tok, avde);
 		if (avde) {
 			Log::msg(Log::Warning, "[libav_encode] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
 		}
-		tok = strtok(NULL, "- ");
+		tok = strtok(nullptr, "- ");
 	}
 }
 
