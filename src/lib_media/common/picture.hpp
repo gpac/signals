@@ -66,6 +66,7 @@ public:
 class Picture;
 typedef PinDataDefault<Picture> PinPicture;
 
+//TODO: we should probably separate planar vs non-planar data, avoid resize on the data, etc.
 class Picture : public RawData {
 public:
 	Picture(size_t unused) : RawData(0) {}
