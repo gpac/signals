@@ -14,7 +14,7 @@ using namespace Modules;
 unittest("empty param test: File") {
 	bool thrown = false;
 	try {
-		auto f = uptr(In::File::create(""));
+		auto f = uptr(new In::File(""));
 	} catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
@@ -24,7 +24,7 @@ unittest("empty param test: File") {
 unittest("empty param test: Demux") {
 	bool thrown = false;
 	try {
-		auto mp4Demux = uptr(Demux::GPACDemuxMP4Simple::create(""));
+		auto mp4Demux = uptr(new Demux::GPACDemuxMP4Simple(""));
 	} catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
@@ -36,11 +36,11 @@ unittest("empty param test: Out::Print") {
 }
 
 unittest("simple param test") {
-	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto f = uptr(new In::File("data/BatmanHD_1000kbit_mpeg.mp4"));
 }
 
 unittest("print packets size from file: File -> Out::Print") {
-	auto f = uptr(In::File::create("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto f = uptr(new In::File("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto p = uptr(new Out::Print(std::cout));
 
 	ConnectPinToModule(f->getPin(0), p);

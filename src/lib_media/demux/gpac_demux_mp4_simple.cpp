@@ -21,24 +21,15 @@ public:
 	uint32_t sampleIndex, sampleCount;
 };
 
-
-GPACDemuxMP4Simple* GPACDemuxMP4Simple::create(std::string const& fn) {
-	/* The ISO progressive reader */
+GPACDemuxMP4Simple::GPACDemuxMP4Simple(std::string const& path)
+: reader(new ISOFileReader) {
 	GF_ISOFile *movie;
-	/* Number of bytes required to finish the current ISO Box reading */
 	u64 missingBytes;
-
-	GF_Err e = gf_isom_open_progressive(fn.c_str(), 0, 0, &movie, &missingBytes);
+	GF_Err e = gf_isom_open_progressive(path.c_str(), 0, 0, &movie, &missingBytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || movie == NULL) {
-		Log::msg(Log::Error, "Could not open file %s for reading (%s).", fn, gf_error_to_string(e));
+		Log::msg(Log::Error, "Could not open file %s for reading (%s).", path, gf_error_to_string(e));
 		throw std::runtime_error("File not found");
 	}
-
-	return new GPACDemuxMP4Simple(movie);
-}
-
-GPACDemuxMP4Simple::GPACDemuxMP4Simple(GF_ISOFile *movie)
-: reader(new ISOFileReader) {
 	reader->init(movie);
 	output = addPin(new PinDefault);
 }

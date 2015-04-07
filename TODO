@@ -11,7 +11,6 @@ Tasks (from higher to lower priority):
  * http://stackoverflow.com/questions/1969579/getting-a-handle-to-the-processs-main-thread
 - investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
 - be able to draw the graph of connections (and allocator states?)
-- remove create() and use C++ exceptions in constructors
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - some modules may still assume the first timestamp is zero...
 - player example plugged with Qt

@@ -153,8 +153,8 @@ void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> /*audio
 	const std::string videoFn = "video.m4s";
 
 	//serialize the MPD (use the GPAC code?)
-	auto audioSeg = uptr(Out::File::create(audioFn));
-	auto videoSeg = uptr(Out::File::create(videoFn));
+	auto audioSeg = uptr(new Out::File(audioFn));
+	auto videoSeg = uptr(new Out::File(videoFn));
 #else
 	std::ofstream f;
 	f.open("dash.mpd", std::ios::out);
