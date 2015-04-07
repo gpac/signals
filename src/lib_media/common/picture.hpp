@@ -51,6 +51,8 @@ public:
 		switch (format) {
 		case YUV420:
 			return res.width * res.height * 3 / 2;
+		case RGB24:
+			return res.width * res.height * 3;
 		default:
 			throw std::runtime_error("Unknown pixel format. Please contact your vendor.");
 		}
@@ -87,7 +89,9 @@ protected:
 
 class PictureYUV420 : public Picture {
 public:
-	PictureYUV420(size_t unused) : Picture(0) {}
+	PictureYUV420(size_t unused) : Picture(0) {
+		m_format.format = YUV420;
+	}
 	PictureYUV420(const Resolution &res)
 	: Picture(res, YUV420) {
 		setResolution(res);
@@ -120,7 +124,9 @@ private:
 
 class PictureRGB24 : public Picture {
 public:
-	PictureRGB24(size_t unused) : Picture(0) {}
+	PictureRGB24(size_t unused) : Picture(0) {
+		m_format.format = RGB24;
+	}
 	PictureRGB24(const Resolution &res)
 		: Picture(res, RGB24) {
 		setResolution(res);

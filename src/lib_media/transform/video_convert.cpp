@@ -15,13 +15,12 @@ namespace Modules {
 namespace Transform {
 
 VideoConvert::VideoConvert(const PictureFormat &dstFormat)
-: m_SwContext(nullptr), dstFormat(dstFormat), picAlloc(ALLOC_NUM_BLOCKS_DEFAULT), rawAlloc(ALLOC_NUM_BLOCKS_DEFAULT) {
+: m_SwContext(nullptr), dstFormat(dstFormat) {
 	output = addPin(new PinDefault);
 }
 
 void VideoConvert::reconfigure(const PictureFormat &format) {
-	if (m_SwContext)
-		sws_freeContext(m_SwContext);
+	sws_freeContext(m_SwContext);
 	m_SwContext = sws_getContext(format.res.width, format.res.height, libavPixFmtConvert(format.format),
 		                         dstFormat.res.width, dstFormat.res.height, libavPixFmtConvert(dstFormat.format),
 								 SWS_BILINEAR, nullptr, nullptr, nullptr);
@@ -64,11 +63,11 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 			break;
 		}
 	case RGB24: {
-			const int dstFrameSize = avpicture_get_size(AV_PIX_FMT_RGB24, dstFormat.res.width, dstFormat.res.height);
-			auto raw = rawAlloc.getBuffer(dstFrameSize);
-			pDst[0] = raw->data();
-			dstStride[0] = dstFormat.res.width * 3;
-			out = raw;
+			auto pic = rawAlloc.getBuffer(0);
+			pic->setResolution(dstFormat.res);
+			pDst[0] = pic->getComp(0);
+			dstStride[0] = (int)pic->getPitch(0);
+			out = pic;
 			break;
 		}
 	default:
