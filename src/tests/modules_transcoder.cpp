@@ -157,7 +157,7 @@ unittest("transcoder: h264/mp4 to jpg") {
 	auto writer = uptr(Out::File::create("data/test.jpg"));
 
 	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
-	auto dstFormat = PictureFormat(srcRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
+	auto dstFormat = PictureFormat(srcRes, RGB24);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
 	ConnectPinToModule(demux->getPin(0), decoder);
@@ -184,7 +184,7 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
 
 	auto reader = uptr(In::File::create(filename));
-	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
+	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_RGB24);
 	auto dstFormat = PictureFormat(srcRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
