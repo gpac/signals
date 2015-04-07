@@ -152,13 +152,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\signals\internal\core\connection.hpp" />
-    <ClInclude Include="..\signals\internal\core\result.hpp" />
-    <ClInclude Include="..\signals\internal\core\signal.hpp" />
-    <ClInclude Include="..\signals\internal\utils\helper.hpp" />
-    <ClInclude Include="..\signals\internal\utils\queue.hpp" />
-    <ClInclude Include="..\signals\internal\utils\threadpool.hpp" />
-    <ClInclude Include="..\signals\signals.hpp" />
+    <ClInclude Include="internal\core\connection.hpp" />
+    <ClInclude Include="internal\core\result.hpp" />
+    <ClInclude Include="internal\core\signal.hpp" />
+    <ClInclude Include="internal\utils\helper.hpp" />
+    <ClInclude Include="internal\utils\queue.hpp" />
+    <ClInclude Include="internal\utils\threadpool.hpp" />
+    <ClInclude Include="signals.hpp" />
     <ClInclude Include="internal\core\executor.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
