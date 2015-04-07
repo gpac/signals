@@ -15,7 +15,7 @@ SDLVideo::SDLVideo(IClock* clock)
 
 void SDLVideo::doRender() {
 	pictureFormat.res = VIDEO_RESOLUTION;
-	pictureFormat.format = YUV420;
+	pictureFormat.format = YUV420P;
 	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pictureFormat.res.width, pictureFormat.res.height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create window: %s", SDL_GetError());

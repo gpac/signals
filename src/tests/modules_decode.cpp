@@ -102,7 +102,7 @@ unittest("decoder: video simple") {
 		auto const format = pic->getFormat();
 		ASSERT_EQUALS(16, format.res.width);
 		ASSERT_EQUALS(16, format.res.height);
-		ASSERT_EQUALS(YUV420, format.format);
+		ASSERT_EQUALS(YUV420P, format.format);
 
 		auto const firstPixel = *pic->getPlane(0);
 		auto const lastPixel = *(pic->getPlane(0) + format.res.width * format.res.height - 1);

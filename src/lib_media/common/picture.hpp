@@ -26,7 +26,7 @@ struct Resolution {
 #undef PixelFormat //FIXME: there are collisions with FFmpeg here
 enum PixelFormat {
 	UNKNOWN = 0,
-	YUV420,
+	YUV420P,
 	RGB24
 };
 
@@ -49,7 +49,7 @@ public:
 	}
 	static size_t getSize(const Resolution &res, const PixelFormat &format) {
 		switch (format) {
-		case YUV420:
+		case YUV420P:
 			return res.width * res.height * 3 / 2;
 		case RGB24:
 			return res.width * res.height * 3;
@@ -90,10 +90,10 @@ protected:
 class PictureYUV420 : public Picture {
 public:
 	PictureYUV420(size_t unused) : Picture(0) {
-		m_format.format = YUV420;
+		m_format.format = YUV420P;
 	}
 	PictureYUV420(const Resolution &res)
-	: Picture(res, YUV420) {
+	: Picture(res, YUV420P) {
 		setResolution(res);
 	}
 	size_t getNumPlanes() const override {
