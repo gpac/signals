@@ -4,7 +4,6 @@ Mid Term apps:
    b) socket in, GPAC demux (MP4 or TS), DASH out
 
 Tasks (from higher to lower priority):
-- typedef shared_ptr<Data> (would allow sending signals on Data deletion for example, which is needed to remove sleep() in the pin/allocator waitforCompletion())
 - SDL and renderers should be able to run in thread 0
  * http://stackoverflow.com/questions/20530218/check-if-current-thread-is-main-thread
  * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c
@@ -16,7 +15,6 @@ Tasks (from higher to lower priority):
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
 - muxer example with two inputs of the same type (e.g. video)
-- 'modules' could be renamed 'components'?
 - use operators (https://github.com/klmr/named-operator) to describe graphs as pipes?
 - GUI: use angular.js? "gui, angular.js, end-point rest, agplv3" @Ffrenchm
 
@@ -28,20 +26,15 @@ Questions (from higher to lower priority):
 
 Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?ArticleID=101789
 http://dlib.net/
-Pipeline -> Containers
 DashCast:
 - resolution as a param
-- dshow input -> webcam : https://trac.ffmpeg.org/wiki/Capture/Desktop
 - DTSC support
 - DASH GPAC input
 - low latency -> allow fine-grain threading
 - multi-rep
 4K60:10/IntelTranscodingSupport->libMFX
-Muxing
 OSGi/Pipe/Mesos?/Angular.js?(http://www.freecodecamp.com/)
 zenbuild to NaCl
-integrate GStreamer etc.
 License should remain compatible with piping
 ASAM, PVSStudio, CPPCheck
-tests: separer lib_modules et lib_media
 GPU: http://on-demand.gputechconf.com/gtc/2015/presentation/S5613-Abhijit-Patait.pdf
