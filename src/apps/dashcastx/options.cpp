@@ -66,6 +66,7 @@ const option::Descriptor usage[] = {
 	"  dashcastx udp://226.0.0.1:1234\n"
 	"  dashcastx -live -s 10000 file.mp4\n"
 	"  dashcastx --live --seg-dur 10000 http://server.com/file.mp4\n"
+	"  dashcastx --live webcam:video=/dev/video0:audio=/dev/audio1\n"
 	},
 	{ 0, 0, 0, 0, 0, 0 } };
 
