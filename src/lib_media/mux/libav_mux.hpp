@@ -11,12 +11,11 @@ namespace Mux {
 
 class LibavMux : public Module {
 public:
-	static LibavMux* create(const std::string &baseName);
+	LibavMux(const std::string &baseName);
 	~LibavMux();
 	void process(std::shared_ptr<const Data> data) override;
 
 private:
-	LibavMux(struct AVFormatContext *formatCtx);
 	void ensureHeader();
 
 	bool declareStream(std::shared_ptr<const Data> stream);

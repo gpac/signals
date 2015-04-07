@@ -19,9 +19,8 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Mux {
 
-LibavMux* LibavMux::create(const std::string &baseName) {
-	AVFormatContext *formatCtx = NULL;
-
+LibavMux::LibavMux(const std::string &baseName)
+: m_headerWritten(false) {
 	/* parse the format optionsDict */
 	std::string optionsStr = "-format mp4"; //TODO
 	AVDictionary *optionsDict = NULL;
@@ -37,12 +36,12 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	av_dict_free(&optionsDict);
 
 	/* output format context */
-	formatCtx = avformat_alloc_context();
-	if (!formatCtx) {
+	m_formatCtx = avformat_alloc_context();
+	if (!m_formatCtx) {
 		Log::msg(Log::Warning, "[libav_mux] format context couldn't be allocated.");
 		throw std::runtime_error("Format Context allocation failed");
 	}
-	formatCtx->oformat = of;
+	m_formatCtx->oformat = of;
 
 	std::stringstream fileName;
 	fileName << baseName;
@@ -52,20 +51,14 @@ LibavMux* LibavMux::create(const std::string &baseName) {
 	fileName << "." << fileNameExt;
 
 	/* open the output file, if needed */
-	if (!(formatCtx->flags & AVFMT_NOFILE)) {
-		if (avio_open(&formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
+	if (!(m_formatCtx->flags & AVFMT_NOFILE)) {
+		if (avio_open(&m_formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
 			Log::msg(Log::Warning, "[libav_mux] could not open %s, disable output.", baseName);
-			avformat_free_context(formatCtx);
+			avformat_free_context(m_formatCtx);
 			throw std::runtime_error("Output open failed");
 		}
-		strncpy(formatCtx->filename, fileName.str().c_str(), sizeof(formatCtx->filename));
+		strncpy(m_formatCtx->filename, fileName.str().c_str(), sizeof(m_formatCtx->filename));
 	}
-
-	return new LibavMux(formatCtx);
-}
-
-LibavMux::LibavMux(struct AVFormatContext *formatCtx)
-	: m_formatCtx(formatCtx), m_headerWritten(false) {
 }
 
 LibavMux::~LibavMux() {

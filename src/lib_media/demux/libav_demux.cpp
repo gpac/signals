@@ -19,33 +19,27 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Demux {
 
-LibavDemux* LibavDemux::create(const std::string &url) {
-	struct AVFormatContext *formatCtx = NULL;
-	if (!(formatCtx = avformat_alloc_context())) {
+LibavDemux::LibavDemux(const std::string &url) {
+	if (!(m_formatCtx = avformat_alloc_context())) {
 		Log::msg(Log::Warning, "[LibavDemux] Can't allocate format context");
 		throw std::runtime_error("Format Context allocation failed.");
 	}
 
-	if (avformat_open_input(&formatCtx, url.c_str(), NULL, NULL))  {
+	if (avformat_open_input(&m_formatCtx, url.c_str(), NULL, NULL)) {
 		Log::msg(Log::Warning, "[LibavDemux] Error when opening input '%s'", url);
-		if (formatCtx) avformat_close_input(&formatCtx);
+		if (m_formatCtx) avformat_close_input(&m_formatCtx);
 		throw std::runtime_error("Format Context init failed.");
 	}
 
 	//if you don't call you may miss the first frames
-	if (avformat_find_stream_info(formatCtx, NULL) < 0) {
+	if (avformat_find_stream_info(m_formatCtx, NULL) < 0) {
 		Log::msg(Log::Warning, "[LibavDemux] Couldn't get additional video stream info");
-		avformat_close_input(&formatCtx);
+		avformat_close_input(&m_formatCtx);
 		throw std::runtime_error("Couldn't find stream info.");
 	}
 
-	return new LibavDemux(formatCtx);
-}
-
-LibavDemux::LibavDemux(struct AVFormatContext *formatCtx)
-	: m_formatCtx(formatCtx) {
-	for (unsigned i = 0; i<formatCtx->nb_streams; i++) {
-		auto props = new PropsDecoder(formatCtx->streams[i]->codec);
+	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {
+		auto props = new PropsDecoder(m_formatCtx->streams[i]->codec);
 		outputs.push_back(addPin(new PinDataDefault<DataAVPacket>(props)));
 	}
 }
