@@ -33,11 +33,10 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 		throw std::runtime_error("[LibavDecode] Decoder not found.");
 	}
 
-	//TODO: test: force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
+	//force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
 	ffpp::Dict dict;
 	dict.set("threads", "1");
 
-	//open the codec
 	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
 		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");

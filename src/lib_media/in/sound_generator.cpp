@@ -3,7 +3,7 @@
 #include "sound_generator.hpp"
 #include <cmath>
 
-#ifndef M_PI //FIXME: Cygwin does not have maths.h extensions
+#ifndef M_PI //Cygwin does not have maths.h extensions
 #define M_PI 3.14159265358979323846
 #endif
 
