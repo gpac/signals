@@ -4,7 +4,7 @@
 
 #define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_ASYNC
+#define EXECUTOR EXECUTOR_SYNC
 
 
 namespace Modules {
