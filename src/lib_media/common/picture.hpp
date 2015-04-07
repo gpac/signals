@@ -73,9 +73,9 @@ public:
 		return m_format.getSize();
 	}
 	virtual size_t getNumPlanes() const = 0;
-	virtual const uint8_t* getComp(int comp) const = 0;
-	virtual uint8_t* getComp(int comp) = 0;
-	virtual size_t getPitch(int comp) const = 0;
+	virtual const uint8_t* getPlane(size_t planeIdx) const = 0;
+	virtual uint8_t* getPlane(size_t planeIdx) = 0;
+	virtual size_t getPitch(size_t planeIdx) const = 0;
 	virtual void setResolution(const Resolution &res) = 0;
 
 protected:
@@ -99,22 +99,22 @@ public:
 	size_t getNumPlanes() const override {
 		return 3;
 	}
-	const uint8_t* getComp(int comp) const override {
-		return m_comp[comp];
+	const uint8_t* getPlane(size_t planeIdx) const override {
+		return m_planes[planeIdx];
 	}
-	uint8_t* getComp(int comp) override {
-		return m_comp[comp];
+	uint8_t* getPlane(size_t planeIdx) override {
+		return m_planes[planeIdx];
 	}
-	size_t getPitch(int comp) const override {
-		return m_pitch[comp];
+	size_t getPitch(size_t planeIdx) const override {
+		return m_pitch[planeIdx];
 	}
 	void setResolution(const Resolution &res) override {
 		m_format.res = res;
 		resize(m_format.getSize());
 		auto const numPixels = res.width * res.height;
-		m_comp[0] = data();
-		m_comp[1] = data() + numPixels;
-		m_comp[2] = data() + numPixels + numPixels / 4;
+		m_planes[0] = data();
+		m_planes[1] = data() + numPixels;
+		m_planes[2] = data() + numPixels + numPixels / 4;
 		m_pitch[0] = res.width;
 		m_pitch[1] = res.width / 2;
 		m_pitch[2] = res.width / 2;
@@ -122,7 +122,7 @@ public:
 
 private:
 	size_t m_pitch[3];
-	uint8_t* m_comp[3];
+	uint8_t* m_planes[3];
 };
 
 class PictureRGB24 : public Picture {
@@ -137,13 +137,13 @@ public:
 	size_t getNumPlanes() const override {
 		return 1;
 	}
-	const uint8_t* getComp(int comp) const {
+	const uint8_t* getPlane(size_t planeIdx) const {
 		return data();
 	}
-	uint8_t* getComp(int comp) {
+	uint8_t* getPlane(size_t planeIdx) {
 		return data();
 	}
-	size_t getPitch(int comp) const override {
+	size_t getPitch(size_t planeIdx) const override {
 		return m_format.res.width * 3;
 	}
 	void setResolution(const Resolution &res) override {

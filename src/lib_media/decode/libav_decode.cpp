@@ -90,7 +90,7 @@ void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 		auto src = avFrame->data[comp];
 		auto srcPitch = avFrame->linesize[comp];
 
-		auto dst = pic->getComp(comp);
+		auto dst = pic->getPlane(comp);
 		auto dstPitch = pic->getPitch(comp);
 
 		auto const h = avFrame->height / subsampling;

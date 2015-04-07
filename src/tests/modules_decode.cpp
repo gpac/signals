@@ -104,8 +104,8 @@ unittest("decoder: video simple") {
 		ASSERT_EQUALS(16, format.res.height);
 		ASSERT_EQUALS(YUV420, format.format);
 
-		auto const firstPixel = *pic->getComp(0);
-		auto const lastPixel = *(pic->getComp(0) + format.res.width * format.res.height - 1);
+		auto const firstPixel = *pic->getPlane(0);
+		auto const lastPixel = *(pic->getPlane(0) + format.res.width * format.res.height - 1);
 		ASSERT_EQUALS(0x80, firstPixel);
 		ASSERT_EQUALS(0x80, lastPixel);
 	};

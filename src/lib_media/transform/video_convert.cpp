@@ -44,7 +44,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	uint8_t const* srcSlice[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	int srcStride[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	for (int i=0; i<3; ++i) {
-		srcSlice[i] = videoData->getComp(i);
+		srcSlice[i] = videoData->getPlane(i);
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
 
@@ -56,8 +56,8 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	case RGB24: {
 			auto pic = picAlloc.getBuffer(0);
 			pic->setResolution(dstFormat.res);
-			for (int i=0; i<pic->getNumPlanes(); ++i) {
-				pDst[i] = pic->getComp(i);
+			for (size_t i=0; i<pic->getNumPlanes(); ++i) {
+				pDst[i] = pic->getPlane(i);
 				dstStride[i] = (int)pic->getPitch(i);
 			}
 			out = pic;
