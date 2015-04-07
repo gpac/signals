@@ -8,7 +8,7 @@ using namespace Tests;
 using namespace Modules;
 
 unittest("encoder: video simple") {
-	std::shared_ptr<Data> picture = uptr(new PictureYUV420(VIDEO_RESOLUTION));
+	std::shared_ptr<Data> picture = uptr(new PictureYUV420P(VIDEO_RESOLUTION));
 
 	int numEncodedFrames = 0;
 	auto onFrame = [&](std::shared_ptr<const Data> data) {
