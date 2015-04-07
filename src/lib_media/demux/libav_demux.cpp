@@ -43,9 +43,7 @@ void LibavDemux::webcamList() {
 
 bool LibavDemux::webcamOpen(const std::string &options) {
 	auto avInputFormat = av_find_input_format(webcamFormat());
-	ffpp::Dict dict;
-	buildAVDictionary("[LibavDemux]", &dict, "-pixf yuv420p", "format");
-	if (avformat_open_input(&m_formatCtx, options.c_str(), avInputFormat, &dict))
+	if (avformat_open_input(&m_formatCtx, options.c_str(), avInputFormat, nullptr))
 		return false;
 	return true;
 }
