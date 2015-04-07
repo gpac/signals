@@ -72,7 +72,7 @@ public:
 	size_t getSize() const {
 		return m_format.getSize();
 	}
-
+	virtual size_t getNumPlanes() const = 0;
 	virtual const uint8_t* getComp(int comp) const = 0;
 	virtual uint8_t* getComp(int comp) = 0;
 	virtual size_t getPitch(int comp) const = 0;
@@ -95,6 +95,9 @@ public:
 	PictureYUV420(const Resolution &res)
 	: Picture(res, YUV420) {
 		setResolution(res);
+	}
+	size_t getNumPlanes() const override {
+		return 3;
 	}
 	const uint8_t* getComp(int comp) const override {
 		return m_comp[comp];
@@ -130,6 +133,9 @@ public:
 	PictureRGB24(const Resolution &res)
 		: Picture(res, RGB24) {
 		setResolution(res);
+	}
+	size_t getNumPlanes() const override {
+		return 1;
 	}
 	const uint8_t* getComp(int comp) const {
 		return data();
