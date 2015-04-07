@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="log.cpp" />
@@ -6,10 +6,10 @@
   <ItemGroup>
     <ClInclude Include="log.hpp" />
     <ClInclude Include="tools.hpp" />
-    <ClInclude Include="..\gpacpp\gpacpp.hpp">
+    <ClInclude Include="..\lib_gpacpp\gpacpp.hpp">
       <Filter>gpacpp</Filter>
     </ClInclude>
-    <ClInclude Include="..\ffpp\ffpp.hpp">
+    <ClInclude Include="..\lib_ffpp\ffpp.hpp">
       <Filter>ffpp</Filter>
     </ClInclude>
   </ItemGroup>
