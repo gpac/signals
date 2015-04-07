@@ -81,6 +81,9 @@ void printDetectedOptions(option::Parser &parse, option::Option * const options)
 
 	for (option::Option* opt = options[NUMERIC]; opt; opt = opt->next())
 		std::cout << "Option: " << opt->name << ", value: " << atol(opt->arg) << std::endl;
+	for (option::Option* opt = options[OPT]; opt; opt = opt->next())
+		std::cout << "Option: " << opt->name << std::endl;
+	std::cout << std::endl;
 }
 
 }
@@ -106,8 +109,8 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 	opt.url = parse.nonOption(0);
 	if (options[OPT].first()->desc && options[OPT].first()->desc->shortopt == std::string("live"))
 		opt.isLive = true;
-	if (options[NUMERIC].first()->desc->shortopt != std::string("s")) throw std::runtime_error("Internal error when parsing '-s'. Please contact your reseller.");
-	opt.segmentDuration = atol(options[NUMERIC].first()->arg);
+	if (options[NUMERIC].first()->desc && options[NUMERIC].first()->desc->shortopt == std::string("s"))
+		opt.segmentDuration = atol(options[NUMERIC].first()->arg);
 
 	return opt;
 }
