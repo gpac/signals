@@ -61,6 +61,7 @@ void AudioConvert::process(std::shared_ptr<const Data> data) {
 			} else {
 				throw std::runtime_error("[AudioConvert] Incompatible input audio data.");
 			}
+			accumulatedTimeInDstSR = clockToTimescale(data->getTime(), srcPcmFormat.sampleRate);
 		}
 
 		srcNumSamples = audioData->size() / audioData->getFormat().getBytesPerSample();
