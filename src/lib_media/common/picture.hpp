@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lib_modules/core/data.hpp"
+#include "lib_modules/core/pin.hpp"
 
 namespace Modules {
 
@@ -62,10 +63,14 @@ public:
 	PixelFormat format;
 };
 
+class Picture;
+typedef PinDataDefault<Picture> PinPicture;
+
 class Picture : public RawData {
 public:
 	Picture(size_t unused) : RawData(0) {}
-	static Picture* create(const Resolution &res, const PixelFormat &format);
+	static std::shared_ptr<Picture> create(PinPicture *pin, const Resolution &res, const PixelFormat &format);
+
 	PictureFormat getFormat() const {
 		return m_format;
 	}

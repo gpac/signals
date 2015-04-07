@@ -81,8 +81,6 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 
 namespace {
 void copyToPicture(AVFrame const* avFrame, Picture* pic) {
-	pic->setResolution(Resolution(avFrame->width, avFrame->height));
-
 	for (size_t comp=0; comp<pic->getNumPlanes(); ++comp) {
 		auto subsampling = comp == 0 ? 1 : 2;
 		auto src = avFrame->data[comp];
@@ -110,12 +108,12 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
 		return false;
 	}
-	if (avFrame->get()->format != AV_PIX_FMT_YUV420P){
-		Log::msg(Log::Warning, "[LibavDecode] Unsupported pixel format.");
-		return false;
-	}
 	if (gotPicture) {
-		auto pic = videoPin->getBuffer(0);
+		if (avFrame->get()->format != AV_PIX_FMT_YUV420P) {
+			Log::msg(Log::Warning, "[LibavDecode] Unsupported pixel format.");
+			return false;
+		}
+		auto pic = Picture::create(videoPin, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
 		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
 		videoPin->emit(pic);

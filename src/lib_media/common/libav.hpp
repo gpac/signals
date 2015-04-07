@@ -70,6 +70,5 @@ void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const
 void avLog(void *avcl, int level, const char *fmt, va_list vl);
 
 typedef PinDataDefault<DataAVPacket> PinLibavPacket;
-typedef PinDataDefault<PictureYUV420P> PinPicture;
 
 }

@@ -16,7 +16,7 @@ namespace Transform {
 
 VideoConvert::VideoConvert(const PictureFormat &dstFormat)
 : m_SwContext(nullptr), dstFormat(dstFormat) {
-	output = addPin(new PinDefault);
+	output = addPin(new PinPicture);
 }
 
 void VideoConvert::reconfigure(const PictureFormat &format) {
@@ -53,11 +53,9 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	int dstStride[3] = { 0, 0, 0 };
 	switch (dstFormat.format) {
 	case YUV420P:
-	case YUV422:
+	case YUYV422:
 	case RGB24: {
-			auto size = avpicture_get_size(libavPixFmtConvert(dstFormat.format), dstFormat.res.width, dstFormat.res.height);
-			auto pic = picAlloc.getBuffer(); //Romain: incorrect ->rawAlloc for RGB
-			pic->setResolution(dstFormat.res);
+			auto pic = Picture::create(output, dstFormat.res, dstFormat.format);
 			for (size_t i=0; i<pic->getNumPlanes(); ++i) {
 				pDst[i] = pic->getPlane(i);
 				dstStride[i] = (int)pic->getPitch(i);
