@@ -14,7 +14,6 @@ bool test() {
 	return true;
 }
 
-//TODO: complete this test... and create other unit tests
 unittest("unit test on class Result") {
 	{
 		bool res = test<int>();

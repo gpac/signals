@@ -26,7 +26,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
 		auto decoderProps = safe_cast<PropsDecoder>(props);
-		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) { //TODO: expose types it somewhere else
+		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
 			ConnectPinToModule(demux->getPin(i), null);

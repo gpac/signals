@@ -99,17 +99,6 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 			codecCtx->pix_fmt = PIX_FMT_YUVJ420P;
 		}
 
-		/* set other optionsDict*/
-#if 0 //TODO
-		if (avCodec == "h264") {
-			av_opt_set(codecCtx->priv_data, "preset", "superfast", 0);
-			av_opt_set(codecCtx->priv_data, "rc-lookahead", "0", 0);
-		}
-		codecCtx->flags |= CODEC_FLAG_PASS1;
-		if (atoi(av_dict_get(generalDict, "pass", nullptr, 0)->value) == 2) {
-			codecCtx->flags |= CODEC_FLAG_PASS2;
-		}
-#endif
 		double fr = atof(generalDict.get("r")->value);
 		AVRational fps;
 		fps2NumDen(fr, fps.den, fps.num); //for FPS, num and den are inverted
