@@ -126,7 +126,7 @@ unittest("audio converter: dynamic formats") {
 
 unittest("video converter: pass-through") {
 	auto res = Resolution(16, 32);
-	auto format = PictureFormat(res, YUV420);
+	auto format = PictureFormat(res, YUV420P);
 	int numFrames = 0;
 
 	auto onFrame = [&](std::shared_ptr<const Data> data) {
@@ -149,7 +149,7 @@ unittest("video converter: pass-through") {
 unittest("video converter: different sizes") {
 	auto srcRes = Resolution(16, 32);
 	auto dstRes = Resolution(24, 8);
-	auto format = PictureFormat(dstRes, YUV420);
+	auto format = PictureFormat(dstRes, YUV420P);
 	int numFrames = 0;
 
 	auto onFrame = [&](std::shared_ptr<const Data> data) {

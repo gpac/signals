@@ -117,7 +117,7 @@ void libavFrameDataConvert(const PcmData *pcmData, AVFrame *frame) {
 
 void pixelFormat2libavPixFmt(const enum PixelFormat format, AVPixelFormat &avPixfmt) {
 	switch (format) {
-	case YUV420:
+	case YUV420P:
 		avPixfmt = AV_PIX_FMT_YUV420P;
 		break;
 	case RGB24:
@@ -131,7 +131,7 @@ void pixelFormat2libavPixFmt(const enum PixelFormat format, AVPixelFormat &avPix
 enum PixelFormat libavPixFmt2PixelFormat(const AVPixelFormat &avPixfmt) {
 	switch (avPixfmt) {
 	case AV_PIX_FMT_YUV420P:
-		return YUV420;
+		return YUV420P;
 	case AV_PIX_FMT_RGB24:
 		return RGB24;
 	default:

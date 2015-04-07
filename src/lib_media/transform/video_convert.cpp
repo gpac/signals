@@ -52,7 +52,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
 	switch (dstFormat.format) {
-	case YUV420:
+	case YUV420P:
 	case RGB24: {
 			auto pic = picAlloc.getBuffer(0);
 			pic->setResolution(dstFormat.res);

@@ -3,7 +3,7 @@
 namespace Modules {
 Picture* Picture::create(const Resolution &res, const PixelFormat &format) {
 	switch (format) {
-	case YUV420:
+	case YUV420P:
 		return new PictureYUV420(res);
 	case RGB24:
 		return new PictureRGB24(res);
