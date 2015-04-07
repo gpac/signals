@@ -100,9 +100,10 @@ bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 void SDLVideo::createTexture() {
 	Log::msg(Log::Info, format("[SDLVideo render] %sx%s", pictureFormat.res.width, pictureFormat.res.height));
 
-	if(texture)
+	if (texture)
 		SDL_DestroyTexture(texture);
 
+	//TODO: should be able to support YUYV422 etc.
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STATIC, pictureFormat.res.width, pictureFormat.res.height);
 	if (!texture) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create texture: %s", SDL_GetError());

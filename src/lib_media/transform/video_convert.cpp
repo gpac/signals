@@ -53,8 +53,10 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 	int dstStride[3] = { 0, 0, 0 };
 	switch (dstFormat.format) {
 	case YUV420P:
+	case YUV422:
 	case RGB24: {
-			auto pic = picAlloc.getBuffer(0);
+			auto size = avpicture_get_size(libavPixFmtConvert(dstFormat.format), dstFormat.res.width, dstFormat.res.height);
+			auto pic = picAlloc.getBuffer(); //Romain: incorrect ->rawAlloc for RGB
 			pic->setResolution(dstFormat.res);
 			for (size_t i=0; i<pic->getNumPlanes(); ++i) {
 				pDst[i] = pic->getPlane(i);
@@ -64,9 +66,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 			break;
 		}
 	default:
-		assert(0);
-		Log::msg(Log::Warning, "[VideoConvert] Dst colorspace not supported. Ignoring.");
-		return;
+		throw std::runtime_error("[VideoConvert] Destination colorspace not supported.");
 	}
 
 	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcFormat.res.height, pDst, dstStride);
