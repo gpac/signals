@@ -55,19 +55,19 @@ struct Arg : public option::Arg
 
 enum optionIndex { UNKNOWN, HELP, OPT, REQUIRED, NUMERIC, NONEMPTY };
 const option::Descriptor usage[] = {
-		{ UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
-		"Options:" },
-		{ HELP, 0, "h", "help", Arg::None, "  \t--help, -h  \tPrint usage and exit." },
-		{ OPT, 0, "live", "live", Arg::None, "  --live, -live \tRun at system clock pace (otherwise runs as fast as possible) with low latency settings (quality may be degraded)." },
-		{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur, -s \tSet the segment duration in millisecond (default value: 2000)." },
-		{ UNKNOWN, 0, "", "", Arg::None,
-		"\nExamples:\n"
-		"  dashcastx file.ts\n"
-		"  dashcastx udp://226.0.0.1:1234\n"
-		"  dashcastx -live -s 10000 file.mp4\n"
-		"  dashcastx --live --seg-dur 10000 http://server.com/file.mp4\n"
-		},
-		{ 0, 0, 0, 0, 0, 0 } };
+	{ UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
+	"Options:" },
+	{ HELP, 0, "h", "help", Arg::None, "  --help, -h  \tPrint usage and exit." },
+	{ OPT, 0, "live", "live", Arg::None, "  --live, -live \tRun at system clock pace (otherwise runs as fast as possible) with low latency settings (quality may be degraded)." },
+	{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur, -s \tSet the segment duration in millisecond (default value: 2000)." },
+	{ UNKNOWN, 0, "", "", Arg::None,
+	"\nExamples:\n"
+	"  dashcastx file.ts\n"
+	"  dashcastx udp://226.0.0.1:1234\n"
+	"  dashcastx -live -s 10000 file.mp4\n"
+	"  dashcastx --live --seg-dur 10000 http://server.com/file.mp4\n"
+	},
+	{ 0, 0, 0, 0, 0, 0 } };
 
 void printDetectedOptions(option::Parser &parse, option::Option * const options) {
 	if (parse.nonOptionsCount() == 1) {
@@ -95,10 +95,9 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 	if (parse.error()) {
 		option::printUsage(std::cout, usage);
 		throw std::runtime_error("Parse error. Please check message and usage above.");
-	}
-
-	if (options[HELP] || argc == 0) {
+	} else if (options[HELP] || argc == 0 || parse.nonOptionsCount() == 0) {
 		option::printUsage(std::cout, usage);
+		throw std::runtime_error("Please check message and usage above.");
 	} else {
 		printDetectedOptions(parse, options.get());
 	}
