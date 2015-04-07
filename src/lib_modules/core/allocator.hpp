@@ -33,11 +33,12 @@ public:
 		PacketAllocator<DataType>* const m_allocator;
 	};
 
-	std::shared_ptr<DataType> getBuffer(size_t size) {
+	template<typename T>
+	std::shared_ptr<T> getBuffer(size_t size) {
 		auto event = freeBlocks.pop(); 
 		switch(event) {
 		case OneBufferIsFree: {
-			std::shared_ptr<DataType> data(new DataType(size), deleter);
+			std::shared_ptr<T> data(new T(size), deleter);
 			return data;
 			}
 		case Exit:

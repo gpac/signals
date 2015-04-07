@@ -69,8 +69,9 @@ public:
 		return numReceivers;
 	}
 
-	std::shared_ptr<typename Allocator::MyType> getBuffer(size_t size) {
-		return allocator->getBuffer(size);
+	template<typename T = typename Allocator::MyType>
+	std::shared_ptr<T> getBuffer(size_t size) {
+		return allocator->getBuffer<T>(size);
 	}
 
 	ISignal<void(std::shared_ptr<const Data>)>& getSignal() override {

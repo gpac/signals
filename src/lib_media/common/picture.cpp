@@ -1,13 +1,16 @@
 #include "picture.hpp"
 
 namespace Modules {
-Picture* Picture::create(const Resolution &res, const PixelFormat &format) {
+std::shared_ptr<Picture> Picture::create(PinPicture *pin, const Resolution &res, const PixelFormat &format) {
+	std::shared_ptr<Picture> r;
+	auto const size = PictureFormat::getSize(res, format);
 	switch (format) {
-	case YUV420P: return new PictureYUV420P(res);
-	case YUYV422: return new PictureYUYV422(res);
-	case RGB24: return new PictureRGB24(res);
-	default:
-		throw std::runtime_error("Unknown pixel format for Picture. Please contact your vendor");
+	case YUV420P: r = safe_cast<Picture>(pin->getBuffer<PictureYUV420P>(size)); break;
+		//Romain case YUYV422: r = pin->getBuffer<PictureYUYV422>(size); break;
+	case RGB24: r = safe_cast<Picture>(pin->getBuffer<PictureRGB24>(size)); break;
+	default: throw std::runtime_error("Unknown pixel format for Picture. Please contact your vendor");
 	}
+	r->setResolution(res);
+	return r;
 }
 }
