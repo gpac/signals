@@ -60,7 +60,7 @@ bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 		switch (event.type) {
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-				SDL_RenderSetViewport(renderer, NULL);
+				SDL_RenderSetViewport(renderer, nullptr);
 				displayrect->w = event.window.data1;
 				displayrect->h = event.window.data2;
 			}
@@ -85,11 +85,11 @@ bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 		createTexture();
 	}
 
-	SDL_UpdateYUVTexture(texture, NULL, 
+	SDL_UpdateYUVTexture(texture, nullptr, 
 			pic->getPlane(0), (int)pic->getPitch(0),
 			pic->getPlane(1), (int)pic->getPitch(1),
 			pic->getPlane(2), (int)pic->getPitch(2));
-	SDL_RenderCopy(renderer, texture, NULL, displayrect.get());
+	SDL_RenderCopy(renderer, texture, nullptr, displayrect.get());
 	SDL_RenderPresent(renderer);
 
 	m_NumFrames++;

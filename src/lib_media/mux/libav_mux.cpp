@@ -23,11 +23,11 @@ LibavMux::LibavMux(const std::string &baseName)
 : m_headerWritten(false) {
 	/* parse the format optionsDict */
 	std::string optionsStr = "-format mp4"; //TODO
-	AVDictionary *optionsDict = NULL;
+	AVDictionary *optionsDict = nullptr;
 	buildAVDictionary("[libav_mux]", &optionsDict, optionsStr.c_str(), "format");
 
 	/* setup container */
-	AVOutputFormat *of = av_guess_format(av_dict_get(optionsDict, "format", NULL, 0)->value, NULL, NULL);
+	AVOutputFormat *of = av_guess_format(av_dict_get(optionsDict, "format", nullptr, 0)->value, nullptr, nullptr);
 	if (!of) {
 		Log::msg(Log::Warning, "[libav_mux] couldn't guess container from file extension");
 		av_dict_free(&optionsDict);
@@ -96,7 +96,7 @@ bool LibavMux::declareStream(std::shared_ptr<const Data> stream_) {
 
 void LibavMux::ensureHeader() {
 	if (!m_headerWritten) {
-		if (avformat_write_header(m_formatCtx, NULL) != 0) {
+		if (avformat_write_header(m_formatCtx, nullptr) != 0) {
 			Log::msg(Log::Warning, "[libav_mux] fatal error: can't write the container header");
 			for (unsigned i = 0; i < m_formatCtx->nb_streams; i++) {
 				if (m_formatCtx->streams[i]->codec && m_formatCtx->streams[i]->codec->codec) {
