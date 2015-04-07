@@ -139,7 +139,7 @@ unittest("video converter: pass-through") {
 		auto convert = uptr(new Transform::VideoConvert(format));
 		ConnectPin(convert->getPin(0), onFrame);
 
-		std::shared_ptr<Data> pic = uptr(new PictureYUV420(res));
+		std::shared_ptr<Data> pic = uptr(new PictureYUV420P(res));
 		convert->process(pic);
 	}
 
@@ -162,7 +162,7 @@ unittest("video converter: different sizes") {
 		auto convert = uptr(new Transform::VideoConvert(format));
 		ConnectPin(convert->getPin(0), onFrame);
 
-		std::shared_ptr<Data> pic = uptr(new PictureYUV420(srcRes));
+		std::shared_ptr<Data> pic = uptr(new PictureYUV420P(srcRes));
 		convert->process(pic);
 	}
 
