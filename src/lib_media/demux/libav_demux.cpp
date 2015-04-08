@@ -38,7 +38,7 @@ void LibavDemux::webcamList() {
 	ffpp::Dict dict;
 	buildAVDictionary("[LibavDemux]", &dict, "-list_devices true", "format");
 	avformat_open_input(&m_formatCtx, "video=dummy:audio=dummy", av_find_input_format(webcamFormat()), &dict);
-	Log::msg(Log::Warning, "\n[LibavDemux] Webcam example: \"webcam:video=Integrated Webcam:audio=Microphone (Realtek High Defini\"");
+	Log::msg(Log::Warning, "\n[LibavDemux] Webcam example: webcam:video=\"Integrated Webcam\":audio=\"Microphone (Realtek High Defini\"");
 }
 
 bool LibavDemux::webcamOpen(const std::string &options) {

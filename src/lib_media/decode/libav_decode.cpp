@@ -93,7 +93,7 @@ void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 		auto const w = avFrame->width / subsampling;
 
 		for (int y=0; y<h; ++y) {
-			memcpy(dst, src, w);
+			memcpy(dst, src, srcPitch);
 			src += srcPitch;
 			dst += dstPitch;
 		}
@@ -109,10 +109,6 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 		return false;
 	}
 	if (gotPicture) {
-		if (avFrame->get()->format != AV_PIX_FMT_YUV420P) {
-			Log::msg(Log::Warning, "[LibavDecode] Unsupported pixel format.");
-			return false;
-		}
 		auto pic = Picture::create(videoPin, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
 		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
