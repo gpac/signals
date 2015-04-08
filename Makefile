@@ -37,6 +37,7 @@ all: targets
 $(BIN)/config.mk:
 	@echo "Configuring ..."
 	@set -e ; \
+	mkdir -p $(BIN)
 	export PKG_CONFIG_PATH=./extra/lib/pkgconfig:$$PKG_CONFIG_PATH ; \
 	echo '# config file' > $(BIN)/config.mk.tmp ; \
 	echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
