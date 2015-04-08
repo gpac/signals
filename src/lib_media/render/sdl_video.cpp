@@ -4,9 +4,19 @@
 #include "SDL2/SDL.h"
 #include "render_common.hpp"
 
-
 namespace Modules {
 namespace Render {
+
+namespace {
+Uint32 pixelFormat2SDLFormat(const Modules::PixelFormat format) {
+	switch (format) {
+	case YUV420P: return SDL_PIXELFORMAT_IYUV;
+	case YUYV422: return SDL_PIXELFORMAT_YUY2;
+	case RGB24: return SDL_PIXELFORMAT_RGB24;
+	default: throw std::runtime_error("[SDLVideo] Pixel format not supported.");
+	}
+}
+}
 
 SDLVideo::SDLVideo(IClock* clock)
 	: m_clock(clock), texture(nullptr), displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
@@ -33,11 +43,6 @@ void SDLVideo::doRender() {
 	createTexture();
 
 	SDL_EventState(SDL_KEYUP, SDL_IGNORE); //ignore key up events, they don't even get filtered
-
-	displayrect->x = 0;
-	displayrect->y = 0;
-	displayrect->w = pictureFormat.res.width;
-	displayrect->h = pictureFormat.res.height;
 
 	m_NumFrames = 0;
 
@@ -71,8 +76,11 @@ bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 		}
 	}
 
-	// sanity check
 	auto pic = safe_cast<const Picture>(data);
+	if (pic->getFormat() != pictureFormat) {
+		pictureFormat = pic->getFormat();
+		createTexture();
+	}
 
 	auto const now = m_clock->now();
 	auto const timestamp = pic->getTime() + PREROLL_DELAY; // assume timestamps start at zero
@@ -80,15 +88,14 @@ bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
 	auto const delayInMs = clockToTimescale(delay, 1000);
 	SDL_Delay((Uint32)delayInMs);
 
-	if(pic->getFormat() != pictureFormat) {
-		pictureFormat = pic->getFormat();
-		createTexture();
-	}
-
-	SDL_UpdateYUVTexture(texture, nullptr, 
+	if (pictureFormat.format == YUV420P) {
+		SDL_UpdateYUVTexture(texture, nullptr,
 			pic->getPlane(0), (int)pic->getPitch(0),
 			pic->getPlane(1), (int)pic->getPitch(1),
 			pic->getPlane(2), (int)pic->getPitch(2));
+	} else {
+		SDL_UpdateTexture(texture, nullptr, pic->getPlane(0), (int)pic->getPitch(0));
+	}
 	SDL_RenderCopy(renderer, texture, nullptr, displayrect.get());
 	SDL_RenderPresent(renderer);
 
@@ -103,12 +110,17 @@ void SDLVideo::createTexture() {
 	if (texture)
 		SDL_DestroyTexture(texture);
 
-	//TODO: should be able to support YUYV422 etc.
-	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_IYUV, SDL_TEXTUREACCESS_STATIC, pictureFormat.res.width, pictureFormat.res.height);
+	texture = SDL_CreateTexture(renderer, pixelFormat2SDLFormat(pictureFormat.format), SDL_TEXTUREACCESS_STATIC, pictureFormat.res.width, pictureFormat.res.height);
 	if (!texture) {
 		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create texture: %s", SDL_GetError());
 		throw std::runtime_error("Texture creation failed");
 	}
+
+	displayrect->x = 0;
+	displayrect->y = 0;
+	displayrect->w = pictureFormat.res.width;
+	displayrect->h = pictureFormat.res.height;
+	SDL_SetWindowSize(window, displayrect->w, displayrect->h);
 }
 
 SDLVideo::~SDLVideo() {
