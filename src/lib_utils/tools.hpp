@@ -78,13 +78,11 @@ std::unique_ptr<T> uptr(T* p) {
 }
 
 template<typename T, typename U>
-std::shared_ptr<T> safe_cast(std::shared_ptr<U> p)
-{
+std::shared_ptr<T> safe_cast(std::shared_ptr<U> p) {
 	if (!p)
 		return nullptr;
 	auto r = std::dynamic_pointer_cast<T>(p);
-	if(!r)
-	{
+	if(!r) {
 		std::string s;
 		s += "dynamic cast error: could not convert from ";
 		s += typeid(U).name();
@@ -96,13 +94,11 @@ std::shared_ptr<T> safe_cast(std::shared_ptr<U> p)
 }
 
 template<typename T, typename U>
-T* safe_cast(U* p)
-{
+T* safe_cast(U* p) {
 	if (!p)
 		return nullptr;
 	auto r = dynamic_cast<T*>(p);
-	if(!r)
-	{
+	if(!r) {
 		std::string s;
 		s += "dynamic cast error: could not convert from ";
 		s += typeid(U).name();
