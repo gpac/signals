@@ -25,11 +25,9 @@ public:
 	struct Deleter {
 		Deleter(PacketAllocator<DataType>* allocator) : m_allocator(allocator) {
 		}
-
 		void operator()(DataType* p) {
 			m_allocator->recycle(p);
 		}
-
 		PacketAllocator<DataType>* const m_allocator;
 	};
 
