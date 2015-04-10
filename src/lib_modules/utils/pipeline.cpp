@@ -22,7 +22,7 @@ size_t PipelinedModule::getNumPin() const {
   return delegate->getNumPin();
 }
 
-IPin* PipelinedModule::getPin(int i) const {
+IPin* PipelinedModule::getPin(size_t i) const {
   return delegate->getPin(i);
 }
 /* direct call: receiving nullptr stops the execution */

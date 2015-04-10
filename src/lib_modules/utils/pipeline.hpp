@@ -15,13 +15,13 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-class PipelinedModule {
+class PipelinedModule : public IModule {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
 	void connect(IPin* pin);
 	size_t getNumPin() const;
-	IPin* getPin(int i) const;
+	IPin* getPin(size_t i) const;
 
 	/* direct call: receiving nullptr stops the execution */
 	void process(std::shared_ptr<const Data> data);
