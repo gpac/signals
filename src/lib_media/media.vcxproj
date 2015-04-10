@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common\dtsc.hpp" />
     <ClInclude Include="common\libav.hpp" />
     <ClInclude Include="common\mm.hpp" />
     <ClInclude Include="common\pcm.hpp" />

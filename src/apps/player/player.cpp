@@ -1,11 +1,12 @@
 #include "pipeliner.hpp"
+#include <iostream>
 
 using namespace Modules;
 
 namespace {
 const char* processArgs(int argc, char const* argv[]) {
 	if (argc != 2)
-		throw std::runtime_error("usage: player <file>");
+		throw std::runtime_error("usage: player <URL>");
 
 	return argv[1];
 }

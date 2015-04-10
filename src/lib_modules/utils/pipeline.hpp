@@ -2,12 +2,13 @@
 
 #include <memory>
 #include <vector>
-#include "core/data.hpp"
-#include "utils/stranded_pool_executor.hpp"
+#include "stranded_pool_executor.hpp"
+#include "../core/module.hpp"
 
 namespace Modules {
 
 class Module;
+class Data;
 struct IPin;
 
 struct ICompletionNotifier {
