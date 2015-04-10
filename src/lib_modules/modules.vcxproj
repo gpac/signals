@@ -24,15 +24,15 @@
     <ClInclude Include="core\data.hpp" />
     <ClInclude Include="core\module.hpp" />
     <ClInclude Include="core\pin.hpp" />
-    <ClInclude Include="core\pipeline.hpp" />
     <ClInclude Include="core\props.hpp" />
     <ClInclude Include="utils\helper.hpp" />
+    <ClInclude Include="utils\pipeline.hpp" />
     <ClInclude Include="utils\stranded_pool_executor.hpp" />
     <ClInclude Include="modules.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\pipeline.cpp" />
     <ClCompile Include="core\system_clock.cpp" />
+    <ClCompile Include="utils\pipeline.cpp" />
     <ClCompile Include="utils\stranded_pool_executor.cpp" />
   </ItemGroup>
   <ItemGroup>

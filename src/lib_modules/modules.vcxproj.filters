@@ -31,22 +31,22 @@
     <ClInclude Include="core\pin.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="core\pipeline.hpp">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="core\props.hpp">
       <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\pipeline.hpp">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utils\stranded_pool_executor.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="core\pipeline.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\system_clock.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\pipeline.cpp">
+      <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
