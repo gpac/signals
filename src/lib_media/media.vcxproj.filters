@@ -121,9 +121,6 @@
     <ClInclude Include="common\picture.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="common\dtsc.hpp">
-      <Filter>src\common</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common\libav.cpp">
