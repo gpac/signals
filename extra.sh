@@ -18,9 +18,7 @@ fi
 #-------------------------------------------------------------------------------
 # X264
 #-------------------------------------------------------------------------------
-
-if [ ! -f extra/src/x264/x264.c ] ;
-then
+if [ ! -f extra/src/x264/x264.c ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/x264
 	git clone --depth 100 git://git.videolan.org/x264.git extra/src/x264
@@ -29,8 +27,7 @@ then
 	popd
 fi
 
-if [ ! -f extra/build/x264/buildOk ] ;
-then
+if [ ! -f extra/build/x264/buildOk ] ; then
 	mkdir -p extra/build/x264
 	pushd extra/build/x264
  	../../src/x264/configure \
@@ -46,8 +43,7 @@ fi
 #-------------------------------------------------------------------------------
 # vo-aacenc
 #-------------------------------------------------------------------------------
-if [ ! -f extra/src/vo-aacenc-0.1.3/configure ] ;
-then
+if [ ! -f extra/src/vo-aacenc-0.1.3/configure ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/vo-aacenc
 	wget http://sourceforge.net/projects/opencore-amr/files/vo-aacenc/vo-aacenc-0.1.3.tar.gz/download -O vo-aacenc.tar.gz
@@ -55,8 +51,7 @@ then
 	rm vo-aacenc.tar.gz
 fi
 
-if [ ! -f extra/build/vo-aacenc/buildOk ] ;
-then
+if [ ! -f extra/build/vo-aacenc/buildOk ] ; then
 	mkdir -p extra/build/vo-aacenc
 	pushd extra/build/vo-aacenc
 	../../src/vo-aacenc-0.1.3/configure \
@@ -71,9 +66,7 @@ fi
 #-------------------------------------------------------------------------------
 # FFMPEG
 #-------------------------------------------------------------------------------
-
-if [ ! -f extra/src/ffmpeg/ffmpeg.c ] ;
-then
+if [ ! -f extra/src/ffmpeg/ffmpeg.c ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/ffmpeg
 	git clone git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
@@ -82,8 +75,7 @@ then
 	popd
 fi
 
-if [ ! -f extra/build/ffmpeg/buildOk ] ;
-then
+if [ ! -f extra/build/ffmpeg/buildOk ] ; then
 	mkdir -p extra/build/ffmpeg
 	pushd extra/build/ffmpeg
 	../../src/ffmpeg/configure \
@@ -109,9 +101,7 @@ fi
 #-------------------------------------------------------------------------------
 # GPAC
 #-------------------------------------------------------------------------------
-
-if [ ! -f extra/src/gpac/Changelog ] ;
-then
+if [ ! -f extra/src/gpac/Changelog ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/gpac
 	git clone https://github.com/gpac/gpac.git extra/src/gpac
@@ -120,8 +110,7 @@ then
 	popd
 fi
 
-if [ ! -f extra/build/gpac/buildOk ] ;
-then
+if [ ! -f extra/build/gpac/buildOk ] ; then
 	mkdir -p extra/build/gpac
 	pushd extra/build/gpac
 	../../src/gpac/configure \
@@ -141,9 +130,7 @@ fi
 #-------------------------------------------------------------------------------
 # SDL2
 #-------------------------------------------------------------------------------
-
-if [ ! -f extra/src/sdl2/configure ] ;
-then
+if [ ! -f extra/src/sdl2/configure ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/sdl2
 	pushd extra/src
@@ -153,8 +140,7 @@ then
 	popd
 fi
 
-if [ ! -f extra/build/sdl2/buildOk ] ;
-then
+if [ ! -f extra/build/sdl2/buildOk ] ; then
 	mkdir -p extra/build/sdl2
 	pushd extra/build/sdl2
 	../../src/sdl2/configure \
@@ -170,8 +156,7 @@ fi
 # ASIO
 #-------------------------------------------------------------------------------
 
-if [ ! -f extra/src/asio/asio/include/asio.hpp ] ;
-then
+if [ ! -f extra/src/asio/asio/include/asio.hpp ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/asio
 	git clone --depth 1000 https://github.com/chriskohlhoff/asio extra/src/asio
@@ -180,8 +165,7 @@ then
 	popd
 fi
 
-if [ ! -f extra/include/asio/asio.hpp ] ;
-then
+if [ ! -f extra/include/asio/asio.hpp ] ; then
 	mkdir -p extra/include/asio
 	cp -r extra/src/asio/asio/include/* extra/include/asio/
 fi
@@ -191,9 +175,7 @@ echo "Done"
 #-------------------------------------------------------------------------------
 # libjpeg-turbo
 #-------------------------------------------------------------------------------
-
-if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ;
-then
+if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/libjpeg_turbo_1.3.x
 	pushd extra/src
@@ -204,8 +186,7 @@ then
 	popd
 fi
 
-if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ;
-then
+if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
 	mkdir -p extra/build/libjpeg_turbo_1.3.x
 	pushd extra/build/libjpeg_turbo_1.3.x
 	../../src/libjpeg_turbo_1.3.x/configure \
@@ -220,9 +201,7 @@ fi
 #-------------------------------------------------------------------------------
 # optionparser
 #-------------------------------------------------------------------------------
-
-if [ ! -f extra/src/optionparser-1.3/src/optionparser.h ] ;
-then
+if [ ! -f extra/src/optionparser-1.3/src/optionparser.h ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/optionparser-1.3
 	wget http://sourceforge.net/projects/optionparser/files/optionparser-1.3.tar.gz/download -O optionparser-1.3.tar.gz
@@ -230,8 +209,7 @@ then
 	rm optionparser-1.3.tar.gz
 fi
 
-if [ ! -f extra/include/optionparser/optionparser.h ] ;
-then
+if [ ! -f extra/include/optionparser/optionparser.h ] ; then
 	mkdir -p extra/include/optionparser
 	cp extra/src/optionparser-1.3/src/optionparser.h extra/include/optionparser/
 fi
