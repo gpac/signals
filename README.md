@@ -13,6 +13,9 @@ $ make
 MSYS2:
 Remove '-XCClinker' and add '-D_WIN32_WINNT=0x0501 -DWIN32_LEAN_AND_MEAN' in bin/make/config.mk (introduced by SDL2)
 
+Cygwin:
+Same as MSYS2, plus: add '-D__USE_W32_SOCKETS'
+
 In the Signals root path:
   
   64 bits:

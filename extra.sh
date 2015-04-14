@@ -114,7 +114,10 @@ if [ ! -f extra/src/gpac/Changelog ] ;
 then
 	mkdir -p extra/src
 	rm -rf extra/src/gpac
-	svn checkout svn://svn.code.sf.net/p/gpac/code/trunk/gpac -r 5507 extra/src/gpac
+	git clone https://github.com/gpac/gpac.git extra/src/gpac
+	pushd extra/src/gpac
+	git checkout -q a1a3cf2dd187f
+	popd
 fi
 
 if [ ! -f extra/build/gpac/buildOk ] ;
