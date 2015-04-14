@@ -28,10 +28,12 @@ Read: 2015: http://www.streamingmediaglobal.com/Articles/ReadArticle.aspx?Articl
 http://dlib.net/
 DashCast:
 - resolution as a param
+- crop
+- multi-rep
 - DTSC support
 - DASH GPAC input
 - low latency -> allow fine-grain threading
-- multi-rep
+- DASHer live should be injected a clock?
 4K60:10/IntelTranscodingSupport->libMFX
 OSGi/Pipe/Mesos?/Angular.js?(http://www.freecodecamp.com/)
 zenbuild to NaCl

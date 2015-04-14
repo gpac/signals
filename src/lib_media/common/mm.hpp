@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include "lib_modules/core/data.hpp"
+#include "dtsc.hpp"
 
 struct AVCodecContext;
 
