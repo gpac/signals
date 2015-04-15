@@ -30,8 +30,8 @@ unittest("transcoder: video simple (libav mux)") {
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsDecoder>(props);
-		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
+		auto decoderProps = safe_cast<PropsPkt>(props);
+		if (decoderProps->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
 			ConnectPinToModule(demux->getPin(i), null);
@@ -65,8 +65,8 @@ unittest("transcoder: video simple (gpac mux)") {
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsDecoder>(props);
-		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
+		auto decoderProps = safe_cast<PropsPkt>(props);
+		if (decoderProps->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
 			ConnectPinToModule(demux->getPin(i), null);

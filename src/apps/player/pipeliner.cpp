@@ -1,6 +1,3 @@
-extern "C" {
-#include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-}
 #include "lib_modules/modules.hpp"
 #include "lib_media/media.hpp"
 #include "pipeliner.hpp"
@@ -8,10 +5,10 @@ extern "C" {
 
 namespace {
 Module* createRenderer(int codecType) {
-	if (codecType == AVMEDIA_TYPE_VIDEO) {
+	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "Found video stream");
 		return new Render::SDLVideo();
-	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "Found audio stream");
 		return new Render::SDLAudio();
 	} else {
@@ -34,7 +31,7 @@ void declarePipeline(Pipeline &pipeline, const char *url) {
 
 		pipeline.connect(demux->getPin(i), decoder);
 
-		auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
+		auto const codecType = decoderProps ? decoderProps->getStreamType() : UNKNOWN_ST;
 		auto renderer = pipeline.addModule(createRenderer(codecType));
 		if (!renderer)
 			continue;

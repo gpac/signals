@@ -26,7 +26,7 @@ struct Resolution {
 
 #undef PixelFormat //FIXME: there are collisions with FFmpeg here
 enum PixelFormat {
-	UNKNOWN = 0,
+	UNKNOWN_PF = -1,
 	YUV420P,
 	YUYV422,
 	RGB24
@@ -34,7 +34,7 @@ enum PixelFormat {
 
 class PictureFormat {
 public:
-	PictureFormat() : format(UNKNOWN) {
+	PictureFormat() : format(UNKNOWN_PF) {
 	}
 	PictureFormat(const Resolution &res, const PixelFormat &format)
 	: res(res), format(format) {
