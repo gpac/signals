@@ -16,6 +16,7 @@ class AudioConvert : public Module {
 public:
 	AudioConvert(const PcmFormat &dstFormat);
 	AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstFormat);
+	~AudioConvert();
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 
