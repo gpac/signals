@@ -23,12 +23,11 @@ Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps, bool isLowLatency
 	}
 }
 
-Module* createConverter(PropsDecoder *decoderProps) {
+Module* createConverter(PropsDecoder *decoderProps, const Resolution &dstRes) {
 	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
 	if (codecType == AVMEDIA_TYPE_VIDEO) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
 		auto srcCtx = decoderProps->getAVCodecContext();
-		auto dstRes = Resolution(320, 180);
 		auto dstFormat = PictureFormat(dstRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
@@ -58,7 +57,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 		pipeline.connect(demux->getPin(i), decoder);
 
-		auto converter = pipeline.addModule(createConverter(decoderProps));
+		auto converter = pipeline.addModule(createConverter(decoderProps, opt.res));
 		if (!converter)
 			continue;
 
