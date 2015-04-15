@@ -46,7 +46,8 @@ protected:
 
 class PropsDecoderImage : public PropsDecoder {
 public:
-	PixelFormat getPixelFormat();
+	PixelFormat getPixelFormat() const;
+	Resolution getResolution() const;
 };
 
 class DataAVPacket : public Data {
