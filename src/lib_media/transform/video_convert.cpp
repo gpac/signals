@@ -1,6 +1,7 @@
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "video_convert.hpp"
+#include "lib_ffpp/ffpp.hpp"
 #include "../common/libav.hpp"
 
 namespace {

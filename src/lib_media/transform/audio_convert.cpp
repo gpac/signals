@@ -21,6 +21,9 @@ AudioConvert::AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstForma
 	output = addPin(new PinPcm);
 }
 
+AudioConvert::~AudioConvert() {
+}
+
 void AudioConvert::reconfigure(const PcmFormat &srcFormat) {
 	flush();
 	m_Swr = uptr(new ffpp::SwResampler);
