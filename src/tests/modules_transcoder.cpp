@@ -1,6 +1,3 @@
-extern "C" {
-#include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-}
 #include "tests.hpp"
 #include "lib_modules/modules.hpp"
 #include "lib_media/decode/jpegturbo_decode.hpp"
@@ -100,11 +97,10 @@ unittest("transcoder: jpg to jpg") {
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
-	auto decoderProps = safe_cast<PropsDecoder>(props);
-	auto srcCtx = decoderProps->getAVCodecContext();
+	auto decoderProps = safe_cast<PropsDecoderImage>(props);
 
 	auto reader = uptr(new In::File(filename));
-	auto dstRes = Resolution(decoderProps->getAVCodecContext()->width, srcCtx->height);
+	auto dstRes = decoderProps->getResolution();
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
@@ -125,13 +121,12 @@ unittest("transcoder: jpg to resized jpg") {
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
-	auto decoderProps = safe_cast<PropsDecoder>(props);
-	auto srcCtx = decoderProps->getAVCodecContext();
+	auto decoderProps = safe_cast<PropsDecoderImage>(props);
 
 	auto reader = uptr(new In::File(filename));
-	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_RGB24);
-	auto dstRes = Resolution(srcCtx->width / 2, srcCtx->height / 2);
-	auto dstFormat = PictureFormat(dstRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
+	ASSERT(decoderProps->getPixelFormat() == RGB24);
+	auto dstRes = decoderProps->getResolution() / 2;
+	auto dstFormat = PictureFormat(dstRes, decoderProps->getPixelFormat());
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(new Out::File("data/test.jpg"));
@@ -148,16 +143,15 @@ unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
 	auto props = demux->getPin(0)->getProps();
-	auto decoderProps = safe_cast<PropsDecoder>(props);
+	auto decoderProps = safe_cast<PropsDecoderImage>(props);
 	auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 
-	auto srcCtx = decoderProps->getAVCodecContext();
-	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
-	auto encoder = uptr(new Encode::JPEGTurboEncode(srcRes));
+	auto dstRes = decoderProps->getResolution();
+	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
-	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_YUV420P);
-	auto dstFormat = PictureFormat(srcRes, RGB24);
+	ASSERT(decoderProps->getPixelFormat() == YUV420P);
+	auto dstFormat = PictureFormat(dstRes, RGB24);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
 	ConnectPinToModule(demux->getPin(0), decoder);
@@ -179,13 +173,12 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	}
 	auto props = decoder->getPin(0)->getProps();
 	ASSERT(props != nullptr);
-	auto decoderProps = safe_cast<PropsDecoder>(props);
-	auto srcCtx = decoderProps->getAVCodecContext();
-	auto srcRes = Resolution(srcCtx->width, srcCtx->height);
+	auto decoderProps = safe_cast<PropsDecoderImage>(props);
+	auto srcRes = decoderProps->getResolution();
 
 	auto reader = uptr(new In::File(filename));
-	ASSERT(srcCtx->pix_fmt == AV_PIX_FMT_RGB24);
-	auto dstFormat = PictureFormat(srcRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
+	ASSERT(decoderProps->getPixelFormat() == RGB24);
+	auto dstFormat = PictureFormat(srcRes, decoderProps->getPixelFormat());
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));

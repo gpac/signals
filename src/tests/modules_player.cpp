@@ -1,6 +1,3 @@
-extern "C" {
-#include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-}
 #include "tests.hpp"
 #include "lib_modules/modules.hpp"
 #include "lib_utils/tools.hpp"
@@ -51,8 +48,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumPin(); ++i) {
 		auto props = demux->getPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsDecoder>(props);
-		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_AUDIO) {
+		auto decoderProps = safe_cast<PropsPkt>(props);
+		if (decoderProps->getStreamType() == AUDIO_PKT) {
 			audioIndex = i;
 		} else {
 			ConnectPinToModule(demux->getPin(i), null);

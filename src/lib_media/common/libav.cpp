@@ -75,8 +75,12 @@ AVCodecContext* PropsDecoder::getAVCodecContext() const {
 	return codecCtx;
 }
 
-PixelFormat PropsDecoderImage::getPixelFormat() {
+PixelFormat PropsDecoderImage::getPixelFormat() const {
 	return libavPixFmt2PixelFormat(codecCtx->pix_fmt);
+}
+
+Resolution PropsDecoderImage::getResolution() const {
+	return Resolution(codecCtx->width, codecCtx->height);
 }
 
 void libavAudioCtxConvertLibav(const Modules::PcmFormat *cfg, int &sampleRate, int &format, int &numChannels, uint64_t &layout) {
