@@ -6,12 +6,17 @@
 
 struct AVCodecContext;
 
-class Stream : public Modules::Data {
-public:
-	virtual ~Stream() {};
+namespace Modules {
+
+enum StreamType {
+	UNKNOWN_ST = -1,
+	PCM,       //UNCOMPRESSED_AUDIO
+	PICTURE,   //UNCOMPRESSED_VIDEO
+	AUDIO_PKT, //COMPRESSED_AUDIO
+	VIDEO_PKT  //COMPRESSED_VIDEO
 };
 
-class StreamVideo : public Stream {
+class StreamVideo : public Modules::Data {
 public:
 	uint32_t width;
 	uint32_t height;
@@ -22,7 +27,7 @@ public:
 	AVCodecContext *codecCtx; //FIXME: legacy from libav
 };
 
-class StreamAudio : public Stream {
+class StreamAudio : public Modules::Data {
 public:
 	std::string codecName;
 	uint32_t numChannels;
@@ -34,4 +39,4 @@ public:
 
 	AVCodecContext *codecCtx; //FIXME: legacy from libav
 };
-
+}

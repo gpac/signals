@@ -1,36 +1,31 @@
-extern "C" {
-#include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-}
 #include "lib_modules/modules.hpp"
 #include "lib_media/media.hpp"
 #include "pipeliner.hpp"
 #include <sstream>
 
 namespace {
-Encode::LibavEncode* createEncoder(PropsDecoder *decoderProps, bool isLowLatency) {
-	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
-	if (codecType == AVMEDIA_TYPE_VIDEO) {
+Encode::LibavEncode* createEncoder(PropsPkt *decoderProps, bool isLowLatency) {
+	auto const codecType = decoderProps ? decoderProps->getStreamType() : UNKNOWN_ST;
+	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Video, isLowLatency);
-	}
-	else if (codecType == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found audio stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Audio);
-	}
-	else {
+	} else {
 		Log::msg(Log::Info, "[Encoder] Found unknown stream");
 		return nullptr;
 	}
 }
 
-Module* createConverter(PropsDecoder *decoderProps, const Resolution &dstRes) {
-	auto const codecType = decoderProps ? decoderProps->getAVCodecContext()->codec_type : AVMEDIA_TYPE_UNKNOWN;
-	if (codecType == AVMEDIA_TYPE_VIDEO) {
+Module* createConverter(PropsPkt *decoderProps, const Resolution &dstRes) {
+	auto const codecType = decoderProps ? decoderProps->getStreamType() : UNKNOWN_ST;
+	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
-		auto srcCtx = decoderProps->getAVCodecContext();
-		auto dstFormat = PictureFormat(dstRes, libavPixFmt2PixelFormat(srcCtx->pix_fmt));
+		auto imageProps = safe_cast<PropsDecoderImage>(decoderProps);
+		auto dstFormat = PictureFormat(dstRes, imageProps->getPixelFormat());
 		return new Transform::VideoConvert(dstFormat);
-	} else if (codecType == AVMEDIA_TYPE_AUDIO) {
+	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found audio stream");
 		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 		return new Transform::AudioConvert(format);

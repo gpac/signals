@@ -3,6 +3,7 @@
 #include "picture.hpp"
 #include "lib_modules/core/pin.hpp"
 #include "lib_modules/core/props.hpp"
+#include "mm.hpp"
 #include <cstdarg>
 #include <memory>
 
@@ -23,21 +24,29 @@ extern "C" {
 
 namespace Modules {
 
-class PropsDecoder : public IProps {
+class PropsPkt : public IProps {
+public:
+	virtual ~PropsPkt() {}
+	virtual StreamType getStreamType() const = 0;
+};
+
+class PropsDecoder : public PropsPkt {
 public:
 	/**
 	 * Doesn't take the ownership of codecCtx
 	 */
-	PropsDecoder(AVCodecContext *codecCtx)
-		: codecCtx(codecCtx) {
-	}
+	PropsDecoder(AVCodecContext *codecCtx);
+	virtual ~PropsDecoder() {}
+	StreamType getStreamType() const override;
+	AVCodecContext* getAVCodecContext() const;
 
-	AVCodecContext* getAVCodecContext() const {
-		return codecCtx;
-	}
-
-private:
+protected:
 	AVCodecContext *codecCtx;
+};
+
+class PropsDecoderImage : public PropsDecoder {
+public:
+	PixelFormat getPixelFormat();
 };
 
 class DataAVPacket : public Data {

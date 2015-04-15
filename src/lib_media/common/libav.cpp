@@ -59,6 +59,26 @@ const char* avlogLevelName(int level) {
 
 namespace Modules {
 
+PropsDecoder::PropsDecoder(AVCodecContext *codecCtx)
+	: codecCtx(codecCtx) {
+}
+
+StreamType PropsDecoder::getStreamType() const {
+	switch (codecCtx->codec_type) {
+	case AVMEDIA_TYPE_VIDEO: return VIDEO_PKT;
+	case AVMEDIA_TYPE_AUDIO: return AUDIO_PKT;
+	default: throw std::runtime_error("Unknown stream type. Only audio and video handled.");
+	}
+}
+
+AVCodecContext* PropsDecoder::getAVCodecContext() const {
+	return codecCtx;
+}
+
+PixelFormat PropsDecoderImage::getPixelFormat() {
+	return libavPixFmt2PixelFormat(codecCtx->pix_fmt);
+}
+
 void libavAudioCtxConvertLibav(const Modules::PcmFormat *cfg, int &sampleRate, int &format, int &numChannels, uint64_t &layout) {
 	sampleRate = cfg->sampleRate;
 

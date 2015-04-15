@@ -1,6 +1,4 @@
-extern "C" {
-#include "libavcodec/avcodec.h" //FIXME: there should be none of the modules include at the application level
-}
+
 #include "tests.hpp"
 #include "lib_modules/modules.hpp"
 #include "lib_media/decode/libav_decode.hpp"
@@ -9,6 +7,10 @@ extern "C" {
 #include "lib_media/out/null.hpp"
 #include "lib_media/transform/audio_convert.hpp"
 #include "lib_utils/tools.hpp"
+
+extern "C" {
+#include "libavcodec/avcodec.h"
+}
 
 using namespace Tests;
 using namespace Modules;
