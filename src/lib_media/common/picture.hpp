@@ -8,7 +8,7 @@ namespace Modules {
 struct Resolution {
 	Resolution() : width(0), height(0) {
 	}
-	Resolution(int w, int h) : width(w), height(h) {
+	Resolution(unsigned int w, unsigned int h) : width(w), height(h) {
 	}
 	bool operator==(Resolution const& other) const {
 		return width == other.width && height == other.height;
@@ -16,7 +16,7 @@ struct Resolution {
 	bool operator!=(Resolution const& other) const {
 		return !(*this == other);
 	}
-	int width, height;
+	unsigned int width, height;
 	std::string toString() const {
 		std::stringstream ss;
 		ss << width << "x" << height;
