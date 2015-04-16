@@ -60,7 +60,7 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 		throw std::runtime_error("Unknown encoder type. Failed.");
 	}
 
-	output = addPin(new PinDataDefault<DataAVPacket>);
+	output = addOutputPin(new PinDataDefault<DataAVPacket>);
 
 	/* parse the codec optionsDict */
 	ffpp::Dict codecDict;

@@ -11,14 +11,14 @@ namespace Transform {
 AudioConvert::AudioConvert(const PcmFormat &dstFormat)
 : dstPcmFormat(dstFormat), m_Swr(nullptr), accumulatedTimeInDstSR(0), autoConfigure(true) {
 	memset(&srcPcmFormat, 0, sizeof(srcPcmFormat));
-	output = addPin(new PinPcm);
+	output = addOutputPin(new PinPcm);
 }
 
 AudioConvert::AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstFormat)
 : srcPcmFormat(srcFormat), dstPcmFormat(dstFormat),
   m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0), autoConfigure(false) {
 	configure(srcPcmFormat);
-	output = addPin(new PinPcm);
+	output = addOutputPin(new PinPcm);
 }
 
 AudioConvert::~AudioConvert() {

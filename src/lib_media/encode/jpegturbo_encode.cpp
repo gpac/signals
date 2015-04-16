@@ -27,7 +27,7 @@ class JPEGTurbo {
 
 JPEGTurboEncode::JPEGTurboEncode(Resolution resolution, int JPEGQuality)
 	: jtHandle(new JPEGTurbo), JPEGQuality(JPEGQuality), resolution(resolution) {
-	output = addPin(new PinDefault);
+	output = addOutputPin(new PinDefault);
 }
 
 JPEGTurboEncode::~JPEGTurboEncode() {

@@ -38,19 +38,19 @@ Module* createConverter(PropsPkt *decoderProps, const Resolution &dstRes) {
 
 void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	auto connect = [&](PipelinedModule* src, PipelinedModule* dst) {
-		pipeline.connect(src->getPin(0), dst);
+		pipeline.connect(src->getOutputPin(0), dst);
 	};
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(opt.url), true);
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
-	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
-		auto props = demux->getPin(i)->getProps();
+	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
+		auto props = demux->getOutputPin(i)->getProps();
 		auto decoderProps = safe_cast<PropsDecoder>(props);
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
 
-		pipeline.connect(demux->getPin(i), decoder);
+		pipeline.connect(demux->getOutputPin(i), decoder);
 
 		auto converter = pipeline.addModule(createConverter(decoderProps, opt.res));
 		if (!converter)

@@ -39,7 +39,7 @@ AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {
 
 JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
-	output = addPin(new PinDefault);
+	output = addOutputPin(new PinDefault);
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
