@@ -25,7 +25,7 @@ private:
 	template<typename T>
 	class FakeVector {
 	public:
-		void push_back(T const&) { }
+		void push_back(T const&) {}
 		T* erase(T*) { return nullptr; }
 		T* begin() { return nullptr; }
 		T* end() { return nullptr; }
