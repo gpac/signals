@@ -24,11 +24,11 @@ public:
 	virtual void flush() { };
 
 	size_t getNumOutputPins() const {
-		return inputPins.size();
+		return outputPins.size();
 	}
 
 	IPin* getOutputPin(size_t i) const {
-		return inputPins[i].get();
+		return outputPins[i].get();
 	}
 
 	void setLowLatency(bool isLowLatency) {
@@ -43,12 +43,12 @@ protected:
 	T* addOutputPin(T* p) {
 		if (m_isLowLatency)
 			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
-		inputPins.push_back(uptr(p));
+		outputPins.push_back(uptr(p));
 		return p;
 	}
 
 private:
-	std::vector<std::unique_ptr<IPin>> inputPins;
+	std::vector<std::unique_ptr<IPin>> outputPins;
 	bool m_isLowLatency = false;
 };
 
