@@ -17,7 +17,7 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 }
 
 template<typename ModuleType>
-size_t ConnectPinToModule(IPin* pin, ModuleType* module, IProcessExecutor& executor) {
+size_t ConnectPinToModule(IPin* pin, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
 	return ConnectPin(pin, functor, executor);
 }

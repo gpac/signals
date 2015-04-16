@@ -7,7 +7,7 @@ namespace Modules {
 */
 class IProps {
 public:
-	virtual ~IProps() { }
+	virtual ~IProps() {}
 };
 
 }

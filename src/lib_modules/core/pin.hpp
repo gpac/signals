@@ -20,8 +20,7 @@ typedef Signal<void(std::shared_ptr<const Data>), ResultVector<NotVoid<void>>> S
 typedef SignalSync SignalDefaultSync;
 
 struct IPin {
-	virtual ~IPin() {
-	}
+	virtual ~IPin() {}
 	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
 	virtual IProps* getProps() const = 0;
 	virtual void setProps(IProps *props) = 0;
