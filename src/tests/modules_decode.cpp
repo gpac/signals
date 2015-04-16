@@ -69,7 +69,7 @@ unittest("decoder: audio simple") {
 	auto decoder = uptr(createMp3Decoder());
 
 	auto null = uptr(new Out::Null);
-	ConnectPinToModule(decoder->getPin(0), null);
+	ConnectPinToModule(decoder->getOutputPin(0), null);
 
 	auto frame = getTestMp3Frame();
 	decoder->process(frame);
@@ -112,7 +112,7 @@ unittest("decoder: video simple") {
 		ASSERT_EQUALS(0x80, lastPixel);
 	};
 
-	ConnectPin(decoder->getPin(0), onPic);
+	ConnectPin(decoder->getOutputPin(0), onPic);
 	decoder->process(data);
 	decoder->process(data);
 }
@@ -123,7 +123,7 @@ unittest("decoder: failing audio mp3 to AAC") {
 	auto decoder = uptr(createMp3Decoder());
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 
-	ConnectPinToModule(decoder->getPin(0), encoder);
+	ConnectPinToModule(decoder->getOutputPin(0), encoder);
 
 	auto frame = getTestMp3Frame();
 	bool thrown = false;
@@ -145,8 +145,8 @@ unittest("decoder: audio mp3 to converter to AAC") {
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 
-	ConnectPinToModule(decoder->getPin(0), converter);
-	ConnectPinToModule(converter->getPin(0), encoder);
+	ConnectPinToModule(decoder->getOutputPin(0), converter);
+	ConnectPinToModule(converter->getOutputPin(0), encoder);
 
 	auto frame = getTestMp3Frame();
 	decoder->process(frame);

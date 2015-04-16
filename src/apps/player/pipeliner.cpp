@@ -20,16 +20,16 @@ Module* createRenderer(int codecType) {
 
 void declarePipeline(Pipeline &pipeline, const char *url) {
 	auto connect = [&](PipelinedModule* src, PipelinedModule* dst) {
-		pipeline.connect(src->getPin(0), dst);
+		pipeline.connect(src->getOutputPin(0), dst);
 	};
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(url), true);
-	for (int i = 0; i < (int)demux->getNumPin(); ++i) {
-		auto props = demux->getPin(i)->getProps();
+	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
+		auto props = demux->getOutputPin(i)->getProps();
 		auto decoderProps = safe_cast<PropsDecoder>(props);
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
 
-		pipeline.connect(demux->getPin(i), decoder);
+		pipeline.connect(demux->getOutputPin(i), decoder);
 
 		auto const codecType = decoderProps ? decoderProps->getStreamType() : UNKNOWN_ST;
 		auto renderer = pipeline.addModule(createRenderer(codecType));

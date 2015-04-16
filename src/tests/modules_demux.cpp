@@ -16,7 +16,7 @@ unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print") {
 	auto mp4Demux = uptr(new Demux::GPACDemuxMP4Simple("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto p = uptr(new Out::Print(std::cout));
 
-	ConnectPinToModule(mp4Demux->getPin(0), p);
+	ConnectPinToModule(mp4Demux->getOutputPin(0), p);
 
 	mp4Demux->process(nullptr);
 }
@@ -26,8 +26,8 @@ unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print") {
 	auto mp4Demux = uptr(new Demux::GPACDemuxMP4Full());
 	auto p = uptr(new Out::Print(std::cout));
 
-	ConnectPinToModule(f->getPin(0), mp4Demux);
-	ConnectPinToModule(mp4Demux->getPin(0), p);
+	ConnectPinToModule(f->getOutputPin(0), mp4Demux);
+	ConnectPinToModule(mp4Demux->getOutputPin(0), p);
 
 	f->process(nullptr);
 }

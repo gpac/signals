@@ -18,12 +18,12 @@ void PipelinedModule::connect(IPin* pin) {
 	ConnectToModule(pin->getSignal(), this, executor);
 }
 
-size_t PipelinedModule::getNumPin() const {
-  return delegate->getNumPin();
+size_t PipelinedModule::getNumOutputPins() const {
+  return delegate->getNumOutputPins();
 }
 
-IPin* PipelinedModule::getPin(size_t i) const {
-  return delegate->getPin(i);
+IPin* PipelinedModule::getOutputPin(size_t i) const {
+  return delegate->getOutputPin(i);
 }
 /* direct call: receiving nullptr stops the execution */
 void PipelinedModule::process(std::shared_ptr<const Data> data) {
@@ -53,7 +53,7 @@ bool PipelinedModule::isSource() const {
 }
 
 bool PipelinedModule::isSink() const {
-	return delegate->getNumPin() == 0;
+	return delegate->getNumOutputPins() == 0;
 }
 
 void PipelinedModule::endOfStream() {
@@ -61,8 +61,8 @@ void PipelinedModule::endOfStream() {
 	if (isSink()) {
 		m_notify->finished();
 	} else {
-		for (size_t i = 0; i < delegate->getNumPin(); ++i) {
-			delegate->getPin(i)->emit(std::shared_ptr<const Data>(nullptr));
+		for (size_t i = 0; i < delegate->getNumOutputPins(); ++i) {
+			delegate->getOutputPin(i)->emit(std::shared_ptr<const Data>(nullptr));
 		}
 	}
 }

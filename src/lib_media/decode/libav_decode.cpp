@@ -44,8 +44,8 @@ LibavDecode::LibavDecode(const PropsDecoder &props)
 
 	auto props_new = new PropsDecoder(codecCtx);
 	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO: videoPin = addPin(new PinPicture(props_new)); break;
-	case AVMEDIA_TYPE_AUDIO: audioPin = addPin(new PinPcm(props_new)); break;
+	case AVMEDIA_TYPE_VIDEO: videoPin = addOutputPin(new PinPicture(props_new)); break;
+	case AVMEDIA_TYPE_AUDIO: audioPin = addOutputPin(new PinPcm(props_new)); break;
 	default: throw std::runtime_error("[LibavDecode] Invalid Pin type.");
 	}
 }

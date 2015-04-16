@@ -11,7 +11,7 @@ namespace In {
 
 VideoGenerator::VideoGenerator()
 	: m_numFrames(0) {
-	output = addPin(new PinPicture);
+	output = addOutputPin(new PinPicture);
 }
 
 void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {

@@ -11,8 +11,8 @@ class IModule {
 public:
 	virtual ~IModule() noexcept(false) { }
 	virtual void process(std::shared_ptr<const Data> data) = 0;
-	virtual size_t getNumPin() const = 0;
-	virtual IPin* getPin(size_t i) const = 0;
+	virtual size_t getNumOutputPins() const = 0;
+	virtual IPin* getOutputPin(size_t i) const = 0;
 };
 
 class Module : public IModule {
@@ -23,12 +23,12 @@ public:
 	virtual void process(std::shared_ptr<const Data> data) = 0;
 	virtual void flush() { };
 
-	size_t getNumPin() const {
-		return pins.size();
+	size_t getNumOutputPins() const {
+		return inputPins.size();
 	}
 
-	IPin* getPin(size_t i) const {
-		return pins[i].get();
+	IPin* getOutputPin(size_t i) const {
+		return inputPins[i].get();
 	}
 
 	void setLowLatency(bool isLowLatency) {
@@ -40,15 +40,15 @@ protected:
 	Module const& operator=(Module const&) = delete;
 
 	template<typename T>
-	T* addPin(T* p) {
+	T* addOutputPin(T* p) {
 		if (m_isLowLatency)
 			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
-		pins.push_back(uptr(p));
+		inputPins.push_back(uptr(p));
 		return p;
 	}
 
 private:
-	std::vector<std::unique_ptr<IPin>> pins;
+	std::vector<std::unique_ptr<IPin>> inputPins;
 	bool m_isLowLatency = false;
 };
 
