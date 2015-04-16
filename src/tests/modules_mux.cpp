@@ -9,7 +9,6 @@
 using namespace Tests;
 using namespace Modules;
 
-#ifdef ENABLE_FAILING_TESTS
 unittest("remux test: GPAC mp4 mux") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto mux = uptr(new Mux::GPACMuxMP4("output_video_libav"));
@@ -23,4 +22,3 @@ unittest("remux test: GPAC mp4 mux") {
 
 	demux->process(nullptr);
 }
-#endif
