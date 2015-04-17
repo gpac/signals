@@ -9,16 +9,22 @@
 using namespace Tests;
 using namespace Modules;
 
+namespace {
+size_t ConnectPinToModuleNewInput(IPin* pin, Module* module, size_t outputIdx) {
+	Modules::IProcessor *input = new Input<Data>(module);
+	auto inputPin = module->addInputPin(input);
+	ASSERT((void*)inputPin == (void*)module->getInputPin(outputIdx));
+	return ConnectPinToModule(pin, module->getInputPin(outputIdx));
+}
+}
+
 unittest("remux test: GPAC mp4 mux") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto mux = uptr(new Mux::GPACMuxMP4("output_video_libav"));
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		//auto props = demux->getOutputPin(i)->getProps();
-		//auto decoderProps = safe_cast<PropsPkt>(props);
 		//TODO: rename helpers? Pin/Module -> Connector/Connected ?
-		ConnectPinToModule(demux->getOutputPin(i), mux->getInputPin(i));
+		ConnectPinToModuleNewInput(demux->getOutputPin(i), mux.get(), i);
 	}
-	//encode->sendOutputPinsInfo();
 
 	demux->process(nullptr);
 }
