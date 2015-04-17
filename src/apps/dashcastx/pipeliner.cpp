@@ -41,18 +41,18 @@ Module* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Reso
 
 void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	auto connect = [&](PipelinedModule* src, PipelinedModule* dst) {
-		pipeline.connect(src->getOutputPin(0), dst);
+		pipeline.connect(src->getOutput(0), dst);
 	};
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(opt.url), true);
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
-	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
-		auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(i));
+	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
+		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 
-		pipeline.connect(demux->getOutputPin(i), decode);
+		pipeline.connect(demux->getOutput(i), decode);
 
 		auto converter = pipeline.addModule(createConverter(metadata, opt.res));
 		if (!converter)

@@ -9,7 +9,7 @@ namespace Modules {
 
 class Module;
 class Data;
-struct IPin;
+struct IOutput;
 
 struct ICompletionNotifier {
 	virtual void finished() = 0;
@@ -19,9 +19,9 @@ class PipelinedModule : public IModule {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
-	void connect(IPin* pin);
-	size_t getNumOutputPins() const;
-	IPin* getOutputPin(size_t i) const;
+	void connect(IOutput* out);
+	size_t getNumOutputs() const;
+	IOutput* getOutput(size_t i) const;
 
 	/* direct call: receiving nullptr stops the execution */
 	void process(std::shared_ptr<const Data> data);
@@ -53,7 +53,7 @@ class Pipeline : public ICompletionNotifier {
 public:
 	Pipeline(bool isLowLatency = false);
 	PipelinedModule* addModule(Module* rawModule, bool isSource = false);
-	void connect(IPin* pin, PipelinedModule *module);
+	void connect(IOutput* out, PipelinedModule *module);
 	void start();
 	void waitForCompletion();
 	void finished() override;

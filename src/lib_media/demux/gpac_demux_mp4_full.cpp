@@ -35,7 +35,7 @@ public:
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 : reader(new ISOProgressiveReader) {
-	output = addOutputPin(new PinDefault);
+	output = addOutput(new OutputDefault);
 }
 
 GPACDemuxMP4Full::~GPACDemuxMP4Full() {

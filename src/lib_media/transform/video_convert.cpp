@@ -17,7 +17,7 @@ namespace Transform {
 
 VideoConvert::VideoConvert(const PictureFormat &dstFormat)
 : m_SwContext(nullptr), dstFormat(dstFormat) {
-	output = addOutputPin(new PinPicture);
+	output = addOutput(new OutputPicture);
 }
 
 void VideoConvert::reconfigure(const PictureFormat &format) {

@@ -15,54 +15,54 @@ using namespace Modules;
 
 namespace {
 
-unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
+unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 	auto null = uptr(new Out::Null);
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
-	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(i));
+	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
+		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		if (metadata->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
-			ConnectPinToModule(demux->getOutputPin(i), null);
+			ConnectOutputToModule(demux->getOutput(i), null);
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-	auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(videoIndex));
+	auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(videoIndex));
 	auto decode = uptr(new Decode::LibavDecode(*metadata));
 	auto render = uptr(new Render::SDLVideo);
 
-	ConnectPinToModule(demux->getOutputPin(videoIndex), decode);
-	ConnectPinToModule(decode->getOutputPin(0), render);
+	ConnectOutputToModule(demux->getOutput(videoIndex), decode);
+	ConnectOutputToModule(decode->getOutput(0), render);
 
 	demux->process(nullptr);
 }
 
-unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
+unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 	auto null = uptr(new Out::Null);
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();
-	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto metadata = getMetadataFromPin<IMetadataPkt>(demux->getOutputPin(i));
+	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
+		auto metadata = getMetadataFromOutput<IMetadataPkt>(demux->getOutput(i));
 		if (metadata->getStreamType() == AUDIO_PKT) {
 			audioIndex = i;
 		} else {
-			ConnectPinToModule(demux->getOutputPin(i), null);
+			ConnectOutputToModule(demux->getOutput(i), null);
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
-	auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(audioIndex));
+	auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(audioIndex));
 	auto decode = uptr(new Decode::LibavDecode(*metadata));
 	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 	auto render = uptr(new Render::SDLAudio());
 
-	ConnectPinToModule(demux->getOutputPin(audioIndex), decode);
-	ConnectPinToModule(decode->getOutputPin(0), converter);
-	ConnectPinToModule(converter->getOutputPin(0), render);
+	ConnectOutputToModule(demux->getOutput(audioIndex), decode);
+	ConnectOutputToModule(decode->getOutput(0), converter);
+	ConnectOutputToModule(converter->getOutput(0), render);
 
 	demux->process(nullptr);
 }

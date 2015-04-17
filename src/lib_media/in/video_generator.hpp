@@ -15,7 +15,7 @@ public:
 
 private:
 	uint64_t m_numFrames;
-	PinPicture* output;
+	OutputPicture* output;
 };
 
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lib_modules/core/data.hpp"
-#include "lib_modules/core/pin.hpp"
+#include "lib_modules/core/output.hpp"
 
 namespace Modules {
 
@@ -67,13 +67,13 @@ public:
 };
 
 class Picture;
-typedef PinDataDefault<Picture> PinPicture;
+typedef OutputDataDefault<Picture> OutputPicture;
 
 //TODO: we should probably separate planar vs non-planar data, avoid resize on the data, etc.
 class Picture : public RawData {
 public:
 	Picture(size_t unused) : RawData(0) {}
-	static std::shared_ptr<Picture> create(PinPicture *pin, const Resolution &res, const PixelFormat &format);
+	static std::shared_ptr<Picture> create(OutputPicture *out, const Resolution &res, const PixelFormat &format);
 
 	PictureFormat getFormat() const {
 		return m_format;

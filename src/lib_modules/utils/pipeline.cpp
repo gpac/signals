@@ -14,16 +14,16 @@ PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
 : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
 
-void PipelinedModule::connect(IPin* pin) {
-	ConnectToModule(pin->getSignal(), this, executor);
+void PipelinedModule::connect(IOutput* out) {
+	ConnectToModule(out->getSignal(), this, executor);
 }
 
-size_t PipelinedModule::getNumOutputPins() const {
-  return delegate->getNumOutputPins();
+size_t PipelinedModule::getNumOutputs() const {
+  return delegate->getNumOutputs();
 }
 
-IPin* PipelinedModule::getOutputPin(size_t i) const {
-  return delegate->getOutputPin(i);
+IOutput* PipelinedModule::getOutput(size_t i) const {
+  return delegate->getOutput(i);
 }
 /* direct call: receiving nullptr stops the execution */
 void PipelinedModule::process(std::shared_ptr<const Data> data) {
@@ -53,7 +53,7 @@ bool PipelinedModule::isSource() const {
 }
 
 bool PipelinedModule::isSink() const {
-	return delegate->getNumOutputPins() == 0;
+	return delegate->getNumOutputs() == 0;
 }
 
 void PipelinedModule::endOfStream() {
@@ -61,8 +61,8 @@ void PipelinedModule::endOfStream() {
 	if (isSink()) {
 		m_notify->finished();
 	} else {
-		for (size_t i = 0; i < delegate->getNumOutputPins(); ++i) {
-			delegate->getOutputPin(i)->emit(std::shared_ptr<const Data>(nullptr));
+		for (size_t i = 0; i < delegate->getNumOutputs(); ++i) {
+			delegate->getOutput(i)->emit(std::shared_ptr<const Data>(nullptr));
 		}
 	}
 }
@@ -81,10 +81,10 @@ PipelinedModule* Pipeline::addModule(Module* rawModule, bool isSource) {
 	return ret;
 }
 
-void Pipeline::connect(IPin* pin, PipelinedModule *module) {
+void Pipeline::connect(IOutput* out, PipelinedModule *module) {
 	if (module->isSink())
 		numRemainingNotifications++;
-	module->connect(pin);
+	module->connect(out);
 }
 
 void Pipeline::start() {

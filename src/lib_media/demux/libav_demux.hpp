@@ -21,7 +21,7 @@ private:
 	bool webcamOpen(const std::string &options);
 
 	struct AVFormatContext *m_formatCtx;
-	std::vector<PinDataDefault<DataAVPacket>*> outputs;
+	std::vector<OutputDataDefault<DataAVPacket>*> outputs;
 };
 
 }

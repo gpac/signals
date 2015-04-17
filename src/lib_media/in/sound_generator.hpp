@@ -16,7 +16,7 @@ private:
 	double nextSample();
 	uint64_t m_numSamples;
 	PcmFormat pcmFormat;
-	PinPcm* output;
+	OutputPcm* output;
 };
 
 }

@@ -44,8 +44,8 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 
 	auto Metadata_new = new MetadataPktLibav(codecCtx);
 	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO: videoPin = addOutputPin(new PinPicture(Metadata_new)); break;
-	case AVMEDIA_TYPE_AUDIO: audioPin = addOutputPin(new PinPcm(Metadata_new)); break;
+	case AVMEDIA_TYPE_VIDEO: videoOutput = addOutput(new OutputPicture(Metadata_new)); break;
+	case AVMEDIA_TYPE_AUDIO: audioOutput = addOutput(new OutputPcm(Metadata_new)); break;
 	default: throw std::runtime_error("[LibavDecode] Invalid Pin type.");
 	}
 }
@@ -63,7 +63,7 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 		return false;
 	}
 	if (gotFrame) {
-		auto out = audioPin->getBuffer(0);
+		auto out = audioOutput->getBuffer(0);
 		PcmFormat pcmFormat;
 		libavFrame2pcmConvert(avFrame->get(), &pcmFormat);
 		out->setFormat(pcmFormat);
@@ -71,7 +71,7 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0] / pcmFormat.numPlanes);
 		}
 		setTimestamp(out, avFrame->get()->nb_samples);
-		audioPin->emit(out);
+		audioOutput->emit(out);
 		++m_numFrames;
 		return true;
 	}
@@ -110,10 +110,10 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 		return false;
 	}
 	if (gotPicture) {
-		auto pic = Picture::create(videoPin, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
+		auto pic = Picture::create(videoOutput, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
 		copyToPicture(avFrame->get(), pic.get());
 		setTimestamp(pic);
-		videoPin->emit(pic);
+		videoOutput->emit(pic);
 		++m_numFrames;
 		return true;
 	}

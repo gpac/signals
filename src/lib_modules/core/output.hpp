@@ -19,42 +19,42 @@ typedef Signal<void(std::shared_ptr<const Data>), ResultVector<NotVoid<void>>> S
 
 typedef SignalSync SignalDefaultSync;
 
-struct IPin {
-	virtual ~IPin() noexcept(false) {}
+struct IOutput {
+	virtual ~IOutput() noexcept(false) {}
 	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
 	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
 };
 
-inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<const Data>)> functor) {
+inline size_t ConnectOutput(IOutput* p, std::function<void(std::shared_ptr<const Data>)> functor) {
 	return p->getSignal().connect(functor);
 }
 
 template<typename C, typename D>
-size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot) {
+size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
 	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectPin(p, functor);
+	return ConnectOutput(p, functor);
 }
 
-inline size_t ConnectPin(IPin* p, std::function<void(std::shared_ptr<const Data>)> functor, IProcessExecutor& executor) {
+inline size_t ConnectOutput(IOutput* p, std::function<void(std::shared_ptr<const Data>)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
 }
 
 template<typename C, typename D, typename E>
-size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
+size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
 	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectPin(p, functor, executor);
+	return ConnectOutput(p, functor, executor);
 }
 
 template<typename Allocator, typename Signal>
-class PinT : public IPin, public Metadata {
+class OutputT : public IOutput, public Metadata {
 public:
 	typedef Allocator AllocatorType;
 
-	PinT(IIMetadata *metadata = nullptr)
+	OutputT(IIMetadata *metadata = nullptr)
 		: Metadata(metadata), allocator(new Allocator) {
 	}
 
-	~PinT() noexcept(false) {
+	~OutputT() noexcept(false) {
 		allocator->unblock();
 	}
 
@@ -62,7 +62,7 @@ public:
 		updateMetadata(data);
 		size_t numReceivers = signal.emit(data);
 		if (numReceivers == 0)
-			Log::msg(Log::Debug, "emit(): Pin had no receiver");
+			Log::msg(Log::Debug, "emit(): Output had no receiver");
 		return numReceivers;
 	}
 
@@ -85,8 +85,8 @@ private:
 	std::unique_ptr<Allocator> allocator;
 };
 
-template<typename DataType> using PinDataDefault = PinT<PacketAllocator<DataType>, SignalDefaultSync>;
+template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
 
-typedef PinDataDefault<RawData> PinDefault;
+typedef OutputDataDefault<RawData> OutputDefault;
 
 }

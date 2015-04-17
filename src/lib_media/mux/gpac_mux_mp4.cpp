@@ -367,7 +367,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 		throw std::runtime_error("Cannot make iso file interleaved.");
 	}
 
-	output = addOutputPin(new PinDataDefault<DataAVPacket>);
+	output = addOutput(new OutputDataDefault<DataAVPacket>);
 }
 
 void GPACMuxMP4::closeSegment() {
