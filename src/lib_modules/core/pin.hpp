@@ -59,7 +59,7 @@ public:
 	}
 
 	size_t emit(std::shared_ptr<const Data> data) {
-		ensureMetadata(data);
+		updateMetadata(data);
 		size_t numReceivers = signal.emit(data);
 		if (numReceivers == 0)
 			Log::msg(Log::Debug, "emit(): Pin had no receiver");
