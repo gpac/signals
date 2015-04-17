@@ -19,7 +19,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder 
 	std::vector<std::unique_ptr<Out::Print>> printers;
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
 		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderMetadata = safe_cast<MetadataDecoder>(metadata);
+		auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
 		auto decode = uptr(new Decode::LibavDecode(*decoderMetadata));
 
 		auto p = uptr(new Out::Print(std::cout));
