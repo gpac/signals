@@ -8,8 +8,6 @@
 extern "C" {
 #include <gpac/isomedia.h>
 }
-#include "lib_ffpp/ffpp.hpp" //TODO: remove DataAVPacket
-#include "../common/libav.hpp" //TODO: remove DataAVPacket
 
 
 namespace {
@@ -116,7 +114,8 @@ MPEG_DASH::~MPEG_DASH() {
 	endOfStream();
 }
 
-//FIXME: we would post/defer/schedule the whole module... but here we are already in our own thread
+//needed because of the use of system time for live - otherwise awake on data as for any multi-input module
+//TODO: add clock to the scheduler
 void MPEG_DASH::DASHThread() {
 	uint64_t n = 0;
 	auto startTime = std::chrono::steady_clock::now();
@@ -168,12 +167,11 @@ void MPEG_DASH::process(std::shared_ptr<const Data> data) {
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time
 	 */
-	auto inputData = safe_cast<const DataAVPacket>(data);
-	switch (inputData->getPacket()->stream_index) {
-	case GF_ISOM_MEDIA_AUDIO:
+	switch (data->getMetadata()->getStreamType()) {
+	case AUDIO_PKT:
 		audioDataQueue.push(data);
 		break;
-	case GF_ISOM_MEDIA_VISUAL:
+	case VIDEO_PKT:
 		videoDataQueue.push(data);
 		break;
 	default:
