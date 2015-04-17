@@ -2,7 +2,7 @@
 #include "pipeline.hpp"
 
 
-#define EXECUTOR_SYNC ExecutorSync<void(std::shared_ptr<const Data>)>
+#define EXECUTOR_SYNC ExecutorSync<void(Data)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
 #define EXECUTOR EXECUTOR_ASYNC
 
@@ -32,7 +32,7 @@ IOutput* PipelinedModule<ModuleType>::getOutput(size_t i) const {
 
 /* direct call: receiving nullptr stops the execution */
 template<typename ModuleType>
-void PipelinedModule<ModuleType>::process(std::shared_ptr<const Data> data) {
+void PipelinedModule<ModuleType>::process(Data data) {
 	if (data) {
 		delegate->process(data);
 	} else {
@@ -42,7 +42,7 @@ void PipelinedModule<ModuleType>::process(std::shared_ptr<const Data> data) {
 
 /* same as process() but uses the executor (may defer the call) */
 template<typename ModuleType>
-void PipelinedModule<ModuleType>::dispatch(std::shared_ptr<const Data> data) {
+void PipelinedModule<ModuleType>::dispatch(Data data) {
 	if (isSource()) {
 		assert(data == nullptr);
 		executor(MEMBER_FUNCTOR(delegate.get(), &ModuleS::process), data);
@@ -73,7 +73,7 @@ void PipelinedModule<ModuleType>::endOfStream() {
 		m_notify->finished();
 	} else {
 		for (size_t i = 0; i < delegate->getNumOutputs(); ++i)
-			delegate->getOutput(i)->emit(std::shared_ptr<const Data>(nullptr));
+			delegate->getOutput(i)->emit(Data(nullptr));
 	}
 }
 

@@ -36,7 +36,7 @@ public:
 
 	LibavEncode(Type type, const LibavEncodeParams &params = *uptr(new LibavEncodeParams));
 	~LibavEncode();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 	void flush() override;
 
 private:

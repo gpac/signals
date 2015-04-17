@@ -62,7 +62,7 @@ void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
 	}
 }
 
-void JPEGTurboDecode::process(std::shared_ptr<const Data> data_) {
+void JPEGTurboDecode::process(Data data_) {
 	auto data = safe_cast<const RawData>(data_);
 	const int pixelFmt = TJPF_RGB;
 	int w, h, jpegSubsamp;

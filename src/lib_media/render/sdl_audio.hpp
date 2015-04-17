@@ -18,11 +18,11 @@ class SDLAudio : public ModuleS {
 public:
 	SDLAudio(IClock* clock = g_DefaultClock);
 	~SDLAudio();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 
 private:
 	bool reconfigure(PcmFormat const * const pcmFormat);
-	void push(std::shared_ptr<const Data> data);
+	void push(Data data);
 	static void staticFillAudio(void *udata, uint8_t *stream, int len);
 	void fillAudio(uint8_t *stream, int len);
 

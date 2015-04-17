@@ -55,7 +55,7 @@ public:
 	void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
 };
 
-class DataAVPacket : public Data {
+class DataAVPacket : public DataBase {
 public:
 	DataAVPacket(size_t size = 0);
 	~DataAVPacket();

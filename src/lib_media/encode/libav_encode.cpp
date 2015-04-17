@@ -246,7 +246,7 @@ bool LibavEncode::processVideo(const Picture *pic) {
 	return false;
 }
 
-void LibavEncode::process(std::shared_ptr<const Data> data) {
+void LibavEncode::process(Data data) {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
 		const auto encoderData = safe_cast<const Picture>(data);

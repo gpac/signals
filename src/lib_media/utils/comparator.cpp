@@ -5,12 +5,12 @@
 namespace Modules {
 namespace Utils {
 
-void IComparator::process(std::shared_ptr<const Data> data) {
+void IComparator::process(Data data) {
 	if (data != nullptr)
 		throw std::runtime_error("[Comparator] data not expected");
 
 	for (;;) {
-		std::shared_ptr<const Data> aData, bData;
+		Data aData, bData;
 		auto a = original.tryPop(aData);
 		auto b = other.tryPop(bData);
 		if (!a || !b) {
@@ -26,16 +26,16 @@ void IComparator::process(std::shared_ptr<const Data> data) {
 	}
 }
 
-void IComparator::pushOriginal(std::shared_ptr<const Data> data) {
+void IComparator::pushOriginal(Data data) {
 	original.push(data);
 }
 
-void IComparator::pushOther(std::shared_ptr<const Data> data) {
+void IComparator::pushOther(Data data) {
 	other.push(data);
 }
 
 
-bool PcmComparator::compare(std::shared_ptr<const Data> data1, std::shared_ptr<const Data> data2) const {
+bool PcmComparator::compare(Data data1, Data data2) const {
 	auto pcm1 = safe_cast<const PcmData>(data1);
 	auto pcm2 = safe_cast<const PcmData>(data2);
 	if (pcm1->getFormat() != pcm2->getFormat())
@@ -65,11 +65,11 @@ bool PcmComparator::compare(std::shared_ptr<const Data> data1, std::shared_ptr<c
 	return true;
 }
 
-void PcmComparator::pushOriginal(std::shared_ptr<const Data> data) {
+void PcmComparator::pushOriginal(Data data) {
 	IComparator::pushOriginal(data);
 }
 
-void PcmComparator::pushOther(std::shared_ptr<const Data> data) {
+void PcmComparator::pushOther(Data data) {
 	IComparator::pushOther(data);
 }
 

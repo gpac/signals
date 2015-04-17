@@ -30,13 +30,13 @@ Decode::LibavDecode* createMp3Decoder() {
 }
 
 template<size_t numBytes>
-std::shared_ptr<Data> createAvPacket(uint8_t const (&bytes)[numBytes]) {
+std::shared_ptr<DataBase> createAvPacket(uint8_t const (&bytes)[numBytes]) {
 	auto pkt = std::make_shared<DataAVPacket>(numBytes);
 	memcpy(pkt->data(), bytes, numBytes);
 	return pkt;
 }
 
-std::shared_ptr<Data> getTestMp3Frame() {
+std::shared_ptr<DataBase> getTestMp3Frame() {
 	static const uint8_t mp3_sine_frame[] = {
 		0xff, 0xfb, 0x30, 0xc0, 0x00, 0x00, 0x00, 0x00,
 	 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -80,7 +80,7 @@ Decode::LibavDecode* createVideoDecoder() {
 	return createGenericDecoder(AV_CODEC_ID_H264);
 }
 
-std::shared_ptr<Data> getTestH24Frame() {
+std::shared_ptr<DataBase> getTestH24Frame() {
   static const uint8_t h264_gray_frame[] = {
     0x00, 0x00, 0x00, 0x01,
     0x67, 0x4d, 0x40, 0x0a, 0xe8, 0x8f, 0x42, 0x00,
@@ -99,7 +99,7 @@ unittest("decode: video simple") {
 	auto decode = uptr(createVideoDecoder());
 	auto data = getTestH24Frame();
 
-	auto onPic = [&](std::shared_ptr<const Data> data) {
+	auto onPic = [&](Data data) {
 		auto const pic = safe_cast<const Picture>(data);
 		auto const format = pic->getFormat();
 		ASSERT_EQUALS(16, format.res.width);

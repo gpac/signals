@@ -143,7 +143,7 @@ void MPEG_DASH::DASHThread() {
 	}
 }
 
-void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> /*audio*/, std::shared_ptr<const Data> /*video*/) {
+void MPEG_DASH::GenerateMPD(uint64_t segNum, Data /*audio*/, Data /*video*/) {
 #if 0
 	//Print the segments to the appropriate threads
 	std::stringstream ssa, ssv;
@@ -162,7 +162,7 @@ void MPEG_DASH::GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> /*audio
 #endif
 }
 
-void MPEG_DASH::process(std::shared_ptr<const Data> data) {
+void MPEG_DASH::process(Data data) {
 	/* TODO:
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time

@@ -27,7 +27,7 @@ File::~File() {
 	fclose(file);
 }
 
-void File::process(std::shared_ptr<const Data> /*data*/) {
+void File::process(Data /*data*/) {
 	for(;;) {
 		auto out = output->getBuffer(IOSIZE);
 		size_t read = fread(out->data(), 1, IOSIZE, file);

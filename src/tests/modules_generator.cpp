@@ -30,7 +30,7 @@ unittest("video generator") {
 	auto render = uptr(new Render::SDLVideo(clock.get()));
 
 	std::vector<int> times;
-	auto onFrame = [&](std::shared_ptr<const Data> data) {
+	auto onFrame = [&](Data data) {
 		auto rawData = safe_cast<const Picture>(data);
 		times.push_back((int)rawData->getTime());
 		render->process(rawData);

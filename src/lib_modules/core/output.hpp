@@ -14,18 +14,18 @@ namespace Modules {
 
 using namespace Signals;
 
-typedef Signal<void(std::shared_ptr<const Data>), ResultQueue<NotVoid<void>>> SignalAsync;
-typedef Signal<void(std::shared_ptr<const Data>), ResultVector<NotVoid<void>>> SignalSync;
+typedef Signal<void(Data), ResultQueue<NotVoid<void>>> SignalAsync;
+typedef Signal<void(Data), ResultVector<NotVoid<void>>> SignalSync;
 
 typedef SignalSync SignalDefaultSync;
 
 struct IOutput {
 	virtual ~IOutput() noexcept(false) {}
-	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
-	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
+	virtual size_t emit(Data data) = 0;
+	virtual ISignal<void(Data)>& getSignal() = 0;
 };
 
-inline size_t ConnectOutput(IOutput* p, std::function<void(std::shared_ptr<const Data>)> functor) {
+inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor) {
 	return p->getSignal().connect(functor);
 }
 
@@ -35,7 +35,7 @@ size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
 	return ConnectOutput(p, functor);
 }
 
-inline size_t ConnectOutput(IOutput* p, std::function<void(std::shared_ptr<const Data>)> functor, IProcessExecutor& executor) {
+inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor, IProcessExecutor& executor) {
 	return p->getSignal().connect(functor, executor);
 }
 
@@ -58,7 +58,7 @@ public:
 		allocator->unblock();
 	}
 
-	size_t emit(std::shared_ptr<const Data> data) {
+	size_t emit(Data data) {
 		updateMetadata(data);
 		size_t numReceivers = signal.emit(data);
 		if (numReceivers == 0)
@@ -71,7 +71,7 @@ public:
 		return allocator->getBuffer<T>(size);
 	}
 
-	ISignal<void(std::shared_ptr<const Data>)>& getSignal() override {
+	ISignal<void(Data)>& getSignal() override {
 		return signal;
 	}
 

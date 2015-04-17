@@ -13,7 +13,7 @@ class GPACDemuxMP4Full : public ModuleS {
 public:
 	GPACDemuxMP4Full();
 	~GPACDemuxMP4Full();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 
 private:
 	bool openData();

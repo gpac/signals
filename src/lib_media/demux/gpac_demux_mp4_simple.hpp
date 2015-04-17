@@ -15,7 +15,7 @@ class GPACDemuxMP4Simple : public ModuleS {
 public:
 	GPACDemuxMP4Simple(std::string const& path);
 	~GPACDemuxMP4Simple();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 
 private:
 

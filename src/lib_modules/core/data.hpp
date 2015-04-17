@@ -3,6 +3,7 @@
 #include "clock.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 namespace Modules {
@@ -22,10 +23,10 @@ struct IMetadataPkt {
 typedef IMetadataPkt IMetadata;
 
 //A generic timed data container.
-class Data {
+class DataBase {
 public:
-	Data() = default;
-	virtual ~Data() {}
+	DataBase() = default;
+	virtual ~DataBase() {}
 
 	std::shared_ptr<IMetadata> getMetadata() const {
 		return m_metadata;
@@ -59,7 +60,9 @@ private:
 	std::shared_ptr<IMetadata> m_metadata;
 };
 
-class RawData : public Data {
+typedef std::shared_ptr<const DataBase> Data;
+
+class RawData : public DataBase {
 public:
 	RawData(size_t size) : buffer(size) {}
 	uint8_t* data() {

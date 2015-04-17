@@ -16,17 +16,17 @@ public:
 
 	MPEG_DASH(Type type, uint64_t segDurationInMs);
 	~MPEG_DASH();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 	void flush() override;
 
 private:
 	void DASHThread();
-	void GenerateMPD(uint64_t segNum, std::shared_ptr<const Data> audio, std::shared_ptr<const Data> video);
+	void GenerateMPD(uint64_t segNum, Data audio, Data video);
 	void endOfStream();
 
 	int numDataQueueNotify = 2;
-	Queue<std::shared_ptr<const Data>> audioDataQueue;
-	Queue<std::shared_ptr<const Data>> videoDataQueue;
+	Queue<Data> audioDataQueue;
+	Queue<Data> videoDataQueue;
 	std::thread workingThread;
 	Type type;
 	std::unique_ptr<MPD> mpd;

@@ -34,7 +34,7 @@ VideoConvert::~VideoConvert() {
 	sws_freeContext(m_SwContext);
 }
 
-void VideoConvert::process(std::shared_ptr<const Data> data) {
+void VideoConvert::process(Data data) {
 	auto videoData = safe_cast<const Picture>(data);
 	if (videoData->getFormat() != srcFormat) {
 		if (m_SwContext)
@@ -49,7 +49,7 @@ void VideoConvert::process(std::shared_ptr<const Data> data) {
 		srcStride[i] = (int)videoData->getPitch(i);
 	}
 
-	std::shared_ptr<Data> out;
+	std::shared_ptr<DataBase> out;
 	uint8_t* pDst[3] = { nullptr, nullptr, nullptr };
 	int dstStride[3] = { 0, 0, 0 };
 	switch (dstFormat.format) {

@@ -59,7 +59,7 @@ void SDLVideo::doRender() {
 	SDL_DestroyWindow(window);
 }
 
-bool SDLVideo::processOneFrame(std::shared_ptr<const Data> data) {
+bool SDLVideo::processOneFrame(Data data) {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
@@ -128,7 +128,7 @@ SDLVideo::~SDLVideo() {
 	workingThread.join();
 }
 
-void SDLVideo::process(std::shared_ptr<const Data> data) {
+void SDLVideo::process(Data data) {
 	m_dataQueue.push(data);
 }
 

@@ -73,7 +73,7 @@ LibavMux::~LibavMux() {
 	}
 }
 
-bool LibavMux::declareStream(std::shared_ptr<const Data> data) {
+bool LibavMux::declareStream(Data data) {
 	auto const metadata_ = data->getMetadata();
 	if(auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) {
 		AVStream *avStream = avformat_new_stream(m_formatCtx, metadata->getAVCodecContext()->codec);
@@ -110,7 +110,7 @@ void LibavMux::ensureHeader() {
 	}
 }
 
-void LibavMux::process(std::shared_ptr<const Data> data) {
+void LibavMux::process(Data data) {
 	if(declareStream(data))
 		return;
 	auto encoderData = safe_cast<const DataAVPacket>(data);

@@ -33,7 +33,7 @@ JPEGTurboEncode::JPEGTurboEncode(Resolution resolution, int JPEGQuality)
 JPEGTurboEncode::~JPEGTurboEncode() {
 }
 
-void JPEGTurboEncode::process(std::shared_ptr<const Data> data_) {
+void JPEGTurboEncode::process(Data data_) {
 	auto data = safe_cast<const PictureRGB24>(data_);
 	auto const dataSize = tjBufSize(resolution.width, resolution.height, TJSAMP_420);
 	auto out = output->getBuffer(dataSize);

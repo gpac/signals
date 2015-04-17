@@ -27,9 +27,9 @@ public:
 	}
 
 protected:
-	bool updateMetadata(std::shared_ptr<const Data> data) {
+	bool updateMetadata(Data data) {
 		if (!data->getMetadata()) {
-			const_cast<Data*>(data.get())->setMetadata(m_metadata);
+			const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
 			return true;
 		} else if (data->getMetadata() != m_metadata) {
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");

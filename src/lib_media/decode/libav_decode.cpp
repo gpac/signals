@@ -120,7 +120,7 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	return false;
 }
 
-void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) const {
+void LibavDecode::setTimestamp(std::shared_ptr<DataBase> s, uint64_t increment) const {
 	uint64_t t;
 	if (m_numFrames == 0) {
 		t = 0;
@@ -133,7 +133,7 @@ void LibavDecode::setTimestamp(std::shared_ptr<Data> s, uint64_t increment) cons
 	s->setTime(t);
 }
 
-void LibavDecode::process(std::shared_ptr<const Data> data) {
+void LibavDecode::process(Data data) {
 	auto decoderData = safe_cast<const DataAVPacket>(data);
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO:

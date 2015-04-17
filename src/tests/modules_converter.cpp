@@ -111,7 +111,7 @@ unittest("audio converter: dynamic formats") {
 		bool thrown = false;
 		try {
 			Tools::Profiler profilerGlobal("  Passthru");
-			std::shared_ptr<const Data> data;
+			Data data;
 			while (data = recorder->pop()) {
 				converter->process(data);
 			}
@@ -129,7 +129,7 @@ unittest("video converter: pass-through") {
 	auto format = PictureFormat(res, YUV420P);
 	int numFrames = 0;
 
-	auto onFrame = [&](std::shared_ptr<const Data> data) {
+	auto onFrame = [&](Data data) {
 		auto pic = safe_cast<const Picture>(data);
 		ASSERT(pic->getFormat() == format);
 		numFrames++;
@@ -139,7 +139,7 @@ unittest("video converter: pass-through") {
 		auto convert = uptr(new Transform::VideoConvert(format));
 		ConnectOutput(convert->getOutput(0), onFrame);
 
-		std::shared_ptr<Data> pic = uptr(new PictureYUV420P(res));
+		std::shared_ptr<DataBase> pic = uptr(new PictureYUV420P(res));
 		convert->process(pic);
 	}
 
@@ -152,7 +152,7 @@ unittest("video converter: different sizes") {
 	auto format = PictureFormat(dstRes, YUV420P);
 	int numFrames = 0;
 
-	auto onFrame = [&](std::shared_ptr<const Data> data) {
+	auto onFrame = [&](Data data) {
 		auto pic = safe_cast<const Picture>(data);
 		ASSERT(pic->getFormat() == format);
 		numFrames++;
@@ -162,7 +162,7 @@ unittest("video converter: different sizes") {
 		auto convert = uptr(new Transform::VideoConvert(format));
 		ConnectOutput(convert->getOutput(0), onFrame);
 
-		std::shared_ptr<Data> pic = uptr(new PictureYUV420P(srcRes));
+		std::shared_ptr<DataBase> pic = uptr(new PictureYUV420P(srcRes));
 		convert->process(pic);
 	}
 
