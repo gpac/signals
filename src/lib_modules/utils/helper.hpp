@@ -38,4 +38,10 @@ size_t ConnectToModule(SignalType& sig, std::unique_ptr<ModuleType>& module, IPr
 	return ConnectToModule(sig, module.get(), executor);
 }
 
+template <typename T>
+T* getMetadataFromPin(IPin *pin) {
+	auto metadata = safe_cast<Metadata>(pin)->getMetadata();
+	return safe_cast<T>(metadata);
+}
+
 }

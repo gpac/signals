@@ -21,8 +21,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto metadata = safe_cast<MetadataPktLibav>(metadata);
+		auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(i));
 		if (metadata->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
@@ -30,8 +29,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-	auto metadata = safe_cast<Metadata>(demux->getOutputPin(videoIndex))->getMetadata();
-	auto decode = uptr(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
+	auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(videoIndex));
+	auto decode = uptr(new Decode::LibavDecode(*metadata));
 	auto render = uptr(new Render::SDLVideo);
 
 	ConnectPinToModule(demux->getOutputPin(videoIndex), decode);
@@ -46,7 +45,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto metadata = safe_cast<MetadataPkt>(demux->getOutputPin(i))->getMetadata();
+		auto metadata = getMetadataFromPin<IMetadataPkt>(demux->getOutputPin(i));
 		if (metadata->getStreamType() == AUDIO_PKT) {
 			audioIndex = i;
 		} else {
@@ -54,8 +53,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
-	auto metadata = safe_cast<Metadata>(demux->getOutputPin(audioIndex))->getMetadata();
-	auto decode = uptr(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
+	auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(audioIndex));
+	auto decode = uptr(new Decode::LibavDecode(*metadata));
 	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));

@@ -25,15 +25,15 @@ void declarePipeline(Pipeline &pipeline, const char *url) {
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(url), true);
 	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
-		auto metadata = safe_cast<Metadata>(demux->getOutputPin(i))->getMetadata();
-		auto decoder = pipeline.addModule(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
+		auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(i));
+		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 
-		pipeline.connect(demux->getOutputPin(i), decoder);
+		pipeline.connect(demux->getOutputPin(i), decode);
 
-		auto renderer = pipeline.addModule(createRenderer(metadata->getStreamType()));
-		if (!renderer)
+		auto render = pipeline.addModule(createRenderer(metadata->getStreamType()));
+		if (!render)
 			continue;
 
-		connect(decoder, renderer);
+		connect(decode, render);
 	}
 }

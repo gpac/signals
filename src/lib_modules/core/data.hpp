@@ -25,7 +25,6 @@ typedef IMetadataPkt IIMetadata;
 class Data {
 public:
 	Data() = default;
-	//Data(std::shared_ptr<IMetadata> metadata) : m_metadata(metadata) {} //Romain: used?
 	virtual ~Data() {}
 
 	std::shared_ptr<IIMetadata> getMetadata() const {

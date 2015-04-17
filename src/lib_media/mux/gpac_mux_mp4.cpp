@@ -454,7 +454,7 @@ void GPACMuxMP4::setupFragments() {
 	}
 }
 
-void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
+void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio> metadata) {
 	GF_Err e;
 	u32 di, trackNum;
 	GF_M4ADecSpecInfo acfg;
@@ -468,41 +468,44 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 	esd->decoderConfig = (GF_DecoderConfig *)gf_odf_desc_new(GF_ODF_DCD_TAG);
 	esd->slConfig = (GF_SLConfig *)gf_odf_desc_new(GF_ODF_SLC_TAG);
 	esd->decoderConfig->streamType = GF_STREAM_AUDIO;
-	if (stream->codecName == "aac") { //TODO: find an automatic table, we only know about MPEG1 Layer 2 and AAC-LC
+	if (metadata->getCodecName() == "aac") { //TODO: find an automatic table, we only know about MPEG1 Layer 2 and AAC-LC
 		esd->decoderConfig->objectTypeIndication = GPAC_OTI_AUDIO_AAC_MPEG4;
 
 		esd->decoderConfig->bufferSizeDB = 20;
-		esd->slConfig->timestampResolution = stream->sampleRate;
+		esd->slConfig->timestampResolution = metadata->getSampleRate();
 		esd->decoderConfig->decoderSpecificInfo = (GF_DefaultDescriptor *)gf_odf_desc_new(GF_ODF_DSI_TAG);
 		esd->ESID = 1;
 
-		esd->decoderConfig->decoderSpecificInfo->dataLength = (u32)stream->extradataSize;
-		esd->decoderConfig->decoderSpecificInfo->data = (char*)gf_malloc(stream->extradataSize);
-		memcpy(esd->decoderConfig->decoderSpecificInfo->data, stream->extradata, stream->extradataSize);
+		const uint8_t *extradata;
+		size_t extradataSize;
+		metadata->getExtradata(extradata, extradataSize);
+		esd->decoderConfig->decoderSpecificInfo->dataLength = (u32)extradataSize;
+		esd->decoderConfig->decoderSpecificInfo->data = (char*)gf_malloc(extradataSize);
+		memcpy(esd->decoderConfig->decoderSpecificInfo->data, extradata, extradataSize);
 
 		memset(&acfg, 0, sizeof(GF_M4ADecSpecInfo));
 		acfg.base_object_type = GF_M4A_AAC_LC;
-		acfg.base_sr = stream->sampleRate;
-		acfg.nb_chan = stream->numChannels;
+		acfg.base_sr = metadata->getSampleRate();
+		acfg.nb_chan = metadata->getNumChannels();
 		acfg.sbr_object_type = 0;
 		acfg.audioPL = gf_m4a_get_profile(&acfg);
 
 		/*e = gf_m4a_write_config(&acfg, &esd->decoderConfig->decoderSpecificInfo->data, &esd->decoderConfig->decoderSpecificInfo->dataLength);
 		assert(e == GF_OK);*/
 	} else {
-		if (stream->codecName != "mp2") {
+		if (metadata->getCodecName() != "mp2") {
 			Log::msg(Log::Warning, "Unlisted codec, setting GPAC_OTI_AUDIO_MPEG1 descriptor.\n");
 		}
 		esd->decoderConfig->objectTypeIndication = GPAC_OTI_AUDIO_MPEG1;
 		esd->decoderConfig->bufferSizeDB = 20;
-		esd->slConfig->timestampResolution = stream->sampleRate;
+		esd->slConfig->timestampResolution = metadata->getSampleRate();
 		esd->decoderConfig->decoderSpecificInfo = (GF_DefaultDescriptor *)gf_odf_desc_new(GF_ODF_DSI_TAG);
 		esd->ESID = 1;
 
 		memset(&acfg, 0, sizeof(GF_M4ADecSpecInfo));
 		acfg.base_object_type = GF_M4A_LAYER2;
-		acfg.base_sr = stream->sampleRate;
-		acfg.nb_chan = stream->numChannels;
+		acfg.base_sr = metadata->getSampleRate();
+		acfg.nb_chan = metadata->getNumChannels();
 		acfg.sbr_object_type = 0;
 		acfg.audioPL = gf_m4a_get_profile(&acfg);
 
@@ -510,8 +513,8 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 		assert(e == GF_OK);
 	}
 
-	trackNum = gf_isom_new_track(m_iso, esd->ESID, GF_ISOM_MEDIA_AUDIO, stream->sampleRate);
-	Log::msg(Log::Warning, "TimeScale: %s\n", stream->sampleRate);
+	trackNum = gf_isom_new_track(m_iso, esd->ESID, GF_ISOM_MEDIA_AUDIO, metadata->getSampleRate());
+	Log::msg(Log::Warning, "TimeScale: %s\n", metadata->getSampleRate());
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track\n");
 		throw std::runtime_error("Cannot create new track");
@@ -534,7 +537,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 	gf_odf_desc_del((GF_Descriptor *)esd);
 	esd = nullptr;
 
-	e = gf_isom_set_audio_info(m_iso, trackNum, di, stream->sampleRate, stream->numChannels, stream->bitsPerSample);
+	e = gf_isom_set_audio_info(m_iso, trackNum, di, metadata->getSampleRate(), metadata->getNumChannels(), metadata->getBitsPerSample());
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_audio_info\n", gf_error_to_string(e));
 		throw std::runtime_error("gf_isom_set_audio_info");
@@ -549,21 +552,24 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const StreamAudio> stream) {
 	setupFragments();
 }
 
-void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
+void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> metadata) {
 	GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
 	if (!avccfg) {
 		Log::msg(Log::Warning, "Cannot create AVCConfig");
 		throw std::runtime_error("Container format import failed");
 	}
 
-	GF_Err e = avc_import_ffextradata(stream->extradata, stream->extradataSize, avccfg);
+	const uint8_t *extradata;
+	size_t extradataSize;
+	metadata->getExtradata(extradata, extradataSize);
+	GF_Err e = avc_import_ffextradata(extradata, extradataSize, avccfg);
 	if (e) {
 		Log::msg(Log::Warning, "Cannot parse H264 SPS/PPS");
 		gf_odf_avc_cfg_del(avccfg);
 		throw std::runtime_error("Container format import failed");
 	}
 
-	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, stream->timeScale);
+	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale());
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track");
 		throw std::runtime_error("Cannot create new track");
@@ -586,7 +592,8 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
 
 	gf_odf_avc_cfg_del(avccfg);
 
-	gf_isom_set_visual_info(m_iso, trackNum, di, stream->width, stream->height);
+	auto const res = metadata->getResolution();
+	gf_isom_set_visual_info(m_iso, trackNum, di, res.width, res.height);
 	gf_isom_set_sync_table(m_iso, trackNum);
 
 	//inband SPS/PPS
@@ -603,22 +610,20 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const StreamVideo> stream) {
 	setupFragments();
 }
 
-bool GPACMuxMP4::declareStream(std::shared_ptr<const Data> stream) {
-	if (auto video = std::dynamic_pointer_cast<const StreamVideo>(stream)) {
+void GPACMuxMP4::declareStream(std::shared_ptr<const Data> data) {
+	auto const metadata = data->getMetadata();
+	//if (metadata.get()/*FIXME: put shared ptr everywhere*/ == getInputPin(0)->getMetadata())
+	//	return;
+
+	if (auto video = safe_cast<const MetadataPktLibavVideo>(metadata)) {
 		declareStreamVideo(video);
-		return true;
-	} else if (auto audio = std::dynamic_pointer_cast<const StreamAudio>(stream)) {
+	} else if (auto audio = safe_cast<const MetadataPktLibavAudio>(metadata)) {
 		declareStreamAudio(audio);
-		return true;
-	}
-	else {
-		return false;
 	}
 }
 
 void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
-	if(declareStream(data_))
-		return;
+	declareStream(data_);
 
 	auto data = safe_cast<const DataAVPacket>(data_);
 
