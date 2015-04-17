@@ -6,7 +6,7 @@ extern "C" {
 #include <turbojpeg.h>
 }
 
-#include "lib_ffpp/ffpp.hpp" //TODO: remove once the Props are not based on libav anymore
+#include "lib_ffpp/ffpp.hpp" //TODO: remove once the Metadata are not based on libav anymore
 
 
 namespace Decode {
@@ -43,7 +43,7 @@ JPEGTurboDecode::JPEGTurboDecode()
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
-	auto p = dynamic_cast<PropsDecoder*>(output->getMetadata());
+	auto p = dynamic_cast<MetadataDecoder*>(output->getMetadata());
 	if (p) {
 		auto ctx = p->getAVCodecContext();
 		avcodec_close(ctx);
@@ -51,14 +51,14 @@ JPEGTurboDecode::~JPEGTurboDecode() {
 	}
 }
 
-void JPEGTurboDecode::ensureProps(int width, int height, int pixelFmt) {
+void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
 	if (!output->getMetadata()) {
 		auto codec = avcodec_find_decoder_by_name("jpg");
 		auto ctx = avcodec_alloc_context3(codec);
 		ctx->width = width;
 		ctx->height = height;
 		ctx->pix_fmt = getAVPF(pixelFmt);
-		output->setMetadata(new PropsDecoder(ctx));
+		output->setMetadata(new MetadataDecoder(ctx));
 	}
 }
 
@@ -76,7 +76,7 @@ void JPEGTurboDecode::process(std::shared_ptr<const Data> data_) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing frame.");
 		return;
 	}
-	ensureProps(w, h, pixelFmt);
+	ensureMetadata(w, h, pixelFmt);
 	output->emit(out);
 }
 

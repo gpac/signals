@@ -13,7 +13,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Decode {
 
-LibavDecode::LibavDecode(const PropsDecoder &metadata)
+LibavDecode::LibavDecode(const MetadataDecoder &metadata)
 	: codecCtx(avcodec_alloc_context3(nullptr)), avFrame(new ffpp::Frame), m_numFrames(0) {
 	avcodec_copy_context(codecCtx, metadata.getAVCodecContext());
 
@@ -42,10 +42,10 @@ LibavDecode::LibavDecode(const PropsDecoder &metadata)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	auto props_new = new PropsDecoder(codecCtx);
+	auto Metadata_new = new MetadataDecoder(codecCtx);
 	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO: videoPin = addOutputPin(new PinPicture(props_new)); break;
-	case AVMEDIA_TYPE_AUDIO: audioPin = addOutputPin(new PinPcm(props_new)); break;
+	case AVMEDIA_TYPE_VIDEO: videoPin = addOutputPin(new PinPicture(Metadata_new)); break;
+	case AVMEDIA_TYPE_AUDIO: audioPin = addOutputPin(new PinPcm(Metadata_new)); break;
 	default: throw std::runtime_error("[LibavDecode] Invalid Pin type.");
 	}
 }

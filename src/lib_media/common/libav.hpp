@@ -24,17 +24,17 @@ extern "C" {
 
 namespace Modules {
 
-class PropsPkt : public IMetadata {
+class MetadataPkt : protected Metadata {
 public:
-	virtual ~PropsPkt() {}
+	virtual ~MetadataPkt() {}
 	virtual StreamType getStreamType() const = 0;
 };
 
-class PropsDecoder : public PropsPkt {
+class MetadataDecoder : public MetadataPkt {
 public:
 	//Doesn't take the ownership of codecCtx
-	PropsDecoder(AVCodecContext *codecCtx);
-	virtual ~PropsDecoder() {}
+	MetadataDecoder(AVCodecContext *codecCtx);
+	virtual ~MetadataDecoder() {}
 	StreamType getStreamType() const override;
 	AVCodecContext* getAVCodecContext() const;
 
@@ -42,7 +42,7 @@ protected:
 	AVCodecContext *codecCtx;
 };
 
-class PropsDecoderImage : public PropsDecoder {
+class MetadataDecoderImage : public MetadataDecoder {
 public:
 	PixelFormat getPixelFormat() const;
 	Resolution getResolution() const;
