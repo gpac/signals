@@ -1,68 +1,55 @@
 #pragma once
 
 #include "data.hpp"
-#include "input.hpp"
-#include "output.hpp"
+#include <memory>
 #include <vector>
 
 
 namespace Modules {
-
-class IModule : public IProcessor {
-public:
+struct IModule {
 	virtual ~IModule() noexcept(false) {}
-	virtual size_t getNumOutputs() const = 0;
-	virtual IOutput* getOutput(size_t i) const = 0;
+	virtual void flush() = 0;
 };
+}
 
-class Module : public IModule {
+//single input module
+#include "output.hpp"
+namespace Modules {
+class ModuleS : public IModule, public OutputCap {
 public:
-	Module() = default;
-
-	virtual ~Module() noexcept(false) {}
+	ModuleS() = default;
+	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(std::shared_ptr<const Data> data) = 0;
+	virtual void flush() {};
 
-	//Takes ownership/
-	template<typename T>
-	T* addInputPin(T* p) {
-		inputs.push_back(uptr(p));
-		return p;
-	}
-	size_t getNumInputPins() const {
-		return inputs.size();
-	}
-	IInput* getInputPin(size_t i) const {
-		return inputs[i].get();
-	}
+private:
+	ModuleS(ModuleS const&) = delete;
+	ModuleS const& operator=(ModuleS const&) = delete;
+};
+}
 
-	size_t getNumOutputs() const override {
-		return outputs.size();
-	}
-	IOutput* getOutput(size_t i) const override {
-		return outputs[i].get();
-	}
-
-	void setLowLatency(bool isLowLatency) {
-		m_isLowLatency = isLowLatency;
-	}
-
-protected:
-	Module(Module const&) = delete;
-	Module const& operator=(Module const&) = delete;
-
-	//Takes ownership
-	template<typename T>
-	T* addOutput(T* p) {
-		if (m_isLowLatency)
-			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
-		outputs.push_back(uptr(p));
-		return p;
+//multiple input module
+namespace Modules {
+struct IModuleM : public IModule {
+	virtual ~IModuleM() {}
+	virtual void process() = 0;
+};
+}
+#include "input.hpp"
+namespace Modules {
+class ModuleM : public IModuleM, public InputCap, public OutputCap {
+public:
+	ModuleM() = default;
+	virtual void process() {
+		if (inputs.size() == 1) {
+			std::shared_ptr<const Data> data;
+			//if (inputs[0]->tryPop(data))
+			//	process(data);
+		}
 	}
 
 private:
-	std::vector<std::unique_ptr<IInput>> inputs;
-	std::vector<std::unique_ptr<IOutput>> outputs;
-	bool m_isLowLatency = false;
+	ModuleM(ModuleM const&) = delete;
+	ModuleM const& operator=(ModuleM const&) = delete;
 };
-
 }

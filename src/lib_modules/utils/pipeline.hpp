@@ -7,7 +7,7 @@
 
 namespace Modules {
 
-class Module;
+class ModuleS;
 class Data;
 struct IOutput;
 
@@ -15,13 +15,15 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-class PipelinedModule : public IModule {
+class PipelinedModule /*Romain: public IModule*/ {
 public:
 	/* take ownership of module */
-	PipelinedModule(Module *module, ICompletionNotifier *notify);
+	PipelinedModule(IModule *module, ICompletionNotifier *notify);
 	void connect(IOutput* out);
+#if 0 //Romain
 	size_t getNumOutputs() const;
 	IOutput* getOutput(size_t i) const;
+#endif
 
 	/* direct call: receiving nullptr stops the execution */
 	void process(std::shared_ptr<const Data> data);
@@ -43,7 +45,7 @@ private:
 	};
 	Type type;
 
-	std::unique_ptr<Module> delegate;
+	std::unique_ptr<IModule> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;
 	IProcessExecutor &executor;
 	ICompletionNotifier* const m_notify;
@@ -52,7 +54,7 @@ private:
 class Pipeline : public ICompletionNotifier {
 public:
 	Pipeline(bool isLowLatency = false);
-	PipelinedModule* addModule(Module* rawModule, bool isSource = false);
+	PipelinedModule* addModule(IModule* rawModule, bool isSource = false);
 	void connect(IOutput* out, PipelinedModule *module);
 	void start();
 	void waitForCompletion();

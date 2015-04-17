@@ -6,7 +6,7 @@ namespace Modules {
 
 namespace Utils {
 
-class Recorder : public Module {
+class Recorder : public ModuleS {
 public:
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;

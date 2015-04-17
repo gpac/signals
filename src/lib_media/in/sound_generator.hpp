@@ -7,7 +7,7 @@ namespace Modules {
 
 namespace In {
 
-class SoundGenerator : public Module {
+class SoundGenerator : public ModuleS {
 public:
 	SoundGenerator();
 	void process(std::shared_ptr<const Data> data) override;

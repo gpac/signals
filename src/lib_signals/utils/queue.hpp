@@ -11,8 +11,8 @@ namespace Signals {
 template<typename T>
 class Queue {
 public:
-	Queue() {
-	}
+	Queue() {}
+	virtual ~Queue() noexcept(false) {}
 
 	void push(T data) {
 		std::lock_guard<std::mutex> lock(mutex);

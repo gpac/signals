@@ -16,7 +16,7 @@ using namespace Modules;
 
 namespace Decode {
 
-class LibavDecode : public Module {
+class LibavDecode : public ModuleS {
 public:
 	LibavDecode(const MetadataPktLibav &metadata);
 	~LibavDecode();

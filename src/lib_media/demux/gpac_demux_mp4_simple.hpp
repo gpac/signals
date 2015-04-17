@@ -11,7 +11,7 @@ namespace Demux {
 
 class ISOFileReader;
 
-class GPACDemuxMP4Simple : public Module {
+class GPACDemuxMP4Simple : public ModuleS {
 public:
 	GPACDemuxMP4Simple(std::string const& path);
 	~GPACDemuxMP4Simple();

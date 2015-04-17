@@ -86,7 +86,36 @@ private:
 };
 
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
-
 typedef OutputDataDefault<RawData> OutputDefault;
+
+class OutputCap {
+public:
+	virtual ~OutputCap() noexcept(false) {}
+
+	size_t getNumOutputs() const {
+		return outputs.size();
+	}
+	IOutput* getOutput(size_t i) const {
+		return outputs[i].get();
+	}
+
+	void setLowLatency(bool isLowLatency) {
+		m_isLowLatency = isLowLatency;
+	}
+
+protected:
+	//Takes ownership
+	template<typename T>
+	T* addOutput(T* p) {
+		if (m_isLowLatency) //FIXME: current low latency is bullshit, use a factory instead
+			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
+		outputs.push_back(uptr(p));
+		return p;
+	}
+
+private:
+	std::vector<std::unique_ptr<IOutput>> outputs;
+	bool m_isLowLatency = false;
+};
 
 }

@@ -10,7 +10,7 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-size_t ConnectOutputToModuleNewInput(IOutput* out, Module* module, size_t outputIdx) {
+size_t ConnectOutputToInput(IOutput* out, ModuleM * const module, size_t outputIdx) {
 	Modules::IInput *input = new Input<Data>(module);
 	auto inputPin = module->addInputPin(input);
 	ASSERT((void*)inputPin == (void*)module->getInputPin(outputIdx));
@@ -22,9 +22,8 @@ unittest("remux test: GPAC mp4 mux") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto mux = uptr(new Mux::GPACMuxMP4("output_video_libav"));
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
-		//TODO: rename helpers? Pin/Module -> Connector/Connected ?
-		ConnectOutputToModuleNewInput(demux->getOutput(i), mux.get(), i);
-		break; //FIXME
+		ConnectOutputToInput(demux->getOutput(i), mux.get(), i);
+		break;
 	}
 
 	demux->process(nullptr);

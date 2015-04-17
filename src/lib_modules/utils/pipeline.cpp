@@ -10,7 +10,7 @@
 namespace Modules {
 
 /* take ownership of module */
-PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
+PipelinedModule::PipelinedModule(IModule *module, ICompletionNotifier *notify)
 : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
 
@@ -18,6 +18,7 @@ void PipelinedModule::connect(IOutput* out) {
 	ConnectToModule(out->getSignal(), this, executor);
 }
 
+#if 0 //Romain
 size_t PipelinedModule::getNumOutputs() const {
   return delegate->getNumOutputs();
 }
@@ -25,6 +26,8 @@ size_t PipelinedModule::getNumOutputs() const {
 IOutput* PipelinedModule::getOutput(size_t i) const {
   return delegate->getOutput(i);
 }
+#endif
+
 /* direct call: receiving nullptr stops the execution */
 void PipelinedModule::process(std::shared_ptr<const Data> data) {
 	if (data) {
@@ -38,7 +41,7 @@ void PipelinedModule::process(std::shared_ptr<const Data> data) {
 void PipelinedModule::dispatch(std::shared_ptr<const Data> data) {
 	if (isSource()) {
 		assert(data == nullptr);
-		executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
+		executor(MEMBER_FUNCTOR(delegate.get(), &ModuleS::process), data);
 	}
 	executor(MEMBER_FUNCTOR(this, &PipelinedModule::process), data);
 }
@@ -70,7 +73,7 @@ void PipelinedModule::endOfStream() {
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
-PipelinedModule* Pipeline::addModule(Module* rawModule, bool isSource) {
+PipelinedModule* Pipeline::addModule(IModule* rawModule, bool isSource) {
 	if(!rawModule)
 		return nullptr;
 	rawModule->setLowLatency(isLowLatency);

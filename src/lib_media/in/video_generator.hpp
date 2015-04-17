@@ -8,7 +8,7 @@ namespace Modules {
 
 namespace In {
 
-class VideoGenerator : public Module {
+class VideoGenerator : public ModuleS {
 public:
 	VideoGenerator();
 	void process(std::shared_ptr<const Data> data) override;

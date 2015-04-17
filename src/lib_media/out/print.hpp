@@ -5,7 +5,7 @@
 namespace Modules {
 namespace Out {
 
-class Print : public Module {
+class Print : public ModuleS {
 public:
 	Print(std::ostream &os);
 	void process(std::shared_ptr<const Data> data) override;

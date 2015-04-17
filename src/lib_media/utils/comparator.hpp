@@ -5,7 +5,7 @@
 namespace Modules {
 namespace Utils {
 
-class IComparator : public Module {
+class IComparator : public ModuleS {
 public:
 	void process(std::shared_ptr<const Data> data) override;
 	virtual bool compare(std::shared_ptr<const Data> original, std::shared_ptr<const Data> other) const = 0;

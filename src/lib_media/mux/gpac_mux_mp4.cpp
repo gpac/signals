@@ -622,7 +622,8 @@ void GPACMuxMP4::declareStream(std::shared_ptr<const Data> data) {
 	}
 }
 
-void GPACMuxMP4::process(std::shared_ptr<const Data> data_) {
+void GPACMuxMP4::process() {
+	std::shared_ptr<const Data> data_; //Romain
 	declareStream(data_);
 
 	auto data = safe_cast<const DataAVPacket>(data_);

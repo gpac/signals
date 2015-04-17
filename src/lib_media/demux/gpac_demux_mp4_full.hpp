@@ -9,7 +9,7 @@ namespace Demux {
 
 class ISOProgressiveReader;
 
-class GPACDemuxMP4Full : public Module {
+class GPACDemuxMP4Full : public ModuleS {
 public:
 	GPACDemuxMP4Full();
 	~GPACDemuxMP4Full();

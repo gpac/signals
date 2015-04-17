@@ -11,7 +11,7 @@ namespace Encode {
 
 class JPEGTurbo;
 
-class JPEGTurboEncode : public Module {
+class JPEGTurboEncode : public ModuleS {
 public:
 	JPEGTurboEncode(Resolution resolution, int JPEGQuality = JPEG_DEFAULT_QUALITY);
 	~JPEGTurboEncode();

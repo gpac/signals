@@ -7,7 +7,7 @@ namespace Stream {
 
 struct MPD;
 
-class MPEG_DASH : public Module {
+class MPEG_DASH : public ModuleS {
 public:
 	enum Type {
 		Live,

@@ -14,7 +14,7 @@ struct SDL_Window;
 namespace Modules {
 namespace Render {
 
-class SDLVideo : public Module {
+class SDLVideo : public ModuleS {
 public:
 	SDLVideo(IClock* clock = g_DefaultClock);
 	~SDLVideo();

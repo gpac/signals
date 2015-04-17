@@ -9,7 +9,7 @@ using namespace Modules;
 
 namespace Demux {
 
-class LibavDemux : public Module {
+class LibavDemux : public ModuleS {
 public:
 	//@param url may be a file, a remote URL, or a webcam (set "webcam" to list the available devices)
 	LibavDemux(const std::string &url);

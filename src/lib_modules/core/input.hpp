@@ -2,37 +2,52 @@
 
 #include "data.hpp"
 #include "metadata.hpp"
+#include "module.hpp"
+#include "lib_signals/utils/queue.hpp"
 #include <memory>
 
 
 namespace Modules {
 
-class IModule;
-
-class IProcessor { //FIXME: template + there should be no module with no input from now, so module doesn't need to be a public processor
-public:
-	virtual ~IProcessor() noexcept(false) {};
-	virtual void process(std::shared_ptr<const Data> data) = 0;
-	virtual void flush() {};
-};
-
-struct IInput : public IProcessor, public Metadata {
+struct IInput : public ModuleS, public Metadata, public Signals::Queue<std::shared_ptr<const Data>> {
 	virtual ~IInput() noexcept(false) {}
 };
 
 template<typename DataType>
 class Input : public IInput {
 public:
-	Input(IProcessor * const module) : module(module) {}
+	Input(IModuleM * const module) : module(module) {}
 
-	void process(std::shared_ptr<const Data> data) {
+	void process(std::shared_ptr<const Data> data) override {
 		if (updateMetadata(data))
 			module->flush();
-		module->process(safe_cast<const DataType>(data));
+		push(safe_cast<const DataType>(data));
+		module->process();
 	}
 
 private:
-	IProcessor * const module;
+	IModuleM * const module;
+};
+
+class InputCap {
+public:
+	virtual ~InputCap() noexcept(false) {}
+
+	//Takes ownership/
+	template<typename T>
+	T* addInputPin(T* p) {
+		inputs.push_back(uptr(p));
+		return p;
+	}
+	size_t getNumInputPins() const {
+		return inputs.size();
+	}
+	IInput* getInputPin(size_t i) const {
+		return inputs[i].get();
+	}
+
+protected:
+	std::vector<std::unique_ptr<IInput>> inputs;
 };
 
 }
