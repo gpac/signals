@@ -5,9 +5,7 @@
 namespace Modules {
 namespace Out {
 
-/**
- * Open bar output. Thread-safe by design ©
- */
+//Open bar output. Thread-safe by design ©
 class Null : public Module {
 public:
 	Null();

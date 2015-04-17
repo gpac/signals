@@ -75,9 +75,7 @@ public:
 		return signal;
 	}
 
-	/**
-	 * Takes ownership.
-	 */
+	//Takes ownership.
 	void setAllocator(Allocator *allocator) {
 		this->allocator = uptr(allocator);
 	}

@@ -32,9 +32,7 @@ public:
 
 class PropsDecoder : public PropsPkt {
 public:
-	/**
-	 * Doesn't take the ownership of codecCtx
-	 */
+	//Doesn't take the ownership of codecCtx
 	PropsDecoder(AVCodecContext *codecCtx);
 	virtual ~PropsDecoder() {}
 	StreamType getStreamType() const override;

@@ -59,9 +59,7 @@ public:
 	virtual void process(std::shared_ptr<const Data> data) = 0;
 	virtual void flush() override {};
 
-	/**
-	 * Takes ownership/
-	 */
+	//Takes ownership/
 	template<typename T>
 	T* addInputPin(T* p) {
 		inputPins.push_back(uptr(p));
@@ -89,9 +87,7 @@ protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
 
-	/**
-	 * Takes ownership/
-	 */
+	//Takes ownership
 	template<typename T>
 	T* addOutputPin(T* p) {
 		if (m_isLowLatency)
