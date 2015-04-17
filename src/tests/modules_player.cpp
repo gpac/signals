@@ -22,7 +22,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
 		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderMetadata = safe_cast<MetadataDecoder>(metadata);
+		auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
 		if (decoderMetadata->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
@@ -31,7 +31,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 	auto metadata = demux->getOutputPin(videoIndex)->getMetadata();
-	auto decoderMetadata = safe_cast<MetadataDecoder>(metadata);
+	auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
 	auto decode = uptr(new Decode::LibavDecode(*decoderMetadata));
 	auto render = uptr(new Render::SDLVideo);
 
@@ -57,7 +57,7 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
 	auto metadata = demux->getOutputPin(audioIndex)->getMetadata();
-	auto decoderMetadata = safe_cast<MetadataDecoder>(metadata);
+	auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
 	auto decode = uptr(new Decode::LibavDecode(*decoderMetadata));
 	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);

@@ -43,7 +43,7 @@ JPEGTurboDecode::JPEGTurboDecode()
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
-	auto p = dynamic_cast<MetadataDecoder*>(output->getMetadata());
+	auto p = dynamic_cast<MetadataPktLibav*>(output->getMetadata());
 	if (p) {
 		auto ctx = p->getAVCodecContext();
 		avcodec_close(ctx);
@@ -58,7 +58,7 @@ void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
 		ctx->width = width;
 		ctx->height = height;
 		ctx->pix_fmt = getAVPF(pixelFmt);
-		output->setMetadata(new MetadataDecoder(ctx));
+		output->setMetadata(new MetadataPktLibav(ctx));
 	}
 }
 
