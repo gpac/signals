@@ -19,7 +19,7 @@ IModule* createRenderer(int codecType) {
 }
 
 void declarePipeline(Pipeline &pipeline, const char *url) {
-	auto connect = [&](PipelinedModule* src, PipelinedModule* dst) {
+	auto connect = [&](auto* src, auto* dst) {
 		pipeline.connect(src->getOutput(0), dst);
 	};
 
