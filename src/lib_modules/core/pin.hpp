@@ -2,7 +2,7 @@
 
 #include "allocator.hpp"
 #include "data.hpp"
-#include "props.hpp"
+#include "metadata.hpp"
 #include "lib_modules/utils/helper.hpp"
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
@@ -20,7 +20,7 @@ typedef Signal<void(std::shared_ptr<const Data>), ResultVector<NotVoid<void>>> S
 typedef SignalSync SignalDefaultSync;
 
 struct IPin {
-	virtual ~IPin() {}
+	virtual ~IPin() noexcept(false) {}
 	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
 	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
 };
@@ -46,15 +46,15 @@ size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
 }
 
 template<typename Allocator, typename Signal>
-class PinT : public IPin, public PropsHandler {
+class PinT : public IPin, public Metadata {
 public:
 	typedef Allocator AllocatorType;
 
-	PinT(IProps *props = nullptr)
-		: PropsHandler(props), allocator(new Allocator) {
+	PinT(IProperty *metadata = nullptr)
+		: Metadata(metadata), allocator(new Allocator) {
 	}
 
-	~PinT() {
+	~PinT() noexcept(false) {
 		allocator->unblock();
 	}
 

@@ -21,8 +21,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto props = demux->getOutputPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsDecoder>(props);
+		auto metadata = demux->getOutputPin(i)->getMetadata();
+		auto decoderProps = safe_cast<PropsDecoder>(metadata);
 		if (decoderProps->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
@@ -30,8 +30,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
-	auto props = demux->getOutputPin(videoIndex)->getProps();
-	auto decoderProps = safe_cast<PropsDecoder>(props);
+	auto metadata = demux->getOutputPin(videoIndex)->getMetadata();
+	auto decoderProps = safe_cast<PropsDecoder>(metadata);
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto render = uptr(new Render::SDLVideo);
 
@@ -47,8 +47,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto props = demux->getOutputPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsPkt>(props);
+		auto metadata = demux->getOutputPin(i)->getMetadata();
+		auto decoderProps = safe_cast<PropsPkt>(metadata);
 		if (decoderProps->getStreamType() == AUDIO_PKT) {
 			audioIndex = i;
 		} else {
@@ -56,8 +56,8 @@ unittest("Packet type erasure + multi-output-pin: libav Demux -> libav Decoder (
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
-	auto props = demux->getOutputPin(audioIndex)->getProps();
-	auto decoderProps = safe_cast<PropsDecoder>(props);
+	auto metadata = demux->getOutputPin(audioIndex)->getMetadata();
+	auto decoderProps = safe_cast<PropsDecoder>(metadata);
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);

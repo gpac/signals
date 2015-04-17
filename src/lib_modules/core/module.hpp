@@ -23,7 +23,7 @@ public:
 };
 
 template<typename DataType>
-class Input : public IProcessor, protected PropsHandler {
+class Input : public IProcessor, protected Metadata {
 public:
 	Input(IModule * const module) : module(module) {}
 

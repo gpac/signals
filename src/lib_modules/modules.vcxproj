@@ -22,9 +22,9 @@
     <ClInclude Include="core\allocator.hpp" />
     <ClInclude Include="core\clock.hpp" />
     <ClInclude Include="core\data.hpp" />
+    <ClInclude Include="core\metadata.hpp" />
     <ClInclude Include="core\module.hpp" />
     <ClInclude Include="core\pin.hpp" />
-    <ClInclude Include="core\props.hpp" />
     <ClInclude Include="utils\helper.hpp" />
     <ClInclude Include="utils\pipeline.hpp" />
     <ClInclude Include="utils\stranded_pool_executor.hpp" />

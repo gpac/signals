@@ -25,8 +25,8 @@ void declarePipeline(Pipeline &pipeline, const char *url) {
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(url), true);
 	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
-		auto props = demux->getOutputPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsDecoder>(props);
+		auto metadata = demux->getOutputPin(i)->getMetadata();
+		auto decoderProps = safe_cast<PropsDecoder>(metadata);
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
 
 		pipeline.connect(demux->getOutputPin(i), decoder);

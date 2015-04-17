@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 #include "lib_modules/core/data.hpp"
-#include "lib_modules/core/props.hpp"
+#include "lib_modules/core/metadata.hpp"
 
 struct AVCodecContext;
 
@@ -17,7 +17,7 @@ enum StreamType {
 	VIDEO_PKT  //COMPRESSED_VIDEO
 };
 
-class StreamVideo : public Modules::Data, public IProps {
+class StreamVideo : public Modules::Data, public IProperty {
 public:
 	uint32_t width;
 	uint32_t height;
@@ -28,7 +28,7 @@ public:
 	AVCodecContext *codecCtx; //FIXME: legacy from libav
 };
 
-class StreamAudio : public Modules::Data, public IProps {
+class StreamAudio : public Modules::Data, public IProperty {
 public:
 	std::string codecName;
 	uint32_t numChannels;

@@ -7,19 +7,19 @@
 
 namespace Modules {
 
-struct IProps;
+struct IProperty;
 
 //A generic timed data container.
 class Data {
 public:
 	Data() = default;
-	Data(std::shared_ptr<IProps> metadata) : m_metadata(metadata) {}
+	Data(std::shared_ptr<IProperty> metadata) : m_metadata(metadata) {}
 	virtual ~Data() {}
 
-	std::shared_ptr<IProps> getMetadata() const {
+	std::shared_ptr<IProperty> getMetadata() const {
 		return m_metadata;
 	}
-	void setMetadata(std::shared_ptr<IProps> metadata) {
+	void setMetadata(std::shared_ptr<IProperty> metadata) {
 		m_metadata = metadata;
 	}
 
@@ -45,7 +45,7 @@ public:
 private:
 	uint64_t m_TimeIn180k;
 	uint64_t m_DurationIn180k;
-	std::shared_ptr<IProps> m_metadata;
+	std::shared_ptr<IProperty> m_metadata;
 };
 
 class RawData : public Data {
