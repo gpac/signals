@@ -9,9 +9,7 @@ namespace Modules {
 
 struct IProps;
 
-/**
- * A generic timed data container.
- */
+//A generic timed data container.
 class Data {
 public:
 	Data() = default;

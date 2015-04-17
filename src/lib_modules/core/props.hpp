@@ -6,9 +6,7 @@
 
 namespace Modules {
 
-/**
- * A generic property container.
- */
+//A generic property container.
 struct IProps {
 	virtual ~IProps() {}
 };
@@ -28,9 +26,7 @@ public:
 		return props.get();
 	}
 
-	/**
-	 * Takes ownership.
-	 */
+	//Takes ownership.
 	void setProps(IProps *props)  override { //FIXME: takes shared ptr in
 		this->props = std::shared_ptr<IProps>(props);
 	}

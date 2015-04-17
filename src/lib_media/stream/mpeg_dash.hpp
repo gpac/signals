@@ -7,9 +7,6 @@ namespace Stream {
 
 struct MPD;
 
-/**
- * Open bar output. Thread-safe by design ©
- */
 class MPEG_DASH : public Module {
 public:
 	enum Type {

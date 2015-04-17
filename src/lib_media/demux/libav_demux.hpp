@@ -11,9 +11,7 @@ namespace Demux {
 
 class LibavDemux : public Module {
 public:
-	/**
-	 @param url may be a file, a remote URL, or a webcam (set "webcam" to list the available devices)
-	 */
+	//@param url may be a file, a remote URL, or a webcam (set "webcam" to list the available devices)
 	LibavDemux(const std::string &url);
 	~LibavDemux();
 	void process(std::shared_ptr<const Data> data) override;
