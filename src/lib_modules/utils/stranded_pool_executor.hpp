@@ -2,7 +2,7 @@
 
 #define ASIO_STANDALONE
 #include <asio/asio.hpp>
-#include "lib_signals/internal/core/executor.hpp"
+#include "lib_signals/core/executor.hpp"
 #include <memory>
 
 

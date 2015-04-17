@@ -16,7 +16,7 @@ public:
 class IModule : public IProcessor {
 public:
 	virtual ~IModule() noexcept(false) {}
-	virtual void process(std::shared_ptr<const Data> data) override = 0;
+	virtual void process() = 0;
 	virtual void flush() {};
 	virtual size_t getNumOutputPins() const = 0;
 	virtual IPin* getOutputPin(size_t i) const = 0;
@@ -27,7 +27,7 @@ struct IInput : public IProcessor, public Metadata {
 };
 
 template<typename DataType>
-class Input : public IInput {
+class Input : public IInput, protected std::queue<DataType> {
 public:
 	Input(IModule * const module) : module(module) {}
 

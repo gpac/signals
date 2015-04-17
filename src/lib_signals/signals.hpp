@@ -1,6 +1,6 @@
 #pragma once
 
-#include "internal/utils/helper.hpp"
-#include "internal/utils/threadpool.hpp"
-#include "internal/core/signal.hpp"
+#include "utils/helper.hpp"
+#include "utils/threadpool.hpp"
+#include "core/signal.hpp"
 
