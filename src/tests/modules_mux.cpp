@@ -24,6 +24,7 @@ unittest("remux test: GPAC mp4 mux") {
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
 		//TODO: rename helpers? Pin/Module -> Connector/Connected ?
 		ConnectPinToModuleNewInput(demux->getOutputPin(i), mux.get(), i);
+		break; //FIXME
 	}
 
 	demux->process(nullptr);
