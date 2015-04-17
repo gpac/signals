@@ -4,7 +4,7 @@
 #include <sstream>
 
 namespace {
-Encode::LibavEncode* createEncoder(IMetadataPkt *metadata, const dashcastXOptions &opt) {
+Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadataPkt> metadata, const dashcastXOptions &opt) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
@@ -21,11 +21,11 @@ Encode::LibavEncode* createEncoder(IMetadataPkt *metadata, const dashcastXOption
 	}
 }
 
-Module* createConverter(IMetadataPkt *metadata, const Resolution &dstRes) {
+Module* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Resolution &dstRes) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
-		auto imageMetadata = safe_cast<MetadataPktLibavVideo>(metadata);
+		auto imageMetadata = safe_cast<const MetadataPktLibavVideo>(metadata);
 		auto dstFormat = PictureFormat(dstRes, imageMetadata->getPixelFormat());
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AUDIO_PKT) {

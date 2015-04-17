@@ -39,9 +39,9 @@ size_t ConnectToModule(SignalType& sig, std::unique_ptr<ModuleType>& module, IPr
 }
 
 template <typename T>
-std::shared_ptr<T> getMetadataFromPin(IPin *pin) {
-	auto metadata = safe_cast<Metadata>(pin)->getMetadata();
-	return safe_cast<T>(metadata);
+std::shared_ptr<const T> getMetadataFromPin(IPin const * const pin) {
+	auto const metadata = safe_cast<const Metadata>(pin)->getMetadata();
+	return safe_cast<const T>(metadata);
 }
 
 }
