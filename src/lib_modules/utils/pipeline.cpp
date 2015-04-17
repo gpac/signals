@@ -10,24 +10,29 @@
 namespace Modules {
 
 /* take ownership of module */
-PipelinedModule::PipelinedModule(IModule *module, ICompletionNotifier *notify)
+template<typename ModuleType>
+PipelinedModule<ModuleType>::PipelinedModule(ModuleType *module, ICompletionNotifier *notify)
 : type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
 
-void PipelinedModule::connect(IOutput* out) {
+template<typename ModuleType>
+void PipelinedModule<ModuleType>::connect(IOutput* out) {
 	ConnectToModule(out->getSignal(), this, executor);
 }
 
-size_t PipelinedModule::getNumOutputs() const {
+template<typename ModuleType>
+size_t PipelinedModule<ModuleType>::getNumOutputs() const {
   return delegate->getNumOutputs();
 }
 
-IOutput* PipelinedModule::getOutput(size_t i) const {
+template<typename ModuleType>
+IOutput* PipelinedModule<ModuleType>::getOutput(size_t i) const {
   return delegate->getOutput(i);
 }
 
 /* direct call: receiving nullptr stops the execution */
-void PipelinedModule::process(std::shared_ptr<const Data> data) {
+template<typename ModuleType>
+void PipelinedModule<ModuleType>::process(std::shared_ptr<const Data> data) {
 	if (data) {
 		delegate->process(data);
 	} else {
@@ -36,7 +41,8 @@ void PipelinedModule::process(std::shared_ptr<const Data> data) {
 }
 
 /* same as process() but uses the executor (may defer the call) */
-void PipelinedModule::dispatch(std::shared_ptr<const Data> data) {
+template<typename ModuleType>
+void PipelinedModule<ModuleType>::dispatch(std::shared_ptr<const Data> data) {
 	if (isSource()) {
 		assert(data == nullptr);
 		executor(MEMBER_FUNCTOR(delegate.get(), &ModuleS::process), data);
@@ -45,44 +51,49 @@ void PipelinedModule::dispatch(std::shared_ptr<const Data> data) {
 }
 
 /* source modules are stopped manually - then the message propagates to other connected modules */
-void PipelinedModule::setSource(bool isSource) {
+template<typename ModuleType>
+void PipelinedModule<ModuleType>::setSource(bool isSource) {
 	type = isSource ? Source : None;
 }
 
-bool PipelinedModule::isSource() const {
+template<typename ModuleType>
+bool PipelinedModule<ModuleType>::isSource() const {
 	return type == Source;
 }
 
-bool PipelinedModule::isSink() const {
+template<typename ModuleType>
+bool PipelinedModule<ModuleType>::isSink() const {
 	return delegate->getNumOutputs() == 0;
 }
 
-void PipelinedModule::endOfStream() {
+template<typename ModuleType>
+void PipelinedModule<ModuleType>::endOfStream() {
 	delegate->flush();
 	if (isSink()) {
 		m_notify->finished();
 	} else {
-		for (size_t i = 0; i < delegate->getNumOutputs(); ++i) {
+		for (size_t i = 0; i < delegate->getNumOutputs(); ++i)
 			delegate->getOutput(i)->emit(std::shared_ptr<const Data>(nullptr));
-		}
 	}
 }
 
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
-PipelinedModule* Pipeline::addModule(IModule* rawModule, bool isSource) {
+template<typename ModuleType>
+PipelinedModule<ModuleType>* Pipeline::addModule(ModuleType* rawModule, bool isSource) {
 	if(!rawModule)
 		return nullptr;
 	rawModule->setLowLatency(isLowLatency);
-	auto module = uptr(new PipelinedModule(rawModule, this));
+	auto module = uptr(new PipelinedModule<ModuleType>(rawModule, this));
 	auto ret = module.get();
 	module->setSource(isSource);
 	modules.push_back(std::move(module));
 	return ret;
 }
 
-void Pipeline::connect(IOutput* out, PipelinedModule *module) {
+template<typename ModuleType>
+void Pipeline::connect(IOutput* out, PipelinedModule<ModuleType> *module) {
 	if (module->isSink())
 		numRemainingNotifications++;
 	module->connect(out);
