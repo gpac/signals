@@ -1,43 +1,18 @@
 #pragma once
 
 #include "data.hpp"
+#include "input.hpp"
 #include "output.hpp"
 #include <vector>
 
 
 namespace Modules {
 
-class IProcessor { //FIXME: template + there should be no module with no input from now, so module doesn't need to be a public processor
-public:
-	virtual ~IProcessor() noexcept(false) {};
-	virtual void process(std::shared_ptr<const Data> data) = 0;
-};
-
 class IModule : public IProcessor {
 public:
 	virtual ~IModule() noexcept(false) {}
-	virtual void flush() {};
 	virtual size_t getNumOutputs() const = 0;
 	virtual IOutput* getOutput(size_t i) const = 0;
-};
-
-struct IInput : public IProcessor, public Metadata {
-	virtual ~IInput() noexcept(false) {}
-};
-
-template<typename DataType>
-class Input : public IInput {
-public:
-	Input(IModule * const module) : module(module) {}
-
-	void process(std::shared_ptr<const Data> data) {
-		if (updateMetadata(data))
-			module->flush();
-		module->process(safe_cast<const DataType>(data));
-	}
-
-private:
-	IModule * const module;
 };
 
 class Module : public IModule {
