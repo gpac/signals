@@ -85,7 +85,7 @@ Resolution MetadataPktLibavVideo::getResolution() const {
 }
 
 uint32_t MetadataPktLibavVideo::getTimeScale() const {
-	if (codecCtx->time_base.num != 1) //FIXME //Romain WTF
+	if (codecCtx->time_base.num != 1)
 		throw std::runtime_error("Unsupported video time scale.");
 	return codecCtx->time_base.den / codecCtx->time_base.num;;
 }

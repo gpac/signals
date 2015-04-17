@@ -80,7 +80,7 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 }
 
 namespace {
-//FIXME: this function is related to Picture and libav and should not be in a module (libav.xpp)
+//FIXME: this function is related to Picture and libav and should not be in a module (libav.xpp) + we can certainly avoid a memcpy here
 void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 	for (size_t comp=0; comp<pic->getNumPlanes(); ++comp) {
 		auto subsampling = comp == 0 ? 1 : 2;

@@ -189,7 +189,6 @@ public:
 	void setPlane(uint8_t planeIdx, uint8_t *plane, uint64_t size) {
 		if (planeIdx > format.numPlanes)
 			throw std::runtime_error("Pcm plane doesn't exist.");
-		//TODO: use std::vector
 		if ((planes[planeIdx] == nullptr) ||
 			(plane != planes[planeIdx]) ||
 			((plane == planes[planeIdx]) && (size > planeSize[planeIdx]))) {
@@ -215,7 +214,7 @@ private:
 	}
 
 	PcmFormat format;
-	uint8_t* planes[AUDIO_PCM_PLANES_MAX];
+	uint8_t* planes[AUDIO_PCM_PLANES_MAX]; //TODO: use std::vector
 	uint64_t planeSize[AUDIO_PCM_PLANES_MAX];
 };
 
