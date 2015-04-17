@@ -60,8 +60,6 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 		throw std::runtime_error("Unknown encoder type. Failed.");
 	}
 
-	output = addOutputPin(new PinDataDefault<DataAVPacket>);
-
 	/* parse the codec optionsDict */
 	ffpp::Dict codecDict;
 	buildAVDictionary("[libav_encode]", &codecDict, codecOptions.c_str(), "codec");
@@ -151,6 +149,18 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 		}
 		tok = strtok(nullptr, "- ");
 	}
+
+	output = addOutputPin(new PinDataDefault<DataAVPacket>);
+	switch (type) {
+	case Video:
+		output->setMetadata(new MetadataPktLibavVideo(codecCtx));
+		break;
+	case Audio:
+		output->setMetadata(new MetadataPktLibavAudio(codecCtx));
+		break;
+	default:
+		assert(0);
+	}
 }
 
 void LibavEncode::flush() {
@@ -172,37 +182,6 @@ void LibavEncode::flush() {
 LibavEncode::~LibavEncode() {
 	if (codecCtx) {
 		avcodec_close(codecCtx);
-	}
-}
-
-std::string LibavEncode::getCodecName() const {
-	return avcodec_get_name(codecCtx->codec_id);
-}
-
-void LibavEncode::sendOutputPinsInfo() {
-	if (codecCtx->codec_type == AVMEDIA_TYPE_VIDEO) {
-		std::shared_ptr<StreamVideo> stream(new StreamVideo);
-		stream->width = codecCtx->width;
-		stream->height = codecCtx->height;
-		stream->timeScale = codecCtx->time_base.den / codecCtx->time_base.num;
-		assert(codecCtx->time_base.num == 1); //FIXME
-		stream->extradata = codecCtx->extradata;
-		stream->extradataSize = codecCtx->extradata_size;
-		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-		output->emit(stream);
-	} else if (codecCtx->codec_type == AVMEDIA_TYPE_AUDIO) {
-		std::shared_ptr<StreamAudio> stream(new StreamAudio); //TODO: should use a constructor
-		stream->codecName = getCodecName();
-		stream->numChannels = codecCtx->channels;
-		stream->sampleRate = codecCtx->sample_rate;
-		stream->bitsPerSample = av_get_bytes_per_sample(codecCtx->sample_fmt) * 8;
-		stream->frameSize = codecCtx->frame_size;
-		stream->extradata = codecCtx->extradata;
-		stream->extradataSize = codecCtx->extradata_size;
-		stream->codecCtx = codecCtx; //FIXME: all the information above is redundant with this one
-		output->emit(stream);
-	} else {
-		assert(0); //TODO test with anythng else than audio and video
 	}
 }
 

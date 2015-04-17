@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../common/mm.hpp"
 #include "lib_modules/core/module.hpp"
 #include "../common/libav.hpp"
 #include <string>
@@ -23,10 +22,9 @@ public:
 	void flush() override;
 
 private:
-	bool declareStream(std::shared_ptr<const Data> stream);
-
-	void declareStreamVideo(std::shared_ptr<const StreamVideo> stream);
-	void declareStreamAudio(std::shared_ptr<const StreamAudio> stream);
+	void declareStream(std::shared_ptr<const Data> stream);
+	void declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> stream);
+	void declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio> stream);
 	void setupFragments();
 	void closeSegment();
 	GF_ISOFile *m_iso;

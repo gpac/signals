@@ -6,10 +6,6 @@
 
 namespace Modules {
 
-struct IIMetadata {
-	virtual ~IIMetadata() {}
-};
-
 struct IMetadata {
 	virtual ~IMetadata() noexcept(false) {}
 	virtual IIMetadata* getMetadata() const = 0;
@@ -21,7 +17,7 @@ public:
 	Metadata(IIMetadata *metadata = nullptr) : metadata(metadata) {} //FIXME: takes shared ptr in
 	virtual ~Metadata() noexcept(false) {}
 
-	IIMetadata* getMetadata() const override { //FIXME: return shared ptr
+	IIMetadata* getMetadata() const override { //FIXME: return shared ptr //TODO: constify
 		return metadata.get();
 	}
 

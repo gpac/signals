@@ -22,8 +22,12 @@ public:
 	virtual IPin* getOutputPin(size_t i) const = 0;
 };
 
+struct IInput : public IProcessor, public Metadata {
+	virtual ~IInput() noexcept(false) {}
+};
+
 template<typename DataType>
-class Input : public IProcessor, protected Metadata {
+class Input : public IInput {
 public:
 	Input(IModule * const module) : module(module) {}
 
@@ -53,7 +57,7 @@ public:
 	size_t getNumInputPins() const {
 		return inputPins.size();
 	}
-	IProcessor* getInputPin(size_t i) const {
+	IInput* getInputPin(size_t i) const {
 		return inputPins[i].get();
 	}
 
@@ -82,7 +86,7 @@ protected:
 	}
 
 private:
-	std::vector<std::unique_ptr<IProcessor>> inputPins; //TODO: don't name them 'pin'
+	std::vector<std::unique_ptr<IInput>> inputPins; //TODO: don't name them 'pin'
 	std::vector<std::unique_ptr<IPin>> outputPins; //TODO: don't name them 'pin'
 	bool m_isLowLatency = false;
 };

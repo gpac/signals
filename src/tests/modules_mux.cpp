@@ -11,7 +11,7 @@ using namespace Modules;
 
 namespace {
 size_t ConnectPinToModuleNewInput(IPin* pin, Module* module, size_t outputIdx) {
-	Modules::IProcessor *input = new Input<Data>(module);
+	Modules::IInput *input = new Input<Data>(module);
 	auto inputPin = module->addInputPin(input);
 	ASSERT((void*)inputPin == (void*)module->getInputPin(outputIdx));
 	return ConnectPinToModule(pin, module->getInputPin(outputIdx));

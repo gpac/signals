@@ -4,8 +4,8 @@
 #include <sstream>
 
 namespace {
-Encode::LibavEncode* createEncoder(MetadataPkt *decoderMetadata, bool isLowLatency) {
-	auto const codecType = decoderMetadata ? decoderMetadata->getStreamType() : UNKNOWN_ST;
+Encode::LibavEncode* createEncoder(IMetadataPkt *metadata, bool isLowLatency) {
+	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Video, isLowLatency);
@@ -18,11 +18,11 @@ Encode::LibavEncode* createEncoder(MetadataPkt *decoderMetadata, bool isLowLaten
 	}
 }
 
-Module* createConverter(MetadataPkt *decoderMetadata, const Resolution &dstRes) {
-	auto const codecType = decoderMetadata ? decoderMetadata->getStreamType() : UNKNOWN_ST;
+Module* createConverter(IMetadataPkt *metadata, const Resolution &dstRes) {
+	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
-		auto imageMetadata = safe_cast<MetadataPktLibavVideo>(decoderMetadata);
+		auto imageMetadata = safe_cast<MetadataPktLibavVideo>(metadata);
 		auto dstFormat = PictureFormat(dstRes, imageMetadata->getPixelFormat());
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AUDIO_PKT) {
@@ -46,19 +46,18 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
 	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
-		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
-		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderMetadata));
+		auto metadata = safe_cast<Metadata>(demux->getOutputPin(i))->getMetadata();
+		auto decoder = pipeline.addModule(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
 
 		pipeline.connect(demux->getOutputPin(i), decoder);
 
-		auto converter = pipeline.addModule(createConverter(decoderMetadata, opt.res));
+		auto converter = pipeline.addModule(createConverter(metadata, opt.res));
 		if (!converter)
 			continue;
 
 		connect(decoder, converter);
 
-		auto rawEncoder = createEncoder(decoderMetadata, opt.isLive);
+		auto rawEncoder = createEncoder(metadata, opt.isLive);
 		auto encoder = pipeline.addModule(rawEncoder);
 		if (!encoder)
 			continue;
@@ -69,7 +68,6 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		filename << i;
 		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true, opt.segmentDuration));
 		connect(encoder, muxer);
-		rawEncoder->sendOutputPinsInfo();
 
 		connect(muxer, dasher);
 	}

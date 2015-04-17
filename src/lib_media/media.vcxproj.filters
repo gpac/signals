@@ -45,9 +45,6 @@
     <ClInclude Include="common\libav.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
-    <ClInclude Include="common\mm.hpp">
-      <Filter>src\common</Filter>
-    </ClInclude>
     <ClInclude Include="common\pcm.hpp">
       <Filter>src\common</Filter>
     </ClInclude>
