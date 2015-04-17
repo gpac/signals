@@ -14,19 +14,9 @@ struct IModule {
 };
 }
 
-//single input specialized module
 #include "input.hpp"
+
 namespace Modules {
-class ModuleS : public IInput, public OutputCap {
-public:
-	ModuleS() = default;
-	virtual ~ModuleS() noexcept(false) {}
-
-private:
-	ModuleS(ModuleS const&) = delete;
-	ModuleS const& operator=(ModuleS const&) = delete;
-};
-
 class Module : public IModule, public InputCap, public OutputCap {
 public:
 	Module() = default;
@@ -35,5 +25,16 @@ public:
 private:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
+};
+
+//single input specialized module
+class ModuleS : public IInput, public OutputCap {
+public:
+	ModuleS() = default;
+	virtual ~ModuleS() noexcept(false) {}
+
+private:
+	ModuleS(ModuleS const&) = delete;
+	ModuleS const& operator=(ModuleS const&) = delete;
 };
 }
