@@ -2,6 +2,7 @@
 
 #include "lib_modules/core/module.hpp"
 #include "../common/libav.hpp"
+#include "../common/picture.hpp"
 
 struct AVStream;
 
@@ -13,6 +14,18 @@ using namespace Modules;
 
 namespace Encode {
 
+struct LibavEncodeParams {
+	//video only
+	Resolution res = VIDEO_RESOLUTION;
+	int bitrate_v = 300000;
+	int GOPSize = 25;
+	int frameRate = 25;
+	bool isLowLatency = false;
+
+	//audio only
+	int bitrate_a = 128000;
+};
+
 class LibavEncode : public Module {
 public:
 	enum Type {
@@ -21,7 +34,7 @@ public:
 		Unknown
 	};
 
-	LibavEncode(Type type, bool isLowLatency = false);
+	LibavEncode(Type type, const LibavEncodeParams &params = *uptr(new LibavEncodeParams));
 	~LibavEncode();
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
@@ -34,7 +47,6 @@ private:
 	std::unique_ptr<PcmFormat> pcmFormat;
 	std::unique_ptr<ffpp::Frame> const avFrame;
 	int frameNum;
-	bool isLowLatency;
 	PinDataDefault<DataAVPacket>* output;
 };
 

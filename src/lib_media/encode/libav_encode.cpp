@@ -38,21 +38,21 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 
 namespace Encode {
 
-LibavEncode::LibavEncode(Type type, bool isLowLatency)
-: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1), isLowLatency(isLowLatency) {
+LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
+: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:
-		codecOptions = "-b 500000 -g 10 -keyint_min 10 -bf 0"; //TODO
-		generalOptions = "-vcodec libx264 -r 25 -pass 1"; //TODO
-		if (isLowLatency)
+		codecOptions = format("-b %s -g %s -keyint_min %s -bf 0", params.bitrate_v, params.GOPSize, params.GOPSize);
+		generalOptions = format("-vcodec libx264 -r %s -pass 1", params.frameRate);
+		if (params.isLowLatency)
 			codecOptions += " -preset ultrafast -tune zerolatency";
 		codecName = "vcodec";
 		break;
 	case Audio:
-		codecOptions = "-b 192000"; //TODO
+		codecOptions = format("-b %s", params.bitrate_a);
 		generalOptions = "-acodec libvo_aacenc"; //TODO
-		if (isLowLatency)
+		if (params.isLowLatency)
 			Log::msg(Log::Info, "[libav_encode] low latency has no effect for audio.");
 		codecName = "acodec";
 		break;
@@ -71,9 +71,8 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 
 	/* find the encoder */
 	auto entry = generalDict.get(codecName);
-	if(!entry) {
+	if(!entry)
 		throw std::runtime_error("Could not get codecName.");
-	}
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
 	if (!codec) {
 		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", entry->value);
@@ -89,8 +88,8 @@ LibavEncode::LibavEncode(Type type, bool isLowLatency)
 	/* parameters */
 	switch (type) {
 	case Video: {
-		codecCtx->width = VIDEO_RESOLUTION.width; //FIXME: encode size should be a parameter
-		codecCtx->height = VIDEO_RESOLUTION.height;
+		codecCtx->width = params.res.width;
+		codecCtx->height = params.res.height;
 		if (strcmp(generalDict.get("vcodec")->value, "mjpeg")) {
 			codecCtx->pix_fmt = PIX_FMT_YUV420P;
 		} else {
