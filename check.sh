@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-find src -name "*.cpp" -or -name "*.hpp" | xargs dos2unix -k -q
+find src -name "*.cpp" -or -name "*.hpp" | xargs sed -i -e 's/\r//'
 
 if [ ! -d "bin" ]; then
   mkdir bin
