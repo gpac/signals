@@ -46,8 +46,8 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
 	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
-		auto props = demux->getOutputPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsDecoder>(props);
+		auto metadata = demux->getOutputPin(i)->getMetadata();
+		auto decoderProps = safe_cast<PropsDecoder>(metadata);
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
 
 		pipeline.connect(demux->getOutputPin(i), decoder);

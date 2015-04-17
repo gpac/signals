@@ -19,8 +19,8 @@ namespace {
 Decode::LibavDecode* createGenericDecoder(enum AVCodecID id) {
 	auto codec = avcodec_find_decoder(id);
 	auto context = avcodec_alloc_context3(codec);
-	PropsDecoder props(context);
-	auto decode = new Decode::LibavDecode(props);
+	PropsDecoder metadata(context);
+	auto decode = new Decode::LibavDecode(metadata);
 	avcodec_close(context);
 	return decode;
 }

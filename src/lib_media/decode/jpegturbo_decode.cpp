@@ -43,7 +43,7 @@ JPEGTurboDecode::JPEGTurboDecode()
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
-	auto p = dynamic_cast<PropsDecoder*>(output->getProps());
+	auto p = dynamic_cast<PropsDecoder*>(output->getMetadata());
 	if (p) {
 		auto ctx = p->getAVCodecContext();
 		avcodec_close(ctx);
@@ -52,13 +52,13 @@ JPEGTurboDecode::~JPEGTurboDecode() {
 }
 
 void JPEGTurboDecode::ensureProps(int width, int height, int pixelFmt) {
-	if (!output->getProps()) {
+	if (!output->getMetadata()) {
 		auto codec = avcodec_find_decoder_by_name("jpg");
 		auto ctx = avcodec_alloc_context3(codec);
 		ctx->width = width;
 		ctx->height = height;
 		ctx->pix_fmt = getAVPF(pixelFmt);
-		output->setProps(new PropsDecoder(ctx));
+		output->setMetadata(new PropsDecoder(ctx));
 	}
 }
 

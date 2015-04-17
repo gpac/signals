@@ -2,7 +2,7 @@
 
 #include "picture.hpp"
 #include "lib_modules/core/pin.hpp"
-#include "lib_modules/core/props.hpp"
+#include "lib_modules/core/metadata.hpp"
 #include "mm.hpp"
 #include <cstdarg>
 #include <memory>
@@ -24,7 +24,7 @@ extern "C" {
 
 namespace Modules {
 
-class PropsPkt : public IProps {
+class PropsPkt : public IProperty {
 public:
 	virtual ~PropsPkt() {}
 	virtual StreamType getStreamType() const = 0;

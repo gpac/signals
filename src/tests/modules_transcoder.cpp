@@ -26,8 +26,8 @@ unittest("transcoder: video simple (libav mux)") {
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto props = demux->getOutputPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsPkt>(props);
+		auto metadata = demux->getOutputPin(i)->getMetadata();
+		auto decoderProps = safe_cast<PropsPkt>(metadata);
 		if (decoderProps->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
@@ -37,8 +37,8 @@ unittest("transcoder: video simple (libav mux)") {
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 
 	//create the video decoder
-	auto props = demux->getOutputPin(videoIndex)->getProps();
-	auto decoderProps = safe_cast<PropsDecoder>(props);
+	auto metadata = demux->getOutputPin(videoIndex)->getMetadata();
+	auto decoderProps = safe_cast<PropsDecoder>(metadata);
 
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
@@ -61,8 +61,8 @@ unittest("transcoder: video simple (gpac mux)") {
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto props = demux->getOutputPin(i)->getProps();
-		auto decoderProps = safe_cast<PropsPkt>(props);
+		auto metadata = demux->getOutputPin(i)->getMetadata();
+		auto decoderProps = safe_cast<PropsPkt>(metadata);
 		if (decoderProps->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
@@ -72,8 +72,8 @@ unittest("transcoder: video simple (gpac mux)") {
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 
 	//create the video decoder
-	auto props = demux->getOutputPin(videoIndex)->getProps();
-	auto decoderProps = safe_cast<PropsDecoder>(props);
+	auto metadata = demux->getOutputPin(videoIndex)->getMetadata();
+	auto decoderProps = safe_cast<PropsDecoder>(metadata);
 
 	auto decode = uptr(new Decode::LibavDecode(*decoderProps));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
@@ -95,9 +95,9 @@ unittest("transcoder: jpg to jpg") {
 		ConnectPinToModule(preReader->getOutputPin(0), decoder);
 		preReader->process(nullptr);
 	}
-	auto props = decoder->getOutputPin(0)->getProps();
-	ASSERT(props != nullptr);
-	auto decoderProps = safe_cast<PropsDecoderImage>(props);
+	auto metadata = decoder->getOutputPin(0)->getMetadata();
+	ASSERT(metadata != nullptr);
+	auto decoderProps = safe_cast<PropsDecoderImage>(metadata);
 
 	auto reader = uptr(new In::File(filename));
 	auto dstRes = decoderProps->getResolution();
@@ -119,9 +119,9 @@ unittest("transcoder: jpg to resized jpg") {
 		ConnectPinToModule(preReader->getOutputPin(0), decoder);
 		preReader->process(nullptr);
 	}
-	auto props = decoder->getOutputPin(0)->getProps();
-	ASSERT(props != nullptr);
-	auto decoderProps = safe_cast<PropsDecoderImage>(props);
+	auto metadata = decoder->getOutputPin(0)->getMetadata();
+	ASSERT(metadata != nullptr);
+	auto decoderProps = safe_cast<PropsDecoderImage>(metadata);
 
 	auto reader = uptr(new In::File(filename));
 	ASSERT(decoderProps->getPixelFormat() == RGB24);
@@ -142,8 +142,8 @@ unittest("transcoder: jpg to resized jpg") {
 unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
-	auto props = demux->getOutputPin(0)->getProps();
-	auto decoderProps = safe_cast<PropsDecoderImage>(props);
+	auto metadata = demux->getOutputPin(0)->getMetadata();
+	auto decoderProps = safe_cast<PropsDecoderImage>(metadata);
 	auto decoder = uptr(new Decode::LibavDecode(*decoderProps));
 
 	auto dstRes = decoderProps->getResolution();
@@ -168,12 +168,12 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	{
 		auto preReader = uptr(new In::File(filename));
 		ConnectPinToModule(preReader->getOutputPin(0), decoder);
-		//FIXME: to retrieve the props, we now need to decode (need to have a memory module keeping the data while inspecting)
+		//FIXME: to retrieve the metadata, we now need to decode (need to have a memory module keeping the data while inspecting)
 		preReader->process(nullptr);
 	}
-	auto props = decoder->getOutputPin(0)->getProps();
-	ASSERT(props != nullptr);
-	auto decoderProps = safe_cast<PropsDecoderImage>(props);
+	auto metadata = decoder->getOutputPin(0)->getMetadata();
+	ASSERT(metadata != nullptr);
+	auto decoderProps = safe_cast<PropsDecoderImage>(metadata);
 	auto srcRes = decoderProps->getResolution();
 
 	auto reader = uptr(new In::File(filename));

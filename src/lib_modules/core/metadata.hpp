@@ -7,46 +7,46 @@
 namespace Modules {
 
 //A generic property container.
-struct IProps {
-	virtual ~IProps() {}
+struct IProperty {
+	virtual ~IProperty() {}
 };
 
-class IPropsHandler {
+class IMetadata {
 public:
-	virtual ~IPropsHandler() {}
-	virtual IProps* getProps() const = 0;
-	virtual void setProps(IProps *props) = 0;
+	virtual ~IMetadata() noexcept(false) {}
+	virtual IProperty* getMetadata() const = 0;
+	virtual void setMetadata(IProperty *metadata) = 0;
 };
 
-class PropsHandler : public IPropsHandler {
+class Metadata : public IMetadata {
 public:
-	PropsHandler(IProps *props) : props(props) {} //FIXME: takes shared ptr in
-	virtual ~PropsHandler() {}
+	Metadata(IProperty *metadata = nullptr) : metadata(metadata) {} //FIXME: takes shared ptr in
+	virtual ~Metadata() noexcept(false) {}
 
-	IProps* getProps() const override { //FIXME: return shared ptr
-		return props.get();
+	IProperty* getMetadata() const override { //FIXME: return shared ptr
+		return metadata.get();
 	}
 
 	//Takes ownership.
-	void setProps(IProps *props)  override { //FIXME: takes shared ptr in
-		this->props = std::shared_ptr<IProps>(props);
+	void setMetadata(IProperty *metadata)  override { //FIXME: takes shared ptr in
+		this->metadata = std::shared_ptr<IProperty>(metadata);
 	}
 
 protected:
 	bool updateMetadata(std::shared_ptr<const Data> data) {
 		if (!data->getMetadata()) {
-			const_cast<Data*>(data.get())->setMetadata(props);
+			const_cast<Data*>(data.get())->setMetadata(metadata);
 			return true;
-		} else if (data->getMetadata() != props) {
+		} else if (data->getMetadata() != metadata) {
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
-			props = data->getMetadata();
+			metadata = data->getMetadata();
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	std::shared_ptr<IProps> props;
+	std::shared_ptr<IProperty> metadata;
 };
 
 }

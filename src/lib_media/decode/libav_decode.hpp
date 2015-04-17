@@ -18,7 +18,7 @@ namespace Decode {
 
 class LibavDecode : public Module {
 public:
-	LibavDecode(const PropsDecoder &props);
+	LibavDecode(const PropsDecoder &metadata);
 	~LibavDecode();
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
