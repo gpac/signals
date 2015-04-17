@@ -3,7 +3,6 @@
 #include "picture.hpp"
 #include "lib_modules/core/pin.hpp"
 #include "lib_modules/core/metadata.hpp"
-#include "mm.hpp"
 #include <cstdarg>
 #include <memory>
 
@@ -29,7 +28,7 @@ public:
 	//Doesn't take the ownership of codecCtx
 	MetadataPktLibav(AVCodecContext *codecCtx);
 	virtual ~MetadataPktLibav() {}
-	StreamType getStreamType() const;
+	StreamType getStreamType() const override;
 	AVCodecContext* getAVCodecContext() const;
 
 protected:
@@ -38,8 +37,22 @@ protected:
 
 class MetadataPktLibavVideo : public MetadataPktLibav {
 public:
+	MetadataPktLibavVideo(AVCodecContext *codecCtx) : MetadataPktLibav(codecCtx) {}
 	PixelFormat getPixelFormat() const;
 	Resolution getResolution() const;
+	uint32_t getTimeScale() const;
+	void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
+};
+
+class MetadataPktLibavAudio : public MetadataPktLibav {
+public:
+	MetadataPktLibavAudio(AVCodecContext *codecCtx) : MetadataPktLibav(codecCtx) {}
+	std::string getCodecName() const;
+	uint32_t getNumChannels() const;
+	uint32_t getSampleRate() const;
+	uint8_t getBitsPerSample() const;
+	uint32_t getFrameSize() const;
+	void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
 };
 
 class DataAVPacket : public Data {

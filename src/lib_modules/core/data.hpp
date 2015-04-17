@@ -7,7 +7,19 @@
 
 namespace Modules {
 
-struct IIMetadata;
+enum StreamType {
+	UNKNOWN_ST = -1,
+	AUDIO_RAW, //UNCOMPRESSED_AUDIO
+	VIDEO_RAW, //UNCOMPRESSED_VIDEO
+	AUDIO_PKT, //COMPRESSED_AUDIO
+	VIDEO_PKT  //COMPRESSED_VIDEO
+};
+
+struct IMetadataPkt {
+	virtual ~IMetadataPkt() {}
+	virtual StreamType getStreamType() const = 0;
+};
+typedef IMetadataPkt IIMetadata;
 
 //A generic timed data container.
 class Data {

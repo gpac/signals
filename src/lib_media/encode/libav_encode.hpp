@@ -2,7 +2,6 @@
 
 #include "lib_modules/core/module.hpp"
 #include "../common/libav.hpp"
-#include "../common/mm.hpp"
 
 struct AVStream;
 
@@ -27,13 +26,9 @@ public:
 	void process(std::shared_ptr<const Data> data) override;
 	void flush() override;
 
-	void sendOutputPinsInfo(); //FIXME: temporary until modules have a manager
-
 private:
 	bool processAudio(const PcmData *data);
 	bool processVideo(const Picture *data);
-
-	std::string getCodecName() const;
 
 	AVCodecContext *codecCtx;
 	std::unique_ptr<PcmFormat> pcmFormat;

@@ -27,8 +27,8 @@ unittest("transcoder: video simple (libav mux)") {
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
 		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderMetadata = safe_cast<MetadataPkt>(metadata);
-		if (decoderMetadata->getStreamType() == VIDEO_PKT) {
+		auto metadata = safe_cast<MetadataPkt>(metadata);
+		if (metadata->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
 			ConnectPinToModule(demux->getOutputPin(i), null);
@@ -37,17 +37,14 @@ unittest("transcoder: video simple (libav mux)") {
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 
 	//create the video decoder
-	auto metadata = demux->getOutputPin(videoIndex)->getMetadata();
-	auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
-
-	auto decode = uptr(new Decode::LibavDecode(*decoderMetadata));
+	auto metadata = safe_cast<Metadata>(demux->getOutputPin(videoIndex))->getMetadata();
+	auto decode = uptr(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::LibavMux("output_video_libav"));
 
 	ConnectPinToModule(demux->getOutputPin(videoIndex), decode);
 	ConnectPinToModule(decode->getOutputPin(0), encode);
 	ConnectPinToModule(encode->getOutputPin(0), mux);
-	encode->sendOutputPinsInfo();
 
 	demux->process(nullptr);
 }
@@ -62,8 +59,8 @@ unittest("transcoder: video simple (gpac mux)") {
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
 		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderMetadata = safe_cast<MetadataPkt>(metadata);
-		if (decoderMetadata->getStreamType() == VIDEO_PKT) {
+		auto metadata = safe_cast<MetadataPkt>(metadata);
+		if (metadata->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
 			ConnectPinToModule(demux->getOutputPin(i), null);
@@ -72,17 +69,14 @@ unittest("transcoder: video simple (gpac mux)") {
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
 
 	//create the video decoder
-	auto metadata = demux->getOutputPin(videoIndex)->getMetadata();
-	auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
-
-	auto decode = uptr(new Decode::LibavDecode(*decoderMetadata));
+	auto metadata = safe_cast<Metadata>(demux->getOutputPin(videoIndex))->getMetadata();
+	auto decode = uptr(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
 	auto mux = uptr(new Mux::GPACMuxMP4("output_video_gpac"));
 
 	ConnectPinToModule(demux->getOutputPin(videoIndex), decode);
 	ConnectPinToModule(decode->getOutputPin(0), encode);
 	ConnectPinToModule(encode->getOutputPin(0), mux);
-	encode->sendOutputPinsInfo();
 
 	demux->process(nullptr);
 }
@@ -97,10 +91,10 @@ unittest("transcoder: jpg to jpg") {
 	}
 	auto metadata = decoder->getOutputPin(0)->getMetadata();
 	ASSERT(metadata != nullptr);
-	auto decoderMetadata = safe_cast<MetadataPktLibavVideo>(metadata);
+	auto metadata = safe_cast<MetadataPktLibavVideo>(metadata);
 
 	auto reader = uptr(new In::File(filename));
-	auto dstRes = decoderMetadata->getResolution();
+	auto dstRes = metadata->getResolution();
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
@@ -121,12 +115,12 @@ unittest("transcoder: jpg to resized jpg") {
 	}
 	auto metadata = decoder->getOutputPin(0)->getMetadata();
 	ASSERT(metadata != nullptr);
-	auto decoderMetadata = safe_cast<MetadataPktLibavVideo>(metadata);
+	auto metadata = safe_cast<MetadataPktLibavVideo>(metadata);
 
 	auto reader = uptr(new In::File(filename));
-	ASSERT(decoderMetadata->getPixelFormat() == RGB24);
-	auto dstRes = decoderMetadata->getResolution() / 2;
-	auto dstFormat = PictureFormat(dstRes, decoderMetadata->getPixelFormat());
+	ASSERT(metadata->getPixelFormat() == RGB24);
+	auto dstRes = metadata->getResolution() / 2;
+	auto dstFormat = PictureFormat(dstRes, metadata->getPixelFormat());
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(new Out::File("data/test.jpg"));
@@ -142,15 +136,14 @@ unittest("transcoder: jpg to resized jpg") {
 unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
-	auto metadata = demux->getOutputPin(0)->getMetadata();
-	auto decoderMetadata = safe_cast<MetadataPktLibavVideo>(metadata);
-	auto decoder = uptr(new Decode::LibavDecode(*decoderMetadata));
+	auto metadata = safe_cast<Metadata>(demux->getOutputPin(0))->getMetadata();
+	auto decoder = uptr(new Decode::LibavDecode(*safe_cast<MetadataPktLibav>(metadata)));
 
-	auto dstRes = decoderMetadata->getResolution();
+	auto dstRes = metadata->getResolution();
 	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
-	ASSERT(decoderMetadata->getPixelFormat() == YUV420P);
+	ASSERT(metadata->getPixelFormat() == YUV420P);
 	auto dstFormat = PictureFormat(dstRes, RGB24);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
@@ -173,12 +166,12 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	}
 	auto metadata = decoder->getOutputPin(0)->getMetadata();
 	ASSERT(metadata != nullptr);
-	auto decoderMetadata = safe_cast<MetadataPktLibavVideo>(metadata);
-	auto srcRes = decoderMetadata->getResolution();
+	auto metadata = safe_cast<MetadataPktLibavVideo>(metadata);
+	auto srcRes = metadata->getResolution();
 
 	auto reader = uptr(new In::File(filename));
-	ASSERT(decoderMetadata->getPixelFormat() == RGB24);
-	auto dstFormat = PictureFormat(srcRes, decoderMetadata->getPixelFormat());
+	ASSERT(metadata->getPixelFormat() == RGB24);
+	auto dstFormat = PictureFormat(srcRes, metadata->getPixelFormat());
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
@@ -188,7 +181,6 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	ConnectPinToModule(decoder->getOutputPin(0), converter);
 	ConnectPinToModule(converter->getOutputPin(0), encoder);
 	ConnectPinToModule(encoder->getOutputPin(0), mux);
-	encoder->sendOutputPinsInfo();
 
 	reader->process(nullptr);
 }

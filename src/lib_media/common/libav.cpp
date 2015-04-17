@@ -59,6 +59,7 @@ const char* avlogLevelName(int level) {
 
 namespace Modules {
 
+//MetadataPktLibav
 MetadataPktLibav::MetadataPktLibav(AVCodecContext *codecCtx)
 	: codecCtx(codecCtx) {
 }
@@ -83,6 +84,44 @@ Resolution MetadataPktLibavVideo::getResolution() const {
 	return Resolution(codecCtx->width, codecCtx->height);
 }
 
+uint32_t MetadataPktLibavVideo::getTimeScale() const {
+	if (codecCtx->time_base.num != 1) //FIXME //Romain WTF
+		throw std::runtime_error("Unsupported video time scale.");
+	return codecCtx->time_base.den / codecCtx->time_base.num;;
+}
+
+void MetadataPktLibavVideo::getExtradata(const uint8_t *&extradata, size_t &extradataSize) const {
+	extradata = codecCtx->extradata;
+	extradataSize = codecCtx->extradata_size;
+}
+
+//MetadataPktLibavAudio
+std::string MetadataPktLibavAudio::getCodecName() const {
+	return avcodec_get_name(codecCtx->codec_id);
+}
+
+uint32_t MetadataPktLibavAudio::getNumChannels() const {
+	return codecCtx->channels;
+}
+
+uint32_t MetadataPktLibavAudio::getSampleRate() const {
+	return codecCtx->sample_rate;
+}
+
+uint8_t MetadataPktLibavAudio::getBitsPerSample() const {
+	return av_get_bytes_per_sample(codecCtx->sample_fmt) * 8;
+}
+
+uint32_t MetadataPktLibavAudio::getFrameSize() const {
+	return codecCtx->frame_size;
+}
+
+void MetadataPktLibavAudio::getExtradata(const uint8_t *&extradata, size_t &extradataSize) const {
+	extradata = codecCtx->extradata;
+	extradataSize = codecCtx->extradata_size;
+}
+
+//conversions
 void libavAudioCtxConvertLibav(const Modules::PcmFormat *cfg, int &sampleRate, int &format, int &numChannels, uint64_t &layout) {
 	sampleRate = cfg->sampleRate;
 
@@ -164,6 +203,7 @@ enum PixelFormat libavPixFmt2PixelFormat(const AVPixelFormat &avPixfmt) {
 	}
 }
 
+//DataAVPacket
 DataAVPacket::DataAVPacket(size_t size)
 	: pkt(new AVPacket) {
 	av_init_packet(pkt.get());
@@ -197,6 +237,7 @@ void DataAVPacket::resize(size_t /*size*/) {
 	assert(0);
 }
 
+//misc
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type) {
 	auto opt = stringDup(options);
 	char *tok = strtok(opt.data(), "- ");
