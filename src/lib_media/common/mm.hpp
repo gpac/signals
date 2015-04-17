@@ -17,7 +17,7 @@ enum StreamType {
 	VIDEO_PKT  //COMPRESSED_VIDEO
 };
 
-class StreamVideo : public Modules::Data, public IProperty {
+class StreamVideo : public Modules::Data, public IMetadata {
 public:
 	uint32_t width;
 	uint32_t height;
@@ -28,7 +28,7 @@ public:
 	AVCodecContext *codecCtx; //FIXME: legacy from libav
 };
 
-class StreamAudio : public Modules::Data, public IProperty {
+class StreamAudio : public Modules::Data, public IMetadata {
 public:
 	std::string codecName;
 	uint32_t numChannels;
