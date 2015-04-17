@@ -17,7 +17,7 @@ unittest("sound generator") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto render = uptr(new Render::SDLAudio());
 
-	ConnectPinToModule(soundGen->getOutputPin(0),  render);
+	ConnectOutputToModule(soundGen->getOutput(0),  render);
 
 	for(int i=0; i < 25; ++i) {
 		soundGen->process(nullptr);
@@ -36,7 +36,7 @@ unittest("video generator") {
 		render->process(rawData);
 	};
 
-	Connect(videoGen->getOutputPin(0)->getSignal(), onFrame);
+	Connect(videoGen->getOutput(0)->getSignal(), onFrame);
 
 	for(int i=0; i < 50; ++i) {
 		videoGen->process(nullptr);

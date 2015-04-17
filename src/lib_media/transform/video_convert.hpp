@@ -19,7 +19,7 @@ private:
 
 	SwsContext *m_SwContext;
 	PictureFormat srcFormat, dstFormat;
-	PinPicture* output;
+	OutputPicture* output;
 };
 
 }

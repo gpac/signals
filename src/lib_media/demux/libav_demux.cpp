@@ -78,7 +78,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 
 	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {
 		auto metadata = new MetadataPktLibav(m_formatCtx->streams[i]->codec);
-		outputs.push_back(addOutputPin(new PinDataDefault<DataAVPacket>(metadata)));
+		outputs.push_back(addOutput(new OutputDataDefault<DataAVPacket>(metadata)));
 	}
 }
 

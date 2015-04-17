@@ -18,7 +18,7 @@ public:
 	void process(std::shared_ptr<const Data> data) override;
 
 private:
-	PinDefault* output;
+	OutputDefault* output;
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 	int JPEGQuality;
 	Resolution resolution;

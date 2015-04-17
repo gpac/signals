@@ -7,7 +7,7 @@
 
 namespace Modules {
 
-struct IPin;
+struct IOutput;
 class Data;
 
 template<typename Class>
@@ -17,14 +17,14 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 }
 
 template<typename ModuleType>
-size_t ConnectPinToModule(IPin* pin, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
+size_t ConnectOutputToModule(IOutput* out, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
-	return ConnectPin(pin, functor, executor);
+	return ConnectOutput(out, functor, executor);
 }
 
 template<typename ModuleType>
-size_t ConnectPinToModule(IPin* pin, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
-	return ConnectPinToModule(pin, module.get(), executor);
+size_t ConnectOutputToModule(IOutput* out, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
+	return ConnectOutputToModule(out, module.get(), executor);
 }
 
 template<typename SignalType, typename ModuleType>
@@ -39,8 +39,8 @@ size_t ConnectToModule(SignalType& sig, std::unique_ptr<ModuleType>& module, IPr
 }
 
 template <typename T>
-std::shared_ptr<const T> getMetadataFromPin(IPin const * const pin) {
-	auto const metadata = safe_cast<const Metadata>(pin)->getMetadata();
+std::shared_ptr<const T> getMetadataFromOutput(IOutput const * const out) {
+	auto const metadata = safe_cast<const Metadata>(out)->getMetadata();
 	return safe_cast<const T>(metadata);
 }
 

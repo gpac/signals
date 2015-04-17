@@ -31,8 +31,8 @@ private:
 
 	AVCodecContext * const codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;
-	PinPicture* videoPin;
-	PinPcm* audioPin;
+	OutputPicture* videoOutput;
+	OutputPcm* audioOutput;
 	uint64_t m_numFrames;
 };
 

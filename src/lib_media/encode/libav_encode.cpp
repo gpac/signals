@@ -149,7 +149,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		tok = strtok(nullptr, "- ");
 	}
 
-	output = addOutputPin(new PinDataDefault<DataAVPacket>);
+	output = addOutput(new OutputDataDefault<DataAVPacket>);
 	switch (type) {
 	case Video:
 		output->setMetadata(new MetadataPktLibavVideo(codecCtx));

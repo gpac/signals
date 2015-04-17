@@ -20,7 +20,7 @@ public:
 private:
 
 	std::unique_ptr<ISOFileReader> reader;
-	PinDefault* output;
+	OutputDefault* output;
 };
 
 }

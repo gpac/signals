@@ -12,19 +12,19 @@ using namespace Modules;
 
 namespace {
 
-unittest("Packet type erasure + multi-output-pin: libav Demux -> {libav Decoder -> Out::Print}*") {
+unittest("Packet type erasure + multi-output: libav Demux -> {libav Decoder -> Out::Print}*") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
 
 	std::vector<std::unique_ptr<Decode::LibavDecode>> decoders;
 	std::vector<std::unique_ptr<Out::Print>> printers;
-	for (size_t i = 0; i < demux->getNumOutputPins(); ++i) {
-		auto metadata = getMetadataFromPin<MetadataPktLibav>(demux->getOutputPin(i));
+	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
+		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		auto decode = uptr(new Decode::LibavDecode(*metadata));
 
 		auto p = uptr(new Out::Print(std::cout));
 
-		ConnectPinToModule(demux->getOutputPin(i), decode);
-		ConnectPinToModule(decode->getOutputPin(0), p);
+		ConnectOutputToModule(demux->getOutput(i), decode);
+		ConnectOutputToModule(decode->getOutput(0), p);
 
 		decoders.push_back(std::move(decode));
 		printers.push_back(std::move(p));

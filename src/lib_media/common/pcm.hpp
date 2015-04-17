@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lib_modules/core/data.hpp"
-#include "lib_modules/core/pin.hpp"
+#include "lib_modules/core/output.hpp"
 
 
 namespace Modules {
@@ -218,6 +218,6 @@ private:
 	uint64_t planeSize[AUDIO_PCM_PLANES_MAX];
 };
 
-typedef PinDataDefault<PcmData> PinPcm;
+typedef OutputDataDefault<PcmData> OutputPcm;
 
 }

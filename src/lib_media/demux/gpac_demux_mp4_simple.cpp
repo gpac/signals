@@ -31,7 +31,7 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(std::string const& path)
 		throw std::runtime_error("File not found");
 	}
 	reader->init(movie);
-	output = addOutputPin(new PinDefault);
+	output = addOutput(new OutputDefault);
 }
 
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {

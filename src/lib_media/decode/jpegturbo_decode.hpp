@@ -16,7 +16,7 @@ public:
 	void process(std::shared_ptr<const Data> data) override;
 
 private:
-	PinDefault* output;
+	OutputDefault* output;
 	void ensureMetadata(int width, int height, int pixelFmt);
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 };

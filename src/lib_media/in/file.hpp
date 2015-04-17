@@ -14,7 +14,7 @@ public:
 
 private:
 	FILE *file;
-	PinDefault* output;
+	OutputDefault* output;
 };
 
 }

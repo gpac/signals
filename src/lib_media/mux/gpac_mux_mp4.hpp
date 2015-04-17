@@ -32,7 +32,7 @@ private:
 	uint32_t m_trackId;
 	bool m_useSegments, m_useFragments;
 	uint64_t m_segDuration;
-	PinDataDefault<DataAVPacket>* output;
+	OutputDataDefault<DataAVPacket>* output;
 };
 
 }

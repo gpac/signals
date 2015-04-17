@@ -1,7 +1,7 @@
 #pragma once
 
 #include "picture.hpp"
-#include "lib_modules/core/pin.hpp"
+#include "lib_modules/core/output.hpp"
 #include "lib_modules/core/metadata.hpp"
 #include <cstdarg>
 #include <memory>
@@ -83,7 +83,5 @@ enum PixelFormat libavPixFmt2PixelFormat(const enum AVPixelFormat &avPixfmt);
 void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const char *options, const char *type);
 
 void avLog(void *avcl, int level, const char *fmt, va_list vl);
-
-typedef PinDataDefault<DataAVPacket> PinLibavPacket;
 
 }

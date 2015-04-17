@@ -20,7 +20,7 @@ File::File(std::string const& fn) {
 	if (size > IOSIZE)
 		Log::msg(Log::Info, "File %s size is %s, will be sent by %s bytes chunks. Check the downstream modules are able to agregate data frames.", fn, size, IOSIZE);
 
-	output = addOutputPin(new PinDefault);
+	output = addOutput(new OutputDefault);
 }
 
 File::~File() {

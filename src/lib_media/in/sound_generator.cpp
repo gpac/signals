@@ -17,7 +17,7 @@ SoundGenerator::SoundGenerator()
 	: m_numSamples(20000) {
 	pcmFormat.sampleRate = SAMPLE_RATE;
 	pcmFormat.numPlanes = 1;
-	output = addOutputPin(new PinPcm);
+	output = addOutput(new OutputPcm);
 }
 
 void SoundGenerator::process(std::shared_ptr<const Data> /*data*/) {

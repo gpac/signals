@@ -1,13 +1,13 @@
 #pragma once
 
 #include "data.hpp"
-#include "pin.hpp"
+#include "output.hpp"
 #include <vector>
 
 
 namespace Modules {
 
-class IProcessor { //FIXME: template + there should be no module with no pin from now, so module doesn't need to be a public processor
+class IProcessor { //FIXME: template + there should be no module with no input from now, so module doesn't need to be a public processor
 public:
 	virtual ~IProcessor() noexcept(false) {};
 	virtual void process(std::shared_ptr<const Data> data) = 0;
@@ -16,10 +16,9 @@ public:
 class IModule : public IProcessor {
 public:
 	virtual ~IModule() noexcept(false) {}
-	virtual void process() = 0;
 	virtual void flush() {};
-	virtual size_t getNumOutputPins() const = 0;
-	virtual IPin* getOutputPin(size_t i) const = 0;
+	virtual size_t getNumOutputs() const = 0;
+	virtual IOutput* getOutput(size_t i) const = 0;
 };
 
 struct IInput : public IProcessor, public Metadata {
@@ -27,7 +26,7 @@ struct IInput : public IProcessor, public Metadata {
 };
 
 template<typename DataType>
-class Input : public IInput, protected std::queue<DataType> {
+class Input : public IInput {
 public:
 	Input(IModule * const module) : module(module) {}
 
@@ -51,21 +50,21 @@ public:
 	//Takes ownership/
 	template<typename T>
 	T* addInputPin(T* p) {
-		inputPins.push_back(uptr(p));
+		inputs.push_back(uptr(p));
 		return p;
 	}
 	size_t getNumInputPins() const {
-		return inputPins.size();
+		return inputs.size();
 	}
 	IInput* getInputPin(size_t i) const {
-		return inputPins[i].get();
+		return inputs[i].get();
 	}
 
-	size_t getNumOutputPins() const override {
-		return outputPins.size();
+	size_t getNumOutputs() const override {
+		return outputs.size();
 	}
-	IPin* getOutputPin(size_t i) const override {
-		return outputPins[i].get();
+	IOutput* getOutput(size_t i) const override {
+		return outputs[i].get();
 	}
 
 	void setLowLatency(bool isLowLatency) {
@@ -78,16 +77,16 @@ protected:
 
 	//Takes ownership
 	template<typename T>
-	T* addOutputPin(T* p) {
+	T* addOutput(T* p) {
 		if (m_isLowLatency)
 			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
-		outputPins.push_back(uptr(p));
+		outputs.push_back(uptr(p));
 		return p;
 	}
 
 private:
-	std::vector<std::unique_ptr<IInput>> inputPins; //TODO: don't name them 'pin'
-	std::vector<std::unique_ptr<IPin>> outputPins; //TODO: don't name them 'pin'
+	std::vector<std::unique_ptr<IInput>> inputs;
+	std::vector<std::unique_ptr<IOutput>> outputs;
 	bool m_isLowLatency = false;
 };
 
