@@ -1,8 +1,11 @@
 #pragma once
 
+#include "data.hpp"
+#include "lib_utils/log.hpp"
 #include <memory>
 
 namespace Modules {
+
 /**
  * A generic property container.
  */
@@ -19,20 +22,29 @@ public:
 
 class PropsHandler : public IPropsHandler {
 public:
-	PropsHandler(IProps *props) : props(props) {} //TODO: takes shared ptr in
+	PropsHandler(IProps *props) : props(props) {} //FIXME: takes shared ptr in
 
-	IProps* getProps() const override { //TODO: return shared ptr
+	IProps* getProps() const override { //FIXME: return shared ptr
 		return props.get();
 	}
 
 	/**
 	 * Takes ownership.
 	 */
-	void setProps(IProps *props)  override { //TODO: takes shared ptr in
+	void setProps(IProps *props)  override { //FIXME: takes shared ptr in
 		this->props = std::shared_ptr<IProps>(props);
 	}
 
 protected:
+	void ensureMetadata(std::shared_ptr<const Data> data) {
+		if (!data->getMetadata()) {
+			const_cast<Data*>(data.get())->setMetadata(props);
+		} else if (data->getMetadata() != props) {
+			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
+			props = data->getMetadata();
+		}
+	}
+
 	std::shared_ptr<IProps> props;
 };
 

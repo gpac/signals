@@ -83,15 +83,6 @@ public:
 	}
 
 private:
-	void ensureMetadata(std::shared_ptr<const Data> data) {
-		if (!data->getMetadata()) {
-			const_cast<Data*>(data.get())->setMetadata(props);
-		} else if (data->getMetadata() != props) {
-			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
-			props = data->getMetadata();
-		}
-	}
-
 	Signal signal;
 	std::unique_ptr<Allocator> allocator;
 };

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "clock.hpp"
-#include "props.hpp"
 
 #include <cstdint>
 #include <vector>
 
 namespace Modules {
+
+struct IProps;
 
 /**
  * A generic timed data container.
