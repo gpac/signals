@@ -6,30 +6,24 @@
 
 namespace Modules {
 
-//A generic property container.
-struct IProperty {
-	virtual ~IProperty() {}
-};
-
-class IMetadata {
-public:
+struct IMetadata {
 	virtual ~IMetadata() noexcept(false) {}
-	virtual IProperty* getMetadata() const = 0;
-	virtual void setMetadata(IProperty *metadata) = 0;
+	virtual IMetadata* getMetadata() const = 0;
+	virtual void setMetadata(IMetadata *metadata) = 0;
 };
 
 class Metadata : public IMetadata {
 public:
-	Metadata(IProperty *metadata = nullptr) : metadata(metadata) {} //FIXME: takes shared ptr in
+	Metadata(IMetadata *metadata = nullptr) : metadata(metadata) {} //FIXME: takes shared ptr in
 	virtual ~Metadata() noexcept(false) {}
 
-	IProperty* getMetadata() const override { //FIXME: return shared ptr
+	IMetadata* getMetadata() const override { //FIXME: return shared ptr
 		return metadata.get();
 	}
 
 	//Takes ownership.
-	void setMetadata(IProperty *metadata)  override { //FIXME: takes shared ptr in
-		this->metadata = std::shared_ptr<IProperty>(metadata);
+	void setMetadata(IMetadata *metadata)  override { //FIXME: takes shared ptr in
+		this->metadata = std::shared_ptr<IMetadata>(metadata);
 	}
 
 protected:
@@ -46,7 +40,7 @@ protected:
 		}
 	}
 
-	std::shared_ptr<IProperty> metadata;
+	std::shared_ptr<IMetadata> metadata;
 };
 
 }

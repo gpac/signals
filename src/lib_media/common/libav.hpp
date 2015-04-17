@@ -24,7 +24,7 @@ extern "C" {
 
 namespace Modules {
 
-class PropsPkt : public IProperty {
+class PropsPkt : public IMetadata {
 public:
 	virtual ~PropsPkt() {}
 	virtual StreamType getStreamType() const = 0;
