@@ -24,7 +24,7 @@ extern "C" {
 
 namespace Modules {
 
-class MetadataPkt : protected Metadata {
+class MetadataPkt : public IIMetadata {
 public:
 	virtual ~MetadataPkt() {}
 	virtual StreamType getStreamType() const = 0;

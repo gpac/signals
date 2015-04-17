@@ -50,7 +50,7 @@ class PinT : public IPin, public Metadata {
 public:
 	typedef Allocator AllocatorType;
 
-	PinT(IMetadata *metadata = nullptr)
+	PinT(IIMetadata *metadata = nullptr)
 		: Metadata(metadata), allocator(new Allocator) {
 	}
 

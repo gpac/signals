@@ -7,19 +7,19 @@
 
 namespace Modules {
 
-struct IMetadata;
+struct IIMetadata;
 
 //A generic timed data container.
 class Data {
 public:
 	Data() = default;
-	Data(std::shared_ptr<IMetadata> metadata) : m_metadata(metadata) {}
-	virtual ~Data() noexcept(false) {}
+	//Data(std::shared_ptr<IMetadata> metadata) : m_metadata(metadata) {} //Romain: used?
+	virtual ~Data() {}
 
-	std::shared_ptr<IMetadata> getMetadata() const {
+	std::shared_ptr<IIMetadata> getMetadata() const {
 		return m_metadata;
 	}
-	void setMetadata(std::shared_ptr<IMetadata> metadata) {
+	void setMetadata(std::shared_ptr<IIMetadata> metadata) {
 		m_metadata = metadata;
 	}
 
@@ -45,7 +45,7 @@ public:
 private:
 	uint64_t m_TimeIn180k;
 	uint64_t m_DurationIn180k;
-	std::shared_ptr<IMetadata> m_metadata;
+	std::shared_ptr<IIMetadata> m_metadata;
 };
 
 class RawData : public Data {
