@@ -18,7 +18,6 @@ void PipelinedModule::connect(IOutput* out) {
 	ConnectToModule(out->getSignal(), this, executor);
 }
 
-#if 0 //Romain
 size_t PipelinedModule::getNumOutputs() const {
   return delegate->getNumOutputs();
 }
@@ -26,7 +25,6 @@ size_t PipelinedModule::getNumOutputs() const {
 IOutput* PipelinedModule::getOutput(size_t i) const {
   return delegate->getOutput(i);
 }
-#endif
 
 /* direct call: receiving nullptr stops the execution */
 void PipelinedModule::process(std::shared_ptr<const Data> data) {

@@ -9,16 +9,23 @@
 
 namespace Modules {
 
-struct IInput : public ModuleS, public Metadata, public Signals::Queue<std::shared_ptr<const Data>> {
+struct IInput : public IModule, public Metadata, public Signals::Queue<std::shared_ptr<const Data>> {
 	virtual ~IInput() noexcept(false) {}
+	virtual void process(std::shared_ptr<const Data> data) = 0;
+	void flush() override {};
+	void process() override {
+		std::shared_ptr<const Data> data;
+		if (tryPop(data))
+			process(data);
+	}
 };
 
 template<typename DataType>
 class Input : public IInput {
 public:
-	Input(IModuleM * const module) : module(module) {}
+	Input(IModule * const module) : module(module) {}
 
-	void process(std::shared_ptr<const Data> data) override {
+	void process(std::shared_ptr<const Data> data) {
 		if (updateMetadata(data))
 			module->flush();
 		push(safe_cast<const DataType>(data));
@@ -26,7 +33,7 @@ public:
 	}
 
 private:
-	IModuleM * const module;
+	IModule * const module;
 };
 
 class InputCap {
