@@ -17,7 +17,7 @@ class IModule : public IProcessor {
 public:
 	virtual ~IModule() noexcept(false) {}
 	virtual void process(std::shared_ptr<const Data> data) override = 0;
-	virtual void flush() = 0;
+	virtual void flush() {};
 	virtual size_t getNumOutputPins() const = 0;
 	virtual IPin* getOutputPin(size_t i) const = 0;
 };
@@ -43,7 +43,6 @@ public:
 
 	virtual ~Module() noexcept(false) {}
 	virtual void process(std::shared_ptr<const Data> data) = 0;
-	virtual void flush() override {};
 
 	//Takes ownership/
 	template<typename T>

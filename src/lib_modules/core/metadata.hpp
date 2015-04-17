@@ -21,6 +21,7 @@ public:
 class PropsHandler : public IPropsHandler {
 public:
 	PropsHandler(IProps *props) : props(props) {} //FIXME: takes shared ptr in
+	virtual ~PropsHandler() {}
 
 	IProps* getProps() const override { //FIXME: return shared ptr
 		return props.get();
