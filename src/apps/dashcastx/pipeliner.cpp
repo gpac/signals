@@ -4,11 +4,14 @@
 #include <sstream>
 
 namespace {
-Encode::LibavEncode* createEncoder(IMetadataPkt *metadata, bool isLowLatency) {
+Encode::LibavEncode* createEncoder(IMetadataPkt *metadata, const dashcastXOptions &opt) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
-		return new Encode::LibavEncode(Encode::LibavEncode::Video, isLowLatency);
+		Encode::LibavEncodeParams p;
+		p.isLowLatency = opt.isLive;
+		p.res = opt.res;
+		return new Encode::LibavEncode(Encode::LibavEncode::Video, p);
 	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found audio stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Audio);
@@ -57,7 +60,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 		connect(decode, converter);
 
-		auto rawEncoder = createEncoder(metadata, opt.isLive);
+		auto rawEncoder = createEncoder(metadata, opt);
 		auto encoder = pipeline.addModule(rawEncoder);
 		if (!encoder)
 			continue;
