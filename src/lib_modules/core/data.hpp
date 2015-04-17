@@ -19,7 +19,7 @@ struct IMetadataPkt {
 	virtual ~IMetadataPkt() {}
 	virtual StreamType getStreamType() const = 0;
 };
-typedef IMetadataPkt IIMetadata;
+typedef IMetadataPkt IMetadata;
 
 //A generic timed data container.
 class Data {
@@ -27,10 +27,10 @@ public:
 	Data() = default;
 	virtual ~Data() {}
 
-	std::shared_ptr<IIMetadata> getMetadata() const {
+	std::shared_ptr<IMetadata> getMetadata() const {
 		return m_metadata;
 	}
-	void setMetadata(std::shared_ptr<IIMetadata> metadata) {
+	void setMetadata(std::shared_ptr<IMetadata> metadata) {
 		m_metadata = metadata;
 	}
 
@@ -56,7 +56,7 @@ public:
 private:
 	uint64_t m_TimeIn180k;
 	uint64_t m_DurationIn180k;
-	std::shared_ptr<IIMetadata> m_metadata;
+	std::shared_ptr<IMetadata> m_metadata;
 };
 
 class RawData : public Data {

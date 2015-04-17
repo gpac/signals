@@ -46,12 +46,12 @@ size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot, E& executor
 }
 
 template<typename Allocator, typename Signal>
-class OutputT : public IOutput, public Metadata {
+class OutputT : public IOutput, public MetadataCap {
 public:
 	typedef Allocator AllocatorType;
 
-	OutputT(IIMetadata *metadata = nullptr)
-		: Metadata(metadata), allocator(new Allocator) {
+	OutputT(IMetadata *metadata = nullptr)
+		: MetadataCap(metadata), allocator(new Allocator) {
 	}
 
 	~OutputT() noexcept(false) {
