@@ -65,14 +65,14 @@ std::shared_ptr<Data> getTestMp3Frame() {
 
 }
 
-unittest("decoder: audio simple") {
-	auto decoder = uptr(createMp3Decoder());
+unittest("decode: audio simple") {
+	auto decode = uptr(createMp3Decoder());
 
 	auto null = uptr(new Out::Null);
-	ConnectPinToModule(decoder->getOutputPin(0), null);
+	ConnectPinToModule(decode->getOutputPin(0), null);
 
 	auto frame = getTestMp3Frame();
-	decoder->process(frame);
+	decode->process(frame);
 }
 
 namespace {
@@ -95,8 +95,8 @@ std::shared_ptr<Data> getTestH24Frame() {
 }
 }
 
-unittest("decoder: video simple") {
-	auto decoder = uptr(createVideoDecoder());
+unittest("decode: video simple") {
+	auto decode = uptr(createVideoDecoder());
 	auto data = getTestH24Frame();
 
 	auto onPic = [&](std::shared_ptr<const Data> data) {
@@ -112,23 +112,23 @@ unittest("decoder: video simple") {
 		ASSERT_EQUALS(0x80, lastPixel);
 	};
 
-	ConnectPin(decoder->getOutputPin(0), onPic);
-	decoder->process(data);
-	decoder->process(data);
+	ConnectPin(decode->getOutputPin(0), onPic);
+	decode->process(data);
+	decode->process(data);
 }
 
 #ifdef ENABLE_FAILING_TESTS
 //TODO: this test fails because the exception is caught by a Signals future. To be tested when tasks are pushed to an executor
-unittest("decoder: failing audio mp3 to AAC") {
-	auto decoder = uptr(createMp3Decoder());
+unittest("decode: failing audio mp3 to AAC") {
+	auto decode = uptr(createMp3Decoder());
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 
-	ConnectPinToModule(decoder->getOutputPin(0), encoder);
+	ConnectPinToModule(decode->getOutputPin(0), encoder);
 
 	auto frame = getTestMp3Frame();
 	bool thrown = false;
 	try {
-		decoder->process(frame);
+		decode->process(frame);
 	} catch (std::exception const& e) {
 		std::cerr << "Expected error: " << e.what() << std::endl;
 		thrown = true;
@@ -137,19 +137,19 @@ unittest("decoder: failing audio mp3 to AAC") {
 }
 #endif
 
-unittest("decoder: audio mp3 to converter to AAC") {
-	auto decoder = uptr(createMp3Decoder());
+unittest("decode: audio mp3 to converter to AAC") {
+	auto decode = uptr(createMp3Decoder());
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 
 	auto srcFormat = PcmFormat(44100, 1, AudioLayout::Mono, AudioSampleFormat::S16, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 
-	ConnectPinToModule(decoder->getOutputPin(0), converter);
+	ConnectPinToModule(decode->getOutputPin(0), converter);
 	ConnectPinToModule(converter->getOutputPin(0), encoder);
 
 	auto frame = getTestMp3Frame();
-	decoder->process(frame);
+	decode->process(frame);
 }
 
 

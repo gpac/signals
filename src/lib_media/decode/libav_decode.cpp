@@ -23,10 +23,10 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 		break;
 	default:
 		Log::msg(Log::Warning, "Module LibavDecode: codec_type %s not supported. Must be audio or video.", codecCtx->codec_type);
-		throw std::runtime_error("[LibavDecode] Unknown decoder type. Failed.");
+		throw std::runtime_error("[LibavDecode] Unknown decode type. Failed.");
 	}
 
-	//find an appropriate decoder
+	//find an appropriate decode
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec) {
 		Log::msg(Log::Warning, "Module LibavDecode: Codec not found");
