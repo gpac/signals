@@ -86,7 +86,7 @@ LibavDemux::~LibavDemux() {
 	avformat_close_input(&m_formatCtx);
 }
 
-void LibavDemux::process(std::shared_ptr<const Data> /*data*/) {
+void LibavDemux::process(Data /*data*/) {
 	for (;;) {
 		auto out = outputs[0]->getBuffer(0);
 		AVPacket *pkt = out->getPacket();

@@ -9,7 +9,7 @@ namespace Out {
 class Null : public ModuleS {
 public:
 	Null();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 };
 
 }

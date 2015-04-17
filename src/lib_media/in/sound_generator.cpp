@@ -20,7 +20,7 @@ SoundGenerator::SoundGenerator()
 	output = addOutput(new OutputPcm);
 }
 
-void SoundGenerator::process(std::shared_ptr<const Data> /*data*/) {
+void SoundGenerator::process(Data /*data*/) {
 	auto const bytesPerSample = pcmFormat.getBytesPerSample();
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.sampleRate / 1000;

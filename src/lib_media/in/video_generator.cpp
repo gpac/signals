@@ -14,7 +14,7 @@ VideoGenerator::VideoGenerator()
 	output = addOutput(new OutputPicture);
 }
 
-void VideoGenerator::process(std::shared_ptr<const Data> /*data*/) {
+void VideoGenerator::process(Data /*data*/) {
 	auto const dim = VIDEO_RESOLUTION;
 	auto pic = Picture::create(output, dim, YUV420P);
 

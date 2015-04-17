@@ -82,11 +82,11 @@ SDLAudio::~SDLAudio() {
 	SDL_CloseAudio();
 }
 
-void SDLAudio::process(std::shared_ptr<const Data> data) {
+void SDLAudio::process(Data data) {
 	m_converter->process(data);
 }
 
-void SDLAudio::push(std::shared_ptr<const Data> data) {
+void SDLAudio::push(Data data) {
 	auto pcmData = safe_cast<const PcmData>(data);
 
 	std::lock_guard<std::mutex> lg(m_Mutex);

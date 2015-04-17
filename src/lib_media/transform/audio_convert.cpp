@@ -52,7 +52,7 @@ void AudioConvert::flush() {
 		process(nullptr);
 }
 
-void AudioConvert::process(std::shared_ptr<const Data> data) {
+void AudioConvert::process(Data data) {
 	uint64_t srcNumSamples, dstNumSamples;
 	uint8_t * const * pSrc;
 	auto audioData = safe_cast<const PcmData>(data);

@@ -11,7 +11,7 @@ namespace In {
 class VideoGenerator : public ModuleS {
 public:
 	VideoGenerator();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 
 private:
 	uint64_t m_numFrames;

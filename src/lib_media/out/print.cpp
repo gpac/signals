@@ -5,7 +5,7 @@
 namespace Modules {
 namespace Out {
 
-void Print::process(std::shared_ptr<const Data> data_) {
+void Print::process(Data data_) {
 	auto data = safe_cast<const RawData>(data_);
 	os << "Print: Received data of size: " << data->size() << std::endl;
 }

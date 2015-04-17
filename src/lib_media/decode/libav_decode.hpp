@@ -20,14 +20,14 @@ class LibavDecode : public ModuleS {
 public:
 	LibavDecode(const MetadataPktLibav &metadata);
 	~LibavDecode();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 	void flush() override;
 
 private:
 	bool processAudio(const DataAVPacket*);
 	bool processVideo(const DataAVPacket*);
 
-	void setTimestamp(std::shared_ptr<Data> s, uint64_t increment = 1) const;
+	void setTimestamp(std::shared_ptr<DataBase> s, uint64_t increment = 1) const;
 
 	AVCodecContext * const codecCtx;
 	std::unique_ptr<ffpp::Frame> const avFrame;

@@ -12,12 +12,12 @@ class LibavMux : public ModuleS {
 public:
 	LibavMux(const std::string &baseName);
 	~LibavMux();
-	void process(std::shared_ptr<const Data> data) override;
+	void process(Data data) override;
 
 private:
 	void ensureHeader();
 
-	bool declareStream(std::shared_ptr<const Data> stream);
+	bool declareStream(Data stream);
 
 	struct AVFormatContext *m_formatCtx;
 	bool m_headerWritten;

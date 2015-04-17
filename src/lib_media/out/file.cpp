@@ -17,7 +17,7 @@ File::~File() {
 	fclose(file);
 }
 
-void File::process(std::shared_ptr<const Data> data_) {
+void File::process(Data data_) {
 	auto data = safe_cast<const RawData>(data_);
 	fwrite(data->data(), 1, (size_t)data->size(), file);
 }

@@ -37,7 +37,7 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(std::string const& path)
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {
 }
 
-void GPACDemuxMP4Simple::process(std::shared_ptr<const Data> /*data*/) {
+void GPACDemuxMP4Simple::process(Data /*data*/) {
 	for (;;) {
 		try {
 			int sampleDescriptionIndex;

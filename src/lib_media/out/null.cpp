@@ -8,7 +8,7 @@ namespace Out {
 Null::Null() {
 }
 
-void Null::process(std::shared_ptr<const Data> data) {
+void Null::process(Data data) {
 }
 
 }

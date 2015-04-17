@@ -7,7 +7,6 @@
 
 namespace Modules {
 
-class Data;
 struct IOutput;
 
 struct ICompletionNotifier {
@@ -19,7 +18,7 @@ struct IPipelinedModule : public IOutputCap {
 	virtual void setSource(bool isSource) = 0;
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
-	virtual void dispatch(std::shared_ptr<const Data> data) = 0;
+	virtual void dispatch(Data data) = 0;
 };
 
 template<typename ModuleType>
@@ -32,10 +31,10 @@ public:
 	IOutput* getOutput(size_t i) const override;
 
 	/* direct call: receiving nullptr stops the execution */
-	void process(std::shared_ptr<const Data> data);
+	void process(Data data);
 
 	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(std::shared_ptr<const Data> data) override;
+	void dispatch(Data data) override;
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
 	void setSource(bool isSource) override;

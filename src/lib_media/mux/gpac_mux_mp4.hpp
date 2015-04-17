@@ -22,7 +22,7 @@ public:
 	void flush() override;
 
 private:
-	void declareStream(std::shared_ptr<const Data> stream);
+	void declareStream(Data stream);
 	void declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> stream);
 	void declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio> stream);
 	void setupFragments();
