@@ -11,13 +11,13 @@ namespace Modules {
 
 enum StreamType {
 	UNKNOWN_ST = -1,
-	PCM,       //UNCOMPRESSED_AUDIO
-	PICTURE,   //UNCOMPRESSED_VIDEO
+	AUDIO_RAW, //UNCOMPRESSED_AUDIO
+	VIDEO_RAW, //UNCOMPRESSED_VIDEO
 	AUDIO_PKT, //COMPRESSED_AUDIO
 	VIDEO_PKT  //COMPRESSED_VIDEO
 };
 
-class StreamVideo : public Modules::Data, public IMetadata {
+class StreamVideo : public Data, public IIMetadata {
 public:
 	uint32_t width;
 	uint32_t height;
@@ -28,7 +28,7 @@ public:
 	AVCodecContext *codecCtx; //FIXME: legacy from libav
 };
 
-class StreamAudio : public Modules::Data, public IMetadata {
+class StreamAudio : public Data, public IIMetadata {
 public:
 	std::string codecName;
 	uint32_t numChannels;

@@ -6,24 +6,28 @@
 
 namespace Modules {
 
+struct IIMetadata {
+	virtual ~IIMetadata() {}
+};
+
 struct IMetadata {
 	virtual ~IMetadata() noexcept(false) {}
-	virtual IMetadata* getMetadata() const = 0;
-	virtual void setMetadata(IMetadata *metadata) = 0;
+	virtual IIMetadata* getMetadata() const = 0;
+	virtual void setMetadata(IIMetadata *metadata) = 0;
 };
 
 class Metadata : public IMetadata {
 public:
-	Metadata(IMetadata *metadata = nullptr) : metadata(metadata) {} //FIXME: takes shared ptr in
+	Metadata(IIMetadata *metadata = nullptr) : metadata(metadata) {} //FIXME: takes shared ptr in
 	virtual ~Metadata() noexcept(false) {}
 
-	IMetadata* getMetadata() const override { //FIXME: return shared ptr
+	IIMetadata* getMetadata() const override { //FIXME: return shared ptr
 		return metadata.get();
 	}
 
 	//Takes ownership.
-	void setMetadata(IMetadata *metadata) override { //FIXME: takes shared ptr in
-		this->metadata = std::shared_ptr<IMetadata>(metadata);
+	void setMetadata(IIMetadata *metadata) override { //FIXME: takes shared ptr in
+		this->metadata = std::shared_ptr<IIMetadata>(metadata);
 	}
 
 protected:
@@ -40,7 +44,7 @@ protected:
 		}
 	}
 
-	std::shared_ptr<IMetadata> metadata;
+	std::shared_ptr<IIMetadata> metadata;
 };
 
 }
