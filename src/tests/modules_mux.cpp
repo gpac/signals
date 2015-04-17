@@ -10,7 +10,7 @@ using namespace Tests;
 using namespace Modules;
 
 namespace {
-size_t ConnectOutputToInput(IOutput* out, ModuleM * const module, size_t outputIdx) {
+size_t ConnectOutputToInput(IOutput* out, Module * const module, size_t outputIdx) {
 	Modules::IInput *input = new Input<Data>(module);
 	auto inputPin = module->addInputPin(input);
 	ASSERT((void*)inputPin == (void*)module->getInputPin(outputIdx));
