@@ -23,7 +23,7 @@ public:
 };
 
 template<typename DataType>
-class Input : public IProcessor {
+class Input : public IProcessor, protected PropsHandler {
 public:
 	Input(IModule * const module) : module(module) {}
 
@@ -34,21 +34,7 @@ public:
 	}
 
 private:
-	bool updateMetadata(std::shared_ptr<const Data> data) { //FIXME: duplicate //TODO: process comments
-		if (!data->getMetadata()) {
-			const_cast<Data*>(data.get())->setMetadata(props);
-			return true;
-		}
-		else if (data->getMetadata() != props) {
-			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
-			props = data->getMetadata();
-			return true;
-		}
-
-		return false;
-	}
 	IModule * const module;
-	std::shared_ptr<IProps> props;
 };
 
 class Module : public IModule {

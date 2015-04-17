@@ -32,12 +32,16 @@ public:
 	}
 
 protected:
-	void ensureMetadata(std::shared_ptr<const Data> data) {
+	bool updateMetadata(std::shared_ptr<const Data> data) {
 		if (!data->getMetadata()) {
 			const_cast<Data*>(data.get())->setMetadata(props);
+			return true;
 		} else if (data->getMetadata() != props) {
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
 			props = data->getMetadata();
+			return true;
+		} else {
+			return false;
 		}
 	}
 
