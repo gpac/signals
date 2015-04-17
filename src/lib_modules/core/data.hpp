@@ -50,8 +50,7 @@ private:
 
 class RawData : public Data {
 public:
-	RawData(size_t size) : buffer(size) {
-	}
+	RawData(size_t size) : buffer(size) {}
 	uint8_t* data() {
 		return buffer.data();
 	}
