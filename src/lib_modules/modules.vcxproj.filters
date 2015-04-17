@@ -28,13 +28,16 @@
     <ClInclude Include="core\module.hpp">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="core\pin.hpp">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="utils\pipeline.hpp">
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="core\metadata.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\input.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\output.hpp">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>
