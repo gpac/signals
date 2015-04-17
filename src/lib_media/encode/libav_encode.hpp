@@ -26,7 +26,7 @@ struct LibavEncodeParams {
 	int bitrate_a = 128000;
 };
 
-class LibavEncode : public Module {
+class LibavEncode : public ModuleS {
 public:
 	enum Type {
 		Video,

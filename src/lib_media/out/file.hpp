@@ -5,7 +5,7 @@
 namespace Modules {
 namespace Out {
 
-class File : public Module {
+class File : public ModuleS {
 public:
 	File(std::string const& path);
 	~File();

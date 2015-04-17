@@ -9,7 +9,7 @@ namespace Decode {
 
 class JPEGTurbo;
 
-class JPEGTurboDecode : public Module {
+class JPEGTurboDecode : public ModuleS {
 public:
 	JPEGTurboDecode();
 	~JPEGTurboDecode();

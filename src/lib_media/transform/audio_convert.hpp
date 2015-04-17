@@ -12,7 +12,7 @@ class Frame;
 namespace Modules {
 namespace Transform {
 
-class AudioConvert : public Module {
+class AudioConvert : public ModuleS {
 public:
 	AudioConvert(const PcmFormat &dstFormat);
 	AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstFormat);

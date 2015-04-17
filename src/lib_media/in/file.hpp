@@ -6,7 +6,7 @@ namespace Modules {
 
 namespace In {
 
-class File : public Module {
+class File : public ModuleS {
 public:
 	File(std::string const& fn);
 	~File();

@@ -22,14 +22,14 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	case AVMEDIA_TYPE_AUDIO:
 		break;
 	default:
-		Log::msg(Log::Warning, "Module LibavDecode: codec_type %s not supported. Must be audio or video.", codecCtx->codec_type);
+		Log::msg(Log::Warning, "[LibavDecode] codec_type %s not supported. Must be audio or video.", codecCtx->codec_type);
 		throw std::runtime_error("[LibavDecode] Unknown decode type. Failed.");
 	}
 
 	//find an appropriate decode
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec) {
-		Log::msg(Log::Warning, "Module LibavDecode: Codec not found");
+		Log::msg(Log::Warning, "[LibavDecode] Codec not found");
 		throw std::runtime_error("[LibavDecode] Decoder not found.");
 	}
 
@@ -38,7 +38,6 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	dict.set("threads", "1");
 
 	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
-		Log::msg(Log::Warning, "Module LibavDecode: Couldn't open stream");
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 

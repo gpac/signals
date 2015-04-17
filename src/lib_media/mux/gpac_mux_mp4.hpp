@@ -14,11 +14,11 @@ using namespace Modules;
 
 namespace Mux {
 
-class GPACMuxMP4 : public Module {
+class GPACMuxMP4 : public ModuleM {
 public:
 	GPACMuxMP4(const std::string &baseName, bool useSegments = false, uint64_t segDurationInMs = 2000);
 	~GPACMuxMP4();
-	void process(std::shared_ptr<const Data> data) override;
+	void process() override;
 	void flush() override;
 
 private:

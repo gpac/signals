@@ -8,7 +8,7 @@ struct SwsContext;
 namespace Modules {
 namespace Transform {
 
-class VideoConvert : public Module {
+class VideoConvert : public ModuleS {
 public:
 	VideoConvert(const PictureFormat &dstFormat);
 	~VideoConvert();
