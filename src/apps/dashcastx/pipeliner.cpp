@@ -40,7 +40,7 @@ IModule* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Res
 }
 
 void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
-	auto connect = [&](PipelinedModule* src, PipelinedModule* dst) {
+	auto connect = [&](auto* src, auto* dst) {
 		pipeline.connect(src->getOutput(0), dst);
 	};
 

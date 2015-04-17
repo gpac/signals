@@ -1,5 +1,5 @@
 CFLAGS:=$(CFLAGS)
-CFLAGS+=-std=c++11
+CFLAGS+=-std=gnu++1y
 CFLAGS+=-Wall
 CFLAGS+=-Wextra
 CFLAGS+=-fvisibility=hidden
