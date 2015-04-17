@@ -14,7 +14,7 @@ class Data {
 public:
 	Data() = default;
 	Data(std::shared_ptr<IMetadata> metadata) : m_metadata(metadata) {}
-	virtual ~Data() {}
+	virtual ~Data() noexcept(false) {}
 
 	std::shared_ptr<IMetadata> getMetadata() const {
 		return m_metadata;

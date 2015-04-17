@@ -22,7 +22,7 @@ public:
 	}
 
 	//Takes ownership.
-	void setMetadata(IMetadata *metadata)  override { //FIXME: takes shared ptr in
+	void setMetadata(IMetadata *metadata) override { //FIXME: takes shared ptr in
 		this->metadata = std::shared_ptr<IMetadata>(metadata);
 	}
 
