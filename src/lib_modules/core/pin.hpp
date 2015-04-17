@@ -22,8 +22,6 @@ typedef SignalSync SignalDefaultSync;
 struct IPin {
 	virtual ~IPin() {}
 	virtual size_t emit(std::shared_ptr<const Data> data) = 0;
-	virtual IProps* getProps() const = 0;
-	virtual void setProps(IProps *props) = 0;
 	virtual ISignal<void(std::shared_ptr<const Data>)>& getSignal() = 0;
 };
 
@@ -48,12 +46,12 @@ size_t ConnectPin(IPin* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
 }
 
 template<typename Allocator, typename Signal>
-class PinT : public IPin {
+class PinT : public IPin, public PropsHandler {
 public:
 	typedef Allocator AllocatorType;
 
 	PinT(IProps *props = nullptr)
-		: allocator(new Allocator), props(props) {
+		: PropsHandler(props), allocator(new Allocator) {
 	}
 
 	~PinT() {
@@ -61,10 +59,10 @@ public:
 	}
 
 	size_t emit(std::shared_ptr<const Data> data) {
+		ensureMetadata(data);
 		size_t numReceivers = signal.emit(data);
-		if (numReceivers == 0) {
+		if (numReceivers == 0)
 			Log::msg(Log::Debug, "emit(): Pin had no receiver");
-		}
 		return numReceivers;
 	}
 
@@ -77,24 +75,25 @@ public:
 		return signal;
 	}
 
-	IProps* getProps() const {
-		return props.get();
-	}
-
 	/**
 	 * Takes ownership.
 	 */
-	void setProps(IProps *props) {
-		this->props = uptr(props);
-	}
-	void setAllocator(Allocator *props) {
-		this->allocator = uptr(props);
+	void setAllocator(Allocator *allocator) {
+		this->allocator = uptr(allocator);
 	}
 
 private:
+	void ensureMetadata(std::shared_ptr<const Data> data) {
+		if (!data->getMetadata()) {
+			const_cast<Data*>(data.get())->setMetadata(props);
+		} else if (data->getMetadata() != props) {
+			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
+			props = data->getMetadata();
+		}
+	}
+
 	Signal signal;
 	std::unique_ptr<Allocator> allocator;
-	std::unique_ptr<IProps> props;
 };
 
 template<typename DataType> using PinDataDefault = PinT<PacketAllocator<DataType>, SignalDefaultSync>;

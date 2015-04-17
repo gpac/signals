@@ -1,6 +1,7 @@
 #pragma once
 
 #include "clock.hpp"
+#include "props.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -12,8 +13,17 @@ namespace Modules {
  */
 class Data {
 public:
-	virtual ~Data() {
+	Data() = default;
+	Data(std::shared_ptr<IProps> metadata) : m_metadata(metadata) {}
+	virtual ~Data() {}
+
+	std::shared_ptr<IProps> getMetadata() const {
+		return m_metadata;
 	}
+	void setMetadata(std::shared_ptr<IProps> metadata) {
+		m_metadata = metadata;
+	}
+
 	void setTime(uint64_t timeIn180k) {
 		m_TimeIn180k = timeIn180k;
 	}
@@ -36,6 +46,7 @@ public:
 private:
 	uint64_t m_TimeIn180k;
 	uint64_t m_DurationIn180k;
+	std::shared_ptr<IProps> m_metadata;
 };
 
 class RawData : public Data {

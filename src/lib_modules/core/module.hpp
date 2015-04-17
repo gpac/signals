@@ -7,7 +7,7 @@
 
 namespace Modules {
 
-class IProcessor {
+class IProcessor { //TODO: there should be no module with no pin from now, so module doesn't need to be a public processor
 public:
 	virtual ~IProcessor() noexcept(false) {};
 	virtual void process(std::shared_ptr<const Data> data) = 0;
@@ -22,7 +22,7 @@ public:
 };
 
 template<typename DataType>
-class Input : IProcessor {
+class Input : public IProcessor {
 public:
 	Input(IModule * const module) : module(module) {}
 
@@ -32,6 +32,7 @@ public:
 
 private:
 	IModule * const module;
+	std::shared_ptr<IProps> props;
 };
 
 class Module : public IModule {
@@ -42,16 +43,19 @@ public:
 	virtual void process(std::shared_ptr<const Data> data) = 0;
 	virtual void flush() {};
 
+	/**
+	 * Takes ownership/
+	 */
+	template<typename T>
+	T* addInputPin(T* p) {
+		inputPins.push_back(uptr(p));
+		return p;
+	}
 	size_t getNumInputPins() const {
 		return inputPins.size();
 	}
 	IProcessor* getInputPin(size_t i) const {
 		return inputPins[i].get();
-	}
-	template<typename T>
-	T* addInputPin(T* p) {
-		inputPins.push_back(uptr(p));
-		return p;
 	}
 
 	size_t getNumOutputPins() const override {
@@ -69,6 +73,9 @@ protected:
 	Module(Module const&) = delete;
 	Module const& operator=(Module const&) = delete;
 
+	/**
+	 * Takes ownership/
+	 */
 	template<typename T>
 	T* addOutputPin(T* p) {
 		if (m_isLowLatency)
