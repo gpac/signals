@@ -23,7 +23,7 @@ extern "C" {
 
 namespace Modules {
 
-class MetadataPktLibav : public IIMetadata {
+class MetadataPktLibav : public IMetadata {
 public:
 	//Doesn't take the ownership of codecCtx
 	MetadataPktLibav(AVCodecContext *codecCtx);

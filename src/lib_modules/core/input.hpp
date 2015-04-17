@@ -9,7 +9,7 @@
 
 namespace Modules {
 
-struct IInput : public IModule, public Metadata, public Signals::Queue<std::shared_ptr<const Data>> {
+struct IInput : public IModule, public MetadataCap, public Signals::Queue<std::shared_ptr<const Data>> {
 	virtual ~IInput() noexcept(false) {}
 	virtual void process(std::shared_ptr<const Data> data) = 0;
 	void flush() override {};

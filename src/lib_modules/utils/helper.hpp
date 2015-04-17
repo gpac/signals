@@ -40,7 +40,7 @@ size_t ConnectToModule(SignalType& sig, std::unique_ptr<ModuleType>& module, IPr
 
 template <typename T>
 std::shared_ptr<const T> getMetadataFromOutput(IOutput const * const out) {
-	auto const metadata = safe_cast<const Metadata>(out)->getMetadata();
+	auto const metadata = safe_cast<const IMetadataCap>(out)->getMetadata();
 	return safe_cast<const T>(metadata);
 }
 
