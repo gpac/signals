@@ -8,8 +8,7 @@ using namespace std::chrono;
 
 class SystemClock : public IClock {
 public:
-	SystemClock() : m_Start(high_resolution_clock::now()) {
-	}
+	SystemClock() : m_Start(high_resolution_clock::now()) {}
 	virtual uint64_t now() const {
 		auto const timeNow = high_resolution_clock::now();
 		auto const timeNowInMs = duration_cast<milliseconds>(timeNow - m_Start);

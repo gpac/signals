@@ -43,7 +43,7 @@ JPEGTurboDecode::JPEGTurboDecode()
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
-	auto p = dynamic_cast<MetadataPktLibav*>(output->getMetadata());
+	auto p = safe_cast<MetadataPktLibav>(output->getMetadata());
 	if (p) {
 		auto ctx = p->getAVCodecContext();
 		avcodec_close(ctx);
