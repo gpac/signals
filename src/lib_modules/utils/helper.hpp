@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stranded_pool_executor.hpp"
-#include "lib_signals/internal/utils/helper.hpp"
+#include "lib_signals/utils/helper.hpp"
 #include <memory>
 
 

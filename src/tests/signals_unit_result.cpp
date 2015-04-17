@@ -1,6 +1,6 @@
 #include "tests.hpp"
 #include "lib_signals/signals.hpp"
-#include "lib_signals/internal/core/result.hpp"
+#include "lib_signals/core/result.hpp"
 
 using namespace Tests;
 using namespace Signals;
