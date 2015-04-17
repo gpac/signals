@@ -22,7 +22,7 @@ Module* createConverter(MetadataPkt *decoderMetadata, const Resolution &dstRes) 
 	auto const codecType = decoderMetadata ? decoderMetadata->getStreamType() : UNKNOWN_ST;
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
-		auto imageMetadata = safe_cast<MetadataDecoderImage>(decoderMetadata);
+		auto imageMetadata = safe_cast<MetadataPktLibavVideo>(decoderMetadata);
 		auto dstFormat = PictureFormat(dstRes, imageMetadata->getPixelFormat());
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AUDIO_PKT) {
@@ -47,7 +47,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
 		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderMetadata = safe_cast<MetadataDecoder>(metadata);
+		auto decoderMetadata = safe_cast<MetadataPktLibav>(metadata);
 		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderMetadata));
 
 		pipeline.connect(demux->getOutputPin(i), decoder);

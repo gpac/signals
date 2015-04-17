@@ -24,25 +24,19 @@ extern "C" {
 
 namespace Modules {
 
-class MetadataPkt : public IIMetadata {
-public:
-	virtual ~MetadataPkt() {}
-	virtual StreamType getStreamType() const = 0;
-};
-
-class MetadataDecoder : public MetadataPkt {
+class MetadataPktLibav : public IIMetadata {
 public:
 	//Doesn't take the ownership of codecCtx
-	MetadataDecoder(AVCodecContext *codecCtx);
-	virtual ~MetadataDecoder() {}
-	StreamType getStreamType() const override;
+	MetadataPktLibav(AVCodecContext *codecCtx);
+	virtual ~MetadataPktLibav() {}
+	StreamType getStreamType() const;
 	AVCodecContext* getAVCodecContext() const;
 
 protected:
 	AVCodecContext *codecCtx;
 };
 
-class MetadataDecoderImage : public MetadataDecoder {
+class MetadataPktLibavVideo : public MetadataPktLibav {
 public:
 	PixelFormat getPixelFormat() const;
 	Resolution getResolution() const;
