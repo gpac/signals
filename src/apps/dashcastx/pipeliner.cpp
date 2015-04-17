@@ -4,8 +4,8 @@
 #include <sstream>
 
 namespace {
-Encode::LibavEncode* createEncoder(PropsPkt *decoderProps, bool isLowLatency) {
-	auto const codecType = decoderProps ? decoderProps->getStreamType() : UNKNOWN_ST;
+Encode::LibavEncode* createEncoder(MetadataPkt *decoderMetadata, bool isLowLatency) {
+	auto const codecType = decoderMetadata ? decoderMetadata->getStreamType() : UNKNOWN_ST;
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Video, isLowLatency);
@@ -18,12 +18,12 @@ Encode::LibavEncode* createEncoder(PropsPkt *decoderProps, bool isLowLatency) {
 	}
 }
 
-Module* createConverter(PropsPkt *decoderProps, const Resolution &dstRes) {
-	auto const codecType = decoderProps ? decoderProps->getStreamType() : UNKNOWN_ST;
+Module* createConverter(MetadataPkt *decoderMetadata, const Resolution &dstRes) {
+	auto const codecType = decoderMetadata ? decoderMetadata->getStreamType() : UNKNOWN_ST;
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
-		auto imageProps = safe_cast<PropsDecoderImage>(decoderProps);
-		auto dstFormat = PictureFormat(dstRes, imageProps->getPixelFormat());
+		auto imageMetadata = safe_cast<MetadataDecoderImage>(decoderMetadata);
+		auto dstFormat = PictureFormat(dstRes, imageMetadata->getPixelFormat());
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found audio stream");
@@ -47,18 +47,18 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 	for (int i = 0; i < (int)demux->getNumOutputPins(); ++i) {
 		auto metadata = demux->getOutputPin(i)->getMetadata();
-		auto decoderProps = safe_cast<PropsDecoder>(metadata);
-		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderProps));
+		auto decoderMetadata = safe_cast<MetadataDecoder>(metadata);
+		auto decoder = pipeline.addModule(new Decode::LibavDecode(*decoderMetadata));
 
 		pipeline.connect(demux->getOutputPin(i), decoder);
 
-		auto converter = pipeline.addModule(createConverter(decoderProps, opt.res));
+		auto converter = pipeline.addModule(createConverter(decoderMetadata, opt.res));
 		if (!converter)
 			continue;
 
 		connect(decoder, converter);
 
-		auto rawEncoder = createEncoder(decoderProps, opt.isLive);
+		auto rawEncoder = createEncoder(decoderMetadata, opt.isLive);
 		auto encoder = pipeline.addModule(rawEncoder);
 		if (!encoder)
 			continue;

@@ -59,11 +59,11 @@ const char* avlogLevelName(int level) {
 
 namespace Modules {
 
-PropsDecoder::PropsDecoder(AVCodecContext *codecCtx)
+MetadataDecoder::MetadataDecoder(AVCodecContext *codecCtx)
 	: codecCtx(codecCtx) {
 }
 
-StreamType PropsDecoder::getStreamType() const {
+StreamType MetadataDecoder::getStreamType() const {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: return VIDEO_PKT;
 	case AVMEDIA_TYPE_AUDIO: return AUDIO_PKT;
@@ -71,15 +71,15 @@ StreamType PropsDecoder::getStreamType() const {
 	}
 }
 
-AVCodecContext* PropsDecoder::getAVCodecContext() const {
+AVCodecContext* MetadataDecoder::getAVCodecContext() const {
 	return codecCtx;
 }
 
-PixelFormat PropsDecoderImage::getPixelFormat() const {
+PixelFormat MetadataDecoderImage::getPixelFormat() const {
 	return libavPixFmt2PixelFormat(codecCtx->pix_fmt);
 }
 
-Resolution PropsDecoderImage::getResolution() const {
+Resolution MetadataDecoderImage::getResolution() const {
 	return Resolution(codecCtx->width, codecCtx->height);
 }
 

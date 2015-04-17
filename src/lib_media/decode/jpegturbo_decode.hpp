@@ -17,7 +17,7 @@ public:
 
 private:
 	PinDefault* output;
-	void ensureProps(int width, int height, int pixelFmt);
+	void ensureMetadata(int width, int height, int pixelFmt);
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 };
 
