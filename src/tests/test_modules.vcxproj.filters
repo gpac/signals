@@ -42,6 +42,9 @@
     <ClCompile Include="modules_mux.cpp">
       <Filter>tests</Filter>
     </ClCompile>
+    <ClCompile Include="modules_pipeline.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tests">

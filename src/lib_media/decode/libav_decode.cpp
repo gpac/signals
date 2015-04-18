@@ -44,7 +44,7 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: videoOutput = addOutput(new OutputPicture(Metadata_new)); break;
 	case AVMEDIA_TYPE_AUDIO: audioOutput = addOutput(new OutputPcm(Metadata_new)); break;
-	default: throw std::runtime_error("[LibavDecode] Invalid Pin type.");
+	default: throw std::runtime_error("[LibavDecode] Invalid output type.");
 	}
 }
 

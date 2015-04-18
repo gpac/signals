@@ -28,11 +28,17 @@ private:
 };
 
 //single input specialized module
-class ModuleS : public IInput, public OutputCap {
+class ModuleS : public IInput, public IInputCap, public OutputCap {
 public:
 	ModuleS() = default;
 	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(Data data) = 0;
+	size_t getNumInputs() const override {
+		return 1;
+	}
+	IInput* getInput(size_t i) override {
+		return this;
+	}
 
 private:
 	ModuleS(ModuleS const&) = delete;

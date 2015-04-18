@@ -34,20 +34,26 @@ private:
 	IModule * const module;
 };
 
-class InputCap {
+struct IInputCap {
+	virtual ~IInputCap() noexcept(false) {}
+	virtual size_t getNumInputs() const = 0;
+	virtual IInput* getInput(size_t i) = 0;
+};
+
+class InputCap : public IInputCap {
 public:
 	virtual ~InputCap() noexcept(false) {}
 
 	//Takes ownership/
 	template<typename T>
-	T* addInputPin(T* p) {
+	T* addInput(T* p) {
 		inputs.push_back(uptr(p));
 		return p;
 	}
-	size_t getNumInputPins() const {
+	size_t getNumInputs() const override {
 		return inputs.size();
 	}
-	IInput* getInputPin(size_t i) const {
+	IInput* getInput(size_t i) override {
 		return inputs[i].get();
 	}
 
