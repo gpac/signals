@@ -625,7 +625,7 @@ void GPACMuxMP4::declareStream(Data data) {
 	}
 }
 
-void GPACMuxMP4::process2(bool dataTypeUpdated) {
+void GPACMuxMP4::process(bool dataTypeUpdated) {
 	Data data_ = inputs[0]->pop();
 	if (dataTypeUpdated)
 		declareStream(data_);

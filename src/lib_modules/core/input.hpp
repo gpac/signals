@@ -13,7 +13,7 @@ struct IInput : public IModule, public MetadataCap, public Signals::Queue<Data> 
 	virtual ~IInput() noexcept(false) {}
 	virtual void process(Data data) = 0;
 	virtual void flush() override {};
-	virtual void process2(bool /*dataTypeUpdated*/) override {
+	virtual void process(bool /*dataTypeUpdated*/) override {
 		Data data;
 		if (tryPop(data))
 			process(data);
@@ -27,7 +27,7 @@ public:
 
 	void process(Data data) override {
 		push(safe_cast<const DataType>(data));
-		module->process2(updateMetadata(data));
+		module->process(updateMetadata(data));
 	}
 
 private:

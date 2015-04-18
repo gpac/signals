@@ -1,18 +1,19 @@
 Mid Term apps:
-2. b) socket in, GPAC demux (MP4 or TS), DASH out
+- socket in, GPAC demux (MP4 or TS), DASH out
 
 Tasks (from higher to lower priority):
-- Make a pass on 'Output' in module headers: they should not own any
-- Add type checking at connect time
- * dynamic: we could create the input pins when receiving data for the first time
-- DashCast:
- * multi-rep
-- Update build system and deps to use Makefile and zenbuild
-- be able to draw the graph of connections (and allocator states?)
+- Multiple inputs:
+ * Add type checking at connect time
+  - dynamic: we could create the input pins when receiving data for the first time
+  - use pipeline to automatically add converters
+ * DashCast:
+  - multi-rep
 - Log
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
  * add time to log msg?
- - write un automatic module tester: valgrind + change of mediatypes etc.
+- write un automatic module tester: valgrind + change of mediatypes etc.
+- Update build system and deps to use Makefile and zenbuild
+- be able to draw the graph of connections (and allocator states?)
 - SDL and renderers should be able to run in thread 0
  * http://stackoverflow.com/questions/20530218/check-if-current-thread-is-main-thread
  * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c
@@ -20,16 +21,10 @@ Tasks (from higher to lower priority):
 - investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - some modules may still assume the first timestamp is zero...
-- mak module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
+- make module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
 - muxer example with two inputs of the same type (e.g. video)
 - use operators (https://github.com/klmr/named-operator) to describe graphs as pipes?
 - GUI: use angular.js? "gui, angular.js, end-point rest, agplv3" @Ffrenchm / OSGi/Pipe/Mesos?/Angular.js?(http://www.freecodecamp.com/)
 - GPU: 4K60:10/IntelTranscodingSupport->libMFX / GPU: http://on-demand.gputechconf.com/gtc/2015/presentation/S5613-Abhijit-Patait.pdf
-
-Questions (from higher to lower priority):
-- eligibility of tasks / ASIO scheduler?
-- how to dynamically connect filters
-- how to expose an interface to older compilers
-- how to expose parameters so that we can plug it with a GUI?

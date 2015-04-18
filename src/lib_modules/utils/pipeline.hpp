@@ -27,6 +27,12 @@ struct IPipelinedModule : public IOutputCap {
 	virtual void dispatch(Data data) = 0;
 };
 
+template<typename Result, typename Class>
+MemberFunctor<Result, Class, Result(Class::*)(Data)>
+MEMBER_FUNCTOR(Class* objectPtr, Result(Class::*memberFunction) (Data)) {
+	return MemberFunctor<Result, Class, Result(Class::*)(Data)>(objectPtr, memberFunction);
+}
+
 template<typename ModuleType>
 class PipelinedModule : public IPipelinedModule, public ModuleS {
 public:
