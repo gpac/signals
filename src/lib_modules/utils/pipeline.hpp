@@ -19,8 +19,8 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-struct IPipelinedModule : public IOutputCap, public IInputCap {
-	virtual ~IPipelinedModule() {}
+struct IPipelinedModule {
+	virtual ~IPipelinedModule() noexcept(false) {}
 	virtual void setSource(bool isSource) = 0;
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
@@ -40,20 +40,15 @@ public:
 	PipelinedModule(ModuleType *module, ICompletionNotifier *notify)
 	: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
+	~PipelinedModule () noexcept(false) {}
 	void connect(IOutput* out, size_t inputIdx) {
 		ConnectModules(out, this, inputIdx, executor);
 	}
 	size_t getNumInputs() const override {
 		return delegate->getNumInputs();
 	}
-	IInput* getInput(size_t i) override {
-		return delegate->getInput(i);
-	}
 	size_t getNumOutputs() const override {
 		return delegate->getNumOutputs();
-	}
-	IOutput* getOutput(size_t i) const override {
-		return delegate->getOutput(i);
 	}
 
 	/* direct call: receiving nullptr stops the execution */
