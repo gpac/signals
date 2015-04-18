@@ -24,7 +24,7 @@ public:
 private:
 	void ensureHeader();
 
-	bool declareStream(Data stream);
+	void declareStream(Data stream);
 
 	struct AVFormatContext *m_formatCtx;
 	bool m_headerWritten;

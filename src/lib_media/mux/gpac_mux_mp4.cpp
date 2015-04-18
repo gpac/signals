@@ -616,13 +616,12 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 
 void GPACMuxMP4::declareStream(Data data) {
 	auto const metadata = data->getMetadata();
-	//if (metadata == getInputPin(0)->getMetadata()) //Romain
-	//	return;
-
 	if (auto video = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata)) {
 		declareStreamVideo(video);
 	} else if (auto audio = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata)) {
 		declareStreamAudio(audio);
+	} else {
+		throw std::runtime_error("[GPACMuxMP4] Stream creation failed: unknown type.");
 	}
 }
 
