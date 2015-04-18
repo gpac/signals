@@ -88,13 +88,7 @@ private:
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
 typedef OutputDataDefault<RawData> OutputDefault;
 
-struct IOutputCap {
-	virtual ~IOutputCap() noexcept(false) {}
-	virtual size_t getNumOutputs() const = 0;
-	virtual IOutput* getOutput(size_t i) const = 0;
-};
-
-class OutputCap {
+class OutputCap : public IOutputCap {
 public:
 	virtual ~OutputCap() noexcept(false) {}
 
