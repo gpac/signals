@@ -5,7 +5,7 @@ Tasks (from higher to lower priority):
 - Multiple inputs:
  * Add type checking at connect time
   - dynamic: we could create the input pins when receiving data for the first time
-  - use pipeline to automatically add converters
+  - use pipeline to automatically add converters, instead of being done with modules?
  * DashCast:
   - multi-rep
 - Log

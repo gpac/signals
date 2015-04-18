@@ -8,7 +8,7 @@
 
 #define EXECUTOR_SYNC ExecutorSync<void(Data)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_SYNC
+#define EXECUTOR EXECUTOR_ASYNC
 
 
 namespace Modules {
@@ -41,7 +41,7 @@ public:
 	: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
 	void connect(IOutput* out) {
-		ConnectToModule(out->getSignal(), this, executor);
+		ConnectOutputToModule(out, this, executor);
 	}
 	size_t getNumOutputs() const override {
 		return delegate->getNumOutputs();
