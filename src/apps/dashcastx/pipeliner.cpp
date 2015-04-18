@@ -41,7 +41,7 @@ ModuleS* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Res
 
 void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	auto connect = [&](auto* src, auto* dst) {
-		pipeline.connect(src->getOutput(0), dst);
+		pipeline.connect(src, 0, dst, 0);
 	};
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(opt.url), true);
@@ -52,7 +52,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 
-		pipeline.connect(demux->getOutput(i), decode);
+		pipeline.connect(demux, i, decode, 0);
 
 		auto converter = pipeline.addModule(createConverter(metadata, opt.res));
 		if (!converter)
