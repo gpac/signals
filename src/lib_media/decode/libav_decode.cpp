@@ -36,7 +36,6 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	//force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
 	ffpp::Dict dict;
 	dict.set("threads", "1");
-
 	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
@@ -90,10 +89,10 @@ void copyToPicture(AVFrame const* avFrame, Picture* pic) {
 		auto dstPitch = pic->getPitch(comp);
 
 		auto const h = avFrame->height / subsampling;
-		//auto const w = avFrame->width / subsampling;
+		auto const w = avFrame->width / subsampling;
 
 		for (int y=0; y<h; ++y) {
-			memcpy(dst, src, srcPitch);
+			memcpy(dst, src, w);
 			src += srcPitch;
 			dst += dstPitch;
 		}
