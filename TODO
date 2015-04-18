@@ -10,6 +10,7 @@ Tasks (from higher to lower priority):
 - Log
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
  * add time to log msg?
+ - wrtie un automatic module tester: valgrind + change of mediatypes etc.
 - SDL and renderers should be able to run in thread 0
  * http://stackoverflow.com/questions/20530218/check-if-current-thread-is-main-thread
  * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c

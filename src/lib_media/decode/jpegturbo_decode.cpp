@@ -58,7 +58,7 @@ void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
 		ctx->width = width;
 		ctx->height = height;
 		ctx->pix_fmt = getAVPF(pixelFmt);
-		output->setMetadata(new MetadataPktLibav(ctx));
+		output->setMetadata(new MetadataPktLibavVideo(ctx));
 	}
 }
 
