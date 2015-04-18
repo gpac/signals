@@ -25,7 +25,7 @@ namespace Modules {
 
 class MetadataPktLibav : public IMetadata {
 public:
-	//Doesn't take the ownership of codecCtx
+	//Doesn't take codecCtx ownership
 	MetadataPktLibav(AVCodecContext *codecCtx);
 	virtual ~MetadataPktLibav() {}
 	StreamType getStreamType() const override;

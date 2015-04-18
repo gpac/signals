@@ -8,8 +8,9 @@ namespace Modules {
 
 struct IMetadataCap {
 	virtual ~IMetadataCap() noexcept(false) {}
-	virtual std::shared_ptr<IMetadata> getMetadata() const = 0;
-	virtual void setMetadata(IMetadata *metadata) = 0;
+	virtual std::shared_ptr<const IMetadata> getMetadata() const = 0;
+	virtual void setMetadata(IMetadata *metadata) = 0; //useful?
+	virtual void setMetadata(std::shared_ptr<const IMetadata> metadata) = 0;
 };
 
 class MetadataCap : public IMetadataCap {
@@ -17,18 +18,23 @@ public:
 	MetadataCap(IMetadata *metadata = nullptr) : m_metadata(metadata) {}
 	virtual ~MetadataCap() noexcept(false) {}
 
-	std::shared_ptr<IMetadata> getMetadata() const override {
+	std::shared_ptr<const IMetadata> getMetadata() const override {
 		return m_metadata;
 	}
 
 	//Takes ownership.
 	void setMetadata(IMetadata *metadata) override {
-		m_metadata = std::shared_ptr<IMetadata>(metadata);
+		m_metadata = std::shared_ptr<const IMetadata>(metadata);
+	}
+	void setMetadata(std::shared_ptr<const IMetadata> metadata) override {
+		m_metadata = metadata;
 	}
 
 protected:
 	bool updateMetadata(Data data) {
-		if (!data->getMetadata()) {
+		if (!data) {
+			return false;
+		} else if (!data->getMetadata()) {
 			const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
 			return true;
 		} else if (data->getMetadata() != m_metadata) {
@@ -40,7 +46,7 @@ protected:
 		}
 	}
 
-	std::shared_ptr<IMetadata> m_metadata;
+	std::shared_ptr<const IMetadata> m_metadata;
 };
 
 }

@@ -28,10 +28,10 @@ public:
 	DataBase() = default;
 	virtual ~DataBase() {}
 
-	std::shared_ptr<IMetadata> getMetadata() const {
+	std::shared_ptr<const IMetadata> getMetadata() const {
 		return m_metadata;
 	}
-	void setMetadata(std::shared_ptr<IMetadata> metadata) {
+	void setMetadata(std::shared_ptr<const IMetadata> metadata) {
 		m_metadata = metadata;
 	}
 
@@ -57,7 +57,7 @@ public:
 private:
 	uint64_t m_TimeIn180k;
 	uint64_t m_DurationIn180k;
-	std::shared_ptr<IMetadata> m_metadata;
+	std::shared_ptr<const IMetadata> m_metadata;
 };
 
 typedef std::shared_ptr<const DataBase> Data;
