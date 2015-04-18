@@ -7,6 +7,8 @@ Tasks (from higher to lower priority):
  * dynamic: we could create the input pins when receiving data for the first time
 - DashCast:
  * multi-rep
+- Update build system and deps to use Makefile and zenbuild
+- be able to draw the graph of connections (and allocator states?)
 - Log
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
  * add time to log msg?
@@ -16,7 +18,6 @@ Tasks (from higher to lower priority):
  * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c
  * http://stackoverflow.com/questions/1969579/getting-a-handle-to-the-processs-main-thread
 - investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
-- be able to draw the graph of connections (and allocator states?)
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - some modules may still assume the first timestamp is zero...
 - mak module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
