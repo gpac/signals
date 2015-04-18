@@ -26,17 +26,6 @@ size_t ConnectOutputToModule(IOutput* out, std::unique_ptr<ModuleType>& module, 
 	return ConnectOutputToModule(out, module.get(), executor);
 }
 
-template<typename SignalType, typename ModuleType>
-size_t ConnectToModule(SignalType& sig, ModuleType* module, IProcessExecutor& executor) {
-	auto functor = MEMBER_FUNCTOR_PROCESS(module);
-	return Connect(sig, functor, executor);
-}
-
-template<typename SignalType, typename ModuleType>
-size_t ConnectToModule(SignalType& sig, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
-	return ConnectToModule(sig, module.get(), executor);
-}
-
 template <typename T>
 std::shared_ptr<const T> getMetadataFromOutput(IOutput const * const out) {
 	auto const metadata = safe_cast<const IMetadataCap>(out)->getMetadata();
