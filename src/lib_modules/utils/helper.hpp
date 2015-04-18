@@ -26,6 +26,15 @@ size_t ConnectOutputToModule(IOutput* out, std::unique_ptr<ModuleType>& module, 
 	return ConnectOutputToModule(out, module.get(), executor);
 }
 
+template<typename ModuleType1, typename ModuleType2>
+size_t ConnectModules(ModuleType1 *module1, size_t input1, ModuleType2 *module2, size_t input2, IProcessExecutor& executor = defaultExecutor) {
+	auto pin1 = module1->getOutput(input1);
+	auto pin2 = module2->getInput (input2);
+	auto functor = MEMBER_FUNCTOR_PROCESS(pin2);
+	//TODO: check types:http://www.cplusplus.com/reference/typeinfo/type_info/
+	return ConnectOutput(pin1, functor, executor);
+}
+
 template <typename T>
 std::shared_ptr<const T> getMetadataFromOutput(IOutput const * const out) {
 	auto const metadata = safe_cast<const IMetadataCap>(out)->getMetadata();

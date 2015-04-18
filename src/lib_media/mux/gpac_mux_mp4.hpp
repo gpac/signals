@@ -22,7 +22,7 @@ public:
 	void flush() override;
 	void process(Data data) {
 		if (inputs.size() == 0)
-			addInputPin(new Input<DataBase>(this));
+			addInput(new Input<DataBase>(this));
 		assert(inputs.size() == 1);
 		inputs[0]->process(data);
 	}

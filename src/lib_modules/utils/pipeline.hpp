@@ -19,7 +19,7 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-struct IPipelinedModule : public IOutputCap {
+struct IPipelinedModule : public IOutputCap, public IInputCap {
 	virtual ~IPipelinedModule() {}
 	virtual void setSource(bool isSource) = 0;
 	virtual bool isSource() const = 0;
@@ -42,6 +42,12 @@ public:
 	}
 	void connect(IOutput* out) {
 		ConnectOutputToModule(out, this, executor);
+	}
+	size_t getNumInputs() const override {
+		return delegate->getNumInputs();
+	}
+	IInput* getInput(size_t i) override {
+		return delegate->getInput(i);
 	}
 	size_t getNumOutputs() const override {
 		return delegate->getNumOutputs();

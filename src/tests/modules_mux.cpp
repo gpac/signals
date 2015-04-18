@@ -12,10 +12,9 @@ using namespace Modules;
 namespace {
 size_t ConnectOutputToInput(IOutput* out, Module * const module, size_t outputIdx) {
 	Modules::IInput *input = new Input<DataBase>(module);
-	auto inputPin = module->addInputPin(input);
-	ASSERT((void*)inputPin == (void*)module->getInputPin(outputIdx));
-	return ConnectOutputToModule(out, module->getInputPin(outputIdx));
-}
+	auto input = module->addInput(input);
+	ASSERT((void*)input == (void*)module->getInput(outputIdx));
+	return ConnectOutputToModule(out, module->getInput(outputIdx));
 }
 
 unittest("remux test: GPAC mp4 mux") {
@@ -27,4 +26,10 @@ unittest("remux test: GPAC mp4 mux") {
 	}
 
 	demux->process(nullptr);
+}
+
+unittest("multiple inputs: send same packets to 2 GPAC mp4 mux inputs") {
+	//TODO
+}
+
 }
