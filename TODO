@@ -3,14 +3,20 @@ Mid Term apps:
 
 Tasks (from higher to lower priority):
 - Multiple inputs:
- * Add type checking at connect time
+ * have only one type of module, even for pipelinedModule, and remove pipelinedModule template
+ * dynamic media types: convey metadata with data
+ * Add type checking at connect time: not so easy because typeid is not as powerful as dynamic_cast:
+//#include <type_traits>
+//	if (typeid(output->getMetadata().get()) != typeid(input->getMetadata().get()))
+//		throw std::runtime_error("Module connection: incompatible types");
   - dynamic: we could create the input pins when receiving data for the first time
-  - use pipeline to automatically add converters, instead of being done with modules?
+  - use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
  * DashCast:
   - multi-rep
 - Log
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
  * add time to log msg?
+- have super modules: one per familiy
 - write un automatic module tester: valgrind + change of mediatypes etc.
 - Update build system and deps to use Makefile and zenbuild
 - be able to draw the graph of connections (and allocator states?)

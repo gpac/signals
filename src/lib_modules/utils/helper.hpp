@@ -30,7 +30,6 @@ template<typename OutputType, typename ModuleType>
 size_t ConnectModules(OutputType *output, ModuleType *module, size_t inputIdx, IProcessExecutor& executor = defaultExecutor) {
 	auto input = module->getInput(inputIdx);
 	auto functor = MEMBER_FUNCTOR_PROCESS(input);
-	//TODO: check types:http://www.cplusplus.com/reference/typeinfo/type_info/
 	return ConnectOutput(output, functor, executor);
 }
 

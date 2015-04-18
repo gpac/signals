@@ -53,8 +53,7 @@ public:
 	OutputT(IMetadata *metadata = nullptr)
 		: MetadataCap(metadata), allocator(new Allocator) {
 	}
-
-	~OutputT() noexcept(false) {
+	virtual ~OutputT() noexcept(false) {
 		allocator->unblock();
 	}
 
@@ -88,7 +87,7 @@ private:
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
 typedef OutputDataDefault<RawData> OutputDefault;
 
-class OutputCap : public IOutputCap {
+class OutputCap {
 public:
 	virtual ~OutputCap() noexcept(false) {}
 
