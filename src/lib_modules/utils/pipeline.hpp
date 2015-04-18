@@ -41,14 +41,19 @@ public:
 	: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
 	~PipelinedModule () noexcept(false) {}
-	void connect(IOutput* out, size_t inputIdx) {
-		ConnectModules(out, this, inputIdx, executor);
+
+	template<typename OutputType>
+	void connect(OutputType* output, size_t inputIdx) {
+		ConnectModules(output, this, inputIdx, executor);
 	}
 	size_t getNumInputs() const override {
 		return delegate->getNumInputs();
 	}
 	size_t getNumOutputs() const override {
 		return delegate->getNumOutputs();
+	}
+	virtual IOutput* getOutput(size_t i) const override {
+		return delegate->getOutput(i);
 	}
 
 	/* direct call: receiving nullptr stops the execution */
