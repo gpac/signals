@@ -79,8 +79,6 @@ unittest("transcoder: video simple (gpac mux)") {
 	demux->process(nullptr);
 }
 
-#ifdef ENABLE_FAILING_TESTS
-//TODO: we have no media type when connecting
 unittest("transcoder: jpg to jpg") {
 	const std::string filename("data/sample.jpg");
 	auto decode = uptr(new Decode::JPEGTurboDecode());
@@ -128,7 +126,6 @@ unittest("transcoder: jpg to resized jpg") {
 
 	reader->process(nullptr);
 }
-#endif
 
 unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
@@ -152,15 +149,12 @@ unittest("transcoder: h264/mp4 to jpg") {
 	demux->process(nullptr);
 }
 
-#ifdef ENABLE_FAILING_TESTS
-//TODO: we have no media type when connecting
 unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	const std::string filename("data/sample.jpg");
 	auto decode = uptr(new Decode::JPEGTurboDecode());
 	{
 		auto preReader = uptr(new In::File(filename));
 		ConnectOutputToModule(preReader->getOutput(0), decode);
-		//FIXME: to retrieve the metadata, we now need to decode (need to have a memory module keeping the data while inspecting)
 		preReader->process(nullptr);
 	}
 	auto reader = uptr(new In::File(filename));
@@ -181,6 +175,5 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 
 	reader->process(nullptr);
 }
-#endif
 
 }

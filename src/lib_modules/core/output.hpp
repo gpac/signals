@@ -113,7 +113,7 @@ protected:
 	//Takes ownership
 	template<typename T>
 	T* addOutput(T* p) {
-		if (m_isLowLatency) //FIXME: current low latency is bullshit, use a factory instead
+		if (m_isLowLatency)
 			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
 		outputs.push_back(uptr(p));
 		return p;

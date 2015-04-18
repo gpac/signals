@@ -14,7 +14,7 @@ public:
 	~LibavMux();
 	void process2(bool dataTypeUpdated) override;
 	void flush() override {}
-	void process(Data data) { //FIXME: here for Module compatibility with Pipeline only
+	void process(Data data) {
 		if (inputs.size() == 0)
 			addInputPin(new Input<DataBase>(this));
 		assert(inputs.size() == 1);

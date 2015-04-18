@@ -10,19 +10,19 @@ extern "C" {
 namespace Encode {
 
 class JPEGTurbo {
-	public:
-		JPEGTurbo() {
-			handle = tjInitCompress();
-		}
-		~JPEGTurbo() {
-			tjDestroy(handle);
-		}
-		tjhandle get() {
-			return handle;
-		}
+public:
+	JPEGTurbo() {
+		handle = tjInitCompress();
+	}
+	~JPEGTurbo() {
+		tjDestroy(handle);
+	}
+	tjhandle get() {
+		return handle;
+	}
 
-	private:
-		tjhandle handle;
+private:
+	tjhandle handle;
 };
 
 JPEGTurboEncode::JPEGTurboEncode(Resolution resolution, int JPEGQuality)

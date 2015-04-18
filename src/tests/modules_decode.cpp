@@ -18,7 +18,7 @@ using namespace Modules;
 namespace {
 Decode::LibavDecode* createGenericDecoder(enum AVCodecID id) {
 	auto codec = avcodec_find_decoder(id);
-	auto context = avcodec_alloc_context3(codec);// FIXME: leak
+	auto context = avcodec_alloc_context3(codec);
 	MetadataPktLibav metadata(context);
 	auto decode = new Decode::LibavDecode(metadata);
 	avcodec_close(context);
