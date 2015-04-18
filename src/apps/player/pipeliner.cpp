@@ -4,7 +4,7 @@
 #include <sstream>
 
 namespace {
-IModule* createRenderer(int codecType) {
+ModuleS* createRenderer(int codecType) {
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "Found video stream");
 		return new Render::SDLVideo();

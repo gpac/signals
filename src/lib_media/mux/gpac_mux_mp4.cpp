@@ -622,10 +622,10 @@ void GPACMuxMP4::declareStream(Data data) {
 	}
 }
 
-void GPACMuxMP4::process() {
-	Data data_; //Romain
-	declareStream(data_);
-
+void GPACMuxMP4::process2(bool dataTypeUpdated) {
+	Data data_ = inputs[0]->pop();
+	if (dataTypeUpdated)
+		declareStream(data_);
 	auto data = safe_cast<const DataAVPacket>(data_);
 
 	GF_ISOSample sample;

@@ -21,7 +21,7 @@ Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadataPkt> metadata,
 	}
 }
 
-IModule* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Resolution &dstRes) {
+ModuleS* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Resolution &dstRes) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");

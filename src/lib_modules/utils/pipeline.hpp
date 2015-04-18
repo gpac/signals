@@ -5,6 +5,12 @@
 #include "stranded_pool_executor.hpp"
 #include "../core/module.hpp"
 
+
+#define EXECUTOR_SYNC ExecutorSync<void(Data)>
+#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
+#define EXECUTOR EXECUTOR_ASYNC
+
+
 namespace Modules {
 
 struct IOutput;
@@ -22,27 +28,61 @@ struct IPipelinedModule : public IOutputCap {
 };
 
 template<typename ModuleType>
-class PipelinedModule : public IPipelinedModule, public IModule {
+class PipelinedModule : public IPipelinedModule, public ModuleS {
 public:
 	/* take ownership of module */
-	PipelinedModule(ModuleType *module, ICompletionNotifier *notify);
-	void connect(IOutput* out);
-	size_t getNumOutputs() const override;
-	IOutput* getOutput(size_t i) const override;
+	PipelinedModule(ModuleType *module, ICompletionNotifier *notify)
+	: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
+	}
+	void connect(IOutput* out) {
+		ConnectToModule(out->getSignal(), this, executor);
+	}
+	size_t getNumOutputs() const override {
+		return delegate->getNumOutputs();
+	}
+	IOutput* getOutput(size_t i) const override {
+		return delegate->getOutput(i);
+	}
 
 	/* direct call: receiving nullptr stops the execution */
-	void process(Data data);
+	void process(Data data) {
+		if (data) {
+			delegate->process(data);
+		} else {
+			endOfStream();
+		}
+	}
 
 	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(Data data) override;
+	void dispatch(Data data) override {
+		if (isSource()) {
+			assert(data == nullptr);
+			executor(MEMBER_FUNCTOR(delegate.get(), &ModuleType::process), data);
+		}
+		executor(MEMBER_FUNCTOR(this, &PipelinedModule::process), data);
+	}
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
-	void setSource(bool isSource) override;
-	bool isSource() const override;
-	bool isSink() const override;
+	void setSource(bool isSource) override {
+		type = isSource ? Source : None;
+	}
+	bool isSource() const override {
+		return type == Source;
+	}
+	bool isSink() const override {
+		return delegate->getNumOutputs() == 0;
+	}
 
 private:
-	void endOfStream();
+	void endOfStream() {
+		delegate->flush();
+		if (isSink()) {
+			m_notify->finished();
+		} else {
+			for (size_t i = 0; i < delegate->getNumOutputs(); ++i)
+				delegate->getOutput(i)->emit(Data(nullptr));
+		}
+	}
 
 	enum Type {
 		None,
@@ -61,10 +101,22 @@ public:
 	Pipeline(bool isLowLatency = false);
 
 	template<typename ModuleType>
-	PipelinedModule<ModuleType>* addModule(ModuleType* rawModule, bool isSource = false);
+	PipelinedModule<ModuleType>* addModule(ModuleType* rawModule, bool isSource = false) {
+		if (!rawModule)
+			return nullptr;
+		rawModule->setLowLatency(isLowLatency);
+		auto module = uptr(new PipelinedModule<ModuleType>(rawModule, this));
+		module->setSource(isSource);
+		modules.push_back(std::move(module));
+		return module.get();
+	}
 
 	template<typename ModuleType>
-	void connect(IOutput* out, PipelinedModule<ModuleType> *module);
+	void connect(IOutput* out, PipelinedModule<ModuleType> *module) {
+		if (module->isSink())
+			numRemainingNotifications++;
+		module->connect(out);
+	}
 
 	void start();
 	void waitForCompletion();
