@@ -109,7 +109,7 @@ void LibavMux::ensureHeader() {
 	}
 }
 
-void LibavMux::process2(bool dataTypeUpdated) {
+void LibavMux::process(bool dataTypeUpdated) {
 	Data data = inputs[0]->pop();
 	if (dataTypeUpdated)
 		declareStream(data);

@@ -18,7 +18,7 @@ class GPACMuxMP4 : public Module {
 public:
 	GPACMuxMP4(const std::string &baseName, bool useSegments = false, uint64_t segDurationInMs = 2000);
 	~GPACMuxMP4();
-	void process2(bool dataTypeUpdated) override;
+	void process(bool dataTypeUpdated) override;
 	void flush() override;
 	void process(Data data) {
 		if (inputs.size() == 0)

@@ -12,7 +12,7 @@ class LibavMux : public Module {
 public:
 	LibavMux(const std::string &baseName);
 	~LibavMux();
-	void process2(bool dataTypeUpdated) override;
+	void process(bool dataTypeUpdated) override;
 	void flush() override {}
 	void process(Data data) {
 		if (inputs.size() == 0)

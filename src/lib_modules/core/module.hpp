@@ -9,7 +9,7 @@
 namespace Modules {
 struct IModule {
 	virtual ~IModule() noexcept(false) {}
-	virtual void process2(bool dataTypeUpdated) = 0;
+	virtual void process(bool dataTypeUpdated) = 0;
 	virtual void flush() = 0;
 };
 }
