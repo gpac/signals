@@ -12,8 +12,8 @@ namespace Modules {
 struct IInput : public IModule, public MetadataCap, public Signals::Queue<Data> {
 	virtual ~IInput() noexcept(false) {}
 	virtual void process(Data data) = 0;
-	void flush() override {};
-	void process() override {
+	virtual void flush() override {};
+	virtual void process2(bool /*dataTypeUpdated*/) override {
 		Data data;
 		if (tryPop(data))
 			process(data);
@@ -25,11 +25,9 @@ class Input : public IInput {
 public:
 	Input(IModule * const module) : module(module) {}
 
-	void process(Data data) {
-		if (updateMetadata(data))
-			module->flush();
+	void process(Data data) override {
 		push(safe_cast<const DataType>(data));
-		module->process();
+		module->process2(updateMetadata(data));
 	}
 
 private:

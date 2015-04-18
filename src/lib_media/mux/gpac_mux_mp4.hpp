@@ -18,8 +18,12 @@ class GPACMuxMP4 : public Module {
 public:
 	GPACMuxMP4(const std::string &baseName, bool useSegments = false, uint64_t segDurationInMs = 2000);
 	~GPACMuxMP4();
-	void process() override;
+	void process2(bool dataTypeUpdated) override;
 	void flush() override;
+	void process(Data data) { //FIXME: here for Module compatibility with Pipeline only
+		assert(inputs.size() == 1);
+		inputs[0]->process(data);
+	}
 
 private:
 	void declareStream(Data stream);

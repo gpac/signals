@@ -9,7 +9,7 @@
 namespace Modules {
 struct IModule {
 	virtual ~IModule() noexcept(false) {}
-	virtual void process() = 0;
+	virtual void process2(bool dataTypeUpdated) = 0;
 	virtual void flush() = 0;
 };
 }
@@ -20,7 +20,7 @@ namespace Modules {
 class Module : public IModule, public InputCap, public OutputCap {
 public:
 	Module() = default;
-	void process() override;
+	virtual ~Module() noexcept(false) {}
 
 private:
 	Module(Module const&) = delete;
@@ -32,6 +32,7 @@ class ModuleS : public IInput, public OutputCap {
 public:
 	ModuleS() = default;
 	virtual ~ModuleS() noexcept(false) {}
+	virtual void process(Data data) = 0;
 
 private:
 	ModuleS(ModuleS const&) = delete;
