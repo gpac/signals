@@ -68,7 +68,7 @@ void AudioConvert::process(Data data) {
 		}
 
 		srcNumSamples = audioData->size() / audioData->getFormat().getBytesPerSample();
-		dstNumSamples = divUp(srcNumSamples * dstPcmFormat.sampleRate, (uint64_t)srcPcmFormat.sampleRate);
+		dstNumSamples = divUp(srcNumSamples * dstPcmFormat.sampleRate, (uint64_t)srcPcmFormat.sampleRate); //FIXME: this number depends on the next module (encoder) spec
 		pSrc = audioData->getPlanes();
 	} else {
 		dstNumSamples = m_Swr->getDelay(dstPcmFormat.sampleRate);

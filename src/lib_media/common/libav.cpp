@@ -178,7 +178,10 @@ void libavFrameDataConvert(const PcmData *pcmData, AVFrame *frame) {
 	libavAudioCtxConvertLibav(&format, frame->sample_rate, frame->format, frame->channels, frame->channel_layout);
 	for (size_t i = 0; i < format.numPlanes; ++i) {
 		frame->data[i] = pcmData->getPlane(i);
-		frame->linesize[i] = (int)pcmData->getPlaneSize(i);
+		if (i == 0)
+			frame->linesize[i] = (int)pcmData->getPlaneSize(i) / format.numChannels;
+		else
+			frame->linesize[i] = 0;
 	}
 	frame->nb_samples = (int)(pcmData->size() / format.getBytesPerSample());
 }
