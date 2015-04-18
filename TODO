@@ -2,10 +2,14 @@ Mid Term apps:
 2. b) socket in, GPAC demux (MP4 or TS), DASH out
 
 Tasks (from higher to lower priority):
+- Make a pass on 'Output' in module headers: they should not own any
+- Add type checking at connect time
+ * dynamic: we could create the input pins when receiving data for the first time
 - DashCast:
  * multi-rep
 - Log
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
+ * add time to log msg?
 - SDL and renderers should be able to run in thread 0
  * http://stackoverflow.com/questions/20530218/check-if-current-thread-is-main-thread
  * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c
@@ -14,6 +18,7 @@ Tasks (from higher to lower priority):
 - be able to draw the graph of connections (and allocator states?)
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
 - some modules may still assume the first timestamp is zero...
+- mak module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
 - muxer example with two inputs of the same type (e.g. video)

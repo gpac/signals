@@ -107,8 +107,9 @@ public:
 		rawModule->setLowLatency(isLowLatency);
 		auto module = uptr(new PipelinedModule<ModuleType>(rawModule, this));
 		module->setSource(isSource);
+		auto ret = module.get();
 		modules.push_back(std::move(module));
-		return module.get();
+		return ret;
 	}
 
 	template<typename ModuleType>

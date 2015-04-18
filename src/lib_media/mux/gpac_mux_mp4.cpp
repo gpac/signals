@@ -550,6 +550,8 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 	}
 
 	setupFragments();
+
+	output->setMetadata(metadata);
 }
 
 void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> metadata) {
@@ -608,16 +610,18 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 #endif
 
 	setupFragments();
+
+	output->setMetadata(metadata);
 }
 
 void GPACMuxMP4::declareStream(Data data) {
 	auto const metadata = data->getMetadata();
-	//if (metadata.get()/*FIXME: put shared ptr everywhere*/ == getInputPin(0)->getMetadata())
+	//if (metadata == getInputPin(0)->getMetadata()) //Romain
 	//	return;
 
-	if (auto video = safe_cast<const MetadataPktLibavVideo>(metadata)) {
+	if (auto video = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata)) {
 		declareStreamVideo(video);
-	} else if (auto audio = safe_cast<const MetadataPktLibavAudio>(metadata)) {
+	} else if (auto audio = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata)) {
 		declareStreamAudio(audio);
 	}
 }
