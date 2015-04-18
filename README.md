@@ -29,6 +29,6 @@ In the Signals root path:
   $ export PKG_CONFIG_PATH=/mingw32/lib/pkgconfig
 
 Visual Studio:
-You need at least Visual Studio 2014 CTP3.
+You need at least Visual Studio 2015.
 Get the dependency repository from https://github.com/rbouqueau/signals-deps.git
 Copy paste the Signals folder on the batch
