@@ -40,8 +40,8 @@ public:
 	PipelinedModule(ModuleType *module, ICompletionNotifier *notify)
 	: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
-	void connect(IOutput* out) {
-		ConnectOutputToModule(out, this, executor);
+	void connect(IOutput* out, size_t inputIdx) {
+		ConnectModules(out, this, inputIdx, executor);
 	}
 	size_t getNumInputs() const override {
 		return delegate->getNumInputs();
@@ -124,11 +124,11 @@ public:
 		return ret;
 	}
 
-	template<typename ModuleType>
-	void connect(IOutput* out, PipelinedModule<ModuleType> *module) {
-		if (module->isSink())
+	template<typename ModuleType1, typename ModuleType2>
+	void connect(ModuleType1* output, size_t outputIdx, PipelinedModule<ModuleType2> *input, size_t inputIdx) {
+		if (input->isSink())
 			numRemainingNotifications++;
-		module->connect(out);
+		input->connect(output->getOutput(outputIdx), inputIdx);
 	}
 
 	void start();

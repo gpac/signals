@@ -20,7 +20,7 @@ ModuleS* createRenderer(int codecType) {
 
 void declarePipeline(Pipeline &pipeline, const char *url) {
 	auto connect = [&](auto* src, auto* dst) {
-		pipeline.connect(src->getOutput(0), dst);
+		pipeline.connect(src, 0, dst, 0);
 	};
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(url), true);
@@ -28,7 +28,7 @@ void declarePipeline(Pipeline &pipeline, const char *url) {
 		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 
-		pipeline.connect(demux->getOutput(i), decode);
+		pipeline.connect(demux, i, decode, 0);
 
 		auto render = pipeline.addModule(createRenderer(metadata->getStreamType()));
 		if (!render)
