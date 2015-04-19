@@ -26,6 +26,7 @@ void IComparator::process(Data data) {
 	}
 }
 
+//FIXME: Romain: re-implement with multiple inputs
 void IComparator::pushOriginal(Data data) {
 	original.push(data);
 }
@@ -34,6 +35,11 @@ void IComparator::pushOther(Data data) {
 	other.push(data);
 }
 
+
+PcmComparator::PcmComparator() {
+	auto input = addInput(new Input<PcmData>(this));
+	input->setMetadata(new MetadataRawAudio);
+}
 
 bool PcmComparator::compare(Data data1, Data data2) const {
 	auto pcm1 = safe_cast<const PcmData>(data1);

@@ -35,6 +35,7 @@ public:
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 : reader(new ISOProgressiveReader) {
+	auto input = addInput(new Input<RawData>(this));
 	output = addOutput(new OutputDefault);
 }
 

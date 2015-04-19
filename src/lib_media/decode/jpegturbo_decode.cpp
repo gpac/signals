@@ -29,16 +29,16 @@ private:
 
 AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {
 	switch (JPEGTurboPixelFmt) {
-	case TJPF_RGB:
-		return AV_PIX_FMT_RGB24;
-	default:
-		throw std::runtime_error("[JPEGTurboDecode] Unsupported pixel format conversion. Failed.");
+	case TJPF_RGB: return AV_PIX_FMT_RGB24;
+	default: throw std::runtime_error("[JPEGTurboDecode] Unsupported pixel format conversion. Failed.");
 	}
 	return AV_PIX_FMT_NONE;
 }
 
 JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
+	auto input = addInput(new Input<RawData>(this));
+	input->setMetadata(new MetadataPktVideo);
 	output = addOutput(new OutputDefault);
 }
 

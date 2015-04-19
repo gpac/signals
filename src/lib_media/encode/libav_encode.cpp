@@ -151,12 +151,18 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 
 	output = addOutput(new OutputDataDefault<DataAVPacket>);
 	switch (type) {
-	case Video:
+	case Video: {
+		auto input = addInput(new Input<Picture>(this));
+		input->setMetadata(new MetadataRawVideo);
 		output->setMetadata(new MetadataPktLibavVideo(codecCtx));
 		break;
-	case Audio:
+	}
+	case Audio: {
+		auto input = addInput(new Input<PcmData>(this));
+		input->setMetadata(new MetadataRawAudio);
 		output->setMetadata(new MetadataPktLibavAudio(codecCtx));
 		break;
+	}
 	default:
 		assert(0);
 	}

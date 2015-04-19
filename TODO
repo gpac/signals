@@ -3,6 +3,7 @@ Mid Term apps:
 
 Tasks (from higher to lower priority):
 - Multiple inputs:
+ * rename: RawData -> DataRaw, PcmData, Picture
  * rename: output -> prev, input -> next
  * pipelineModule needs to call process on the appropriate pin, convert all modules, pipelineModule doesn't need to have the same interface as module
  * dynamic media types:

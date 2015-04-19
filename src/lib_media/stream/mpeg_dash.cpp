@@ -167,6 +167,7 @@ void MPEG_DASH::process(Data data) {
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time
 	 */
+	//FIXME: Romain: reimplement with multiple inputs
 	switch (data->getMetadata()->getStreamType()) {
 	case AUDIO_PKT:
 		audioDataQueue.push(data);

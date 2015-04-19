@@ -11,6 +11,8 @@ namespace Transform {
 AudioConvert::AudioConvert(const PcmFormat &dstFormat)
 : dstPcmFormat(dstFormat), m_Swr(nullptr), accumulatedTimeInDstSR(0), autoConfigure(true) {
 	memset(&srcPcmFormat, 0, sizeof(srcPcmFormat));
+	auto input = addInput(new Input<PcmData>(this));
+	input->setMetadata(new MetadataRawAudio);
 	output = addOutput(new OutputPcm);
 }
 

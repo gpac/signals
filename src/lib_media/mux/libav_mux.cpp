@@ -81,14 +81,15 @@ void LibavMux::declareStream(Data data) {
 			Log::msg(Log::Warning, "[LibavMux] could not create the stream, disable output.");
 			throw std::runtime_error("[LibavMux] Stream creation failed.");
 		}
-		if (metadata->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
-			m_formatCtx->streams[0]->codec->time_base = metadata->getAVCodecContext()->time_base; //FIXME: [0]: not a mux yet...
-			m_formatCtx->streams[0]->codec->width = metadata->getAVCodecContext()->width;
-			m_formatCtx->streams[0]->codec->height = metadata->getAVCodecContext()->height;
-		}
-		if (m_formatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
+
+		m_formatCtx->streams[0]->codec->time_base = metadata->getAVCodecContext()->time_base; //FIXME: [0]: not a mux yet...
+		m_formatCtx->streams[0]->codec->width = metadata->getAVCodecContext()->width;
+		m_formatCtx->streams[0]->codec->height = metadata->getAVCodecContext()->height;
+		if (m_formatCtx->oformat->flags & AVFMT_GLOBALHEADER)
 			m_formatCtx->streams[0]->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
-		}
+
+		auto input = addInput(new Input<DataAVPacket>(this));
+		input->setMetadata(new MetadataPktLibavVideo(metadata->getAVCodecContext()));
 	} else {
 		throw std::runtime_error("[LibavMux] Stream creation failed: unknown type.");
 	}
