@@ -64,7 +64,7 @@ SDLAudio::SDLAudio(IClock* clock)
 	if (!reconfigure(pcmFormat.get()))
 		throw std::runtime_error("Audio output creation failed");
 
-	auto input = addInput(new Input<PcmData>(this));
+	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
 	Signals::Connect(m_converter->getOutput(0)->getSignal(), this, &SDLAudio::push, g_executorSync);
 }
@@ -90,7 +90,7 @@ void SDLAudio::process(Data data) {
 }
 
 void SDLAudio::push(Data data) {
-	auto pcmData = safe_cast<const PcmData>(data);
+	auto pcmData = safe_cast<const DataPcm>(data);
 
 	std::lock_guard<std::mutex> lg(m_Mutex);
 	if(m_Fifo.bytesToRead() == 0) {

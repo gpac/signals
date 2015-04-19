@@ -40,7 +40,7 @@ public:
 	void flush() override;
 
 private:
-	bool processAudio(const PcmData *data);
+	bool processAudio(const DataPcm *data);
 	bool processVideo(const DataPicture *data);
 
 	AVCodecContext *codecCtx;

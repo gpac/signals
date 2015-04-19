@@ -37,13 +37,13 @@ void IComparator::pushOther(Data data) {
 
 
 PcmComparator::PcmComparator() {
-	auto input = addInput(new Input<PcmData>(this));
+	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
 }
 
 bool PcmComparator::compare(Data data1, Data data2) const {
-	auto pcm1 = safe_cast<const PcmData>(data1);
-	auto pcm2 = safe_cast<const PcmData>(data2);
+	auto pcm1 = safe_cast<const DataPcm>(data1);
+	auto pcm2 = safe_cast<const DataPcm>(data2);
 	if (pcm1->getFormat() != pcm2->getFormat())
 		throw std::runtime_error("[PcmComparator] Incompatible audio data");
 
@@ -51,7 +51,7 @@ bool PcmComparator::compare(Data data1, Data data2) const {
 	auto const size2 = pcm2->size();
 	if (size1 != size2)
 		Log::msg(Log::Warning, "[PcmComparator] Sample sizes are different, comparing the overlap.");
-	const PcmData *data;
+	const DataPcm *data;
 	if (size1 < size2)
 		data = pcm1.get();
 	else

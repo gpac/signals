@@ -158,7 +158,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		break;
 	}
 	case Audio: {
-		auto input = addInput(new Input<PcmData>(this));
+		auto input = addInput(new Input<DataPcm>(this));
 		input->setMetadata(new MetadataRawAudio);
 		output->setMetadata(new MetadataPktLibavAudio(codecCtx));
 		break;
@@ -190,7 +190,7 @@ LibavEncode::~LibavEncode() {
 	}
 }
 
-bool LibavEncode::processAudio(const PcmData *data) {
+bool LibavEncode::processAudio(const DataPcm *data) {
 	auto out = output->getBuffer(0);
 	AVPacket *pkt = out->getPacket();
 	AVFrame *f = nullptr;
@@ -260,7 +260,7 @@ void LibavEncode::process(Data data) {
 		break;
 	}
 	case AVMEDIA_TYPE_AUDIO: {
-		const auto pcmData = safe_cast<const PcmData>(data);
+		const auto pcmData = safe_cast<const DataPcm>(data);
 		if (pcmData->getFormat() != *pcmFormat)
 			throw std::runtime_error("[LibavEncode] Incompatible audio data");
 		processAudio(pcmData.get());
