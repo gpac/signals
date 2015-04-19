@@ -5,7 +5,7 @@ namespace Modules {
 namespace Utils {
 
 Recorder::Recorder() {
-	auto input = addInput(new Input<DataBase>(this));
+	addInput(new Input<DataBase>(this));
 }
 
 void Recorder::flush() {

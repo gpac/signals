@@ -24,7 +24,7 @@ class Input : public IInput {
 public:
 	Input(ModuleType * const module) : module(module) {}
 
-	void process(Data data) override {
+	virtual void process(Data data) override {
 		push(safe_cast<const DataType>(data));
 		module->process(updateMetadata(data));
 	}
@@ -49,10 +49,10 @@ public:
 		inputs.push_back(uptr(p));
 		return p;
 	}
-	size_t getNumInputs() const override {
+	virtual size_t getNumInputs() const override {
 		return inputs.size();
 	}
-	IInput* getInput(size_t i) override {
+	virtual IInput* getInput(size_t i) override {
 		return inputs[i].get();
 	}
 

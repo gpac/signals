@@ -49,6 +49,9 @@ public:
 	ModuleDynI() = default;
 	virtual ~ModuleDynI() noexcept(false) {}
 
+	virtual size_t getNumInputs() const override {
+		return std::max<size_t>(inputs.size(), 1);
+	}
 	IInput* getInput(size_t i) override {
 		if (i == inputs.size())
 			addInput(new Input<DataBase>(this));
