@@ -42,9 +42,20 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 
 	auto Metadata_new = new MetadataPktLibav(codecCtx);
 	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO: videoOutput = addOutput(new OutputPicture(Metadata_new)); break;
-	case AVMEDIA_TYPE_AUDIO: audioOutput = addOutput(new OutputPcm(Metadata_new)); break;
-	default: throw std::runtime_error("[LibavDecode] Invalid output type.");
+	case AVMEDIA_TYPE_VIDEO: {
+		auto input = addInput(new Input<DataAVPacket>(this));
+		input->setMetadata(new MetadataPktLibavVideo(codecCtx));
+		videoOutput = addOutput(new OutputPicture(Metadata_new));
+		break;
+	}
+	case AVMEDIA_TYPE_AUDIO: {
+		auto input = addInput(new Input<DataAVPacket>(this));
+		input->setMetadata(new MetadataPktLibavAudio(codecCtx));
+		audioOutput = addOutput(new OutputPcm(Metadata_new));
+		break;
+	}
+	default:
+		throw std::runtime_error("[LibavDecode] Invalid output type.");
 	}
 }
 

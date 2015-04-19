@@ -17,6 +17,8 @@ namespace Transform {
 
 VideoConvert::VideoConvert(const PictureFormat &dstFormat)
 : m_SwContext(nullptr), dstFormat(dstFormat) {
+	auto input = addInput(new Input<Picture>(this));
+	input->setMetadata(new MetadataRawVideo);
 	output = addOutput(new OutputPicture);
 }
 

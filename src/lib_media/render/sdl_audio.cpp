@@ -64,6 +64,8 @@ SDLAudio::SDLAudio(IClock* clock)
 	if (!reconfigure(pcmFormat.get()))
 		throw std::runtime_error("Audio output creation failed");
 
+	auto input = addInput(new Input<PcmData>(this));
+	input->setMetadata(new MetadataRawAudio);
 	Signals::Connect(m_converter->getOutput(0)->getSignal(), this, &SDLAudio::push, g_executorSync);
 }
 

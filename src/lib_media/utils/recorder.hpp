@@ -8,6 +8,7 @@ namespace Utils {
 
 class Recorder : public ModuleS {
 public:
+	Recorder();
 	void process(Data data) override;
 	void flush() override;
 

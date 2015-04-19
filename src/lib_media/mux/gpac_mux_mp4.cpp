@@ -551,6 +551,8 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 
 	setupFragments();
 
+	auto input = addInput(new Input<DataAVPacket>(this));
+	input->setMetadata(new MetadataPktLibavAudio(metadata->getAVCodecContext()));
 	output->setMetadata(metadata);
 }
 
@@ -611,6 +613,8 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 
 	setupFragments();
 
+	auto input = addInput(new Input<DataAVPacket>(this));
+	input->setMetadata(new MetadataPktLibavVideo(metadata->getAVCodecContext()));
 	output->setMetadata(metadata);
 }
 

@@ -19,6 +19,7 @@ private:
 
 class PcmComparator : public IComparator {
 public:
+	PcmComparator();
 	bool compare(Data data1, Data data2) const override;
 	void pushOriginal(Data data) override;
 	void pushOther(Data data) override;

@@ -11,6 +11,7 @@ void Print::process(Data data_) {
 }
 
 Print::Print(std::ostream &os) : os(os) {
+	auto input = addInput(new Input<RawData>(this));
 }
 
 }

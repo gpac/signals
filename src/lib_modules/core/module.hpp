@@ -17,10 +17,7 @@ struct IModule {
 
 class Module : public IModule, public InputCap, public OutputCap {
 public:
-	Module()// = default; //Romain: change on real multiple-output: muxers could create their automatically is dynamic (Cap?)
-	{
-		addInput(new Input<DataBase>(this));
-	}
+	Module() = default;
 	virtual ~Module() noexcept(false) {}
 	virtual void flush() {}
 	virtual void process(Data data) { //Romain: to remove once pipeline move to 'Module' instead of 'ModuleS'
@@ -38,9 +35,7 @@ private:
 //single input specialized module
 class ModuleS : public Module {
 public:
-	ModuleS() {
-		addInput(new Input<DataBase>(this));
-	}
+	ModuleS() = default;
 	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(Data data) = 0;
 	virtual void process(bool /*dataTypeUpdated*/) override {

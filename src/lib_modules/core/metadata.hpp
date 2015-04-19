@@ -38,6 +38,21 @@ struct MetadataRawAudio : public IMetadata {
 	}
 };
 
+struct MetadataPkt : public IMetadata {
+};
+
+struct MetadataPktVideo : public MetadataPkt {
+	virtual StreamType getStreamType() const override {
+		return VIDEO_PKT;
+	}
+};
+
+struct MetadataPktAudio : public MetadataPkt {
+	virtual StreamType getStreamType() const override {
+		return AUDIO_PKT;
+	}
+};
+
 class MetadataCap : public IMetadataCap {
 public:
 	MetadataCap(IMetadata *metadata = nullptr) : m_metadata(metadata) {}
