@@ -26,7 +26,7 @@ unittest("transcoder: video simple (libav mux)") {
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
-		auto metadata = getMetadataFromOutput<IMetadataPkt>(demux->getOutput(i));
+		auto metadata = getMetadataFromOutput<IMetadata>(demux->getOutput(i));
 		if (metadata->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
@@ -57,7 +57,7 @@ unittest("transcoder: video simple (gpac mux)") {
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
-		auto metadata = getMetadataFromOutput<IMetadataPkt>(demux->getOutput(i));
+		auto metadata = getMetadataFromOutput<IMetadata>(demux->getOutput(i));
 		if (metadata->getStreamType() == VIDEO_PKT) {
 			videoIndex = i;
 		} else {
