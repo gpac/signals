@@ -8,7 +8,7 @@ using namespace Modules;
 
 namespace Mux {
 
-class LibavMux : public Module {
+class LibavMux : public ModuleDynI {
 public:
 	LibavMux(const std::string &baseName);
 	~LibavMux();
