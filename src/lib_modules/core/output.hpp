@@ -63,7 +63,7 @@ private:
 };
 
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
-typedef OutputDataDefault<RawData> OutputDefault;
+typedef OutputDataDefault<DataRaw> OutputDefault;
 
 struct IOutputCap {
 	virtual ~IOutputCap() noexcept(false) {}
