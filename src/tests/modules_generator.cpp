@@ -31,7 +31,7 @@ unittest("video generator") {
 
 	std::vector<int> times;
 	auto onFrame = [&](Data data) {
-		auto rawData = safe_cast<const Picture>(data);
+		auto rawData = safe_cast<const DataPicture>(data);
 		times.push_back((int)rawData->getTime());
 		render->process(rawData);
 	};

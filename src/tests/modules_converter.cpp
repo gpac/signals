@@ -130,7 +130,7 @@ unittest("video converter: pass-through") {
 	int numFrames = 0;
 
 	auto onFrame = [&](Data data) {
-		auto pic = safe_cast<const Picture>(data);
+		auto pic = safe_cast<const DataPicture>(data);
 		ASSERT(pic->getFormat() == format);
 		numFrames++;
 	};
@@ -153,7 +153,7 @@ unittest("video converter: different sizes") {
 	int numFrames = 0;
 
 	auto onFrame = [&](Data data) {
-		auto pic = safe_cast<const Picture>(data);
+		auto pic = safe_cast<const DataPicture>(data);
 		ASSERT(pic->getFormat() == format);
 		numFrames++;
 	};

@@ -17,7 +17,7 @@ namespace Transform {
 
 VideoConvert::VideoConvert(const PictureFormat &dstFormat)
 : m_SwContext(nullptr), dstFormat(dstFormat) {
-	auto input = addInput(new Input<Picture>(this));
+	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataRawVideo);
 	output = addOutput(new OutputPicture);
 }
@@ -37,7 +37,7 @@ VideoConvert::~VideoConvert() {
 }
 
 void VideoConvert::process(Data data) {
-	auto videoData = safe_cast<const Picture>(data);
+	auto videoData = safe_cast<const DataPicture>(data);
 	if (videoData->getFormat() != srcFormat) {
 		if (m_SwContext)
 			Log::msg(Log::Info, "[VideoConvert] Incompatible input video data. Reconfiguring.");
@@ -58,7 +58,7 @@ void VideoConvert::process(Data data) {
 	case YUV420P:
 	case YUYV422:
 	case RGB24: {
-			auto pic = Picture::create(output, dstFormat.res, dstFormat.format);
+			auto pic = DataPicture::create(output, dstFormat.res, dstFormat.format);
 			for (size_t i=0; i<pic->getNumPlanes(); ++i) {
 				pDst[i] = pic->getPlane(i);
 				dstStride[i] = (int)pic->getPitch(i);

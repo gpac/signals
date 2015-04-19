@@ -66,14 +66,14 @@ public:
 	PixelFormat format;
 };
 
-class Picture;
-typedef OutputDataDefault<Picture> OutputPicture;
+class DataPicture;
+typedef OutputDataDefault<DataPicture> OutputPicture;
 
 //TODO: we should probably separate planar vs non-planar data, avoid resize on the data, etc.
-class Picture : public DataRaw {
+class DataPicture : public DataRaw {
 public:
-	Picture(size_t unused) : DataRaw(0) {}
-	static std::shared_ptr<Picture> create(OutputPicture *out, const Resolution &res, const PixelFormat &format);
+	DataPicture(size_t unused) : DataRaw(0) {}
+	static std::shared_ptr<DataPicture> create(OutputPicture *out, const Resolution &res, const PixelFormat &format);
 
 	PictureFormat getFormat() const {
 		return m_format;
@@ -88,7 +88,7 @@ public:
 	virtual void setResolution(const Resolution &res) = 0;
 
 protected:
-	Picture(const Resolution &res, const PixelFormat &format)
+	DataPicture(const Resolution &res, const PixelFormat &format)
 		: DataRaw(PictureFormat::getSize(res, format)),
 		m_format(res, format) {
 	}
@@ -96,13 +96,13 @@ protected:
 	PictureFormat m_format;
 };
 
-class PictureYUV420P : public Picture {
+class PictureYUV420P : public DataPicture {
 public:
-	PictureYUV420P(size_t unused) : Picture(0) {
+	PictureYUV420P(size_t unused) : DataPicture(0) {
 		m_format.format = YUV420P;
 	}
 	PictureYUV420P(const Resolution &res)
-	: Picture(res, YUV420P) {
+	: DataPicture(res, YUV420P) {
 		setResolution(res);
 	}
 	size_t getNumPlanes() const override {
@@ -134,13 +134,13 @@ private:
 	uint8_t* m_planes[3];
 };
 
-class PictureYUYV422 : public Picture {
+class PictureYUYV422 : public DataPicture {
 public:
-	PictureYUYV422(size_t unused) : Picture(0) {
+	PictureYUYV422(size_t unused) : DataPicture(0) {
 		m_format.format = YUYV422;
 	}
 	PictureYUYV422(const Resolution &res)
-		: Picture(res, YUYV422) {
+		: DataPicture(res, YUYV422) {
 		setResolution(res);
 	}
 	size_t getNumPlanes() const override {
@@ -161,13 +161,13 @@ public:
 	}
 };
 
-class PictureRGB24 : public Picture {
+class PictureRGB24 : public DataPicture {
 public:
-	PictureRGB24(size_t unused) : Picture(0) {
+	PictureRGB24(size_t unused) : DataPicture(0) {
 		m_format.format = RGB24;
 	}
 	PictureRGB24(const Resolution &res)
-		: Picture(res, RGB24) {
+		: DataPicture(res, RGB24) {
 		setResolution(res);
 	}
 	size_t getNumPlanes() const override {

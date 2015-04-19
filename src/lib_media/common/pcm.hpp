@@ -114,9 +114,9 @@ public:
 	uint8_t numPlanes;
 };
 
-class PcmData : public RawData {
+class PcmData : public DataRaw {
 public:
-	PcmData(size_t size) : RawData(0) {
+	PcmData(size_t size) : DataRaw(0) {
 		memset(planes, 0, sizeof(planes));
 		memset(planeSize, 0, sizeof(planeSize));
 		if (size > 0) {

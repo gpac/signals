@@ -27,7 +27,7 @@ private:
 
 JPEGTurboEncode::JPEGTurboEncode(Resolution resolution, int JPEGQuality)
 	: jtHandle(new JPEGTurbo), JPEGQuality(JPEGQuality), resolution(resolution) {
-	auto input = addInput(new Input<Picture>(this));
+	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataRawVideo);
 	output = addOutput(new OutputDefault);
 }

@@ -20,7 +20,7 @@ Uint32 pixelFormat2SDLFormat(const Modules::PixelFormat format) {
 
 SDLVideo::SDLVideo(IClock* clock)
 	: m_clock(clock), texture(nullptr), displayrect(new SDL_Rect()), workingThread(&SDLVideo::doRender, this) {
-	auto input = addInput(new Input<Picture>(this));
+	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataRawVideo);
 	m_dataQueue.pop();
 }
@@ -78,7 +78,7 @@ bool SDLVideo::processOneFrame(Data data) {
 		}
 	}
 
-	auto pic = safe_cast<const Picture>(data);
+	auto pic = safe_cast<const DataPicture>(data);
 	if (pic->getFormat() != pictureFormat) {
 		pictureFormat = pic->getFormat();
 		createTexture();
