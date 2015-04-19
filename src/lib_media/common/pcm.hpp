@@ -114,9 +114,9 @@ public:
 	uint8_t numPlanes;
 };
 
-class PcmData : public DataRaw {
+class DataPcm : public DataRaw {
 public:
-	PcmData(size_t size) : DataRaw(0) {
+	DataPcm(size_t size) : DataRaw(0) {
 		memset(planes, 0, sizeof(planes));
 		memset(planeSize, 0, sizeof(planeSize));
 		if (size > 0) {
@@ -126,7 +126,7 @@ public:
 		}
 	}
 
-	~PcmData() {
+	~DataPcm() {
 		freePlanes();
 	}
 
@@ -218,6 +218,6 @@ private:
 	uint64_t planeSize[AUDIO_PCM_PLANES_MAX];
 };
 
-typedef OutputDataDefault<PcmData> OutputPcm;
+typedef OutputDataDefault<DataPcm> OutputPcm;
 
 }

@@ -173,7 +173,7 @@ void libavFrame2pcmConvert(const AVFrame *frame, PcmFormat *cfg) {
 	}
 }
 
-void libavFrameDataConvert(const PcmData *pcmData, AVFrame *frame) {
+void libavFrameDataConvert(const DataPcm *pcmData, AVFrame *frame) {
 	auto const& format = pcmData->getFormat();
 	libavAudioCtxConvertLibav(&format, frame->sample_rate, frame->format, frame->channels, frame->channel_layout);
 	for (size_t i = 0; i < format.numPlanes; ++i) {
