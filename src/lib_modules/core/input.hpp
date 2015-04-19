@@ -33,7 +33,7 @@ private:
 	ModuleType * const module;
 };
 
-struct IInputCap : public IInput {
+struct IInputCap {
 	virtual ~IInputCap() noexcept(false) {}
 	virtual size_t getNumInputs() const = 0;
 	virtual IInput* getInput(size_t i) = 0;

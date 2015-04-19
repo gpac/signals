@@ -23,7 +23,7 @@ public:
 	}
 	virtual ~Module() noexcept(false) {}
 	virtual void flush() {}
-	virtual void process(Data data) override { //Romain: to remove once pipeline move to 'Module' instead of 'ModuleS'
+	virtual void process(Data data) { //Romain: to remove once pipeline move to 'Module' instead of 'ModuleS'
 		if (inputs.size() == 0)
 			addInput(new Input<DataBase>(this));
 		assert(inputs.size() == 1);
