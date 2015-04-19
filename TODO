@@ -3,8 +3,11 @@ Mid Term apps:
 
 Tasks (from higher to lower priority):
 - Multiple inputs:
- * convert all modules, remove isSource now that we have input pins, pipelineModule doesn't need to have the same interface as module, 
- * dynamic media types: convey metadata with data
+ * rename: output -> prev, input -> next
+ * pipelineModule needs to call process on the appropriate pin, convert all modules, remove isSource now that we have input pins, pipelineModule doesn't need to have the same interface as module, 
+ * dynamic media types:
+  - check 'static' types are ok for connection, and remove log traces accordingly
+  - remove process(bool): convey metadata with data
   - dynamic: we could create the input pins when receiving data for the first time
   - use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
  * DashCast:
@@ -14,7 +17,7 @@ Tasks (from higher to lower priority):
 - Log
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
  * add time to log msg?
-- write un automatic module tester: valgrind + change of mediatypes etc.
+- write un automatic module tester: valgrind + change of mediatypes + null process pkt + etc.
 - Update build system and deps to use Makefile and zenbuild
 - be able to draw the graph of connections (and allocator states?)
 - SDL and renderers should be able to run in thread 0

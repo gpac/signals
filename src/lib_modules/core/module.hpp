@@ -29,9 +29,6 @@ public:
 		assert(inputs.size() == 1);
 		inputs[0]->process(data);
 	}
-	void process(bool /*dataTypeUpdated*/) override {
-		assert(0);
-	}
 
 private:
 	Module(Module const&) = delete;
@@ -46,6 +43,9 @@ public:
 	}
 	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(Data data) = 0;
+	virtual void process(bool /*dataTypeUpdated*/) override {
+		process(getInput(0)->pop());
+	}
 };
 
 //dynamic input number specialized module
@@ -54,9 +54,6 @@ public:
 	ModuleDynI() = default;
 	virtual ~ModuleDynI() noexcept(false) {}
 
-	size_t getNumInputs() const override {
-		return inputs.size();
-	}
 	IInput* getInput(size_t i) override {
 		if (i == inputs.size())
 			addInput(new Input<DataBase>(this));
