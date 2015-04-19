@@ -9,18 +9,21 @@
 namespace Modules {
 
 PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
-: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
+: delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
 
 size_t PipelinedModule::getNumInputs() const {
 	return delegate->getNumInputs();
 }
+
 IInput* PipelinedModule::getInput(size_t i) {
 	return delegate->getInput(i);
 }
+
 size_t PipelinedModule::getNumOutputs() const {
 	return delegate->getNumOutputs();
 }
+
 IOutput* PipelinedModule::getOutput(size_t i) const {
 	return delegate->getOutput(i);
 }
@@ -41,12 +44,10 @@ void PipelinedModule::dispatch(Data data) {
 	executor(MEMBER_FUNCTOR_PROCESS(this), data);
 }
 
-void PipelinedModule::setSource(bool isSource) {
-	type = isSource ? Source : None;
-}
 bool PipelinedModule::isSource() const {
-	return type == Source;
+	return delegate->getNumOutputs() == 0;
 }
+
 bool PipelinedModule::isSink() const {
 	return delegate->getNumOutputs() == 0;
 }

@@ -17,7 +17,6 @@ struct ICompletionNotifier {
 
 struct IPipelinedModule : public IInputCap, public IOutputCap /*Romain: either remove or add IProcessor*/ {
 	virtual ~IPipelinedModule() noexcept(false) {}
-	virtual void setSource(bool isSource) = 0;
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
 	virtual void dispatch(Data data) = 0;
@@ -46,18 +45,11 @@ public:
 	void dispatch(Data data);
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
-	void setSource(bool isSource);
 	bool isSource() const;
 	bool isSink() const;
 
 private:
 	void endOfStream();
-
-	enum Type {
-		None,
-		Source
-	};
-	Type type;
 
 	std::unique_ptr<Module> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;
@@ -70,12 +62,11 @@ public:
 	Pipeline(bool isLowLatency = false);
 
 	template<typename ModuleType>
-	PipelinedModule* addModule(ModuleType* rawModule, bool isSource = false) { //Romain: we know isSource from the numInputs
+	PipelinedModule* addModule(ModuleType* rawModule) {
 		if (!rawModule)
 			return nullptr;
 		rawModule->setLowLatency(isLowLatency);
 		auto module = uptr(new PipelinedModule(rawModule, this));
-		module->setSource(isSource);
 		auto ret = module.get();
 		modules.push_back(std::move(module));
 		return ret;
