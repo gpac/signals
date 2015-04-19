@@ -8,30 +8,7 @@
 
 namespace Modules {
 
-enum StreamType {
-	UNKNOWN_ST = -1,
-	AUDIO_RAW, //UNCOMPRESSED_AUDIO
-	VIDEO_RAW, //UNCOMPRESSED_VIDEO
-	AUDIO_PKT, //COMPRESSED_AUDIO
-	VIDEO_PKT  //COMPRESSED_VIDEO
-};
-
-struct IMetadata {
-	virtual ~IMetadata() {}
-	virtual StreamType getStreamType() const = 0;
-};
-
-struct MetadataRawVideo : public IMetadata {
-	virtual StreamType getStreamType() const override {
-		return VIDEO_RAW;
-	}
-};
-
-struct MetadataRawAudio : public IMetadata {
-	virtual StreamType getStreamType() const override {
-		return AUDIO_RAW;
-	}
-};
+struct IMetadata;
 
 //A generic timed data container.
 class DataBase {
