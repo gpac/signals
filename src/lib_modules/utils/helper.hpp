@@ -26,13 +26,24 @@ size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
 
 template<typename ModuleType>
 size_t ConnectOutputToInput(IOutput* output, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
-	if (safe_cast<const IMetadataCap>(output)->getMetadata() && module->getMetadata()) {
-		if (safe_cast<const IMetadataCap>(output)->getMetadata()->getStreamType() != module->getMetadata()->getStreamType())
+	auto prevMetadata = safe_cast<const IMetadataCap>(output)->getMetadata();
+	auto nextMetadata = module->getMetadata();
+	if (prevMetadata && nextMetadata) {
+		if (prevMetadata->getStreamType() != module->getMetadata()->getStreamType())
 			throw std::runtime_error("Module connection: incompatible types");
-		Log::msg(Log::Info, "--------- OK");
+		Log::msg(Log::Info, "--------- Connect: metadata OK");
 	} else {
-		Log::msg(Log::Info, "--------- output meta: %s, input meta: %s", safe_cast<const IMetadataCap>(output)->getMetadata(), module->getMetadata());
+		if (prevMetadata && !nextMetadata) {
+			module->setMetadata(prevMetadata);
+			Log::msg(Log::Info, "--------- Connect: metadata Propagate to next");
+		} else if (!prevMetadata && nextMetadata) {
+			safe_cast<IMetadataCap>(output)->setMetadata(nextMetadata);
+			Log::msg(Log::Info, "--------- Connect: metadata Propagate to prev (backward)");
+		} else {
+			Log::msg(Log::Info, "--------- Connect: no metadata");
+		}
 	}
+
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
 	return output->getSignal().connect(functor, executor);
 }
