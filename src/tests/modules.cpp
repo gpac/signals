@@ -4,7 +4,7 @@
 //#define ENABLE_FAILING_TESTS
 
 //#define R
-#define P
+//#define P
 #ifndef R
 #ifndef P
 #include "modules_fifo.cpp"

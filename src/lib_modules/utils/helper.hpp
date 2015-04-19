@@ -14,10 +14,19 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<void, Class, void(Class::*)(Data)>(objectPtr, &IProcessor::process);
 }
 
+inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor) {
+	return p->getSignal().connect(functor);
+}
+
+template<typename C, typename D>
+size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
+	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
+	return ConnectOutput(p, functor);
+}
+
 template<typename ModuleType>
 size_t ConnectOutputToInput(IOutput* output, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
-	//Romain: we can check based on metadata media-type
 	return output->getSignal().connect(functor, executor);
 }
 

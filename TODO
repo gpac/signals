@@ -3,12 +3,8 @@ Mid Term apps:
 
 Tasks (from higher to lower priority):
 - Multiple inputs:
- * have only one type of module, even for pipelinedModule, and remove pipelinedModule template, convert all modules, remove isSource now that we have input pins
+ * convert all modules, remove isSource now that we have input pins, pipelineModule doesn't need to have the same interface as module, 
  * dynamic media types: convey metadata with data
- * Add type checking at connect time: not so easy because typeid is not as powerful as dynamic_cast:
-//#include <type_traits>
-//	if (typeid(output->getMetadata().get()) != typeid(input->getMetadata().get()))
-//		throw std::runtime_error("Module connection: incompatible types");
   - dynamic: we could create the input pins when receiving data for the first time
   - use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
  * DashCast:
