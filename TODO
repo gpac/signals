@@ -4,11 +4,10 @@ Mid Term apps:
 Tasks (from higher to lower priority):
 - Multiple inputs:
  * rename: output -> prev, input -> next
- * pipelineModule needs to call process on the appropriate pin, convert all modules, remove isSource now that we have input pins, pipelineModule doesn't need to have the same interface as module, 
+ * pipelineModule needs to call process on the appropriate pin, convert all modules, pipelineModule doesn't need to have the same interface as module
  * dynamic media types:
-  - check 'static' types are ok for connection, and remove log traces accordingly
+  - check 'static' types are ok for connection (most are null now), and remove log traces accordingly
   - remove process(bool): convey metadata with data
-  - dynamic: we could create the input pins when receiving data for the first time
   - use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
  * DashCast:
   - multi-rep

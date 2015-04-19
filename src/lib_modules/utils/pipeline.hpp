@@ -15,7 +15,7 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-class PipelinedModule {
+class PipelinedModule : public IProcessor {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
