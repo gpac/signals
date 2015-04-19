@@ -14,7 +14,7 @@ size_t ConnectOutputToInput(IOutput* out, Module * const module, size_t outputId
 	Modules::IInput *input = new Input<DataBase>(module);
 	auto input = module->addInput(input);
 	ASSERT((void*)input == (void*)module->getInput(outputIdx));
-	return ConnectOutputToModule(out, module->getInput(outputIdx));
+	return ConnectOutputToInput(out, module->getInput(outputIdx));
 }
 
 unittest("remux test: GPAC mp4 mux") {

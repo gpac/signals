@@ -43,7 +43,7 @@ unittest("print packets size from file: File -> Out::Print") {
 	auto f = uptr(new In::File("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto p = uptr(new Out::Print(std::cout));
 
-	ConnectOutputToModule(f->getOutput(0), p);
+	ConnectOutputToInput(f->getOutput(0), p);
 
 	f->process(nullptr);
 }

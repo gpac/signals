@@ -17,7 +17,7 @@ unittest("sound generator") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto render = uptr(new Render::SDLAudio());
 
-	ConnectOutputToModule(soundGen->getOutput(0),  render);
+	ConnectOutputToInput(soundGen->getOutput(0),  render);
 
 	for(int i=0; i < 25; ++i) {
 		soundGen->process(nullptr);
