@@ -3,11 +3,9 @@
 #include "allocator.hpp"
 #include "data.hpp"
 #include "metadata.hpp"
-#include "lib_modules/utils/helper.hpp"
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include <lib_signals/signals.hpp>
-#include <thread>
 
 
 namespace Modules {
@@ -24,26 +22,6 @@ struct IOutput {
 	virtual size_t emit(Data data) = 0;
 	virtual ISignal<void(Data)>& getSignal() = 0;
 };
-
-inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor) {
-	return p->getSignal().connect(functor);
-}
-
-template<typename C, typename D>
-size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectOutput(p, functor);
-}
-
-inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor, IProcessExecutor& executor) {
-	return p->getSignal().connect(functor, executor);
-}
-
-template<typename C, typename D, typename E>
-size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot, E& executor) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectOutput(p, functor, executor);
-}
 
 template<typename Allocator, typename Signal>
 class OutputT : public IOutput, public MetadataCap {
@@ -87,7 +65,13 @@ private:
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
 typedef OutputDataDefault<RawData> OutputDefault;
 
-class OutputCap {
+struct IOutputCap {
+	virtual ~IOutputCap() noexcept(false) {}
+	virtual size_t getNumOutputs() const = 0;
+	virtual IOutput* getOutput(size_t i) const = 0;
+};
+
+class OutputCap : public IOutputCap {
 public:
 	virtual ~OutputCap() noexcept(false) {}
 

@@ -2,6 +2,7 @@
 #include "render_common.hpp"
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
+#include "lib_modules/utils/stranded_pool_executor.hpp"
 #include "SDL2/SDL.h"
 #include "../transform/audio_convert.hpp"
 #include <cstring>

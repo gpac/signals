@@ -38,7 +38,7 @@ struct Arg : public option::Arg {
 
 	static option::ArgStatus Numeric(const option::Option& option, bool msg) {
 		char* endptr = 0;
-		if (option.arg != 0 && strtol(option.arg, &endptr, 10)){};
+		if (option.arg != 0 && strtol(option.arg, &endptr, 10)) {}
 		if (endptr != option.arg && *endptr == 0)
 			return option::ARG_OK;
 
