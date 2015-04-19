@@ -99,7 +99,7 @@ struct MPD {
 
 MPEG_DASH::MPEG_DASH(Type type, uint64_t segDurationInMs)
 : workingThread(&MPEG_DASH::DASHThread, this), type(type), mpd(new MPD(type == Live, segDurationInMs)) {
-	auto input = addInput(new Input<DataAVPacket>(this));
+	addInput(new Input<DataAVPacket>(this));
 }
 
 void MPEG_DASH::endOfStream() {

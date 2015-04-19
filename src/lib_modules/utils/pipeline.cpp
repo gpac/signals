@@ -10,7 +10,7 @@ namespace Modules {
 
 class PipelinedInput : public IInput {
 public:
-	PipelinedInput(PipelinedModule * const module, IInput *input) : module(module), delegate(input) {}
+	PipelinedInput(PipelinedModule * const module, IInput *input) : delegate(input), module(module) {}
 	virtual ~PipelinedInput() noexcept(false) {}
 
 	/* direct call: receiving nullptr stops the execution */

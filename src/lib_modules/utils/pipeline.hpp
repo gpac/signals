@@ -26,7 +26,7 @@ public:
 		ConnectModules(output, this, inputIdx, executor);
 	}
 
-	size_t getNumInputs() const override; //Romain: check these functions are used
+	size_t getNumInputs() const override;
 	IInput* getInput(size_t i) override;
 	size_t getNumOutputs() const;
 	IOutput* getOutput(size_t i) const;
