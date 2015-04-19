@@ -15,14 +15,7 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-struct IPipelinedModule : public IInputCap, public IOutputCap /*Romain: either remove or add IProcessor*/ {
-	virtual ~IPipelinedModule() noexcept(false) {}
-	virtual bool isSource() const = 0;
-	virtual bool isSink() const = 0;
-	virtual void dispatch(Data data) = 0;
-};
-
-class PipelinedModule : public IPipelinedModule {
+class PipelinedModule {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
@@ -33,10 +26,10 @@ public:
 		ConnectModules(output, this, inputIdx, executor);
 	}
 
-	size_t getNumInputs() const override;
-	IInput* getInput(size_t i) override;
-	size_t getNumOutputs() const override;
-	IOutput* getOutput(size_t i) const override;
+	size_t getNumInputs() const;
+	IInput* getInput(size_t i);
+	size_t getNumOutputs() const;
+	IOutput* getOutput(size_t i) const;
 
 	/* direct call: receiving nullptr stops the execution */
 	void process(Data data);
