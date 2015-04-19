@@ -11,7 +11,7 @@ File::File(std::string const& path) {
 		Log::msg(Log::Error, "Can't open file for writing: %s", path);
 		throw std::runtime_error("File not found");
 	}
-	auto input = addInput(new Input<RawData>(this));
+	addInput(new Input<RawData>(this));
 }
 
 File::~File() {

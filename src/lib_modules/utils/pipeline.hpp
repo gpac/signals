@@ -15,7 +15,7 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-class PipelinedModule : public IProcessor {
+class PipelinedModule : public InputCap {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
@@ -26,23 +26,22 @@ public:
 		ConnectModules(output, this, inputIdx, executor);
 	}
 
-	size_t getNumInputs() const;
-	IInput* getInput(size_t i);
+	size_t getNumInputs() const override; //Romain: check these functions are used
+	IInput* getInput(size_t i) override;
 	size_t getNumOutputs() const;
 	IOutput* getOutput(size_t i) const;
-
-	/* direct call: receiving nullptr stops the execution */
-	void process(Data data);
-
-	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(Data data);
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
 	bool isSource() const;
 	bool isSink() const;
 
+	/* same as process() but uses the executor (may defer the call) */
+	void dispatch(Data data);
+
+	void endOfStream(); //Romain
+
 private:
-	void endOfStream();
+	void mimicInputs();
 
 	std::unique_ptr<Module> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;

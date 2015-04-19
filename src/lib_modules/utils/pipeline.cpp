@@ -8,8 +8,37 @@
 
 namespace Modules {
 
+class PipelinedInput : public IInput {
+public:
+	PipelinedInput(PipelinedModule * const module, IInput *input) : module(module), delegate(input) {}
+	virtual ~PipelinedInput() noexcept(false) {}
+
+	/* direct call: receiving nullptr stops the execution */
+	virtual void process(Data data) override {
+		if (data) {
+			delegate->process(data);
+		} else {
+			module->endOfStream();
+		}
+	}
+
+private:
+	IInput *delegate;
+	PipelinedModule * const module;
+};
+
 PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
 : delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
+}
+
+void PipelinedModule::mimicInputs() {
+	auto const delegateInputs = delegate->getNumInputs();
+	auto const thisInputs = inputs.size();
+	if (thisInputs < delegateInputs) {
+		for (size_t i = thisInputs; i < delegateInputs; ++i) {
+			addInput(new PipelinedInput(this, delegate->getInput(i)));
+		}
+	}
 }
 
 size_t PipelinedModule::getNumInputs() const {
@@ -17,7 +46,8 @@ size_t PipelinedModule::getNumInputs() const {
 }
 
 IInput* PipelinedModule::getInput(size_t i) {
-	return delegate->getInput(i);
+	mimicInputs();
+	return inputs[i].get();
 }
 
 size_t PipelinedModule::getNumOutputs() const {
@@ -28,28 +58,24 @@ IOutput* PipelinedModule::getOutput(size_t i) const {
 	return delegate->getOutput(i);
 }
 
-void PipelinedModule::process(Data data) {
-	if (data) {
-		delegate->process(data);
-	} else {
-		endOfStream();
-	}
+bool PipelinedModule::isSource() const {
+	return delegate->getNumInputs() == 0;
+}
+
+bool PipelinedModule::isSink() const {
+	return delegate->getNumOutputs() == 0;
 }
 
 void PipelinedModule::dispatch(Data data) {
 	if (isSource()) {
 		assert(data == nullptr);
-		executor(MEMBER_FUNCTOR_PROCESS(delegate.get()), data);
+		assert(getNumInputs() == 0);
+		delegate->addInput(new Input<DataBase>(delegate.get()));
+		executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), data);
 	}
-	executor(MEMBER_FUNCTOR_PROCESS(this), data);
-}
 
-bool PipelinedModule::isSource() const {
-	return delegate->getNumOutputs() == 0;
-}
-
-bool PipelinedModule::isSink() const {
-	return delegate->getNumOutputs() == 0;
+	for (size_t i = 0; i < getNumInputs(); ++i)
+		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)), data);
 }
 
 void PipelinedModule::endOfStream() {

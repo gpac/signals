@@ -10,6 +10,7 @@ Tasks (from higher to lower priority):
   - check 'static' types are ok for connection (most are null now), and remove log traces accordingly
   - remove process(bool): convey metadata with data
   - use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
+  - check inputs are not double connected?
  * DashCast:
   - multi-rep
 - have super modules: one per family (demux, decoder, transform, etc.) - users don't care about implementation details

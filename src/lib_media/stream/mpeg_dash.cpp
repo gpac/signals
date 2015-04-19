@@ -3,6 +3,7 @@
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "../out/file.hpp"
+#include "../common/libav.hpp"
 #include <fstream>
 
 extern "C" {
@@ -98,6 +99,7 @@ struct MPD {
 
 MPEG_DASH::MPEG_DASH(Type type, uint64_t segDurationInMs)
 : workingThread(&MPEG_DASH::DASHThread, this), type(type), mpd(new MPD(type == Live, segDurationInMs)) {
+	auto input = addInput(new Input<DataAVPacket>(this));
 }
 
 void MPEG_DASH::endOfStream() {
