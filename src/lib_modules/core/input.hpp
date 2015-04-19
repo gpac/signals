@@ -8,15 +8,21 @@
 
 namespace Modules {
 
-struct IInput : public MetadataCap, public Signals::Queue<Data> {
-	virtual ~IInput() noexcept(false) {}
+struct IProcessor {
+	virtual ~IProcessor() noexcept(false) {}
 	virtual void process(Data data) = 0;
 };
 
-template<typename DataType>
+struct IInput : public IProcessor, public MetadataCap, public Signals::Queue<Data> {
+	virtual ~IInput() noexcept(false) {}
+};
+
+struct IModule;
+
+template<typename DataType, typename ModuleType = IModule>
 class Input : public IInput {
 public:
-	Input(IModule * const module) : module(module) {} //Romain: remove IModule
+	Input(ModuleType * const module) : module(module) {}
 
 	void process(Data data) override {
 		push(safe_cast<const DataType>(data));
@@ -24,10 +30,10 @@ public:
 	}
 
 private:
-	IModule * const module;
+	ModuleType * const module;
 };
 
-struct IInputCap {
+struct IInputCap : public IInput {
 	virtual ~IInputCap() noexcept(false) {}
 	virtual size_t getNumInputs() const = 0;
 	virtual IInput* getInput(size_t i) = 0;

@@ -4,6 +4,7 @@
 #include <vector>
 #include "stranded_pool_executor.hpp"
 #include "../core/module.hpp"
+#include "helper.hpp"
 
 
 #define EXECUTOR_SYNC ExecutorSync<void(Data)>
@@ -19,7 +20,7 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-struct IPipelinedModule {
+struct IPipelinedModule : public IInputCap, public IOutputCap {
 	virtual ~IPipelinedModule() noexcept(false) {}
 	virtual void setSource(bool isSource) = 0;
 	virtual bool isSource() const = 0;
@@ -27,13 +28,7 @@ struct IPipelinedModule {
 	virtual void dispatch(Data data) = 0;
 };
 
-template<typename Result, typename Class>
-MemberFunctor<Result, Class, Result(Class::*)(Data)>
-MEMBER_FUNCTOR(Class* objectPtr, Result(Class::*memberFunction) (Data)) {
-	return MemberFunctor<Result, Class, Result(Class::*)(Data)>(objectPtr, memberFunction);
-}
-
-class PipelinedModule : public Module {
+class PipelinedModule : public IPipelinedModule {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify)
@@ -45,13 +40,17 @@ public:
 	void connect(OutputType* output, size_t inputIdx) {
 		ConnectModules(output, this, inputIdx, executor);
 	}
-	size_t getNumInputs() const {
+
+	size_t getNumInputs() const override {
 		return delegate->getNumInputs();
 	}
-	size_t getNumOutputs() const {
+	IInput* getInput(size_t i) override {
+		return delegate->getInput(i);
+	}
+	size_t getNumOutputs() const override {
 		return delegate->getNumOutputs();
 	}
-	virtual IOutput* getOutput(size_t i) const {
+	IOutput* getOutput(size_t i) const override {
 		return delegate->getOutput(i);
 	}
 
@@ -68,9 +67,9 @@ public:
 	void dispatch(Data data) {
 		if (isSource()) {
 			assert(data == nullptr);
-			executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
+			executor(MEMBER_FUNCTOR_PROCESS(delegate.get()), data);
 		}
-		executor(MEMBER_FUNCTOR(this, &PipelinedModule::process), data);
+		executor(MEMBER_FUNCTOR_PROCESS(this), data);
 	}
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
