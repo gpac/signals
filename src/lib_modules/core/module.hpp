@@ -21,6 +21,16 @@ class Module : public IModule, public InputCap, public OutputCap {
 public:
 	Module() = default;
 	virtual ~Module() noexcept(false) {}
+	virtual void flush() {};
+	virtual void process(Data data) { //Romain: to remove once pipeline move to 'Module' instead of 'ModuleS'
+		if (inputs.size() == 0)
+			addInput(new Input<DataBase>(this));
+		assert(inputs.size() == 1);
+		inputs[0]->process(data);
+	}
+	void process(bool /*dataTypeUpdated*/) override {
+		assert(0);
+	}
 
 private:
 	Module(Module const&) = delete;
@@ -28,17 +38,11 @@ private:
 };
 
 //single input specialized module
-class ModuleS : public IInput, public IInputCap, public OutputCap {
+class ModuleS : public Module {
 public:
 	ModuleS() = default;
 	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(Data data) = 0;
-	size_t getNumInputs() const override {
-		return 1;
-	}
-	IInput* getInput(size_t i) override {
-		return this;
-	}
 
 private:
 	ModuleS(ModuleS const&) = delete;

@@ -33,11 +33,10 @@ MEMBER_FUNCTOR(Class* objectPtr, Result(Class::*memberFunction) (Data)) {
 	return MemberFunctor<Result, Class, Result(Class::*)(Data)>(objectPtr, memberFunction);
 }
 
-template<typename ModuleType>
-class PipelinedModule : public IPipelinedModule, public ModuleS {
+class PipelinedModule : public Module {
 public:
 	/* take ownership of module */
-	PipelinedModule(ModuleType *module, ICompletionNotifier *notify)
+	PipelinedModule(Module *module, ICompletionNotifier *notify)
 	: type(None), delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 	}
 	~PipelinedModule () noexcept(false) {}
@@ -46,13 +45,13 @@ public:
 	void connect(OutputType* output, size_t inputIdx) {
 		ConnectModules(output, this, inputIdx, executor);
 	}
-	size_t getNumInputs() const override {
+	size_t getNumInputs() const {
 		return delegate->getNumInputs();
 	}
-	size_t getNumOutputs() const override {
+	size_t getNumOutputs() const {
 		return delegate->getNumOutputs();
 	}
-	virtual IOutput* getOutput(size_t i) const override {
+	virtual IOutput* getOutput(size_t i) const {
 		return delegate->getOutput(i);
 	}
 
@@ -66,22 +65,22 @@ public:
 	}
 
 	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(Data data) override {
+	void dispatch(Data data) {
 		if (isSource()) {
 			assert(data == nullptr);
-			executor(MEMBER_FUNCTOR(delegate.get(), &ModuleType::process), data);
+			executor(MEMBER_FUNCTOR(delegate.get(), &Module::process), data);
 		}
 		executor(MEMBER_FUNCTOR(this, &PipelinedModule::process), data);
 	}
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
-	void setSource(bool isSource) override {
+	void setSource(bool isSource) {
 		type = isSource ? Source : None;
 	}
-	bool isSource() const override {
+	bool isSource() const {
 		return type == Source;
 	}
-	bool isSink() const override {
+	bool isSink() const {
 		return delegate->getNumOutputs() == 0;
 	}
 
@@ -102,7 +101,7 @@ private:
 	};
 	Type type;
 
-	std::unique_ptr<ModuleType> delegate;
+	std::unique_ptr<Module> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;
 	IProcessExecutor &executor;
 	ICompletionNotifier* const m_notify;
@@ -113,19 +112,19 @@ public:
 	Pipeline(bool isLowLatency = false);
 
 	template<typename ModuleType>
-	PipelinedModule<ModuleType>* addModule(ModuleType* rawModule, bool isSource = false) {
+	PipelinedModule* addModule(ModuleType* rawModule, bool isSource = false) { //Romain: we know isSource from the numInputs
 		if (!rawModule)
 			return nullptr;
 		rawModule->setLowLatency(isLowLatency);
-		auto module = uptr(new PipelinedModule<ModuleType>(rawModule, this));
+		auto module = uptr(new PipelinedModule(rawModule, this));
 		module->setSource(isSource);
 		auto ret = module.get();
 		modules.push_back(std::move(module));
 		return ret;
 	}
 
-	template<typename ModuleType1, typename ModuleType2>
-	void connect(ModuleType1* output, size_t outputIdx, PipelinedModule<ModuleType2> *input, size_t inputIdx) {
+	template<typename ModuleType>
+	void connect(ModuleType* output, size_t outputIdx, PipelinedModule *input, size_t inputIdx) {
 		if (input->isSink())
 			numRemainingNotifications++;
 		input->connect(output->getOutput(outputIdx), inputIdx);
@@ -136,7 +135,7 @@ public:
 	void finished() override;
 
 private:
-	std::vector<std::unique_ptr<IPipelinedModule>> modules;
+	std::vector<std::unique_ptr<PipelinedModule>> modules;
 	bool isLowLatency;
 
 	std::mutex mutex;
