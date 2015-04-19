@@ -25,7 +25,7 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Vide
 		if (metadata->getAVCodecContext()->codec_type == AVMEDIA_TYPE_VIDEO) {
 			videoIndex = i;
 		} else {
-			ConnectOutputToModule(demux->getOutput(i), null);
+			ConnectOutputToInput(demux->getOutput(i), null);
 		}
 	}
 	ASSERT(videoIndex != std::numeric_limits<size_t>::max());
@@ -33,8 +33,8 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Vide
 	auto decode = uptr(new Decode::LibavDecode(*metadata));
 	auto render = uptr(new Render::SDLVideo);
 
-	ConnectOutputToModule(demux->getOutput(videoIndex), decode);
-	ConnectOutputToModule(decode->getOutput(0), render);
+	ConnectOutputToInput(demux->getOutput(videoIndex), decode);
+	ConnectOutputToInput(decode->getOutput(0), render);
 
 	demux->process(nullptr);
 }
@@ -49,7 +49,7 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audi
 		if (metadata->getStreamType() == AUDIO_PKT) {
 			audioIndex = i;
 		} else {
-			ConnectOutputToModule(demux->getOutput(i), null);
+			ConnectOutputToInput(demux->getOutput(i), null);
 		}
 	}
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
@@ -60,9 +60,9 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audi
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 	auto render = uptr(new Render::SDLAudio());
 
-	ConnectOutputToModule(demux->getOutput(audioIndex), decode);
-	ConnectOutputToModule(decode->getOutput(0), converter);
-	ConnectOutputToModule(converter->getOutput(0), render);
+	ConnectOutputToInput(demux->getOutput(audioIndex), decode);
+	ConnectOutputToInput(decode->getOutput(0), converter);
+	ConnectOutputToInput(converter->getOutput(0), render);
 
 	demux->process(nullptr);
 }

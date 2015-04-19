@@ -70,7 +70,7 @@ unittest("decode: audio simple") {
 	auto decode = uptr(createMp3Decoder());
 
 	auto null = uptr(new Out::Null);
-	ConnectOutputToModule(decode->getOutput(0), null);
+	ConnectOutputToInput(decode->getOutput(0), null);
 
 	auto frame = getTestMp3Frame();
 	decode->process(frame);
@@ -124,7 +124,7 @@ unittest("decode: failing audio mp3 to AAC") {
 	auto decode = uptr(createMp3Decoder());
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
 
-	ConnectOutputToModule(decode->getOutput(0), encoder);
+	ConnectOutputToInput(decode->getOutput(0), encoder);
 
 	auto frame = getTestMp3Frame();
 	bool thrown = false;
@@ -148,8 +148,8 @@ unittest("decode: audio mp3 to converter to AAC") {
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 
-	ConnectOutputToModule(decode->getOutput(0), converter);
-	ConnectOutputToModule(converter->getOutput(0), encoder);
+	ConnectOutputToInput(decode->getOutput(0), converter);
+	ConnectOutputToInput(converter->getOutput(0), encoder);
 
 	auto frame = getTestMp3Frame();
 	decode->process(frame);

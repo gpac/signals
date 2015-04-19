@@ -16,14 +16,14 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 }
 
 template<typename ModuleType>
-size_t ConnectOutputToModule(IOutput* out, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
+size_t ConnectOutputToInput(IOutput* out, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
 	return ConnectOutput(out, functor, executor);
 }
 
 template<typename ModuleType>
-size_t ConnectOutputToModule(IOutput* out, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
-	return ConnectOutputToModule(out, module.get(), executor);
+size_t ConnectOutputToInput(IOutput* out, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
+	return ConnectOutputToInput(out, module.get(), executor);
 }
 
 template<typename OutputType, typename ModuleType>

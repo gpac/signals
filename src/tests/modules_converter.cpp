@@ -24,8 +24,8 @@ unittest("audio converter: interleaved to planar to interleaved") {
 	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
 	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
 
-	ConnectOutputToModule(soundGen->getOutput(0), converter1);
-	ConnectOutputToModule(converter1->getOutput(0), converter2);
+	ConnectOutputToInput(soundGen->getOutput(0), converter1);
+	ConnectOutputToInput(converter1->getOutput(0), converter2);
 	ConnectOutput(converter2->getOutput(0), comparator.get(), &Utils::PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
@@ -51,8 +51,8 @@ unittest("audio converter: 44100 to 48000") {
 	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
 	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
 
-	ConnectOutputToModule(soundGen->getOutput(0), converter1);
-	ConnectOutputToModule(converter1->getOutput(0), converter2);
+	ConnectOutputToInput(soundGen->getOutput(0), converter1);
+	ConnectOutputToInput(converter1->getOutput(0), converter2);
 	ConnectOutput(converter2->getOutput(0), comparator.get(), &Utils::PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
@@ -75,8 +75,8 @@ unittest("audio converter: dynamic formats") {
 	PcmFormat format;;
 	auto converter = uptr(new Transform::AudioConvert(format));
 
-	ConnectOutputToModule(soundGen->getOutput(0), converter);
-	ConnectOutputToModule(converter->getOutput(0), recorder);
+	ConnectOutputToInput(soundGen->getOutput(0), converter);
+	ConnectOutputToInput(converter->getOutput(0), recorder);
 
 	{
 		bool thrown = false;

@@ -23,8 +23,8 @@ unittest("Packet type erasure + multi-output: libav Demux -> {libav Decoder -> O
 
 		auto p = uptr(new Out::Print(std::cout));
 
-		ConnectOutputToModule(demux->getOutput(i), decode);
-		ConnectOutputToModule(decode->getOutput(0), p);
+		ConnectOutputToInput(demux->getOutput(i), decode);
+		ConnectOutputToInput(decode->getOutput(0), p);
 
 		decoders.push_back(std::move(decode));
 		printers.push_back(std::move(p));
