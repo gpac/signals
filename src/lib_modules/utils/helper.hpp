@@ -26,6 +26,13 @@ size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
 
 template<typename ModuleType>
 size_t ConnectOutputToInput(IOutput* output, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
+	if (safe_cast<const IMetadataCap>(output)->getMetadata() && module->getMetadata()) {
+		if (safe_cast<const IMetadataCap>(output)->getMetadata()->getStreamType() != module->getMetadata()->getStreamType())
+			throw std::runtime_error("Module connection: incompatible types");
+		Log::msg(Log::Info, "--------- OK");
+	} else {
+		Log::msg(Log::Info, "--------- output meta: %s, input meta: %s", safe_cast<const IMetadataCap>(output)->getMetadata(), module->getMetadata());
+	}
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
 	return output->getSignal().connect(functor, executor);
 }

@@ -1,6 +1,11 @@
 #include "pipeline.hpp"
 
 
+#define EXECUTOR_SYNC ExecutorSync<void(Data)>
+#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
+#define EXECUTOR EXECUTOR_SYNC //Romain
+
+
 namespace Modules {
 
 PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
@@ -81,4 +86,3 @@ void Pipeline::finished() {
 }
 
 }
-

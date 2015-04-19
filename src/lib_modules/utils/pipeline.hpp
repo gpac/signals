@@ -7,11 +7,6 @@
 #include "helper.hpp"
 
 
-#define EXECUTOR_SYNC ExecutorSync<void(Data)>
-#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_ASYNC
-
-
 namespace Modules {
 
 struct IOutput;
@@ -20,7 +15,7 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-struct IPipelinedModule : public IInputCap, public IOutputCap {
+struct IPipelinedModule : public IInputCap, public IOutputCap /*Romain: either remove or add IProcessor*/ {
 	virtual ~IPipelinedModule() noexcept(false) {}
 	virtual void setSource(bool isSource) = 0;
 	virtual bool isSource() const = 0;
