@@ -46,9 +46,24 @@ public:
 	}
 	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(Data data) = 0;
+};
 
-private:
-	ModuleS(ModuleS const&) = delete;
-	ModuleS const& operator=(ModuleS const&) = delete;
+//dynamic input number specialized module
+class ModuleDynI : public Module {
+public:
+	ModuleDynI() = default;
+	virtual ~ModuleDynI() noexcept(false) {}
+
+	size_t getNumInputs() const override {
+		return inputs.size();
+	}
+	IInput* getInput(size_t i) override {
+		if (i == inputs.size())
+			addInput(new Input<DataBase>(this));
+		else if (i > inputs.size())
+			throw std::runtime_error("Incorrect pin number for dynamic input.");
+
+		return inputs[i].get();
+	}
 };
 }
