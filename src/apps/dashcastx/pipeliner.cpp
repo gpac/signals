@@ -4,7 +4,7 @@
 #include <sstream>
 
 namespace {
-Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadataPkt> metadata, const dashcastXOptions &opt) {
+Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
@@ -21,7 +21,7 @@ Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadataPkt> metadata,
 	}
 }
 
-ModuleS* createConverter(std::shared_ptr<const IMetadataPkt> metadata, const Resolution &dstRes) {
+ModuleS* createConverter(std::shared_ptr<const IMetadata> metadata, const Resolution &dstRes) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found video stream");
