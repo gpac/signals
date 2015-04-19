@@ -37,7 +37,7 @@ AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {
 
 JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
-	auto input = addInput(new Input<Picture>(this));
+	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataPktVideo);
 	output = addOutput(new OutputDefault);
 }

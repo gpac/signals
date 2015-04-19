@@ -101,7 +101,7 @@ unittest("decode: video simple") {
 	auto data = getTestH24Frame();
 
 	auto onPic = [&](Data data) {
-		auto const pic = safe_cast<const Picture>(data);
+		auto const pic = safe_cast<const DataPicture>(data);
 		auto const format = pic->getFormat();
 		ASSERT_EQUALS(16, format.res.width);
 		ASSERT_EQUALS(16, format.res.height);

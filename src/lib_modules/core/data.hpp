@@ -50,9 +50,9 @@ private:
 
 typedef std::shared_ptr<const DataBase> Data;
 
-class RawData : public DataBase {
+class DataRaw : public DataBase {
 public:
-	RawData(size_t size) : buffer(size) {}
+	DataRaw(size_t size) : buffer(size) {}
 	uint8_t* data() {
 		return buffer.data();
 	}

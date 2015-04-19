@@ -41,7 +41,7 @@ public:
 
 private:
 	bool processAudio(const PcmData *data);
-	bool processVideo(const Picture *data);
+	bool processVideo(const DataPicture *data);
 
 	AVCodecContext *codecCtx;
 	std::unique_ptr<PcmFormat> pcmFormat;

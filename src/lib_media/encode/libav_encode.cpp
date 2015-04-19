@@ -152,7 +152,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 	output = addOutput(new OutputDataDefault<DataAVPacket>);
 	switch (type) {
 	case Video: {
-		auto input = addInput(new Input<Picture>(this));
+		auto input = addInput(new Input<DataPicture>(this));
 		input->setMetadata(new MetadataRawVideo);
 		output->setMetadata(new MetadataPktLibavVideo(codecCtx));
 		break;
@@ -216,7 +216,7 @@ bool LibavEncode::processAudio(const PcmData *data) {
 	return false;
 }
 
-bool LibavEncode::processVideo(const Picture *pic) {
+bool LibavEncode::processVideo(const DataPicture *pic) {
 	auto out = output->getBuffer(0);
 	AVPacket *pkt = out->getPacket();
 
@@ -255,7 +255,7 @@ bool LibavEncode::processVideo(const Picture *pic) {
 void LibavEncode::process(Data data) {
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
-		const auto encoderData = safe_cast<const Picture>(data);
+		const auto encoderData = safe_cast<const DataPicture>(data);
 		processVideo(encoderData.get());
 		break;
 	}
