@@ -70,9 +70,9 @@ class Picture;
 typedef OutputDataDefault<Picture> OutputPicture;
 
 //TODO: we should probably separate planar vs non-planar data, avoid resize on the data, etc.
-class Picture : public RawData {
+class Picture : public DataRaw {
 public:
-	Picture(size_t unused) : RawData(0) {}
+	Picture(size_t unused) : DataRaw(0) {}
 	static std::shared_ptr<Picture> create(OutputPicture *out, const Resolution &res, const PixelFormat &format);
 
 	PictureFormat getFormat() const {
@@ -89,7 +89,7 @@ public:
 
 protected:
 	Picture(const Resolution &res, const PixelFormat &format)
-		: RawData(PictureFormat::getSize(res, format)),
+		: DataRaw(PictureFormat::getSize(res, format)),
 		m_format(res, format) {
 	}
 

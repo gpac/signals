@@ -35,7 +35,7 @@ public:
 
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 : reader(new ISOProgressiveReader) {
-	addInput(new Input<RawData>(this));
+	addInput(new Input<DataRaw>(this));
 	output = addOutput(new OutputDefault);
 }
 
@@ -168,7 +168,7 @@ void GPACDemuxMP4Full::process(Data data_) {
 	reader->validDataSize = reader->dataSize = data->size();
 	reader->data.data() = data->data();
 #else
-	auto data = safe_cast<const RawData>(data_);
+	auto data = safe_cast<const DataRaw>(data_);
 	const size_t currSize = reader->data.size();
 	reader->data.resize(reader->data.size() + (size_t)data->size());
 	memcpy(reader->data.data() + currSize, data->data(), (size_t)data->size());
