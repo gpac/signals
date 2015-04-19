@@ -45,7 +45,7 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audi
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
-		auto metadata = getMetadataFromOutput<IMetadataPkt>(demux->getOutput(i));
+		auto metadata = getMetadataFromOutput<IMetadata>(demux->getOutput(i));
 		if (metadata->getStreamType() == AUDIO_PKT) {
 			audioIndex = i;
 		} else {

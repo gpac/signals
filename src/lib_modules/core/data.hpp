@@ -16,11 +16,22 @@ enum StreamType {
 	VIDEO_PKT  //COMPRESSED_VIDEO
 };
 
-struct IMetadataPkt {
-	virtual ~IMetadataPkt() {}
+struct IMetadata {
+	virtual ~IMetadata() {}
 	virtual StreamType getStreamType() const = 0;
 };
-typedef IMetadataPkt IMetadata;
+
+struct MetadataRawVideo : public IMetadata {
+	virtual StreamType getStreamType() const override {
+		return VIDEO_RAW;
+	}
+};
+
+struct MetadataRawAudio : public IMetadata {
+	virtual StreamType getStreamType() const override {
+		return AUDIO_RAW;
+	}
+};
 
 //A generic timed data container.
 class DataBase {

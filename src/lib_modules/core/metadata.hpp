@@ -9,7 +9,7 @@ namespace Modules {
 struct IMetadataCap {
 	virtual ~IMetadataCap() noexcept(false) {}
 	virtual std::shared_ptr<const IMetadata> getMetadata() const = 0;
-	virtual void setMetadata(IMetadata *metadata) = 0; //useful?
+	virtual void setMetadata(IMetadata *metadata) = 0;
 	virtual void setMetadata(std::shared_ptr<const IMetadata> metadata) = 0;
 };
 
