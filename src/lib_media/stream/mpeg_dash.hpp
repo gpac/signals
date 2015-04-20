@@ -7,7 +7,7 @@ namespace Stream {
 
 struct MPD;
 
-class MPEG_DASH : public ModuleS {
+class MPEG_DASH : public ModuleDynI {
 public:
 	enum Type {
 		Live,
@@ -16,7 +16,8 @@ public:
 
 	MPEG_DASH(Type type, uint64_t segDurationInMs);
 	~MPEG_DASH();
-	void process(Data data) override;
+	void process(Data data);
+	void process() override;
 	void flush() override;
 
 private:

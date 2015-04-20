@@ -17,9 +17,8 @@
 #include "modules_erasure.cpp"
 #include "modules_generator.cpp"
 #endif
-#else
-#include "modules_mux.cpp"
 #endif
+#include "modules_mux.cpp"
 #ifndef R
 #include "modules_pipeline.cpp"
 #ifndef P

@@ -78,6 +78,8 @@ public:
 			const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
 			return true;
 		} else if (data->getMetadata() != m_metadata) {
+			if (m_metadata)
+				throw std::runtime_error(format("Metadata update from data not supported yet"));
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
 			if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
 				throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", data->getMetadata()->getStreamType(), m_metadata->getStreamType()));

@@ -145,6 +145,14 @@ void MPEG_DASH::DASHThread() {
 	}
 }
 
+void MPEG_DASH::process() {
+	for (size_t i = 0; i < inputs.size(); ++i) {
+		Data data;
+		if (inputs[i]->tryPop(data))
+			process(data);
+	}
+}
+
 void MPEG_DASH::GenerateMPD(uint64_t segNum, Data /*audio*/, Data /*video*/) {
 #if 0
 	//Print the segments to the appropriate threads
@@ -169,7 +177,7 @@ void MPEG_DASH::process(Data data) {
 	 * 1) no test on timestamps
 	 * 2) no time to provoke the MPD generation on time
 	 */
-	//FIXME: Romain: reimplement with multiple inputs
+	 //FIXME: Romain: reimplement with multiple inputs
 	switch (data->getMetadata()->getStreamType()) {
 	case AUDIO_PKT:
 		audioDataQueue.push(data);

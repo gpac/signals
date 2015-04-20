@@ -14,6 +14,7 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<void, Class, void(Class::*)(Data)>(objectPtr, &IProcessor::process);
 }
 
+//Romain: reorganize module helpers
 inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor) {
 	return p->getSignal().connect(functor);
 }
@@ -58,7 +59,7 @@ size_t ConnectOutputToInput(IOutput* output, std::unique_ptr<ModuleType>& module
 template<typename ModuleType1, typename ModuleType2>
 size_t ConnectModules(ModuleType1 *module1, size_t outputIdx, ModuleType2 *module2, size_t inputIdx, IProcessExecutor& executor = defaultExecutor) {
 	auto output = module1->getOutput(outputIdx);
-	return ConnectModules(output, module2, inputIdx, executor);
+	return ConnectOutputToInput(output, module2->getInput(inputIdx), executor);
 }
 
 template <typename T>
