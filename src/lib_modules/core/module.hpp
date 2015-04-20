@@ -11,7 +11,7 @@ namespace Modules {
 
 struct IModule {
 	virtual ~IModule() noexcept(false) {}
-	virtual void process(bool dataTypeUpdated) = 0;
+	virtual void process() = 0;
 	virtual void flush() = 0;
 };
 
@@ -32,7 +32,7 @@ public:
 	ModuleS() = default;
 	virtual ~ModuleS() noexcept(false) {}
 	virtual void process(Data data) = 0;
-	virtual void process(bool /*dataTypeUpdated*/) override {
+	virtual void process() override {
 		process(getInput(0)->pop());
 	}
 };
@@ -50,7 +50,7 @@ public:
 		if (i == inputs.size())
 			addInput(new Input<DataLoose>(this));
 		else if (i > inputs.size())
-			throw std::runtime_error("Incorrect pin number for dynamic input.");
+			throw std::runtime_error(format("Incorrect pin number %s for dynamic input.", i));
 
 		return inputs[i].get();
 	}

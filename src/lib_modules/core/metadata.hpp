@@ -71,7 +71,6 @@ public:
 		m_metadata = metadata;
 	}
 
-protected:
 	bool updateMetadata(Data data) {
 		if (!data) {
 			return false;
@@ -89,6 +88,7 @@ protected:
 		}
 	}
 
+private:
 	std::shared_ptr<const IMetadata> m_metadata;
 };
 

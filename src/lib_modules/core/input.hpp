@@ -29,7 +29,7 @@ public:
 			push(data);
 		else
 			push(safe_cast<const DataType>(data));
-		module->process(updateMetadata(data));
+		module->process();
 	}
 
 private:
