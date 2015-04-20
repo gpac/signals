@@ -81,7 +81,7 @@ protected:
 		} else if (data->getMetadata() != m_metadata) {
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
 			if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
-				throw std::runtime_error("Metadata update: incompatible types");
+				throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", data->getMetadata()->getStreamType(), m_metadata->getStreamType()));
 			m_metadata = data->getMetadata();
 			return true;
 		} else {

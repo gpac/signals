@@ -33,15 +33,17 @@ size_t ConnectOutputToInput(IOutput* output, ModuleType* module, IProcessExecuto
 			throw std::runtime_error("Module connection: incompatible types");
 		Log::msg(Log::Info, "--------- Connect: metadata OK");
 	} else {
+#if 0 //Romain: don't assign type, rely on data instead (not possible yet because of process())
 		if (prevMetadata && !nextMetadata) {
 			module->setMetadata(prevMetadata);
-			Log::msg(Log::Info, "--------- Connect: metadata Propagate to next");
+			Log::msg(Log::Info, "--------- Connect: metadata Propagate to next"); ROMAIN: LAISSER LES DONNEES LE PROPAGER?
 		} else if (!prevMetadata && nextMetadata) {
 			safe_cast<IMetadataCap>(output)->setMetadata(nextMetadata);
 			Log::msg(Log::Info, "--------- Connect: metadata Propagate to prev (backward)");
 		} else {
 			Log::msg(Log::Info, "--------- Connect: no metadata");
 		}
+#endif
 	}
 
 	auto functor = MEMBER_FUNCTOR_PROCESS(module);
