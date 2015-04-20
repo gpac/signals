@@ -6,7 +6,7 @@ extern "C" {
 #include <turbojpeg.h>
 }
 
-#include "lib_ffpp/ffpp.hpp" //TODO: remove once the Metadata are not based on libav anymore
+#include "lib_ffpp/ffpp.hpp"
 
 
 namespace Decode {
@@ -37,9 +37,9 @@ AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {
 
 JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
-	auto input = addInput(new Input<DataPicture>(this));
+	auto input = addInput(new Input<DataRaw>(this));
 	input->setMetadata(new MetadataPktVideo);
-	output = addOutput(new OutputDefault);
+	output = addOutput(new OutputPicture(new MetadataRawVideo));
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
@@ -52,6 +52,7 @@ JPEGTurboDecode::~JPEGTurboDecode() {
 }
 
 void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
+	//FIXME: wrong because raw data currently don't help Resolution etc.
 	if (!output->getMetadata()) {
 		auto codec = avcodec_find_decoder_by_name("jpg");
 		auto ctx = avcodec_alloc_context3(codec);
@@ -71,7 +72,7 @@ void JPEGTurboDecode::process(Data data_) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing header.");
 		return;
 	}
-	auto out = output->getBuffer(w*h*3);
+	auto out = DataPicture::create(output, Resolution(w, h), RGB24);
 	if (tjDecompress2(jtHandle->get(), (unsigned char*)jpegBuf, (unsigned long)data->size(), out->data(), w, 0/*pitch*/, h, pixelFmt, TJFLAG_FASTDCT) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing frame.");
 		return;

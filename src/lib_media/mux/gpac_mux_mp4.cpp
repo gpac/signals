@@ -630,6 +630,7 @@ void GPACMuxMP4::declareStream(Data data) {
 }
 
 void GPACMuxMP4::process() {
+	//FIXME: Romain: reimplement with multiple inputs
 	Data data_ = inputs[0]->pop();
 	if (inputs[0]->updateMetadata(data_))
 		declareStream(data_);

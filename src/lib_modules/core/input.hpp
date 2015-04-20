@@ -25,10 +25,11 @@ public:
 	Input(ModuleType * const module) : module(module) {}
 
 	virtual void process(Data data) override {
-		if (typeid(DataType) == typeid(DataLoose)) //FIXME
+		if (typeid(DataType) == typeid(DataLoose))
 			push(data);
 		else
 			push(safe_cast<const DataType>(data));
+
 		module->process();
 	}
 
@@ -49,17 +50,7 @@ public:
 	//Takes ownership
 	template<typename T>
 	T* addInput(T* p) {
-		//Romain: ultra-bourrin: en vrai on ne veut pas changer une pin déjà connectée
-		bool isDyn = false;
-		std::unique_ptr<IInput> pEx(nullptr);
-		if (inputs.size() && dynamic_cast<DataLoose*>(inputs.back().get())) {
-			isDyn = true;
-			pEx = std::move(inputs.back());
-			inputs.pop_back();
-		}
 		inputs.push_back(uptr(p));
-		if (isDyn)
-			inputs.push_back(std::move(pEx));
 		return p;
 	}
 	virtual size_t getNumInputs() const override {

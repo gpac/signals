@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lib_modules/core/module.hpp"
+#include "../common/picture.hpp"
 
 
 using namespace Modules;
@@ -16,7 +17,7 @@ public:
 	void process(Data data) override;
 
 private:
-	OutputDefault* output;
+	OutputPicture* output;
 	void ensureMetadata(int width, int height, int pixelFmt);
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 };
