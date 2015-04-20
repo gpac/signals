@@ -28,8 +28,10 @@ unittest("remux test: GPAC mp4 mux") {
 	demux->process(nullptr);
 }
 
+#ifdef ENABLE_FAILING_TESTS
 unittest("multiple inputs: send same packets to 2 GPAC mp4 mux inputs") {
 	//TODO
 }
+#endif
 
 }

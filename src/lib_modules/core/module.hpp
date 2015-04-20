@@ -43,6 +43,21 @@ public:
 	ModuleDynI() = default;
 	virtual ~ModuleDynI() noexcept(false) {}
 
+	//Takes ownership
+	template<typename T>
+	T* addInput(T* p) {
+		bool isDyn = false;
+		std::unique_ptr<IInput> pEx(nullptr);
+		if (inputs.size() && dynamic_cast<DataLoose*>(inputs.back().get())) {
+			isDyn = true;
+			pEx = std::move(inputs.back());
+			inputs.pop_back();
+		}
+		inputs.push_back(uptr(p));
+		if (isDyn)
+			inputs.push_back(std::move(pEx));
+		return p;
+	}
 	virtual size_t getNumInputs() const override {
 		return inputs.size() + 1;
 	}
