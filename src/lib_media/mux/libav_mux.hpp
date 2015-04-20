@@ -12,7 +12,7 @@ class LibavMux : public ModuleDynI {
 public:
 	LibavMux(const std::string &baseName);
 	~LibavMux();
-	void process(bool dataTypeUpdated) override;
+	void process() override;
 
 private:
 	void ensureHeader();

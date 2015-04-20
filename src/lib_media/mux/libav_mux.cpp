@@ -110,9 +110,9 @@ void LibavMux::ensureHeader() {
 	}
 }
 
-void LibavMux::process(bool dataTypeUpdated) {
+void LibavMux::process() {
 	Data data = inputs[0]->pop();
-	if (dataTypeUpdated)
+	if (inputs[0]->updateMetadata(data))
 		declareStream(data);
 	auto encoderData = safe_cast<const DataAVPacket>(data);
 	auto pkt = encoderData->getPacket();

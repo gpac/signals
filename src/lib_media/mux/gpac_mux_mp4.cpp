@@ -629,9 +629,9 @@ void GPACMuxMP4::declareStream(Data data) {
 	}
 }
 
-void GPACMuxMP4::process(bool dataTypeUpdated) {
+void GPACMuxMP4::process() {
 	Data data_ = inputs[0]->pop();
-	if (dataTypeUpdated)
+	if (inputs[0]->updateMetadata(data_))
 		declareStream(data_);
 	auto data = safe_cast<const DataAVPacket>(data_);
 
