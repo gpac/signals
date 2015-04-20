@@ -9,8 +9,8 @@ extern "C" {
 }
 
 #include "lib_gpacpp/gpacpp.hpp"
-#include "lib_ffpp/ffpp.hpp" //TODO: remove DataAVPacket
-#include "../common/libav.hpp" //TODO: remove DataAVPacket
+#include "lib_ffpp/ffpp.hpp"
+#include "../common/libav.hpp"
 
 
 namespace {
@@ -351,8 +351,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 	fileName << ".mp4";
 
 	if (baseName == "") {
-		//TODO: open in memory - apparently we have to use the gmem:// protocol
-		assert(0);
+		throw std::runtime_error("[GPACMuxMP4] Unsupported memory output");; //open in memory - apparently we have to use the gmem:// protocol
 	} else {
 		m_iso = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, nullptr);
 		if (!m_iso) {
@@ -654,7 +653,8 @@ void GPACMuxMP4::process() {
 			sample.dataLength = bufLen;
 			sample.DTS = m_DTS;
 		} else {
-			assert(0); //TODO: only audio or video supported yet
+			Log::msg(Log::Warning, "[GPACMuxMP4] only audio or video supported yet");
+			return;
 		}
 	}
 
