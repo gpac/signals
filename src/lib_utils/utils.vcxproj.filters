@@ -12,6 +12,7 @@
     <ClInclude Include="..\lib_ffpp\ffpp.hpp">
       <Filter>ffpp</Filter>
     </ClInclude>
+    <ClInclude Include="format.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="gpacpp">

@@ -91,6 +91,16 @@ void PipelinedModule::endOfStream() {
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
+PipelinedModule* Pipeline::addModule(Module* rawModule) {
+	if (!rawModule)
+		return nullptr;
+	rawModule->setLowLatency(isLowLatency);
+	auto module = uptr(new PipelinedModule(rawModule, this));
+	auto ret = module.get();
+	modules.push_back(std::move(module));
+	return ret;
+}
+
 void Pipeline::start() {
 	for (auto &m : modules) {
 		if (m->isSource())

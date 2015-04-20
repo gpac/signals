@@ -26,7 +26,7 @@ struct IMetadata {
 	virtual StreamType getStreamType() const = 0;
 };
 
-//Romain: TODO: should be picture and Pcm and return the same fields as MetadataPkt
+//TODO: should be picture and Pcm and return the same fields as MetadataPkt
 struct MetadataRawVideo : public IMetadata {
 	virtual StreamType getStreamType() const override {
 		return VIDEO_RAW;

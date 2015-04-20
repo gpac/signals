@@ -20,12 +20,6 @@ public:
 	Module() = default;
 	virtual ~Module() noexcept(false) {}
 	virtual void flush() {}
-	virtual void process(Data data) { //Romain: to remove once pipeline move to 'Module' instead of 'ModuleS'
-		if (inputs.size() == 0)
-			addInput(new Input<DataBase>(this));
-		assert(inputs.size() == 1);
-		inputs[0]->process(data);
-	}
 
 private:
 	Module(Module const&) = delete;
