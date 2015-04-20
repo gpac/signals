@@ -1,5 +1,7 @@
 #pragma once
 
+#include "format.hpp"
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -82,7 +84,7 @@ std::shared_ptr<T> safe_cast(std::shared_ptr<U> p) {
 	if (!p)
 		return nullptr;
 	auto r = std::dynamic_pointer_cast<T>(p);
-	if(!r)
+	if (!r)
 		throw std::runtime_error(format("dynamic cast error: could not convert from %s to %s", typeid(U).name(), typeid(T).name()).c_str());
 	return r;
 }
@@ -92,14 +94,8 @@ T* safe_cast(U* p) {
 	if (!p)
 		return nullptr;
 	auto r = dynamic_cast<T*>(p);
-	if(!r) {
-		std::string s;
-		s += "dynamic cast error: could not convert from ";
-		s += typeid(U).name();
-		s += " to ";
-		s += typeid(T).name();
-		throw std::runtime_error(s.c_str());
-	}
+	if (!r)
+		throw std::runtime_error(format("dynamic cast error: could not convert from %s to %s", typeid(U).name(), typeid(T).name()).c_str());
 	return r;
 }
 

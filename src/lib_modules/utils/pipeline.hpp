@@ -52,17 +52,7 @@ private:
 class Pipeline : public ICompletionNotifier {
 public:
 	Pipeline(bool isLowLatency = false);
-
-	template<typename ModuleType>
-	PipelinedModule* addModule(ModuleType* rawModule) {
-		if (!rawModule)
-			return nullptr;
-		rawModule->setLowLatency(isLowLatency);
-		auto module = uptr(new PipelinedModule(rawModule, this));
-		auto ret = module.get();
-		modules.push_back(std::move(module));
-		return ret;
-	}
+	PipelinedModule* addModule(Module* rawModule);
 
 	template<typename ModuleType>
 	void connect(ModuleType* output, size_t outputIdx, PipelinedModule *input, size_t inputIdx) {

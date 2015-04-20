@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClInclude Include="..\lib_ffpp\ffpp.hpp" />
     <ClInclude Include="..\lib_gpacpp\gpacpp.hpp" />
+    <ClInclude Include="format.hpp" />
     <ClInclude Include="log.hpp" />
     <ClInclude Include="tools.hpp" />
   </ItemGroup>
