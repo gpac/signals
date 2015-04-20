@@ -23,7 +23,7 @@ public:
 
 	template<typename OutputType>
 	void connect(OutputType* output, size_t inputIdx) {
-		ConnectModules(output, this, inputIdx, executor);
+		ConnectOutputToInput(output, getInput(inputIdx), executor);
 	}
 
 	size_t getNumInputs() const override;

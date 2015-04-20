@@ -53,12 +53,6 @@ size_t ConnectOutputToInput(IOutput* output, std::unique_ptr<ModuleType>& module
 	return ConnectOutputToInput(output, module->getInput(0), executor);
 }
 
-template<typename OutputType, typename ModuleType>
-size_t ConnectModules(OutputType *output, ModuleType *module, size_t inputIdx, IProcessExecutor& executor = defaultExecutor) {
-	auto input = module->getInput(inputIdx);
-	return ConnectOutputToInput(output, input, executor);
-}
-
 template<typename ModuleType1, typename ModuleType2>
 size_t ConnectModules(ModuleType1 *module1, size_t outputIdx, ModuleType2 *module2, size_t inputIdx, IProcessExecutor& executor = defaultExecutor) {
 	auto output = module1->getOutput(outputIdx);

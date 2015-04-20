@@ -50,6 +50,9 @@ private:
 
 typedef std::shared_ptr<const DataBase> Data;
 
+/* automatic inputs have a loose datatype */
+struct DataLoose : public DataBase {};
+
 class DataRaw : public DataBase {
 public:
 	DataRaw(size_t size) : buffer(size) {}

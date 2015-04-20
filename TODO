@@ -1,35 +1,40 @@
 Mid Term apps:
 - socket in, GPAC demux (MP4 or TS), DASH out
+- player example plugged with Qt
+- GPAC TS demux and mux (for HLS)
 
 Tasks (from higher to lower priority):
 - Multiple inputs:
+ * fix some test_modules + //Romain
  * rename: output -> prev, input -> next
  * dynamic media types:
   - check 'static' types are ok for connection (most are null now), and remove log traces accordingly
   - remove process(bool): convey metadata with data
   - use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
   - check inputs are not double connected?
+  - error prone: hide Module helpers when using modules?
  * DashCast:
   - multi-rep
+ * muxer example with two inputs of the same type (e.g. video)
 - have super modules: one per family (demux, decoder, transform, etc.) - users don't care about implementation details
-- copy the interfae of libVLC or GPAC to have their GUIs
 - Log
+ * remove throw and log::msg duplicates by using  format()
  * give names to modules and prefix the log automatically and create "tools" accordingly + register template instantiation for the module
  * add time to log msg?
-- write un automatic module tester: valgrind + change of mediatypes + null process pkt + etc.
-- Update build system and deps to use Makefile and zenbuild
+ * add colors to log msg
 - be able to draw the graph of connections (and allocator states?)
+- build:
+ * Update build system and deps to use Makefile and zenbuild
+ * make module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
+ * write un automatic module tester: valgrind + change of mediatypes + null process pkt + do not assume the first timestamp is zero + etc.
 - SDL and renderers should be able to run in thread 0
  * http://stackoverflow.com/questions/20530218/check-if-current-thread-is-main-thread
  * http://stackoverflow.com/questions/13287963/id-of-main-thread-in-c
  * http://stackoverflow.com/questions/1969579/getting-a-handle-to-the-processs-main-thread
-- investigate existing code compatibility (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
+- investigate existing code compatibility:
+ * copy the interface of libVLC or GPAC to have their GUIs
+ * (especially GStreamer code, see http://cgit.freedesktop.org/~thiagoss/gst-plugins-bad/log/?h=adaptivedemux)
 - allow multi-process with pipes (x264, MP4Box -dash-ctx, ...)
-- some modules may still assume the first timestamp is zero...
-- make module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
-- player example plugged with Qt
-- GPAC TS demux and mux (for HLS)
-- muxer example with two inputs of the same type (e.g. video)
 - use operators (https://github.com/klmr/named-operator) to describe graphs as pipes?
 - GUI: use angular.js? "gui, angular.js, end-point rest, agplv3" @Ffrenchm / OSGi/Pipe/Mesos?/Angular.js?(http://www.freecodecamp.com/)
 - GPU: 4K60:10/IntelTranscodingSupport->libMFX / GPU: http://on-demand.gputechconf.com/gtc/2015/presentation/S5613-Abhijit-Patait.pdf
