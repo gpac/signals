@@ -14,7 +14,7 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<void, Class, void(Class::*)(Data)>(objectPtr, &IProcessor::process);
 }
 
-//Romain: reorganize module helpers
+//TODO: reorganize module helpers, there are too many
 inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor) {
 	return p->getSignal().connect(functor);
 }
@@ -26,40 +26,40 @@ size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
 }
 
 template<typename ModuleType>
-size_t ConnectOutputToInput(IOutput* output, ModuleType* module, IProcessExecutor& executor = defaultExecutor) {
-	auto prevMetadata = safe_cast<const IMetadataCap>(output)->getMetadata();
-	auto nextMetadata = module->getMetadata();
+size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor& executor = defaultExecutor) {
+	auto prevMetadata = safe_cast<const IMetadataCap>(prev)->getMetadata();
+	auto nextMetadata = next->getMetadata();
 	if (prevMetadata && nextMetadata) {
-		if (prevMetadata->getStreamType() != module->getMetadata()->getStreamType())
+		if (prevMetadata->getStreamType() != next->getMetadata()->getStreamType())
 			throw std::runtime_error("Module connection: incompatible types");
 		Log::msg(Log::Info, "--------- Connect: metadata OK");
 	} else {
 		if (prevMetadata && !nextMetadata) {
-#if 0 //TODO: question: don't assign type, rely on data instead (not possible yet because the input type and the current processed data input type may be not the same)
-			module->setMetadata(prevMetadata);
+#if 0 //rely on data to propagate type instead of inputs or outputs - this way sent data type is on the output, processed data is on the input
+			next->setMetadata(prevMetadata);
 			Log::msg(Log::Info, "--------- Connect: metadata Propagate to next");
 #endif
 		} else if (!prevMetadata && nextMetadata) {
-			safe_cast<IMetadataCap>(output)->setMetadata(nextMetadata);
+			safe_cast<IMetadataCap>(prev)->setMetadata(nextMetadata);
 			Log::msg(Log::Info, "--------- Connect: metadata Propagate to prev (backward)");
 		} else {
 			Log::msg(Log::Info, "--------- Connect: no metadata");
 		}
 	}
 
-	auto functor = MEMBER_FUNCTOR_PROCESS(module);
-	return output->getSignal().connect(functor, executor);
+	auto functor = MEMBER_FUNCTOR_PROCESS(next);
+	return prev->getSignal().connect(functor, executor);
 }
 
 template<typename ModuleType>
-size_t ConnectOutputToInput(IOutput* output, std::unique_ptr<ModuleType>& module, IProcessExecutor& executor = defaultExecutor) {
-	return ConnectOutputToInput(output, module->getInput(0), executor);
+size_t ConnectOutputToInput(IOutput* prev, std::unique_ptr<ModuleType>& next, IProcessExecutor& executor = defaultExecutor) {
+	return ConnectOutputToInput(prev, next->getInput(0), executor);
 }
 
 template<typename ModuleType1, typename ModuleType2>
-size_t ConnectModules(ModuleType1 *module1, size_t outputIdx, ModuleType2 *module2, size_t inputIdx, IProcessExecutor& executor = defaultExecutor) {
-	auto output = module1->getOutput(outputIdx);
-	return ConnectOutputToInput(output, module2->getInput(inputIdx), executor);
+size_t ConnectModules(ModuleType1 *prev, size_t outputIdx, ModuleType2 *next, size_t inputIdx, IProcessExecutor& executor = defaultExecutor) {
+	auto output = prev->getOutput(outputIdx);
+	return ConnectOutputToInput(output, next->getInput(inputIdx), executor);
 }
 
 template <typename T>
