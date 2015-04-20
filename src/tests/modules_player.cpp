@@ -16,7 +16,7 @@ using namespace Modules;
 namespace {
 
 unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
-	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto null = uptr(new Out::Null);
 
 	size_t videoIndex = std::numeric_limits<size_t>::max();
@@ -40,7 +40,7 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Vide
 }
 
 unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
-	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto null = uptr(new Out::Null);
 
 	size_t audioIndex = std::numeric_limits<size_t>::max();

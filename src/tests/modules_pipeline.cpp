@@ -37,22 +37,22 @@ unittest("Pipeline: connect while running") {
 	//TODO
 }
 
-unittest("Pipeline: connect one input to one output") {
+unittest("Pipeline: connect one input (out of 2) to one output") {
 	Pipeline p;
-	auto demux = p.addModule(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = p.addModule(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	ASSERT(demux->getNumOutputs() > 1);
 	auto null = p.addModule(new Out::Null);
-	ConnectModules(demux, 0, null, 0);
+	p.connect(demux, 0, null, 0);
 	p.start();
 	p.waitForCompletion();
 }
 
 unittest("Pipeline: connect inputs to outputs") {
 	Pipeline p;
-	auto demux = p.addModule(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = p.addModule(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto muxer = p.addModule(new Mux::GPACMuxMP4("output"));
 	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
-		ConnectModules(demux, i, muxer, i);
+		p.connect(demux, i, muxer, i);
 	}
 	p.start();
 	p.waitForCompletion();

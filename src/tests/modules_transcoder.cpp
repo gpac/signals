@@ -20,7 +20,7 @@ using namespace Modules;
 namespace {
 
 unittest("transcoder: video simple (libav mux)") {
-	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 	auto null = uptr(new Out::Null);
 
 	//find video signal from demux
@@ -49,7 +49,7 @@ unittest("transcoder: video simple (libav mux)") {
 }
 
 unittest("transcoder: video simple (gpac mux)") {
-	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 
 	//create stub output (for unused demuxer's outputs)
 	auto null = uptr(new Out::Null);
@@ -128,7 +128,7 @@ unittest("transcoder: jpg to resized jpg") {
 }
 
 unittest("transcoder: h264/mp4 to jpg") {
-	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 
 	auto metadata = getMetadataFromOutput<MetadataPktLibavVideo>(demux->getOutput(0));
 	auto decode = uptr(new Decode::LibavDecode(*metadata));

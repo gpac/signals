@@ -13,7 +13,7 @@ using namespace Modules;
 namespace {
 
 unittest("Packet type erasure + multi-output: libav Demux -> {libav Decoder -> Out::Print}*") {
-	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg_0_20_frag_1000.mp4"));
+	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 
 	std::vector<std::unique_ptr<Decode::LibavDecode>> decoders;
 	std::vector<std::unique_ptr<Out::Print>> printers;
