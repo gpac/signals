@@ -50,11 +50,11 @@ public:
 	virtual ~ModuleDynI() noexcept(false) {}
 
 	virtual size_t getNumInputs() const override {
-		return std::max<size_t>(inputs.size(), 1);
+		return inputs.size() + 1;
 	}
 	IInput* getInput(size_t i) override {
 		if (i == inputs.size())
-			addInput(new Input<DataBase>(this));
+			addInput(new Input<DataLoose>(this));
 		else if (i > inputs.size())
 			throw std::runtime_error("Incorrect pin number for dynamic input.");
 

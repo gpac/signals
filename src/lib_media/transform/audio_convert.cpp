@@ -20,6 +20,8 @@ AudioConvert::AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstForma
 : srcPcmFormat(srcFormat), dstPcmFormat(dstFormat),
   m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0), autoConfigure(false) {
 	configure(srcPcmFormat);
+	auto input = addInput(new Input<DataPcm>(this));
+	input->setMetadata(new MetadataRawAudio);
 	output = addOutput(new OutputPcm);
 }
 

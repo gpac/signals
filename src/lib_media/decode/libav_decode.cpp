@@ -40,18 +40,17 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
 	}
 
-	auto Metadata_new = new MetadataPktLibav(codecCtx);
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavVideo(codecCtx));
-		videoOutput = addOutput(new OutputPicture(Metadata_new));
+		videoOutput = addOutput(new OutputPicture(new MetadataRawVideo));
 		break;
 	}
 	case AVMEDIA_TYPE_AUDIO: {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavAudio(codecCtx));
-		audioOutput = addOutput(new OutputPcm(Metadata_new));
+		audioOutput = addOutput(new OutputPcm(new MetadataRawAudio));
 		break;
 	}
 	default:

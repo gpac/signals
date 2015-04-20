@@ -26,6 +26,7 @@ struct IMetadata {
 	virtual StreamType getStreamType() const = 0;
 };
 
+//Romain: TODO: should be picture and Pcm and return the same fields as MetadataPkt
 struct MetadataRawVideo : public IMetadata {
 	virtual StreamType getStreamType() const override {
 		return VIDEO_RAW;
@@ -79,6 +80,8 @@ protected:
 			return true;
 		} else if (data->getMetadata() != m_metadata) {
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
+			if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
+				throw std::runtime_error("Metadata update: incompatible types");
 			m_metadata = data->getMetadata();
 			return true;
 		} else {
