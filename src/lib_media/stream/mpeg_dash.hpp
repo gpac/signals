@@ -25,9 +25,7 @@ private:
 	void GenerateMPD(uint64_t segNum, Data audio, Data video);
 	void endOfStream();
 
-	int numDataQueueNotify = 2;
-	Queue<Data> audioDataQueue;
-	Queue<Data> videoDataQueue;
+	int numDataQueueNotify = 2; //Romain
 	std::thread workingThread;
 	Type type;
 	std::unique_ptr<MPD> mpd;

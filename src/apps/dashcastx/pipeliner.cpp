@@ -48,12 +48,12 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
+	int numDashInputs = 0;
 	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
 		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 
 		pipeline.connect(demux, i, decode, 0);
-
 		auto converter = pipeline.addModule(createConverter(metadata, opt.res));
 		if (!converter)
 			continue;
@@ -68,10 +68,11 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		connect(converter, encoder);
 
 		std::stringstream filename;
-		filename << i;
+		filename << numDashInputs;
 		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true, opt.segmentDuration));
 		connect(encoder, muxer);
 
-		connect(muxer, dasher);
+		pipeline.connect(muxer, 0, dasher, numDashInputs);
+		numDashInputs++;
 	}
 }

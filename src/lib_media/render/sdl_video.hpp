@@ -36,7 +36,7 @@ private:
 
 	int64_t m_NumFrames;
 
-	Queue<Data> m_dataQueue;
+	Queue<Data> m_dataQueue; //FIXME: useless now we have input pins
 	std::thread workingThread;
 };
 

@@ -59,7 +59,7 @@ public:
 		return p;
 	}
 	virtual size_t getNumInputs() const override {
-		return inputs.size() + 1;
+		return maxRequestedInput + 1;
 	}
 	IInput* getInput(size_t i) override {
 		if (i == inputs.size())
@@ -67,7 +67,11 @@ public:
 		else if (i > inputs.size())
 			throw std::runtime_error(format("Incorrect pin number %s for dynamic input.", i));
 
+		maxRequestedInput = std::max(i+1, maxRequestedInput);
 		return inputs[i].get();
 	}
+
+protected:
+	size_t maxRequestedInput = 0;
 };
 }
