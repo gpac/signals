@@ -9,8 +9,6 @@
 
 namespace Modules {
 
-struct IOutput;
-
 struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
@@ -19,6 +17,8 @@ struct IPipelineModule {
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
 	virtual void dispatch(Data data) = 0;
+	virtual void connect(IOutput *output, size_t inputIdx) = 0;
+	virtual IOutput* getOutput(size_t i) const = 0;
 };
 
 class PipelinedModule : public ICompletionNotifier, public IPipelineModule, public InputCap {
@@ -26,11 +26,6 @@ public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
 	~PipelinedModule () noexcept(false) {}
-
-	template<typename OutputType>
-	void connect(OutputType* output, size_t inputIdx) {
-		ConnectOutputToInput(output, getInput(inputIdx), executor);
-	}
 
 	size_t getNumInputs() const override;
 	size_t getNumOutputs() const;
@@ -41,6 +36,9 @@ public:
 	bool isSink() const override;
 
 private:
+	virtual void connect(IOutput *output, size_t inputIdx) override {
+		ConnectOutputToInput(output, getInput(inputIdx), executor);
+	}
 	IInput* getInput(size_t i) override;
 	void mimicInputs();
 
@@ -59,11 +57,10 @@ public:
 	Pipeline(bool isLowLatency = false);
 	PipelinedModule* addModule(Module* rawModule);
 
-	template<typename ModuleType>
-	void connect(ModuleType* output, size_t outputIdx, PipelinedModule *input, size_t inputIdx) {
-		if (input->isSink())
+	void connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *next, size_t inputIdx) {
+		if (next->isSink())
 			numRemainingNotifications++;
-		input->connect(output->getOutput(outputIdx), inputIdx);
+		next->connect(prev->getOutput(outputIdx), inputIdx);
 	}
 
 	void start();
