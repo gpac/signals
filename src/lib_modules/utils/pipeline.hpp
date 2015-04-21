@@ -33,7 +33,6 @@ public:
 	}
 
 	size_t getNumInputs() const override;
-	IInput* getInput(size_t i) override;
 	size_t getNumOutputs() const;
 	IOutput* getOutput(size_t i) const;
 
@@ -42,6 +41,7 @@ public:
 	bool isSink() const override;
 
 private:
+	IInput* getInput(size_t i) override;
 	void mimicInputs();
 
 	/* same as process() but uses the executor (may defer the call) */
