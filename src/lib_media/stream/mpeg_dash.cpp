@@ -98,21 +98,19 @@ struct MPD {
 };
 
 MPEG_DASH::MPEG_DASH(Type type, uint64_t segDurationInMs)
-: workingThread(&MPEG_DASH::DASHThread, this), type(type), mpd(new MPD(type == Live, segDurationInMs)) {
+: type(type), mpd(new MPD(type == Live, segDurationInMs)) {
 	addInput(new Input<DataAVPacket>(this));
 }
 
 void MPEG_DASH::endOfStream() {
 	if (workingThread.joinable()) {
-		audioDataQueue.push(nullptr);
-		videoDataQueue.push(nullptr);
+		for (size_t i = 0; i < inputs.size(); ++i)
+			inputs[i]->push(nullptr);
 		workingThread.join();
 	}
 }
 
 MPEG_DASH::~MPEG_DASH() {
-	audioDataQueue.clear();
-	videoDataQueue.clear();
 	endOfStream();
 }
 
@@ -122,10 +120,20 @@ void MPEG_DASH::DASHThread() {
 	uint64_t n = 0;
 	auto startTime = std::chrono::steady_clock::now();
 	for (;;) {
-		auto a = audioDataQueue.pop();
-		auto v = videoDataQueue.pop();
-		if (!a || !v)
-			break;
+		Data a, v;
+		assert(maxRequestedInput == 2); //FIXME: with multiple inputs
+		for (size_t i = 0; i < maxRequestedInput; ++i) {
+			auto data = inputs[i]->pop();
+			if (!data) {
+				return;
+			} else {
+				switch (data->getMetadata()->getStreamType()) {
+				case AUDIO_PKT: a = data; break;
+				case VIDEO_PKT: v = data; break;
+				default: Log::msg(Log::Warning, "[MPEG_DASH] undeclared data. Discarding.");
+				}
+			}
+		}
 
 		GenerateMPD(n, a, v);
 
@@ -146,50 +154,15 @@ void MPEG_DASH::DASHThread() {
 }
 
 void MPEG_DASH::process() {
-	for (size_t i = 0; i < inputs.size(); ++i) {
-		Data data;
-		if (inputs[i]->tryPop(data))
-			process(data);
-	}
+	if (!workingThread.joinable())
+		workingThread = std::thread(&MPEG_DASH::DASHThread, this);
 }
 
 void MPEG_DASH::GenerateMPD(uint64_t segNum, Data /*audio*/, Data /*video*/) {
-#if 0
-	//Print the segments to the appropriate threads
-	std::stringstream ssa, ssv;
-
-	const std::string audioFn = "audio.m4s";
-	const std::string videoFn = "video.m4s";
-
-	//serialize the MPD (use the GPAC code?)
-	auto audioSeg = uptr(new Out::File(audioFn));
-	auto videoSeg = uptr(new Out::File(videoFn));
-#else
 	std::ofstream f;
 	f.open("dash.mpd", std::ios::out);
 	mpd->serialize(f);
 	f.close();
-#endif
-}
-
-void MPEG_DASH::process(Data data) {
-	/* TODO:
-	 * 1) no test on timestamps
-	 * 2) no time to provoke the MPD generation on time
-	 */
-	 //FIXME: Romain: reimplement with multiple inputs
-	switch (data->getMetadata()->getStreamType()) {
-	case AUDIO_PKT:
-		audioDataQueue.push(data);
-		break;
-	case VIDEO_PKT:
-		videoDataQueue.push(data);
-		break;
-	default:
-		assert(0);
-		Log::msg(Log::Warning, "[MPEG_DASH] undeclared data. Discarding.");
-		return;
-	}
 }
 
 void MPEG_DASH::flush() {

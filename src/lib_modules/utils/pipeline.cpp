@@ -35,9 +35,8 @@ void PipelinedModule::mimicInputs() {
 	auto const delegateInputs = delegate->getNumInputs();
 	auto const thisInputs = inputs.size();
 	if (thisInputs < delegateInputs) {
-		for (size_t i = thisInputs; i < delegateInputs; ++i) {
+		for (size_t i = thisInputs; i < delegateInputs; ++i)
 			addInput(new PipelinedInput(this, delegate->getInput(i)));
-		}
 	}
 }
 
