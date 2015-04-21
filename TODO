@@ -5,12 +5,9 @@ Mid Term apps:
 
 Tasks (from higher to lower priority):
 - DashCast:
- * multi-rep
+ * multi-rep: use GPAC dasher? at least combine it with the muxer?
 - Multiple inputs:
- * process(): convey metadata with data
  * A/V muxer
- * improve RawVideo metadata with resolution and pixel format
- * Use DataAVPacket under an umbrella - too many modules include ffpp.hpp
 - dynamic media types:
  * use pipeline to automatically add converters, instead of being done with modules? (sam's remark: not the pipeline: dshow tried and that's a nightmare)
  * error prone: hide Module helpers when using modules? Pipeline namespace? Would be better with supermodules (see below)

@@ -10,7 +10,7 @@ namespace Modules {
 
 class PipelinedInput : public IInput {
 public:
-	PipelinedInput(PipelinedModule * const module, IInput *input) : delegate(input), module(module) {}
+	PipelinedInput(IInput *input, ICompletionNotifier * const notify) : delegate(input), notify(notify) {}
 	virtual ~PipelinedInput() noexcept(false) {}
 
 	/* direct call: receiving nullptr stops the execution */
@@ -18,13 +18,13 @@ public:
 		if (data) {
 			delegate->process(data);
 		} else {
-			module->endOfStream();
+			notify->finished();
 		}
 	}
 
 private:
 	IInput *delegate;
-	PipelinedModule * const module;
+	ICompletionNotifier * const notify;
 };
 
 PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
@@ -36,7 +36,7 @@ void PipelinedModule::mimicInputs() {
 	auto const thisInputs = inputs.size();
 	if (thisInputs < delegateInputs) {
 		for (size_t i = thisInputs; i < delegateInputs; ++i)
-			addInput(new PipelinedInput(this, delegate->getInput(i)));
+			addInput(new PipelinedInput(delegate->getInput(i), this));
 	}
 }
 
@@ -77,7 +77,8 @@ void PipelinedModule::dispatch(Data data) {
 		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)), data);
 }
 
-void PipelinedModule::endOfStream() {
+/* end of stream */
+void PipelinedModule::finished() {
 	delegate->flush();
 	if (isSink()) {
 		m_notify->finished();
