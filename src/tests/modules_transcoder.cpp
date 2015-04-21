@@ -79,8 +79,6 @@ unittest("transcoder: video simple (gpac mux)") {
 	demux->process(nullptr);
 }
 
-#ifdef ENABLE_FAILING_TESTS
-//TODO: we need to have more info (Res, PixFmt) on raw video metadata
 unittest("transcoder: jpg to jpg") {
 	const std::string filename("data/sample.jpg");
 	auto decode = uptr(new Decode::JPEGTurboDecode());
@@ -91,9 +89,7 @@ unittest("transcoder: jpg to jpg") {
 	}
 
 	auto reader = uptr(new In::File(filename));
-	auto metadata = getMetadataFromOutput<MetadataPktRawVideo>(decode->getOutput(0));
-	auto dstRes = metadata->getResolution();
-	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
+	auto encoder = uptr(new Encode::JPEGTurboEncode());
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
 	ConnectOutputToInput(reader->getOutput(0), decode);
@@ -113,12 +109,9 @@ unittest("transcoder: jpg to resized jpg") {
 	}
 	auto reader = uptr(new In::File(filename));
 
-	auto metadata = getMetadataFromOutput<MetadataPktRawVideo>(decode->getOutput(0));
-	ASSERT(metadata->getPixelFormat() == RGB24);
-	auto dstRes = metadata->getResolution() / 2;
-	auto dstFormat = PictureFormat(dstRes, metadata->getPixelFormat());
+	auto dstFormat = PictureFormat(VIDEO_RESOLUTION / 2, RGB24);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
-	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
+	auto encoder = uptr(new Encode::JPEGTurboEncode());
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
 	ConnectOutputToInput(reader->getOutput(0), decode);
@@ -129,18 +122,16 @@ unittest("transcoder: jpg to resized jpg") {
 	reader->process(nullptr);
 }
 
-#ifdef ENABLE_FAILING_TESTS
-//TODO: we need to have more info (Res, PixFmt) on raw video metadata
 unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
 
 	auto metadata = getMetadataFromOutput<MetadataPktLibavVideo>(demux->getOutput(0));
 	auto decode = uptr(new Decode::LibavDecode(*metadata));
 
-	auto dstRes = metadata->getResolution();
-	auto encoder = uptr(new Encode::JPEGTurboEncode(dstRes));
+	auto encoder = uptr(new Encode::JPEGTurboEncode());
 	auto writer = uptr(new Out::File("data/test.jpg"));
 
+	auto dstRes = metadata->getResolution();
 	ASSERT(metadata->getPixelFormat() == YUV420P);
 	auto dstFormat = PictureFormat(dstRes, RGB24);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
@@ -152,7 +143,6 @@ unittest("transcoder: h264/mp4 to jpg") {
 
 	demux->process(nullptr);
 }
-#endif
 
 unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	const std::string filename("data/sample.jpg");
@@ -164,10 +154,7 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	}
 	auto reader = uptr(new In::File(filename));
 
-	auto metadata = getMetadataFromOutput<MetadataPktLibavVideo>(decode->getOutput(0));
-	auto srcRes = metadata->getResolution();
-	ASSERT(metadata->getPixelFormat() == RGB24);
-	auto dstFormat = PictureFormat(srcRes, metadata->getPixelFormat());
+	auto dstFormat = PictureFormat(VIDEO_RESOLUTION, YUV420P);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
 	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
@@ -180,6 +167,5 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 
 	reader->process(nullptr);
 }
-#endif
 
 }

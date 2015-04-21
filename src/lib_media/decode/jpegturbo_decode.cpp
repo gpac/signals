@@ -43,23 +43,16 @@ JPEGTurboDecode::JPEGTurboDecode()
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {
-	auto p = safe_cast<const MetadataPktLibav>(output->getMetadata());
-	if (p) {
-		auto ctx = p->getAVCodecContext();
-		avcodec_close(ctx);
-		av_free(ctx);
-	}
 }
 
 void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
-	//FIXME: wrong because raw data currently don't help Resolution etc.
 	if (!output->getMetadata()) {
-		auto codec = avcodec_find_decoder_by_name("jpg");
-		auto ctx = avcodec_alloc_context3(codec);
-		ctx->width = width;
-		ctx->height = height;
-		ctx->pix_fmt = getAVPF(pixelFmt);
-		output->setMetadata(new MetadataPktLibavVideo(ctx));
+		auto p = safe_cast<const MetadataRawVideo>(output->getMetadata());
+		//TODO: add resolution and pixel format to MetadataRawVideo
+		//ctx->width = width;
+		//ctx->height = height;
+		//ctx->pix_fmt = getAVPF(pixelFmt);
+		//output->setMetadata(new MetadataRawVideo(ctx));
 	}
 }
 

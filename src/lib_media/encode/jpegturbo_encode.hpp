@@ -13,7 +13,7 @@ class JPEGTurbo;
 
 class JPEGTurboEncode : public ModuleS {
 public:
-	JPEGTurboEncode(Resolution resolution, int JPEGQuality = JPEG_DEFAULT_QUALITY);
+	JPEGTurboEncode(int JPEGQuality = JPEG_DEFAULT_QUALITY);
 	~JPEGTurboEncode();
 	void process(Data data) override;
 
@@ -21,7 +21,6 @@ private:
 	OutputDefault* output;
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 	int JPEGQuality;
-	Resolution resolution;
 };
 
 }

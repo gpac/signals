@@ -25,8 +25,8 @@ private:
 	tjhandle handle;
 };
 
-JPEGTurboEncode::JPEGTurboEncode(Resolution resolution, int JPEGQuality)
-	: jtHandle(new JPEGTurbo), JPEGQuality(JPEGQuality), resolution(resolution) {
+JPEGTurboEncode::JPEGTurboEncode(int JPEGQuality)
+	: jtHandle(new JPEGTurbo), JPEGQuality(JPEGQuality) {
 	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataRawVideo);
 	output = addOutput(new OutputDefault);
@@ -37,12 +37,13 @@ JPEGTurboEncode::~JPEGTurboEncode() {
 
 void JPEGTurboEncode::process(Data data_) {
 	auto data = safe_cast<const PictureRGB24>(data_);
-	auto const dataSize = tjBufSize(resolution.width, resolution.height, TJSAMP_420);
+	auto const w = data->getFormat().res.width, h = data->getFormat().res.height;
+	auto const dataSize = tjBufSize(w, h, TJSAMP_420);
 	auto out = output->getBuffer(dataSize);
-	unsigned long jpegSize;
 	unsigned char *buf = (unsigned char*)out->data();
 	auto jpegBuf = data->data();
-	if (tjCompress2(jtHandle->get(), (unsigned char*)jpegBuf, resolution.width, 0/*pitch*/, resolution.height, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
+	unsigned long jpegSize;
+	if (tjCompress2(jtHandle->get(), (unsigned char*)jpegBuf, w, 0/*pitch*/, h, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
 		Log::msg(Log::Warning, "[jpegturbo_encode] error encountered while compressing.");
 		return;
 	}
