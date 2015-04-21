@@ -15,7 +15,13 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-class PipelinedModule : public InputCap {
+struct IPipelineModule {
+	virtual bool isSource() const = 0;
+	virtual bool isSink() const = 0;
+	virtual void dispatch(Data data) = 0;
+};
+
+class PipelinedModule : public ICompletionNotifier, public IPipelineModule, public InputCap {
 public:
 	/* take ownership of module */
 	PipelinedModule(Module *module, ICompletionNotifier *notify);
@@ -32,16 +38,15 @@ public:
 	IOutput* getOutput(size_t i) const;
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
-	bool isSource() const;
-	bool isSink() const;
-
-	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(Data data);
-
-	void endOfStream(); //Romain
+	bool isSource() const override;
+	bool isSink() const override;
 
 private:
 	void mimicInputs();
+
+	/* same as process() but uses the executor (may defer the call) */
+	void dispatch(Data data) override;
+	void finished() override;
 
 	std::unique_ptr<Module> delegate;
 	std::unique_ptr<IProcessExecutor> const localExecutor;
@@ -63,10 +68,11 @@ public:
 
 	void start();
 	void waitForCompletion();
-	void finished() override;
 
 private:
-	std::vector<std::unique_ptr<PipelinedModule>> modules;
+	void finished() override;
+
+	std::vector<std::unique_ptr<IPipelineModule>> modules;
 	bool isLowLatency;
 
 	std::mutex mutex;
