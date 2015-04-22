@@ -1,5 +1,6 @@
 #include "tests.hpp"
 #include "lib_signals/signals.hpp"
+#include "lib_utils/profiler.hpp"
 #include <sstream>
 #include <vector>
 

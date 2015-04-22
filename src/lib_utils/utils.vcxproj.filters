@@ -13,6 +13,7 @@
       <Filter>ffpp</Filter>
     </ClInclude>
     <ClInclude Include="format.hpp" />
+    <ClInclude Include="profiler.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="gpacpp">
