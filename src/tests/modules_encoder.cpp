@@ -16,7 +16,7 @@ unittest("encoder: video simple") {
 	};
 
 	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
-	ConnectOutput(encode->getOutput(0), onFrame);
+	Connect(encode->getOutput(0)->getSignal(), onFrame);
 	for (int i = 0; i < 50; ++i)
 		encode->process(picture);
 

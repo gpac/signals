@@ -14,17 +14,6 @@ MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
 	return Signals::MemberFunctor<void, Class, void(Class::*)(Data)>(objectPtr, &IProcessor::process);
 }
 
-//TODO: reorganize module helpers, there are too many
-inline size_t ConnectOutput(IOutput* p, std::function<void(Data)> functor) {
-	return p->getSignal().connect(functor);
-}
-
-template<typename C, typename D>
-size_t ConnectOutput(IOutput* p, C ObjectSlot, D MemberFunctionSlot) {
-	auto functor = MEMBER_FUNCTOR(ObjectSlot, MemberFunctionSlot);
-	return ConnectOutput(p, functor);
-}
-
 template<typename ModuleType>
 size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor& executor = defaultExecutor) {
 	auto prevMetadata = safe_cast<const IMetadataCap>(prev)->getMetadata();
