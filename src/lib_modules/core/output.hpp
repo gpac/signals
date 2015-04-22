@@ -10,17 +10,15 @@
 
 namespace Modules {
 
-using namespace Signals;
-
-typedef Signal<void(Data), ResultQueue<NotVoid<void>>> SignalAsync;
-typedef Signal<void(Data), ResultVector<NotVoid<void>>> SignalSync;
+typedef Signals::Signal<void(Data), Signals::ResultQueue<NotVoid<void>>> SignalAsync;
+typedef Signals::Signal<void(Data), Signals::ResultVector<NotVoid<void>>> SignalSync;
 
 typedef SignalSync SignalDefaultSync;
 
 struct IOutput {
 	virtual ~IOutput() noexcept(false) {}
 	virtual size_t emit(Data data) = 0;
-	virtual ISignal<void(Data)>& getSignal() = 0;
+	virtual Signals::ISignal<void(Data)>& getSignal() = 0;
 };
 
 template<typename Allocator, typename Signal>
@@ -48,7 +46,7 @@ public:
 		return allocator->getBuffer<T>(size);
 	}
 
-	ISignal<void(Data)>& getSignal() override {
+	Signals::ISignal<void(Data)>& getSignal() override {
 		return signal;
 	}
 
