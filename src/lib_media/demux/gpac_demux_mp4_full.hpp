@@ -3,8 +3,7 @@
 #include "lib_modules/core/module.hpp"
 #include <cstdint>
 
-using namespace Modules;
-
+namespace Modules {
 namespace Demux {
 
 class ISOProgressiveReader;
@@ -25,4 +24,5 @@ private:
 	OutputDefault* output;
 };
 
+}
 }

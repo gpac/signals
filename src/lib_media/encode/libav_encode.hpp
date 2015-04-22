@@ -10,8 +10,7 @@ namespace ffpp {
 class Frame;
 }
 
-using namespace Modules;
-
+namespace Modules {
 namespace Encode {
 
 struct LibavEncodeParams {
@@ -50,4 +49,5 @@ private:
 	OutputDataDefault<DataAVPacket>* output;
 };
 
+}
 }

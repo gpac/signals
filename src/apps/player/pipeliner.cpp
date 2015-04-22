@@ -3,6 +3,9 @@
 #include "pipeliner.hpp"
 #include <sstream>
 
+using namespace Modules;
+using namespace Pipelines;
+
 namespace {
 ModuleS* createRenderer(int codecType) {
 	if (codecType == VIDEO_PKT) {

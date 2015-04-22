@@ -4,8 +4,7 @@
 #include "../common/picture.hpp"
 
 
-using namespace Modules;
-
+namespace Modules {
 namespace Decode {
 
 class JPEGTurbo;
@@ -22,4 +21,5 @@ private:
 	std::unique_ptr<JPEGTurbo> const jtHandle;
 };
 
+}
 }

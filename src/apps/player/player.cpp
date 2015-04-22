@@ -1,7 +1,7 @@
 #include "pipeliner.hpp"
 #include <iostream>
 
-using namespace Modules;
+using namespace Pipelines;
 
 namespace {
 const char* processArgs(int argc, char const* argv[]) {

@@ -7,8 +7,6 @@
 #include <memory>
 
 
-using namespace Signals;
-
 namespace asio {
 class thread_pool;
 template<typename> class strand;
@@ -16,7 +14,7 @@ template<typename> class strand;
 
 namespace Modules {
 
-typedef IExecutor<void(Data)> IProcessExecutor;
+typedef Signals::IExecutor<void(Data)> IProcessExecutor;
 
 //tasks occur in the default thread pool
 //when tasks belong to a strand, they are processed non-concurrently in FIFO order
@@ -30,7 +28,7 @@ private:
 	asio::strand<asio::thread_pool::executor_type> strand;
 };
 
-static ExecutorSync<void(Data)> g_executorSync;
+static Signals::ExecutorSync<void(Data)> g_executorSync;
 //static StrandedPoolModuleExecutor g_StrandedExecutor;
 #define defaultExecutor g_executorSync
 

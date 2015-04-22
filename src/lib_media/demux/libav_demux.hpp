@@ -5,8 +5,7 @@
 
 struct AVFormatContext;
 
-using namespace Modules;
-
+namespace Modules {
 namespace Demux {
 
 class LibavDemux : public ModuleS {
@@ -24,4 +23,5 @@ private:
 	std::vector<OutputDataDefault<DataAVPacket>*> outputs;
 };
 
+}
 }

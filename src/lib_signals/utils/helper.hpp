@@ -47,16 +47,4 @@ size_t Connect(SignalType& sig, LambdaType lambda) {
 	return sig.connect(lambda);
 }
 
-template<typename T>
-struct NotVoidStruct {
-	typedef T Type;
-};
-
-template<>
-struct NotVoidStruct<void> {
-	typedef int Type;
-};
-
-template <typename T> using NotVoid = typename NotVoidStruct<T>::Type;
-
 }

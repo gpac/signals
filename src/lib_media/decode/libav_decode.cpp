@@ -5,6 +5,8 @@
 #include "lib_ffpp/ffpp.hpp"
 #include <cassert>
 
+namespace Modules {
+
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
@@ -172,4 +174,5 @@ void LibavDecode::flush() {
 	}
 }
 
+}
 }

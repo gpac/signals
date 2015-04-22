@@ -4,8 +4,7 @@
 
 struct AVFormatContext;
 
-using namespace Modules;
-
+namespace Modules {
 namespace Mux {
 
 class LibavMux : public ModuleDynI {
@@ -23,4 +22,5 @@ private:
 	bool m_headerWritten;
 };
 
+}
 }

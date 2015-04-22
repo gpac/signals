@@ -12,8 +12,7 @@ class Frame;
 
 class AudioConverter;
 
-using namespace Modules;
-
+namespace Modules {
 namespace Decode {
 
 class LibavDecode : public ModuleS {
@@ -36,4 +35,5 @@ private:
 	uint64_t m_numFrames;
 };
 
+}
 }

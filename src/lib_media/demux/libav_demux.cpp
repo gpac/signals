@@ -13,7 +13,10 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
-namespace {
+
+namespace Modules {
+
+	namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 auto g_InitAvdevice = runAtStartup(&avdevice_register_all);
@@ -111,4 +114,5 @@ void LibavDemux::process(Data /*data*/) {
 	}
 }
 
+}
 }

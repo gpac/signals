@@ -7,6 +7,7 @@ extern "C" {
 #include <cassert>
 
 
+namespace Modules {
 namespace Encode {
 
 class JPEGTurbo {
@@ -51,4 +52,5 @@ void JPEGTurboEncode::process(Data data_) {
 	output->emit(out);
 }
 
+}
 }

@@ -7,6 +7,7 @@
 
 using namespace Tests;
 using namespace Modules;
+using namespace Pipelines;
 
 namespace {
 
