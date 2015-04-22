@@ -59,7 +59,12 @@ public:
 		return p;
 	}
 	virtual size_t getNumInputs() const override {
-		return maxRequestedInput + 1;
+		if (inputs.size() == 0)
+			return 1;
+		else if (inputs[inputs.size() - 1]->getNumConnections() == 0)
+			return inputs.size();
+		else
+			return inputs.size() + 1;
 	}
 	IInput* getInput(size_t i) override {
 		if (i == inputs.size())
@@ -67,11 +72,7 @@ public:
 		else if (i > inputs.size())
 			throw std::runtime_error(format("Incorrect pin number %s for dynamic input.", i));
 
-		maxRequestedInput = std::max(i+1, maxRequestedInput);
 		return inputs[i].get();
 	}
-
-protected:
-	size_t maxRequestedInput = 0; //FIXME: wrong by design. Asking for a pin doesn't need connecting to it (e.g. scanning for types when drawing a graph)
 };
 }

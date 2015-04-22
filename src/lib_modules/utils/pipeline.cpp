@@ -22,6 +22,13 @@ public:
 		}
 	}
 
+	virtual size_t getNumConnections() const override {
+		return delegate->getNumConnections();
+	}
+	virtual void connect() override {
+		delegate->connect();
+	}
+
 private:
 	IInput *delegate;
 	ICompletionNotifier * const notify;
