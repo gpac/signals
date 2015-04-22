@@ -113,7 +113,7 @@ unittest("decode: video simple") {
 		ASSERT_EQUALS(0x80, lastPixel);
 	};
 
-	ConnectOutput(decode->getOutput(0), onPic);
+	Connect(decode->getOutput(0)->getSignal(), onPic);
 	decode->process(data);
 	decode->process(data);
 }

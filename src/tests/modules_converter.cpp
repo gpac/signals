@@ -17,7 +17,7 @@ namespace {
 unittest("audio converter: interleaved to planar to interleaved") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto comparator = uptr(new Utils::PcmComparator);
-	ConnectOutput(soundGen->getOutput(0), comparator.get(), &Utils::PcmComparator::pushOriginal);
+	Connect(soundGen->getOutput(0)->getSignal(), comparator.get(), &Utils::PcmComparator::pushOriginal);
 
 	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Planar);
@@ -27,7 +27,7 @@ unittest("audio converter: interleaved to planar to interleaved") {
 
 	ConnectOutputToInput(soundGen->getOutput(0), converter1);
 	ConnectOutputToInput(converter1->getOutput(0), converter2);
-	ConnectOutput(converter2->getOutput(0), comparator.get(), &Utils::PcmComparator::pushOther);
+	Connect(converter2->getOutput(0)->getSignal(), comparator.get(), &Utils::PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
 	SLEEP_IN_MS(200); // HACK: allow time for the data to reach the comparator ...
@@ -45,7 +45,7 @@ unittest("audio converter: interleaved to planar to interleaved") {
 unittest("audio converter: 44100 to 48000") {
 	auto soundGen = uptr(new In::SoundGenerator);
 	auto comparator = uptr(new Utils::PcmComparator);
-	ConnectOutput(soundGen->getOutput(0), comparator.get(), &Utils::PcmComparator::pushOriginal);
+	Connect(soundGen->getOutput(0)->getSignal(), comparator.get(), &Utils::PcmComparator::pushOriginal);
 
 	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto otherFormat = PcmFormat(48000, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
@@ -54,7 +54,7 @@ unittest("audio converter: 44100 to 48000") {
 
 	ConnectOutputToInput(soundGen->getOutput(0), converter1);
 	ConnectOutputToInput(converter1->getOutput(0), converter2);
-	ConnectOutput(converter2->getOutput(0), comparator.get(), &Utils::PcmComparator::pushOther);
+	Connect(converter2->getOutput(0)->getSignal(), comparator.get(), &Utils::PcmComparator::pushOther);
 
 	soundGen->process(nullptr);
 	SLEEP_IN_MS(200); // HACK: allow time for the data to reach the comparator ...
@@ -138,7 +138,7 @@ unittest("video converter: pass-through") {
 
 	{
 		auto convert = uptr(new Transform::VideoConvert(format));
-		ConnectOutput(convert->getOutput(0), onFrame);
+		Connect(convert->getOutput(0)->getSignal(), onFrame);
 
 		std::shared_ptr<DataBase> pic = uptr(new PictureYUV420P(res));
 		convert->process(pic);
@@ -161,7 +161,7 @@ unittest("video converter: different sizes") {
 
 	{
 		auto convert = uptr(new Transform::VideoConvert(format));
-		ConnectOutput(convert->getOutput(0), onFrame);
+		Connect(convert->getOutput(0)->getSignal(), onFrame);
 
 		std::shared_ptr<DataBase> pic = uptr(new PictureYUV420P(srcRes));
 		convert->process(pic);
