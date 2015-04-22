@@ -6,6 +6,9 @@
 
 #include "lib_ffpp/ffpp.hpp"
 
+
+namespace Modules {
+
 namespace {
 void fps2NumDen(const double fps, int &num, int &den) {
 	if (fabs(fps - (int)fps) < 0.001) {
@@ -272,4 +275,5 @@ void LibavEncode::process(Data data) {
 	}
 }
 
+}
 }

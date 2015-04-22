@@ -72,6 +72,6 @@ public:
 	}
 
 protected:
-	size_t maxRequestedInput = 0;
+	size_t maxRequestedInput = 0; //FIXME: wrong by design. Asking for a pin doesn't need connecting to it (e.g. scanning for types when drawing a graph)
 };
 }

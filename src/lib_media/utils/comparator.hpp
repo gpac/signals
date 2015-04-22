@@ -13,7 +13,7 @@ public:
 	virtual void pushOther(Data data);
 
 private:
-	Queue<Data> original, other;
+	Signals::Queue<Data> original, other;
 };
 
 

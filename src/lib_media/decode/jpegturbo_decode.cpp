@@ -9,6 +9,7 @@ extern "C" {
 #include "lib_ffpp/ffpp.hpp"
 
 
+namespace Modules {
 namespace Decode {
 
 class JPEGTurbo {
@@ -74,4 +75,5 @@ void JPEGTurboDecode::process(Data data_) {
 	output->emit(out);
 }
 
+}
 }

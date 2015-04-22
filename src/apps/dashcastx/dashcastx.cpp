@@ -1,7 +1,7 @@
 #include "lib_utils/profiler.hpp"
 #include "pipeliner.hpp"
 
-using namespace Modules;
+using namespace Pipelines;
 
 int safeMain(int argc, char const* argv[]) {
 	dashcastXOptions opt = processArgs(argc, argv);

@@ -10,8 +10,7 @@ namespace gpacpp {
 class IsoSample;
 }
 
-using namespace Modules;
-
+namespace Modules {
 namespace Mux {
 
 class GPACMuxMP4 : public ModuleDynI {
@@ -35,4 +34,5 @@ private:
 	OutputDataDefault<DataAVPacket>* output;
 };
 
+}
 }

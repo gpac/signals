@@ -4,6 +4,7 @@
 
 #include "lib_gpacpp/gpacpp.hpp"
 
+namespace Modules {
 namespace Demux {
 
 class ISOFileReader {
@@ -67,4 +68,5 @@ void GPACDemuxMP4Simple::process(Data /*data*/) {
 	}
 }
 
+}
 }

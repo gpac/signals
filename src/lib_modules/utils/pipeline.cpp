@@ -1,12 +1,12 @@
 #include "pipeline.hpp"
 
-
-#define EXECUTOR_SYNC ExecutorSync<void(Data)>
+#define EXECUTOR_SYNC Signals::ExecutorSync<void(Data)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
 #define EXECUTOR EXECUTOR_SYNC //Romain
 
+using namespace Modules;
 
-namespace Modules {
+namespace Pipelines {
 
 class PipelinedInput : public IInput {
 public:
@@ -65,6 +65,10 @@ bool PipelinedModule::isSink() const {
 	return delegate->getNumOutputs() == 0;
 }
 
+void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
+	ConnectOutputToInput(output, getInput(inputIdx), executor);
+}
+
 void PipelinedModule::dispatch(Data data) {
 	if (isSource()) {
 		assert(data == nullptr);
@@ -99,6 +103,12 @@ PipelinedModule* Pipeline::addModule(Module* rawModule) {
 	auto ret = module.get();
 	modules.push_back(std::move(module));
 	return ret;
+}
+
+void Pipeline::connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *next, size_t inputIdx) {
+	if (next->isSink())
+		numRemainingNotifications++;
+	next->connect(prev->getOutput(outputIdx), inputIdx);
 }
 
 void Pipeline::start() {

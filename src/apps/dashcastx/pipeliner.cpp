@@ -3,6 +3,9 @@
 #include "pipeliner.hpp"
 #include <sstream>
 
+using namespace Modules;
+using namespace Pipelines;
+
 namespace {
 Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt) {
 	auto const codecType = metadata->getStreamType();

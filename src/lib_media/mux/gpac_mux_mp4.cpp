@@ -13,6 +13,8 @@ extern "C" {
 #include "../common/libav.hpp"
 
 
+namespace Modules {
+
 namespace {
 static u64 getNTP() {
 	u32 sec, frac;
@@ -714,4 +716,5 @@ void GPACMuxMP4::process() {
 	}
 }
 
+}
 }

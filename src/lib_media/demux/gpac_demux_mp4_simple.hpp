@@ -5,8 +5,7 @@
 
 typedef struct __tag_isom GF_ISOFile;
 
-using namespace Modules;
-
+namespace Modules {
 namespace Demux {
 
 class ISOFileReader;
@@ -23,4 +22,5 @@ private:
 	OutputDefault* output;
 };
 
+}
 }

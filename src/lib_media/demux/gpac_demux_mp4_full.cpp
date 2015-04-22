@@ -6,6 +6,7 @@
 
 #include "lib_gpacpp/gpacpp.hpp"
 
+namespace Modules {
 namespace Demux {
 
 //TODO: set appropriate CCO credits
@@ -190,4 +191,5 @@ void GPACDemuxMP4Full::process(Data data_) {
 	processData();
 }
 
+}
 }

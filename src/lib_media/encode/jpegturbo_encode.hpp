@@ -5,8 +5,7 @@
 
 #define JPEG_DEFAULT_QUALITY 70
 
-using namespace Modules;
-
+namespace Modules {
 namespace Encode {
 
 class JPEGTurbo;
@@ -23,4 +22,5 @@ private:
 	int JPEGQuality;
 };
 
+}
 }

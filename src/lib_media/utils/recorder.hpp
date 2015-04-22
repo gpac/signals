@@ -15,7 +15,7 @@ public:
 	Data pop();
 
 private:
-	Queue<Data> record;
+	Signals::Queue<Data> record;
 };
 
 }

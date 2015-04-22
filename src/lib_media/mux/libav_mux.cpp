@@ -11,6 +11,8 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 
+namespace Modules {
+
 namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
@@ -135,4 +137,5 @@ void LibavMux::process() {
 	}
 }
 
+}
 }
