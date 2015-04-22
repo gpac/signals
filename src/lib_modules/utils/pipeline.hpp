@@ -14,6 +14,7 @@ struct ICompletionNotifier {
 };
 
 struct IPipelineModule {
+	virtual ~IPipelineModule() noexcept(false) {}
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
 	virtual void dispatch(Modules::Data data) = 0;

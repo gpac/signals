@@ -36,6 +36,7 @@ size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor& e
 		}
 	}
 
+	next->connect();
 	auto functor = MEMBER_FUNCTOR_PROCESS(next);
 	return prev->getSignal().connect(functor, executor);
 }

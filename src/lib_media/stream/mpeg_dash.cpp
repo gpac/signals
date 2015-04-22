@@ -121,8 +121,7 @@ void MPEG_DASH::DASHThread() {
 	auto startTime = std::chrono::steady_clock::now();
 	for (;;) {
 		Data a, v;
-		assert(maxRequestedInput == 2); //FIXME: with multiple inputs
-		for (size_t i = 0; i < maxRequestedInput; ++i) {
+		for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 			auto data = inputs[i]->pop();
 			if (!data) {
 				return;

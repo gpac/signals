@@ -3,6 +3,7 @@
 #include "data.hpp"
 #include "metadata.hpp"
 #include "lib_signals/utils/queue.hpp"
+#include <atomic>
 #include <memory>
 
 
@@ -13,7 +14,22 @@ struct IProcessor {
 	virtual void process(Data data) = 0;
 };
 
-struct IInput : public IProcessor, public MetadataCap, public Signals::Queue<Data> {
+class ConnectedCap {
+public:
+	ConnectedCap() : connections(0) {}
+	virtual ~ConnectedCap() noexcept(false) {}
+	virtual size_t getNumConnections() const {
+		return connections;
+	}
+	virtual void connect() {
+		connections++;
+	}
+
+private:
+	std::atomic_size_t connections;
+};
+
+struct IInput : public IProcessor, public ConnectedCap, public MetadataCap, public Signals::Queue<Data> {
 	virtual ~IInput() noexcept(false) {}
 };
 
