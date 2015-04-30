@@ -2,7 +2,7 @@
 
 #define EXECUTOR_SYNC Signals::ExecutorSync<void(Data)>
 #define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_SYNC //Romain
+#define EXECUTOR EXECUTOR_ASYNC
 
 using namespace Modules;
 

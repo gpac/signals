@@ -7,6 +7,7 @@
 #include <gpac/tools.h>
 #include <gpac/isomedia.h>
 #include <gpac/thread.h>
+#include <gpac/media_tools.h>
 
 //#define GPAC_MEM_TRACKER
 
@@ -64,7 +65,7 @@ class IsoSample : public GF_ISOSample {
 //------------------------------------------------
 class Init {
 	public:
-		Init(/*bool memTracker = false, */uint32_t globalLogTools = GF_LOG_ALL, uint32_t globalLogLevel = GF_LOG_DEBUG) {
+		Init(/*bool memTracker = false, */uint32_t globalLogTools = GF_LOG_ALL, uint32_t globalLogLevel = GF_LOG_WARNING) {
 #ifdef GPAC_MEM_TRACKER
 			gf_sys_init(GF_TRUE);
 #else

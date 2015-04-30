@@ -26,7 +26,7 @@ void IComparator::process(Data data) {
 	}
 }
 
-//FIXME: Romain: re-implement with multiple inputs
+//FIXME: re-implement with multiple inputs
 void IComparator::pushOriginal(Data data) {
 	original.push(data);
 }

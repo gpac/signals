@@ -113,7 +113,7 @@ void LibavMux::ensureHeader() {
 }
 
 void LibavMux::process() {
-	//FIXME: Romain: reimplement with multiple inputs
+	//FIXME: reimplement with multiple inputs
 	Data data = inputs[0]->pop();
 	if (inputs[0]->updateMetadata(data))
 		declareStream(data);

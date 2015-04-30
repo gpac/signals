@@ -26,6 +26,20 @@ struct IMetadata {
 	virtual StreamType getStreamType() const = 0;
 };
 
+class MetadataFile : public IMetadata {
+public:
+	MetadataFile(const std::string &filename) : filename(filename) {}
+	std::string getFilename() const {
+		return filename;
+	}
+	virtual StreamType getStreamType() const override {
+		return UNKNOWN_ST;
+	}
+
+private:
+	std::string filename;
+};
+
 //TODO: should be picture and Pcm and return the same fields as MetadataPkt
 struct MetadataRawVideo : public IMetadata {
 	virtual StreamType getStreamType() const override {
@@ -78,8 +92,10 @@ public:
 			const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
 			return true;
 		} else if (data->getMetadata() != m_metadata) {
-			if (m_metadata)
-				throw std::runtime_error(format("Metadata update from data not supported yet"));
+			if (m_metadata) {
+				Log::msg(Log::Warning, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
+				return true;
+			}
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
 			if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
 				throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", data->getMetadata()->getStreamType(), m_metadata->getStreamType()));

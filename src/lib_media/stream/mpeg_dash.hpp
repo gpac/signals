@@ -1,13 +1,12 @@
 #pragma once
 
 #include "lib_modules/core/module.hpp"
+#include "lib_gpacpp/gpacpp.hpp"
 
 namespace Modules {
 namespace Stream {
 
-struct MPD;
-
-class MPEG_DASH : public ModuleDynI {
+class MPEG_DASH : public ModuleDynI, public gpacpp::Init {
 public:
 	enum Type {
 		Live,
@@ -22,13 +21,14 @@ public:
 
 private:
 	void DASHThread();
-	void GenerateMPD(uint64_t segNum, Data audio, Data video);
+	u32 GenerateMPD(GF_DashSegmenterInput *dasherInputs);
 	void endOfStream();
 
-	int numDataQueueNotify = 2; //Romain
+	int numDataQueueNotify = 0;
 	std::thread workingThread;
 	Type type;
-	std::unique_ptr<MPD> mpd;
+	uint64_t segDurationInMs;
+	GF_Config *dashCtx;
 };
 
 }

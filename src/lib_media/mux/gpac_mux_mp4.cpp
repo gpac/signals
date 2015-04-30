@@ -353,7 +353,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 	fileName << ".mp4";
 
 	if (baseName == "") {
-		throw std::runtime_error("[GPACMuxMP4] Unsupported memory output");; //open in memory - apparently we have to use the gmem:// protocol
+		throw std::runtime_error("[GPACMuxMP4] Unsupported memory output"); //open in memory - apparently we have to use the gmem:// protocol
 	} else {
 		m_iso = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, nullptr);
 		if (!m_iso) {
@@ -371,16 +371,26 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 	output = addOutput(new OutputDataDefault<DataAVPacket>);
 }
 
-void GPACMuxMP4::closeSegment() {
+void GPACMuxMP4::closeSegment(bool isLastSeg) {
 	if (m_useSegments) {
-		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, GF_TRUE, GF_4CC('e', 'o', 'd', 's'), nullptr, nullptr);
+		gf_isom_flush_fragments(m_iso, (Bool)isLastSeg);
+		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, (Bool)isLastSeg, GF_4CC('e', 'o', 'd', 's'), nullptr, nullptr);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
 			throw std::runtime_error("Cannot close output segment.");
 		}
 
+		//Romain: concatenate manually TODO: try with fragments only?
+		auto s = format("%s_x.mp4", m_segName);
+		auto s_tmp = format("%s_x.mp4.tmp", m_segName);
+		system(format("cat %s %s > %s", gf_isom_get_filename(m_iso), m_segName, s_tmp).c_str());
+		system(format("mp4box -add %s -new %s", s_tmp, s).c_str());
+		system(format("rm %s %s", s_tmp, m_segName).c_str());
+
 		auto out = output->getBuffer(0);
-		out->getPacket()->stream_index = gf_isom_get_media_type(m_iso, 1);
+		assert(m_segName != "");
+		out->setMetadata(std::make_shared<MetadataFile>(s));
+		m_segName = "";
 		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 		out->setTime(m_DTS, mediaTimescale);
 		out->setDuration(m_curFragDur, mediaTimescale);
@@ -392,7 +402,7 @@ void GPACMuxMP4::flush() {
 	if (m_useFragments) {
 		gf_isom_flush_fragments(m_iso, GF_TRUE);
 	}
-	closeSegment();
+	closeSegment(true);
 }
 
 GPACMuxMP4::~GPACMuxMP4() {
@@ -427,13 +437,13 @@ void GPACMuxMP4::setupFragments() {
 
 			std::stringstream ss;
 			ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
-			e = gf_isom_start_segment(m_iso, (char*)ss.str().c_str(), GF_TRUE);
+			m_segName = ss.str();
+			e = gf_isom_start_segment(m_iso, (char*)m_segName.c_str(), GF_TRUE);
 			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
+				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_segNum, m_segName);
 				throw std::runtime_error("Impossible to start the segment");
 			}
-		}
-		else {
+		} else {
 			e = gf_isom_finalize_for_fragment(m_iso, 0);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
@@ -603,12 +613,10 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 
 	//inband SPS/PPS
 #if 0
-	if (video_output_file->muxer_type == GPAC_INIT_VIDEO_MUXER_AVC3) {
-		e = gf_isom_avc_set_inband_config(file, trackNum, 1);
-		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
-			throw std::runtime_error("Cannot set inband PPS/SPS for AVC track");
-		}
+	e = gf_isom_avc_set_inband_config(m_iso, trackNum, di);
+	if (e != GF_OK) {
+		Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
+		throw std::runtime_error("Cannot set inband PPS/SPS for AVC track");
 	}
 #endif
 
@@ -631,7 +639,7 @@ void GPACMuxMP4::declareStream(Data data) {
 }
 
 void GPACMuxMP4::process() {
-	//FIXME: Romain: reimplement with multiple inputs
+	//FIXME: reimplement with multiple inputs
 	Data data_ = inputs[0]->pop();
 	if (inputs[0]->updateMetadata(data_))
 		declareStream(data_);
@@ -666,24 +674,20 @@ void GPACMuxMP4::process() {
 
 	if (m_useFragments) {
 		m_curFragDur += deltaDTS;
-
 		//TODO: gf_isom_set_traf_base_media_decode_time(m_iso, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
-		GF_Err e = gf_isom_fragment_add_sample(m_iso, m_trackId, &sample, 1, deltaDTS, 0, 0, GF_FALSE);
-		if (e != GF_OK) {
-			Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));
-			return;
-		}
 
+		GF_Err e;
 		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_segDuration)) {
-			closeSegment();
+			closeSegment(false);
 			if (m_useSegments) {
 				m_segNum++;
 
 				std::stringstream ss;
 				ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
-				e = gf_isom_start_segment(m_iso, (char*)ss.str().c_str(), GF_TRUE);
+				m_segName = ss.str();
+				e = gf_isom_start_segment(m_iso, (char*)m_segName.c_str(), GF_TRUE);
 				if (e != GF_OK) {
-					Log::msg(Log::Warning, "%s: gf_isom_start_segment %s\n", gf_error_to_string(e), m_segNum);
+					Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_segNum, m_segName);
 					throw std::runtime_error("Impossible to start the segment");
 				}
 			}
@@ -702,6 +706,12 @@ void GPACMuxMP4::process() {
 
 			const u64 oneFragDurInTimescale = clockToTimescale(m_segDuration, mediaTimescale);
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
+		}
+		
+		e = gf_isom_fragment_add_sample(m_iso, m_trackId, &sample, 1, deltaDTS, 0, 0, GF_FALSE);
+		if (e != GF_OK) {
+			Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));
+			return;
 		}
 	} else {
 		GF_Err e = gf_isom_add_sample(m_iso, m_trackId, 1, &sample);
