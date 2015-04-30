@@ -5,7 +5,9 @@ Mid Term apps:
 
 Tasks (from higher to lower priority):
 - DashCast:
- * multi-rep: use GPAC dasher? at least combine it with the muxer?
+ * add bitrates
+ * use an event loop so that the user interacts (and then insert 'lsmg')
+ * add an input loop for live simulation
 - Multiple inputs:
  * A/V muxer
 - dynamic media types:
