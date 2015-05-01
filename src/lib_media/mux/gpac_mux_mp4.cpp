@@ -342,11 +342,18 @@ void fillVideoSample(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 namespace Mux {
 
 //TODO: segments start with RAP
-GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t segDurationInMs)
-: m_DTS(0), m_curFragDur(0), m_segNum(0), m_useSegments(useSegments), m_useFragments(useSegments),
-  m_segDuration(timescaleToClock(segDurationInMs, 1000)) {
-	if (m_segDuration == 0)
-		throw std::runtime_error("[GPAC Mux] Segment duration too small. Please check your settings.");
+GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
+: m_DTS(0), m_curFragDur(0), m_chunkNum(0), m_useSegments(useSegments), m_useFragments(useSegments),
+  m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)) {
+	if (m_chunkDuration == 0) {
+		Log::msg(Log::Debug, "[GPAC Mux] Configuration: single file.");
+		assert(!useSegments);
+	} else {
+		if (useSegments)
+			Log::msg(Log::Debug, "[GPAC Mux] Configuration: segmented.");
+		else
+			Log::msg(Log::Info, "[GPAC Mux] Configuration: chunks (independent ISOBMF files, not segmented).");
+	}
 
 	std::stringstream fileName;
 	fileName << baseName;
@@ -372,29 +379,14 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, bool useSegments, uint64_t s
 }
 
 void GPACMuxMP4::closeSegment(bool isLastSeg) {
+	gf_isom_flush_fragments(m_iso, (Bool)isLastSeg);
+
 	if (m_useSegments) {
-		gf_isom_flush_fragments(m_iso, (Bool)isLastSeg);
 		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, (Bool)isLastSeg, GF_4CC('e', 'o', 'd', 's'), nullptr, nullptr);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
 			throw std::runtime_error("Cannot close output segment.");
 		}
-
-		//Romain: concatenate manually TODO: try with fragments only?
-		auto s = format("%s_x.mp4", m_segName);
-		auto s_tmp = format("%s_x.mp4.tmp", m_segName);
-		system(format("cat %s %s > %s", gf_isom_get_filename(m_iso), m_segName, s_tmp).c_str());
-		system(format("mp4box -add %s -new %s", s_tmp, s).c_str());
-		system(format("rm %s %s", s_tmp, m_segName).c_str());
-
-		auto out = output->getBuffer(0);
-		assert(m_segName != "");
-		out->setMetadata(std::make_shared<MetadataFile>(s));
-		m_segName = "";
-		auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
-		out->setTime(m_DTS, mediaTimescale);
-		out->setDuration(m_curFragDur, mediaTimescale);
-		output->emit(out);
 	}
 }
 
@@ -436,11 +428,11 @@ void GPACMuxMP4::setupFragments() {
 			}
 
 			std::stringstream ss;
-			ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
-			m_segName = ss.str();
-			e = gf_isom_start_segment(m_iso, (char*)m_segName.c_str(), GF_TRUE);
+			ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum;
+			m_chunkName = ss.str();
+			e = gf_isom_start_segment(m_iso, (char*)m_chunkName.c_str(), GF_TRUE);
 			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_segNum, m_segName);
+				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_chunkNum, m_chunkName);
 				throw std::runtime_error("Impossible to start the segment");
 			}
 		} else {
@@ -459,7 +451,7 @@ void GPACMuxMP4::setupFragments() {
 
 		e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), 0);
 		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_segNum);
+			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
 			throw std::runtime_error("Impossible to create UTC marquer");
 		}
 	}
@@ -677,19 +669,33 @@ void GPACMuxMP4::process() {
 		//TODO: gf_isom_set_traf_base_media_decode_time(m_iso, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
 
 		GF_Err e;
-		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_segDuration)) {
+		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_chunkDuration)) {
 			closeSegment(false);
 			if (m_useSegments) {
-				m_segNum++;
+				auto oldChunkName = m_chunkName;
+				m_chunkNum++;
 
 				std::stringstream ss;
-				ss << gf_isom_get_filename(m_iso) << "_" << m_segNum;
-				m_segName = ss.str();
-				e = gf_isom_start_segment(m_iso, (char*)m_segName.c_str(), GF_TRUE);
+				ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum;
+				m_chunkName = ss.str();
+				e = gf_isom_start_segment(m_iso, (char*)m_chunkName.c_str(), GF_TRUE);
 				if (e != GF_OK) {
-					Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_segNum, m_segName);
+					Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_chunkNum, m_chunkName);
 					throw std::runtime_error("Impossible to start the segment");
 				}
+
+				//FIXME: MP4Box dasher requires complete ISOBMF files
+				auto s = format("%s_x.mp4", oldChunkName);
+				auto s_tmp = format("%s_x.mp4.tmp", oldChunkName);
+				system(format("cat %s %s > %s", gf_isom_get_filename(m_iso), oldChunkName, s_tmp).c_str());
+				system(format("MP4Box -add %s -new %s", s_tmp, s).c_str());
+				system(format("rm %s %s", s_tmp, oldChunkName).c_str());
+
+				auto out = output->getBuffer(0);
+				out->setMetadata(std::make_shared<MetadataFile>(s));
+				out->setTime(m_DTS, mediaTimescale);
+				out->setDuration(m_curFragDur, mediaTimescale);
+				output->emit(out);
 			}
 
 			e = gf_isom_start_fragment(m_iso, GF_TRUE);
@@ -700,11 +706,11 @@ void GPACMuxMP4::process() {
 
 			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), m_DTS);
 			if (e != GF_OK) {
-				Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_segNum);
+				Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
 				throw std::runtime_error("Impossible to set the UTC marquer");
 			}
 
-			const u64 oneFragDurInTimescale = clockToTimescale(m_segDuration, mediaTimescale);
+			const u64 oneFragDurInTimescale = clockToTimescale(m_chunkDuration, mediaTimescale);
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
 		}
 		

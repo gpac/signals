@@ -163,16 +163,17 @@ MPEG_DASH::~MPEG_DASH() {
 //needed because of the use of system time for live - otherwise awake on data as for any multi-input module
 //TODO: add clock to the scheduler
 void MPEG_DASH::DASHThread() {
-	auto startTime = std::chrono::steady_clock::now();
 	for (;;) {
 		GF_DashSegmenterInput *dash_inputs = nullptr;
 		u32 nb_dash_inputs = 0;
+		std::vector<Data> data;
+		data.resize(getNumInputs() - 1);
 		for (size_t i = 0; i < getNumInputs() - 1; ++i) {
-			auto data = inputs[i]->pop();
-			if (!data) {
+			data[i] = inputs[i]->pop();
+			if (!data[i]) {
 				return;
 			} else {
-				char *f = gf_strdup(safe_cast<const MetadataFile>(data->getMetadata())->getFilename().c_str());
+				char *f = gf_strdup(safe_cast<const MetadataFile>(data[i]->getMetadata())->getFilename().c_str());
 				dash_inputs = set_dash_input(dash_inputs, f, &nb_dash_inputs);
 			}
 		}
@@ -237,15 +238,13 @@ void MPEG_DASH::process() {
 u32 MPEG_DASH::GenerateMPD(GF_DashSegmenterInput *dasherInputs) {
 	u32 nb_dash_inputs = (u32)getNumInputs() - 1;
 	
-	u32 do_abort = 0;
 	char szMPD[GF_MAX_PATH];
 	strcpy(szMPD, "dashcastx.mpd");
 
 	Double dash_duration = (double)segDurationInMs / 1000;
 	Double mpd_update_time = dash_duration;
 	Bool dash_live = (type == Live) ? GF_TRUE : GF_FALSE;
-	bool del_file = true;
-
+	
 	u32 use_url_template = 0;
 	Bool segment_timeline = GF_FALSE;
 	GF_DashSwitchingMode bitstream_switching = GF_DASH_BSMODE_DEFAULT;

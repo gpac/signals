@@ -15,7 +15,7 @@ namespace Mux {
 
 class GPACMuxMP4 : public ModuleDynI {
 public:
-	GPACMuxMP4(const std::string &baseName, bool useSegments = false, uint64_t segDurationInMs = 2000);
+	GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs = 0, bool useSegments = false);
 	~GPACMuxMP4();
 	void process() override;
 	void flush() override;
@@ -27,11 +27,11 @@ private:
 	void setupFragments();
 	void closeSegment(bool isLastSeg);
 	GF_ISOFile *m_iso;
-	uint64_t m_DTS, m_curFragDur, m_segNum;
+	uint64_t m_DTS, m_curFragDur, m_chunkNum;
 	uint32_t m_trackId;
 	bool m_useSegments, m_useFragments;
-	uint64_t m_segDuration;
-	std::string m_segName;
+	uint64_t m_chunkDuration;
+	std::string m_chunkName;
 	OutputDataDefault<DataAVPacket>* output;
 };
 
