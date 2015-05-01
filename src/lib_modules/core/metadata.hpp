@@ -93,7 +93,7 @@ public:
 			return true;
 		} else if (data->getMetadata() != m_metadata) {
 			if (m_metadata) {
-				Log::msg(Log::Warning, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
+				Log::msg(Log::Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
 				return true;
 			}
 			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");

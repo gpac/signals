@@ -7,13 +7,13 @@ using namespace Modules;
 using namespace Pipelines;
 
 namespace {
-Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt) {
+Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t iRes) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
 		Encode::LibavEncodeParams p;
 		p.isLowLatency = opt.isLive;
-		p.res = opt.res;
+		p.res = opt.res[iRes];
 		return new Encode::LibavEncode(Encode::LibavEncode::Video, p);
 	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found audio stream");
@@ -52,30 +52,38 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
 	int numDashInputs = 0;
-	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
+	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
+		if (!metadata) {
+			Log::msg(Log::Warning, "[DashCastX] Unknown metadata for stream %s. Ignoring.", i);
+			break;
+		}
+
 		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
-
 		pipeline.connect(demux, i, decode, 0);
-		auto converter = pipeline.addModule(createConverter(metadata, opt.res));
-		if (!converter)
-			continue;
 
-		connect(decode, converter);
+		auto const numRes = (metadata->getStreamType() == VIDEO_PKT) ? opt.res.size() : 1;
+		for (size_t r = 0; r < numRes; ++r) {
+			auto converter = pipeline.addModule(createConverter(metadata, opt.res[r]));
+			if (!converter)
+				continue;
 
-		auto rawEncoder = createEncoder(metadata, opt);
-		auto encoder = pipeline.addModule(rawEncoder);
-		if (!encoder)
-			continue;
+			connect(decode, converter);
 
-		connect(converter, encoder);
+			auto rawEncoder = createEncoder(metadata, opt, r);
+			auto encoder = pipeline.addModule(rawEncoder);
+			if (!encoder)
+				continue;
 
-		std::stringstream filename;
-		filename << numDashInputs;
-		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), opt.segmentDuration, true));
-		connect(encoder, muxer);
+			connect(converter, encoder);
 
-		pipeline.connect(muxer, 0, dasher, numDashInputs);
-		numDashInputs++;
+			std::stringstream filename;
+			filename << numDashInputs;
+			auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), opt.segmentDuration, true));
+			connect(encoder, muxer);
+
+			pipeline.connect(muxer, 0, dasher, numDashInputs);
+			numDashInputs++;
+		}
 	}
 }

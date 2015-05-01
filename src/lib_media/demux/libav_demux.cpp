@@ -16,8 +16,9 @@ extern "C" {
 
 namespace Modules {
 
-	namespace {
+namespace {
 auto g_InitAv = runAtStartup(&av_register_all);
+auto g_InitAvformat = runAtStartup(&avformat_network_init);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
 auto g_InitAvdevice = runAtStartup(&avdevice_register_all);
 auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
@@ -65,7 +66,10 @@ LibavDemux::LibavDemux(const std::string &url) {
 			throw std::runtime_error("Webcam init failed.");
 		}
 	} else {
-		if (avformat_open_input(&m_formatCtx, url.c_str(), nullptr, nullptr)) {
+		ffpp::Dict dict;
+		dict.set("probesize", "100M");
+		dict.set("analyzeduration", "100M");
+		if (avformat_open_input(&m_formatCtx, url.c_str(), nullptr, &dict)) {
 			Log::msg(Log::Warning, "[LibavDemux] Error when opening input '%s'", url);
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
 			throw std::runtime_error("Format Context init failed.");

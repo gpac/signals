@@ -11,7 +11,7 @@ int safeMain(int argc, char const* argv[]) {
 	Pipeline pipeline(opt.isLive);
 	declarePipeline(pipeline, opt);
 
-	Tools::Profiler profilerProcessing("Dashcast X - processing time");
+	Tools::Profiler profilerProcessing("DashcastX - processing time");
 	pipeline.start();
 	pipeline.waitForCompletion();
 

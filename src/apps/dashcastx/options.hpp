@@ -4,7 +4,7 @@
 
 struct dashcastXOptions {
 	std::string url;
-	Modules::Resolution res = Modules::VIDEO_RESOLUTION;
+	std::vector<Modules::Resolution> res;
 	uint64_t segmentDuration = 2000;
 	bool isLive = false;
 };

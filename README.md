@@ -32,3 +32,8 @@ Visual Studio:
 You need at least Visual Studio 2015.
 Get the dependency repository from https://github.com/rbouqueau/signals-deps.git
 Copy paste the Signals folder on the batch
+
+Run
+===
+
+For live inputs with FFmpeg demux, please increase the fifo size: protocol://ip_address:port?fifo_size=1000000&overrun_nonfatal=1
