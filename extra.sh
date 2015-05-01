@@ -81,8 +81,8 @@ if [ ! -f extra/build/ffmpeg/buildOk ] ; then
 	../../src/ffmpeg/configure \
 		--host-os=$HOST \
 		--disable-programs \
-		--disable-shared \
-		--enable-static \
+		--enable-shared \
+		--disable-static \
 		--enable-gpl \
 		--enable-libx264 \
 		--enable-version3 \
