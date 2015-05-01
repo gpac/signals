@@ -72,7 +72,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 		std::stringstream filename;
 		filename << numDashInputs;
-		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), true, opt.segmentDuration));
+		auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), opt.segmentDuration, true));
 		connect(encoder, muxer);
 
 		pipeline.connect(muxer, 0, dasher, numDashInputs);

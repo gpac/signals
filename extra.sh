@@ -106,7 +106,7 @@ if [ ! -f extra/src/gpac/Changelog ] ; then
 	rm -rf extra/src/gpac
 	git clone https://github.com/gpac/gpac.git extra/src/gpac
 	pushd extra/src/gpac
-	git checkout -q a1a3cf2dd187f
+	git checkout -q 4d74713
 	popd
 fi
 
