@@ -7,13 +7,14 @@ using namespace Modules;
 using namespace Pipelines;
 
 namespace {
-Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t iRes) {
+Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t i) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found video stream");
 		Encode::LibavEncodeParams p;
 		p.isLowLatency = opt.isLive;
-		p.res = opt.res[iRes];
+		p.res = opt.v[i].res;
+		p.bitrate_v = opt.v[i].bitrate;
 		return new Encode::LibavEncode(Encode::LibavEncode::Video, p);
 	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Encoder] Found audio stream");
@@ -62,9 +63,9 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 		pipeline.connect(demux, i, decode, 0);
 
-		auto const numRes = (metadata->getStreamType() == VIDEO_PKT) ? opt.res.size() : 1;
+		auto const numRes = (metadata->getStreamType() == VIDEO_PKT) ? opt.v.size() : 1;
 		for (size_t r = 0; r < numRes; ++r) {
-			auto converter = pipeline.addModule(createConverter(metadata, opt.res[r]));
+			auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
 			if (!converter)
 				continue;
 
@@ -81,6 +82,11 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 			filename << numDashInputs;
 			auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), opt.segmentDuration, true));
 			connect(encoder, muxer);
+			if (metadata->getStreamType() == AUDIO_PKT) {
+				filename << "dump.aac";
+				auto file = pipeline.addModule(new Out::File(filename.str()));
+				connect(encoder, file);
+			}
 
 			pipeline.connect(muxer, 0, dasher, numDashInputs);
 			numDashInputs++;
