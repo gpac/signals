@@ -15,6 +15,10 @@ class DataBase {
 public:
 	DataBase() = default;
 	virtual ~DataBase() {}
+	virtual uint8_t* data() = 0;
+	virtual const uint8_t* data() const = 0;
+	virtual uint64_t size() const = 0;
+	virtual void resize(size_t size) = 0;
 
 	std::shared_ptr<const IMetadata> getMetadata() const {
 		return m_metadata;
@@ -56,16 +60,16 @@ struct DataLoose : public DataBase {};
 class DataRaw : public DataBase {
 public:
 	DataRaw(size_t size) : buffer(size) {}
-	uint8_t* data() {
+	uint8_t* data() override {
 		return buffer.data();
 	}
-	const uint8_t* data() const {
+	const uint8_t* data() const override {
 		return buffer.data();
 	}
-	uint64_t size() const {
+	uint64_t size() const override {
 		return buffer.size();
 	}
-	void resize(size_t size) {
+	void resize(size_t size) override {
 		buffer.resize(size);
 	}
 

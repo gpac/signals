@@ -11,7 +11,7 @@ File::File(std::string const& path) {
 		Log::msg(Log::Error, "Can't open file for writing: %s", path);
 		throw std::runtime_error("File not found");
 	}
-	addInput(new Input<DataRaw>(this));
+	addInput(new Input<DataBase>(this));
 }
 
 File::~File() {
@@ -19,7 +19,7 @@ File::~File() {
 }
 
 void File::process(Data data_) {
-	auto data = safe_cast<const DataRaw>(data_);
+	auto data = safe_cast<const DataBase>(data_);
 	fwrite(data->data(), 1, (size_t)data->size(), file);
 }
 
