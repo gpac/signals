@@ -59,11 +59,12 @@ class DataAVPacket : public DataBase {
 public:
 	DataAVPacket(size_t size = 0);
 	~DataAVPacket();
-	uint8_t* data();
-	uint8_t const* data() const;
-	uint64_t size() const;
+	uint8_t* data() override;
+	uint8_t const* data() const override;
+	uint64_t size() const override;
+	void resize(size_t size) override;
+
 	AVPacket* getPacket() const;
-	void resize(size_t size);
 
 private:
 	std::unique_ptr<AVPacket> const pkt;

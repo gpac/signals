@@ -38,7 +38,7 @@ AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {
 
 JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
-	auto input = addInput(new Input<DataRaw>(this));
+	auto input = addInput(new Input<DataBase>(this));
 	input->setMetadata(new MetadataPktVideo);
 	output = addOutput(new OutputPicture(new MetadataRawVideo));
 }
@@ -58,7 +58,7 @@ void JPEGTurboDecode::ensureMetadata(int width, int height, int pixelFmt) {
 }
 
 void JPEGTurboDecode::process(Data data_) {
-	auto data = safe_cast<const DataRaw>(data_);
+	auto data = safe_cast<const DataBase>(data_);
 	const int pixelFmt = TJPF_RGB;
 	int w, h, jpegSubsamp;
 	auto jpegBuf = data->data();
