@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-Log::Level Log::globalLogLevel = Log::Info;
+Log::Level Log::globalLogLevel = Log::Warning;
 
 
 std::ostream& Log::get(Level /*level*/) {
