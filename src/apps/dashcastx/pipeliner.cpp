@@ -82,11 +82,6 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 			filename << numDashInputs;
 			auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), opt.segmentDuration, true));
 			connect(encoder, muxer);
-			if (metadata->getStreamType() == AUDIO_PKT) {
-				filename << "dump.aac";
-				auto file = pipeline.addModule(new Out::File(filename.str()));
-				connect(encoder, file);
-			}
 
 			pipeline.connect(muxer, 0, dasher, numDashInputs);
 			numDashInputs++;
