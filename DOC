@@ -1,0 +1,55 @@
+Coding consideration
+====================
+
+You need a C++11 compiler.
+
+
+Write an application
+====================
+
+Use the Pipeline namespace.
+
+ORDER OF ALLOC
+
+
+Write a module
+==============
+
+Use the Modules namespace.
+
+Constructor: use hard types.
+flush() = EOS
+
+* Inputs
+
+TODO
+
+MAKE A LIST OF BASIC OBJECTS
+* Allocator
+* Data: shared_ptr
+* Output
+...
+
+
+Framework architecture
+======================
+
+Signals is layered (from bottom to top):
+- signals: a signal-slot system
+- modules: a generic set of module interfaces and connection helpers
+- media: some module implementations based on libmodules
+- pipeline: a
+
+
+Technical considerations
+========================
+
+* Parallelism
+
+Automatic over a thread pool with an ID preventing parallel execution on the same module.
+
+only use a thread if you need the system clock
+
+* Data types
+
+* metadata
