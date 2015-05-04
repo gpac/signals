@@ -92,6 +92,16 @@ void LibavMux::declareStream(Data data) {
 
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavVideo(metadata->getAVCodecContext()));
+	} else if (auto metadata2 = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata_)) {
+		AVStream *avStream = avformat_new_stream(m_formatCtx, metadata2->getAVCodecContext()->codec);
+		if (!avStream) {
+			Log::msg(Log::Warning, "[LibavMux] could not create the stream, disable output.");
+			throw std::runtime_error("[LibavMux] Stream creation failed.");
+		}
+
+		m_formatCtx->streams[0]->codec->sample_rate = metadata2->getAVCodecContext()->sample_rate;
+		auto input = addInput(new Input<DataAVPacket>(this));
+		input->setMetadata(new MetadataPktLibavAudio(metadata2->getAVCodecContext()));
 	} else {
 		throw std::runtime_error("[LibavMux] Stream creation failed: unknown type.");
 	}
