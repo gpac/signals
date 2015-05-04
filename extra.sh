@@ -171,8 +171,6 @@ if [ ! -f extra/include/asio/asio.hpp ] ; then
 	cp -r extra/src/asio/asio/include/* extra/include/asio/
 fi
 
-echo "Done"
-
 #-------------------------------------------------------------------------------
 # libjpeg-turbo
 #-------------------------------------------------------------------------------
