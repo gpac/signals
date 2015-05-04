@@ -253,16 +253,17 @@ u32 MPEG_DASH::GenerateMPD(GF_DashSegmenterInput *dasherInputs) {
 	char *seg_ext = nullptr;
 	u32 segment_marker_4cc = 0;
 	Double min_buffer = 1.5;
-	s32 ast_offset_ms = 0;
+	u32 timeshiftBuffer = 60;
+	s32 ast_offset_ms = (s32)segDurationInMs;
 	u32 dash_scale = 1000;
 	Bool fragments_in_memory = GF_TRUE;
 
-	GF_Err e = gf_dasher_segment_files(szMPD, dasherInputs, nb_dash_inputs, (type == Live) ? GF_DASH_PROFILE_LIVE : GF_DASH_PROFILE_FULL,
+	GF_Err e = gf_dasher_segment_files(szMPD, dasherInputs, nb_dash_inputs, GF_DASH_PROFILE_LIVE,
 		nullptr, nullptr, nullptr, nullptr, nullptr, 0,
 		use_url_template, segment_timeline, GF_FALSE, GF_FALSE,
 		bitstream_switching, seg_at_rap, dash_duration,
 		seg_name, seg_ext, segment_marker_4cc, dash_duration, 0, GF_FALSE, frag_at_rap, nullptr,
-		dashCtx, GF_DASH_DYNAMIC/*_LAST TODO: on last segment/flush()*/, mpd_update_time, 0, 0.0, min_buffer,
+		dashCtx, (type == Static) ? GF_DASH_STATIC : GF_DASH_DYNAMIC/*_LAST TODO: on last segment/flush()*/, mpd_update_time, timeshiftBuffer, 0.0, min_buffer,
 		ast_offset_ms, dash_scale, fragments_in_memory, 0, 0, GF_FALSE,
 		GF_FALSE, GF_FALSE, GF_FALSE, 0.0, GF_FALSE, GF_FALSE, nullptr);
 

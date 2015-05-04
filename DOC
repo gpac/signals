@@ -37,8 +37,9 @@ Framework architecture
 Signals is layered (from bottom to top):
 - signals: a signal-slot system
 - modules: a generic set of module interfaces and connection helpers
+- mm? TODO multimedia consideration (modules would be agnostic)
 - media: some module implementations based on libmodules
-- pipeline: a
+- pipeline: pipeline builder and connection helpers
 
 
 Technical considerations
