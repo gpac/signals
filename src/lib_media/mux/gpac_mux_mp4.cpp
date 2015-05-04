@@ -685,8 +685,8 @@ void GPACMuxMP4::process() {
 				}
 
 				//MP4Box dasher requires complete ISOBMF files
-				auto s = format("%s%s_x.mp4", gf_get_default_cache_directory(), oldChunkName);
-				auto s_tmp = format("%s%s_x.tmp.mp4", gf_get_default_cache_directory(), oldChunkName);
+				auto s = format("%s/%s_x.mp4", gf_get_default_cache_directory(), oldChunkName);
+				auto s_tmp = format("%s/%s_x.tmp.mp4", gf_get_default_cache_directory(), oldChunkName);
 				system(format("cat %s %s > %s", gf_isom_get_filename(m_iso), oldChunkName, s_tmp).c_str());
 				system(format("MP4Box -add %s:ext=mp4 -new %s 2>&1 > nul", s_tmp, s).c_str());
 				system(format("rm %s %s 2>&1 > nul", s_tmp, oldChunkName).c_str());
@@ -713,7 +713,7 @@ void GPACMuxMP4::process() {
 			const u64 oneFragDurInTimescale = clockToTimescale(m_chunkDuration, mediaTimescale);
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
 		}
-		
+
 		e = gf_isom_fragment_add_sample(m_iso, m_trackId, &sample, 1, deltaDTS, 0, 0, GF_FALSE);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));

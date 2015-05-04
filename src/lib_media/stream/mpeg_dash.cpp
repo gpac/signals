@@ -237,14 +237,14 @@ void MPEG_DASH::process() {
 
 u32 MPEG_DASH::GenerateMPD(GF_DashSegmenterInput *dasherInputs) {
 	u32 nb_dash_inputs = (u32)getNumInputs() - 1;
-	
+
 	char szMPD[GF_MAX_PATH];
 	strcpy(szMPD, "dashcastx.mpd");
 
 	Double dash_duration = (double)segDurationInMs / 1000;
 	Double mpd_update_time = dash_duration;
 	Bool dash_live = (type == Live) ? GF_TRUE : GF_FALSE;
-	
+
 	u32 use_url_template = 0;
 	Bool segment_timeline = GF_FALSE;
 	GF_DashSwitchingMode bitstream_switching = GF_DASH_BSMODE_DEFAULT;
@@ -257,7 +257,7 @@ u32 MPEG_DASH::GenerateMPD(GF_DashSegmenterInput *dasherInputs) {
 	u32 dash_scale = 1000;
 	Bool fragments_in_memory = GF_TRUE;
 
-	GF_Err e = gf_dasher_segment_files(szMPD, dasherInputs, nb_dash_inputs, GF_DASH_PROFILE_LIVE,
+	GF_Err e = gf_dasher_segment_files(szMPD, dasherInputs, nb_dash_inputs, (type == Live) ? GF_DASH_PROFILE_LIVE : GF_DASH_PROFILE_FULL,
 		nullptr, nullptr, nullptr, nullptr, nullptr, 0,
 		use_url_template, segment_timeline, GF_FALSE, GF_FALSE,
 		bitstream_switching, seg_at_rap, dash_duration,

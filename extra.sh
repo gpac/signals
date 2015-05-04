@@ -23,21 +23,22 @@ if [ ! -f extra/src/x264/x264.c ] ; then
 	rm -rf extra/src/x264
 	git clone --depth 100 git://git.videolan.org/x264.git extra/src/x264
 	pushd extra/src/x264
- 	git checkout dd79a61e0e354a432907f2d1f7137b27a12dfce7
+	git checkout dd79a61e0e354a432907f2d1f7137b27a12dfce7
 	popd
 fi
 
 if [ ! -f extra/build/x264/buildOk ] ; then
 	mkdir -p extra/build/x264
 	pushd extra/build/x264
- 	../../src/x264/configure \
+	../../src/x264/configure \
 		--host=$HOST \
-		--enable-static \
+		--enable-shared \
+		--disable-static \
 		--prefix=$EXTRA_DIR
 	popd
 	$MAKE -C extra/build/x264
 	$MAKE -C extra/build/x264 install
-	touch extra/build/x264/buildOk 
+	touch extra/build/x264/buildOk
 fi
 
 #-------------------------------------------------------------------------------
@@ -124,7 +125,7 @@ if [ ! -f extra/build/gpac/buildOk ] ; then
 	$MAKE install-lib
 	cp gpac.pc $EXTRA_DIR/lib/pkgconfig
 	popd
-	touch extra/build/gpac/buildOk 
+	touch extra/build/gpac/buildOk
 fi
 
 #-------------------------------------------------------------------------------
@@ -161,7 +162,7 @@ if [ ! -f extra/src/asio/asio/include/asio.hpp ] ; then
 	rm -rf extra/src/asio
 	git clone --depth 1000 https://github.com/chriskohlhoff/asio extra/src/asio
 	pushd extra/src/asio
- 	git checkout f05ccf18df816f8999dcc6449f65e520787899c6
+	git checkout f05ccf18df816f8999dcc6449f65e520787899c6
 	popd
 fi
 
