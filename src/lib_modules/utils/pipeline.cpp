@@ -1,8 +1,9 @@
 #include "pipeline.hpp"
 
-#define EXECUTOR_SYNC Signals::ExecutorSync<void(Data)>
-#define EXECUTOR_ASYNC StrandedPoolModuleExecutor
-#define EXECUTOR EXECUTOR_ASYNC
+#define EXECUTOR_SYNC         Signals::ExecutorSync<void(Data)>
+#define EXECUTOR_ASYNC_THREAD Signals::ExecutorThread<void(Data)>
+#define EXECUTOR_ASYNC_POOL   StrandedPoolModuleExecutor
+#define EXECUTOR EXECUTOR_ASYNC_POOL
 
 using namespace Modules;
 
