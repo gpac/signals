@@ -47,9 +47,10 @@ Technical considerations
 
 * Parallelism
 
-Automatic over a thread pool with an ID preventing parallel execution on the same module.
+With Pipeline, automatic over a thread pool with an ID preventing parallel execution on the same module.
 
 only use a thread if you need the system clock
+a clock can be injected in modules
 
 * Data types
 
