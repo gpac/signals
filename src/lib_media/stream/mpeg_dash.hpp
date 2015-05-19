@@ -21,6 +21,7 @@ public:
 
 private:
 	void DASHThread();
+	void ensureInitializeDASHer();
 	u32 GenerateMPD(GF_DashSegmenterInput *dasherInputs);
 	void endOfStream();
 
@@ -29,6 +30,7 @@ private:
 	Type type;
 	uint64_t segDurationInMs;
 	GF_Config *dashCtx;
+	GF_DASHSegmenter *dasher;
 };
 
 }

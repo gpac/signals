@@ -156,6 +156,8 @@ void MPEG_DASH::endOfStream() {
 MPEG_DASH::~MPEG_DASH() {
 	endOfStream();
 
+	if (dasher)
+		gf_dasher_del(dasher);
 	if (dashCtx)
 		gf_cfg_del(dashCtx);
 }
@@ -178,6 +180,7 @@ void MPEG_DASH::DASHThread() {
 			}
 		}
 
+		ensureInitializeDASHer();
 		u32 nextInMs = GenerateMPD(dash_inputs);
 
 #if 0 //debug traces
@@ -235,43 +238,91 @@ void MPEG_DASH::process() {
 		workingThread = std::thread(&MPEG_DASH::DASHThread, this);
 }
 
+void MPEG_DASH::ensureInitializeDASHer() {
+	if (!dasher) {
+		char szMPD[GF_MAX_PATH];
+		strcpy(szMPD, "dashcastx.mpd");
+		u32 dash_scale = 1000;
+
+		dasher = gf_dasher_new(szMPD, GF_DASH_PROFILE_LIVE, nullptr, dash_scale, dashCtx);
+		if (!dasher)
+			throw std::runtime_error("[MPEG_DASH] Cannot create DASHer.");
+
+		GF_Err e = gf_dasher_set_info(dasher, nullptr, nullptr, nullptr, nullptr);
+		if (e != GF_OK)
+			throw std::runtime_error("[MPEG_DASH] Cannot set DASHer info.");
+
+		//TODO: add baseURL: gf_dasher_add_base_url
+
+		char *seg_name = "seg_$RepresentationID$_";
+		char *seg_ext = nullptr;
+		e = gf_dasher_enable_url_template(dasher, GF_TRUE, seg_name, seg_ext);
+		if (e != GF_OK)
+			throw std::runtime_error("[MPEG_DASH] Cannot set DASHer URL template.");
+
+		Bool segment_timeline = GF_FALSE;
+		if (!e) e = gf_dasher_enable_segment_timeline(dasher, segment_timeline);
+		if (!e) e = gf_dasher_enable_single_segment(dasher, GF_FALSE);
+		if (!e) e = gf_dasher_enable_single_file(dasher, GF_FALSE);
+
+		GF_DashSwitchingMode bitstream_switching_mode = GF_DASH_BSMODE_DEFAULT;
+		if (!e) e = gf_dasher_set_switch_mode(dasher, bitstream_switching_mode);
+
+		Double dash_duration = (double)segDurationInMs / 1000;
+		if (!e) e = gf_dasher_set_durations(dasher, dash_duration, dash_duration);
+
+		Bool seg_at_rap = GF_TRUE, frag_at_rap = GF_TRUE;
+		if (!e) e = gf_dasher_enable_rap_splitting(dasher, seg_at_rap, frag_at_rap);
+
+		u32 segment_marker_4cc = 0;
+		if (!e) e = gf_dasher_set_segment_marker(dasher, segment_marker_4cc);
+
+		if (!e) e = gf_dasher_enable_sidx(dasher, GF_TRUE, 0, GF_FALSE);
+
+		Double mpd_update_time = dash_duration;
+		u32 timeshiftBuffer = 60;
+		GF_DashDynamicMode dash_mode = (type == Static) ? GF_DASH_STATIC : GF_DASH_DYNAMIC/*_LAST TODO: on last segment/flush()*/;
+		if (!e) e = gf_dasher_set_dynamic_mode(dasher, dash_mode, mpd_update_time, timeshiftBuffer, 0.0);
+
+		Double min_buffer = 1.5;
+		if (!e) e = gf_dasher_set_min_buffer(dasher, min_buffer);
+
+		s32 ast_offset_ms = (s32)segDurationInMs;
+		if (!e) e = gf_dasher_set_ast_offset(dasher, ast_offset_ms);
+
+		Bool fragments_in_memory = GF_TRUE;
+		if (!e) e = gf_dasher_enable_memory_fragmenting(dasher, fragments_in_memory);
+
+		if (!e) e = gf_dasher_set_initial_isobmf(dasher, 0, 0);
+
+		Bool no_fragments_defaults = GF_TRUE;
+		if (!e) e = gf_dasher_configure_isobmf_default(dasher, no_fragments_defaults, GF_FALSE, GF_FALSE, GF_FALSE);
+
+		Bool insert_utc = GF_FALSE;
+		if (!e) e = gf_dasher_enable_utc_ref(dasher, insert_utc);
+		if (!e) e = gf_dasher_enable_real_time(dasher, GF_FALSE);
+		if (!e) e = gf_dasher_set_profile_extension(dasher, nullptr);
+
+		if (e != GF_OK)
+			throw std::runtime_error("[MPEG_DASH] DASHer couldn't initialize. Please check previous messages.");
+	}
+}
+
 u32 MPEG_DASH::GenerateMPD(GF_DashSegmenterInput *dasherInputs) {
-	u32 nb_dash_inputs = (u32)getNumInputs() - 1;
+	const u32 nb_dash_inputs = (u32)getNumInputs() - 1;
 
-	char szMPD[GF_MAX_PATH];
-	strcpy(szMPD, "dashcastx.mpd");
+	gf_dasher_clean_inputs(dasher);
+	for (u32 i = 0; i < nb_dash_inputs; i++) {
+		GF_Err e = gf_dasher_add_input(dasher, &dasherInputs[i]);
+		if (e != GF_OK)
+			Log::msg(Log::Warning, "[MPEG_DASH] Input %s couldn't be added for processing...\n", gf_error_to_string(e));
+	}
 
-	Double dash_duration = (double)segDurationInMs / 1000;
-	Double mpd_update_time = dash_duration;
-	Bool dash_live = (type == Live) ? GF_TRUE : GF_FALSE;
-
-	u32 use_url_template = 0;
-	Bool segment_timeline = GF_FALSE;
-	GF_DashSwitchingMode bitstream_switching = GF_DASH_BSMODE_DEFAULT;
-	Bool seg_at_rap = GF_TRUE, frag_at_rap = GF_TRUE;
-	char *seg_name = "seg_$RepresentationID$_";
-	char *seg_ext = nullptr;
-	u32 segment_marker_4cc = 0;
-	Double min_buffer = 1.5;
-	u32 timeshiftBuffer = 60;
-	s32 ast_offset_ms = (s32)segDurationInMs;
-	u32 dash_scale = 1000;
-	Bool fragments_in_memory = GF_TRUE;
-
-	GF_Err e = gf_dasher_segment_files(szMPD, dasherInputs, nb_dash_inputs, GF_DASH_PROFILE_LIVE,
-		nullptr, nullptr, nullptr, nullptr, nullptr, 0,
-		use_url_template, segment_timeline, GF_FALSE, GF_FALSE,
-		bitstream_switching, seg_at_rap, dash_duration,
-		seg_name, seg_ext, segment_marker_4cc, dash_duration, 0, GF_FALSE, frag_at_rap, nullptr,
-		dashCtx, (type == Static) ? GF_DASH_STATIC : GF_DASH_DYNAMIC/*_LAST TODO: on last segment/flush()*/, mpd_update_time, timeshiftBuffer, 0.0, min_buffer,
-		ast_offset_ms, dash_scale, fragments_in_memory, 0, 0, GF_FALSE,
-		GF_FALSE, GF_FALSE, GF_FALSE, 0.0, GF_FALSE, GF_FALSE, nullptr);
-
-	//this happens when reading file while writing them (local playback of the live session ...)
-	if (dash_live && (e == GF_IO_ERR))
+	GF_Err e = gf_dasher_process(dasher, 0);
+	if ((type == Live) && (e == GF_IO_ERR)) //this happens when reading file while writing them (local playback of the live session ...)
 		Log::msg(Log::Warning, "[MPEG_DASH] Error dashing file (%s) but continuing ...\n", gf_error_to_string(e));
 
-	return gf_dasher_next_update_time(dashCtx, mpd_update_time);
+	return gf_dasher_next_update_time(dasher);
 }
 
 void MPEG_DASH::flush() {
