@@ -3,6 +3,10 @@ Mid Term apps:
 - player example plugged with Qt
 - GPAC TS demux and mux (for HLS)
 
+Bugs:
+- GPAC infinite loop leading to infinite memory usage
+- 'info()' call from Ffmpeg on live inputs causes huge delays
+
 Tasks (from higher to lower priority):
 - DashCast:
  * write in /tmp
