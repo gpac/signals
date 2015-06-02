@@ -121,6 +121,9 @@
     <ClInclude Include="mux\gpac_mux_m2ts.hpp">
       <Filter>src\mux</Filter>
     </ClInclude>
+    <ClInclude Include="stream\apple_hls.hpp">
+      <Filter>src\stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common\libav.cpp">
@@ -200,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="mux\gpac_mux_m2ts.cpp">
       <Filter>src\mux</Filter>
+    </ClCompile>
+    <ClCompile Include="stream\apple_hls.cpp">
+      <Filter>src\stream</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
