@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22013.1
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_signals", "src\tests\test_signals.vcxproj", "{56B7E6F6-9666-4F71-A75C-C24AFFC93FCA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -41,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "media", "src\lib_media\medi
 	ProjectSection(ProjectDependencies) = postProject
 		{F6843994-F116-4E68-8EF8-C88149887D4C} = {F6843994-F116-4E68-8EF8-C88149887D4C}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp42tsx", "src\apps\mp42tsx\mp42tsx.vcxproj", "{28E67419-9B31-4EBF-A624-8C5072DC3447}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -122,6 +123,14 @@ Global
 		{3ED5C725-44B6-4E0B-A38C-73D85D8347CD}.Release|Win32.Build.0 = Release|Win32
 		{3ED5C725-44B6-4E0B-A38C-73D85D8347CD}.Release|x64.ActiveCfg = Release|x64
 		{3ED5C725-44B6-4E0B-A38C-73D85D8347CD}.Release|x64.Build.0 = Release|x64
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Debug|Win32.ActiveCfg = Debug|Win32
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Debug|Win32.Build.0 = Debug|Win32
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Debug|x64.ActiveCfg = Debug|x64
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Debug|x64.Build.0 = Debug|x64
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Release|Win32.ActiveCfg = Release|Win32
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Release|Win32.Build.0 = Release|Win32
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Release|x64.ActiveCfg = Release|x64
+		{28E67419-9B31-4EBF-A624-8C5072DC3447}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,5 +145,6 @@ Global
 		{4A14FB63-AD80-418D-A68B-0814B51F0C74} = {A39E4613-6955-478C-A8DF-F34F9D721DF8}
 		{D0952093-7DEF-41AD-BA68-87FEEA688E95} = {35FA5B12-E9CC-4957-A4BB-7F30BF7995C9}
 		{3ED5C725-44B6-4E0B-A38C-73D85D8347CD} = {A290926A-109B-4AD8-99F0-469AB6EFCA0C}
+		{28E67419-9B31-4EBF-A624-8C5072DC3447} = {35FA5B12-E9CC-4957-A4BB-7F30BF7995C9}
 	EndGlobalSection
 EndGlobal

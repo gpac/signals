@@ -133,6 +133,12 @@ CFLAGS+=-I$(ProjectName)
 
 #------------------------------------------------------------------------------
 
+ProjectName:=$(SRC)/apps/mp42tsx
+include $(ProjectName)/project.mk
+CFLAGS+=-I$(ProjectName)
+
+#------------------------------------------------------------------------------
+
 targets: $(TARGETS)
 
 unit: $(TARGETS)
