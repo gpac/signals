@@ -33,6 +33,7 @@
     <ClInclude Include="in\sound_generator.hpp" />
     <ClInclude Include="in\video_generator.hpp" />
     <ClInclude Include="media.hpp" />
+    <ClInclude Include="mux\gpac_mux_m2ts.hpp" />
     <ClInclude Include="mux\gpac_mux_mp4.hpp" />
     <ClInclude Include="mux\libav_mux.hpp" />
     <ClInclude Include="out\file.hpp" />
@@ -60,6 +61,7 @@
     <ClCompile Include="in\file.cpp" />
     <ClCompile Include="in\sound_generator.cpp" />
     <ClCompile Include="in\video_generator.cpp" />
+    <ClCompile Include="mux\gpac_mux_m2ts.cpp" />
     <ClCompile Include="mux\gpac_mux_mp4.cpp" />
     <ClCompile Include="mux\libav_mux.cpp" />
     <ClCompile Include="out\file.cpp" />
