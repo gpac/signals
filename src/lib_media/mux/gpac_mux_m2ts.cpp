@@ -11,6 +11,7 @@ namespace Modules {
 namespace Mux {
 
 GPACMuxMPEG2TS::GPACMuxMPEG2TS() {
+	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
 }
 
 GPACMuxMPEG2TS::~GPACMuxMPEG2TS() {
@@ -38,7 +39,7 @@ void GPACMuxMPEG2TS::process() {
 		/*auto pkt =*/ encoderData->getPacket();
 
 		/* write the compressed frame to the output */
-		//TODO
+		//TODO: getOutput(0)->emit(data);
 	}
 }
 
