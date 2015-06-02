@@ -29,15 +29,6 @@ void declarePipeline(Pipeline &pipeline, const mp42tsXOptions &opt) {
 	auto m2tsmux = pipeline.addModule(new Mux::GPACMuxMPEG2TS());
 	auto sink = pipeline.addModule(createSink(isHLS));
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
-		//TODO: pour chacune des sorties de 'demux', connecter à 'm2tsmux'
-#if 0
-		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
-		if (!metadata) {
-			Log::msg(Log::Warning, "[MP42TSX] Unknown metadata for stream %s. Ignoring.", i);
-			break;
-		}
-#endif
-
 		pipeline.connect(demux, i, m2tsmux, i);
 	}
 
