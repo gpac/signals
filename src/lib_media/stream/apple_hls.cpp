@@ -29,12 +29,20 @@ void Apple_HLS::HLSThread() {
 		std::vector<Data> data;
 		data.resize(getNumInputs() - 1);
 		for (size_t i = 0; i < getNumInputs() - 1; ++i) {
-			data[i] = inputs[i]->pop(); //TODO: make pop() multiple times until you have enough data (i.e. segment_duration, 10s)
-			if (!data[i]) {
-				return;
+			uint64_t durationInMs = 0;
+			while (1) {
+				data[i] = inputs[i]->pop(); //TODO: make pop() multiple times until you have enough data (i.e. segment_duration, 10s)
+				if (!data[i]) {
+					return;
+				}
+
+				durationInMs += clockToTimescale(data[i]->getDuration(), 1000);
+				if (durationInMs > segDurationInMs) {
+					//TODO: do sth with data[i]
+					break;
+				}
 			}
 
-			//TODO: do sth with data[i]
 		}
 
 		u32 nextInMs = GenerateM3U8();
