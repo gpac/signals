@@ -83,6 +83,7 @@ MEDIA_SRCS:=\
   $(ProjectName)/in/file.cpp\
   $(ProjectName)/in/sound_generator.cpp\
   $(ProjectName)/in/video_generator.cpp\
+  $(ProjectName)/mux/gpac_mux_m2ts.cpp\
   $(ProjectName)/mux/gpac_mux_mp4.cpp\
   $(ProjectName)/mux/libav_mux.cpp\
   $(ProjectName)/out/file.cpp\
@@ -91,6 +92,7 @@ MEDIA_SRCS:=\
   $(ProjectName)/render/sdl_audio.cpp\
   $(ProjectName)/render/sdl_common.cpp\
   $(ProjectName)/render/sdl_video.cpp\
+  $(ProjectName)/stream/apple_hls.cpp\
   $(ProjectName)/stream/mpeg_dash.cpp\
   $(ProjectName)/transform/audio_convert.cpp\
   $(ProjectName)/transform/video_convert.cpp\
@@ -126,6 +128,12 @@ CFLAGS+=-I$(ProjectName)
 #------------------------------------------------------------------------------
 
 ProjectName:=$(SRC)/apps/dashcastx
+include $(ProjectName)/project.mk
+CFLAGS+=-I$(ProjectName)
+
+#------------------------------------------------------------------------------
+
+ProjectName:=$(SRC)/apps/mp42tsx
 include $(ProjectName)/project.mk
 CFLAGS+=-I$(ProjectName)
 

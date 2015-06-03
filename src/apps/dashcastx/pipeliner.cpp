@@ -56,7 +56,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		if (!metadata) {
-			Log::msg(Log::Warning, "[DashCastX] Unknown metadata for stream %s. Ignoring.", i);
+			Log::msg(Log::Warning, "[DashcastX] Unknown metadata for stream %s. Ignoring.", i);
 			break;
 		}
 
