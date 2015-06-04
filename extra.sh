@@ -15,142 +15,64 @@ if [ -z "$MAKE" ]; then
 	MAKE="make -j$CORES"
 fi
 
+if [ -z "$var" ]; then 
+	if [[ "$OSTYPE" == "linux-gnu" ]]; then
+		CPREFIX=x86_64-linux-gnu
+	elif [[ "$OSTYPE" == "msys" ]]; then
+		CPREFIX=x86_64-w64-mingw32
+	else
+		echo "Unknown platform. Please specify manually your compiler prefix with the CPREFIX environment variable."
+		exit 1
+	fi
+fi
+echo "Using compiler host prefix: $CPREFIX"
+
 #-------------------------------------------------------------------------------
-# X264
+# zenbuild
 #-------------------------------------------------------------------------------
-if [ ! -f extra/src/x264/x264.c ] ; then
+if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	mkdir -p extra/src
-	rm -rf extra/src/x264
-	git clone --depth 100 git://git.videolan.org/x264.git extra/src/x264
-	pushd extra/src/x264
-	git checkout dd79a61e0e354a432907f2d1f7137b27a12dfce7
+	rm -rf extra/src/zenbuild
+	git clone https://github.com/gpac/zenbuild extra/src/zenbuild
+	pushd extra/src/zenbuild
+	git checkout e3886072c464f73
 	popd
 fi
 
-if [ ! -f extra/build/x264/buildOk ] ; then
-	mkdir -p extra/build/x264
-	pushd extra/build/x264
-	../../src/x264/configure \
-		--host=$HOST \
-		--enable-shared \
-		--disable-static \
-		--prefix=$EXTRA_DIR
-	popd
-	$MAKE -C extra/build/x264
-	$MAKE -C extra/build/x264 install
-	touch extra/build/x264/buildOk
-fi
-
-#-------------------------------------------------------------------------------
-# vo-aacenc
-#-------------------------------------------------------------------------------
-if [ ! -f extra/src/vo-aacenc-0.1.3/configure ] ; then
-	mkdir -p extra/src
-	rm -rf extra/src/vo-aacenc
-	wget http://sourceforge.net/projects/opencore-amr/files/vo-aacenc/vo-aacenc-0.1.3.tar.gz/download -O vo-aacenc.tar.gz
-	tar xvlf vo-aacenc.tar.gz -C extra/src
-	rm vo-aacenc.tar.gz
-fi
-
-if [ ! -f extra/build/vo-aacenc/buildOk ] ; then
-	mkdir -p extra/build/vo-aacenc
-	pushd extra/build/vo-aacenc
-	../../src/vo-aacenc-0.1.3/configure \
-		--host=$HOST \
-		--prefix=$EXTRA_DIR
-	$MAKE
-	$MAKE install
-	popd
-	touch extra/build/vo-aacenc/buildOk
-fi
-
-#-------------------------------------------------------------------------------
-# FFMPEG
-#-------------------------------------------------------------------------------
-if [ ! -f extra/src/ffmpeg/ffmpeg.c ] ; then
-	mkdir -p extra/src
-	rm -rf extra/src/ffmpeg
-	git clone git://source.ffmpeg.org/ffmpeg.git extra/src/ffmpeg
-	pushd extra/src/ffmpeg
-	git checkout 27f936eca8a1703a5c203f5d2cbc76862c9219fc
-	popd
-fi
-
-if [ ! -f extra/build/ffmpeg/buildOk ] ; then
-	mkdir -p extra/build/ffmpeg
-	pushd extra/build/ffmpeg
-	../../src/ffmpeg/configure \
-		--host-os=$HOST \
-		--disable-programs \
-		--enable-shared \
-		--disable-static \
-		--enable-gpl \
-		--enable-libx264 \
-		--enable-version3 \
-		--enable-libvo-aacenc \
-		--enable-swresample \
-		--enable-swscale \
-		--extra-cflags="`pkg-config x264 --cflags`" \
-		--extra-libs="`pkg-config x264 --libs`" \
-		--prefix=$EXTRA_DIR
-	popd
-	$MAKE -C extra/build/ffmpeg
-	$MAKE -C extra/build/ffmpeg install
-	touch extra/build/ffmpeg/buildOk
-fi
-
-#-------------------------------------------------------------------------------
-# GPAC
-#-------------------------------------------------------------------------------
-if [ ! -f extra/src/gpac/Changelog ] ; then
-	mkdir -p extra/src
-	rm -rf extra/src/gpac
-	git clone https://github.com/gpac/gpac.git extra/src/gpac
-	pushd extra/src/gpac
-	git checkout -q d38297c66d6d0d8e02b631bfbf68ca5f1ca0b320
-	popd
-fi
-
-if [ ! -f extra/build/gpac/buildOk ] ; then
-	mkdir -p extra/build/gpac
-	pushd extra/build/gpac
-	../../src/gpac/configure \
-		--use-ffmpeg=no \
-		--use-zlib=no \
-		--use-png=no \
-		--use-jpeg=no \
-		--prefix=$EXTRA_DIR
-
-	$MAKE lib
-	$MAKE install-lib
-	cp gpac.pc $EXTRA_DIR/lib/pkgconfig
-	popd
-	touch extra/build/gpac/buildOk
-fi
-
-#-------------------------------------------------------------------------------
-# SDL2
-#-------------------------------------------------------------------------------
-if [ ! -f extra/src/sdl2/configure ] ; then
-	mkdir -p extra/src
-	rm -rf extra/src/sdl2
-	pushd extra/src
-	wget http://libsdl.org/release/SDL2-2.0.3.tar.gz
-	tar xvlf SDL2-2.0.3.tar.gz
-	mv "SDL2-2.0.3" sdl2
-	popd
-fi
-
-if [ ! -f extra/build/sdl2/buildOk ] ; then
-	mkdir -p extra/build/sdl2
-	pushd extra/build/sdl2
-	../../src/sdl2/configure \
-		--prefix=$EXTRA_DIR
-
-	$MAKE
-	$MAKE install
-	popd
-	touch extra/build/sdl2/buildOk
+if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
+	## X264
+	if [ ! -f extra/build/flags/$CPREFIX/x264.built ] ; then
+		pushd extra/src/zenbuild
+		./zenbuild.sh "$PWD/../../../extra/build" x264 $CPREFIX
+		popd
+	fi
+	## vo-aacenc
+	if [ ! -f extra/build/flags/$CPREFIX/voaac-enc.built ] ; then
+		pushd extra/src/zenbuild
+		./zenbuild.sh "$PWD/../../../extra/build" voaac-enc $CPREFIX
+		popd
+	fi
+	## FFMPEG
+	if [ ! -f extra/build/flags/$CPREFIX/x264.built ] ; then
+		pushd extra/src/zenbuild
+		./zenbuild.sh "$PWD/../../../extra/build" x264 $CPREFIX
+		popd
+	fi
+	## GPAC
+	if [ ! -f extra/build/flags/$CPREFIX/gpac.built ] ; then
+		pushd extra/src/zenbuild
+		./zenbuild.sh "$PWD/../../../extra/build" gpac $CPREFIX
+		popd
+	fi
+	## SDL2
+	if [ ! -f extra/build/flags/$CPREFIX/libsdl2.built ] ; then
+		pushd extra/src/zenbuild
+		./zenbuild.sh "$PWD/../../../extra/build" libsdl2 $CPREFIX
+		popd
+	fi
+	## move files
+	rsync -ar --remove-source-files extra/build/release/$CPREFIX/* extra/
+	touch extra/src/zenbuild/zenbuild.built
 fi
 
 #-------------------------------------------------------------------------------
