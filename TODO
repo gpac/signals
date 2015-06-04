@@ -22,7 +22,7 @@ Tasks (from higher to lower priority):
 - be able to draw the graph of connections (and allocator states? threading? latency?)
 - use operators (https://github.com/klmr/named-operator) to describe graphs as pipes?
 - build:
- * ensure extra are included as DLLs (some are not yet)
+ * Update build system and deps to use Makefile and zenbuild
  * make module Dlls with https://msdn.microsoft.com/en-us/library/by56e477.aspx
  * write un automatic module tester: valgrind + change of mediatypes + null process pkt + do not assume the first timestamp is zero + etc.
 - SDL and renderers should be able to run in thread 0

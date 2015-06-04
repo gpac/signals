@@ -4,7 +4,7 @@ signals
 Build
 =====
 
-Download dependencies (optional, requires 'rsync'):
+Download dependencies (optional):
 $ ./extra.sh
 
 Build:
