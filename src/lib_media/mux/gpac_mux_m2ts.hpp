@@ -13,7 +13,7 @@ namespace Mux {
 class GPACMuxMPEG2TS : public ModuleDynI 
 {
 	public:
-		GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_ms, int64_t pcr_init_val);
+		GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_ms = 100, int64_t pcr_init_val = -1);
 		~GPACMuxMPEG2TS();
 		void process() override;
 
@@ -21,9 +21,6 @@ class GPACMuxMPEG2TS : public ModuleDynI
 
 		void declareStream(Data data);
 		GF_M2TS_Mux *muxer;
-		Bool real_time, single_au_pes = GF_FALSE;
-		u32 mux_rate, psi_refresh_rate, pcr_ms = 100;
-		s64 pcr_init_val = (s64) -1;
 		GF_M2TS_Mux_Program *program;
 
 
