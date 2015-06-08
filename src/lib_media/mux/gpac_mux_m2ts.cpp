@@ -12,18 +12,25 @@ namespace Modules
 
 namespace Mux 
 {
-GPACMuxMPEG2TS::GPACMuxMPEG2TS(Bool real_time, Bool single_au_pes, u32 mux_rate, u32 psi_refresh_rate, u32 pcr_ms, s64 pcr_init_val) 
+GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_ms, int64_t pcr_init_val) 
 {
 	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
 	gf_sys_init(GF_FALSE);
 	gf_log_set_tool_level(GF_LOG_ALL, GF_LOG_WARNING);
 
-	muxer = gf_m2ts_mux_new(mux_rate, psi_refresh_rate, real_time);
+	muxer = gf_m2ts_mux_new(mux_rate, GF_M2TS_PSI_DEFAULT_REFRESH_RATE, real_time == true ? GF_TRUE : GF_FALSE);
 	if (muxer != NULL) 
+	{
+		const Bool single_au_pes = GF_FALSE;
 		gf_m2ts_mux_use_single_au_pes_mode(muxer, single_au_pes);
+	}
 	if (pcr_init_val >= 0) 
 		gf_m2ts_mux_set_initial_pcr(muxer, (u64) pcr_init_val);
 	gf_m2ts_mux_set_pcr_max_interval(muxer, pcr_ms);
+	const int pcrOffset = 0;
+	const int curPid    = 100;
+	program = gf_m2ts_mux_program_add(muxer, 1, curPid, GF_M2TS_PSI_DEFAULT_REFRESH_RATE, pcrOffset, GF_FALSE);
+
 }
 
 GPACMuxMPEG2TS::~GPACMuxMPEG2TS() 
