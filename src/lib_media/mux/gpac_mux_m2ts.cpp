@@ -4,7 +4,6 @@
 
 extern "C" 
 {
-#include <gpac/mpegts.h>
 #include <libavformat/avformat.h>
 }
 
@@ -13,13 +12,18 @@ namespace Modules
 
 namespace Mux 
 {
-GPACMuxMPEG2TS::GPACMuxMPEG2TS(u32 mux_rate, u32 psi_refresh_rate, Bool real_time) 
+GPACMuxMPEG2TS::GPACMuxMPEG2TS(Bool real_time, Bool single_au_pes, u32 mux_rate, u32 psi_refresh_rate, u32 pcr_ms, s64 pcr_init_val) 
 {
 	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
 	gf_sys_init(GF_FALSE);
 	gf_log_set_tool_level(GF_LOG_ALL, GF_LOG_WARNING);
 
-	GF_M2TS_Mux *muxer = gf_m2ts_mux_new(mux_rate, psi_refresh_rate, real_time);
+	muxer = gf_m2ts_mux_new(mux_rate, psi_refresh_rate, real_time);
+	if (muxer != NULL) 
+		gf_m2ts_mux_use_single_au_pes_mode(muxer, single_au_pes);
+	if (pcr_init_val >= 0) 
+		gf_m2ts_mux_set_initial_pcr(muxer, (u64) pcr_init_val);
+	gf_m2ts_mux_set_pcr_max_interval(muxer, pcr_ms);
 }
 
 GPACMuxMPEG2TS::~GPACMuxMPEG2TS() 
@@ -53,6 +57,8 @@ void GPACMuxMPEG2TS::process()
 		if (inputs[0]->updateMetadata(data))
 			declareStream(data);
 		auto encoderData = safe_cast<const DataAVPacket>(data);
+
+		
 		
 		/*auto pkt =*/ encoderData->getPacket();
    
@@ -65,5 +71,4 @@ void GPACMuxMPEG2TS::process()
 }
 
 };
-}
 }
