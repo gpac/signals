@@ -27,6 +27,7 @@ GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_m
 	}
 	if (pcr_init_val >= 0) 
 		gf_m2ts_mux_set_initial_pcr(muxer, (u64) pcr_init_val);
+
 	gf_m2ts_mux_set_pcr_max_interval(muxer, pcr_ms);
 	const int pcrOffset = 0;
 	const int curPid    = 100;
@@ -53,6 +54,13 @@ void GPACMuxMPEG2TS::declareStream(Data data)
 	} 
 	else 
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
+
+	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
+	//GF_ESInterface ifce;	
+
+	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
+	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;
+		
 }
 
 void GPACMuxMPEG2TS::process() 
