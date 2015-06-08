@@ -5,15 +5,19 @@
 namespace Modules {
 namespace Mux {
 
-class GPACMuxMPEG2TS : public ModuleDynI {
-public:
-	GPACMuxMPEG2TS();
-	~GPACMuxMPEG2TS();
-	void process() override;
+class GPACMuxMPEG2TS : public ModuleDynI 
+{
+	public:
+		GPACMuxMPEG2TS(u32, u32, Bool);
+		~GPACMuxMPEG2TS();
+		void process() override;
 
-private:
-	void declareStream(Data data);
-	//TODO
+	private:
+		void declareStream(Data data);
+		u32 mux_rate, psi_refresh_rate;
+		Bool real_time;
+
+		//TODO
 };
 
 }
