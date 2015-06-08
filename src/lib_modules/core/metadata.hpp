@@ -85,6 +85,9 @@ public:
 		m_metadata = metadata;
 	}
 
+	/**
+	 * updateMetadata notifies of any change in data type.
+	 */
 	bool updateMetadata(Data data) {
 		if (!data) {
 			return false;
