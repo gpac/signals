@@ -4,6 +4,7 @@
 
 extern "C" 
 {
+#include <gpac/mpegts.h>
 #include <libavformat/avformat.h>
 }
 

@@ -1,11 +1,9 @@
 #pragma once
 
-extern "C" 
-{
-#include <gpac/mpegts.h>
-}
-
 #include "lib_modules/core/module.hpp"
+
+typedef struct __m2ts_mux_program GF_M2TS_Mux_Program;
+typedef struct __m2ts_mux GF_M2TS_Mux;
 
 namespace Modules {
 namespace Mux {
