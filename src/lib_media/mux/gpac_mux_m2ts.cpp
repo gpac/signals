@@ -69,7 +69,10 @@ void GPACMuxMPEG2TS::process()
 
 	for (size_t i = 0; i < getNumInputs() - 1; ++i) 
 	{
-		Data data = inputs[0]->pop();
+		Data data;
+		if(!inputs[0]->tryPop(data))
+			continue;
+
 		if (inputs[0]->updateMetadata(data))
 			declareStream(data);
 		auto encoderData = safe_cast<const DataAVPacket>(data);
@@ -80,10 +83,19 @@ void GPACMuxMPEG2TS::process()
    
 		/* write the compressed frame to the output. */
 		
-		//TODO: getOutput(0)->emit(data);
-		
-		
 	}
+	const char *ts_pck;
+	u32 status, usec_till_next;
+	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != NULL) 
+	{
+		//TODO: Transform ts_pck into valid data.
+
+		/* writes the compressed frame to the output. */
+		//getOutput(0)->emit(data);
+
+
+	}
+
 }
 
 };
