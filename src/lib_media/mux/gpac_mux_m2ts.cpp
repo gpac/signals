@@ -86,16 +86,9 @@ void GPACMuxMPEG2TS::process()
 	}
 	const char *ts_pck;
 	u32 status, usec_till_next;
-	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != NULL) 
-	{
-		//TODO: Transform ts_pck into valid data.
-
-		/* writes the compressed frame to the output. */
-		//getOutput(0)->emit(data);
-
-
+	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != NULL) {
+		getOutput(0)->emit(uptr(new DataRaw((uint8_t*)ts_pck, 188)));
 	}
-
 }
 
 };

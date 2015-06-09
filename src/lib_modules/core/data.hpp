@@ -60,6 +60,10 @@ struct DataLoose : public DataBase {};
 class DataRaw : public DataBase {
 public:
 	DataRaw(size_t size) : buffer(size) {}
+	DataRaw(uint8_t *buffer, size_t size) : buffer(size) {
+		this->buffer.assign(buffer, buffer + size);
+	}
+	virtual ~DataRaw() {}
 	uint8_t* data() override {
 		return buffer.data();
 	}
