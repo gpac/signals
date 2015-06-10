@@ -99,4 +99,3 @@ void GPACMuxMPEG2TS::process()
 };
 }
 
-//Do I really want to write shit, that's where the question mark belongs.
