@@ -48,9 +48,8 @@ GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inpu
 	case GF_ESI_INPUT_DATA_FLUSH: {
 		std::shared_ptr<const DataAVPacket> data;
 		while (inputData[inputIdx]->tryPop(data)) {
-			auto pkt = data->getPacket();
 			//TODO: this is the libav strcuture, copy the fiels to match the GF_ESIPacket
-			//pkt->
+			//auto pkt = data->getPacket();
 			//esi->output_ctrl(esi, , );
 		}
 		break;
@@ -77,6 +76,7 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
+#if 0
 	inputData.resize(getNumInputs());
 	const size_t inputIdx = getNumInputs() - 1;
 	inputData[inputIdx] = uptr(new DataInput);
@@ -85,6 +85,7 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 	ifce.input_udta = (void*)new UserData(this, inputIdx);
 	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
 	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;	
+#endif
 }
 
 void GPACMuxMPEG2TS::process() {
