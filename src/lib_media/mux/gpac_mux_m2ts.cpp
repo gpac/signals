@@ -47,12 +47,12 @@ GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inpu
 	switch (ctrl_type) {
 	case GF_ESI_INPUT_DATA_FLUSH: {
 		std::shared_ptr<const DataAVPacket> data;
-		if (!inputData[inputIdx]->tryPop(data))
-			return GF_OK;
-		auto pkt = data->getPacket();
-		//TODO: this is the libav strcuture, copy the fiels to match the GF_ESIPacket
-		//pkt->
-		//esi->output_ctrl(esi, , );
+		while (inputData[inputIdx]->tryPop(data)) {
+			auto pkt = data->getPacket();
+			//TODO: this is the libav strcuture, copy the fiels to match the GF_ESIPacket
+			//pkt->
+			//esi->output_ctrl(esi, , );
+		}
 		break;
 	}
 	case GF_ESI_INPUT_DESTROY:
@@ -90,14 +90,13 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 void GPACMuxMPEG2TS::process() {
 	for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 		Data data;
-		if(!inputs[i]->tryPop(data))
-			continue;
+		while (inputs[i]->tryPop(data)) {
+			if (inputs[i]->updateMetadata(data))
+				declareStream(data);
+			auto encoderData = safe_cast<const DataAVPacket>(data);
 
-		if (inputs[i]->updateMetadata(data))
-			declareStream(data);
-		auto encoderData = safe_cast<const DataAVPacket>(data);
-
-		inputData[i]->push(encoderData);
+			inputData[i]->push(encoderData);
+		}
 	}
 
 	const char *ts_pck;
