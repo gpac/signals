@@ -53,6 +53,8 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
+	inputData.resize(getNumInputs());
+	inputData[getNumInputs() - 1] = uptr(new DataInput);
 	GF_ESInterface ifce;
 	ifce.input_ctrl = &GPACMuxMPEG2TS::staticFillInput;
 	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
@@ -62,17 +64,14 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 void GPACMuxMPEG2TS::process() {
 	for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 		Data data;
-		if(!inputs[0]->tryPop(data))
+		if(!inputs[i]->tryPop(data))
 			continue;
 
-		if (inputs[0]->updateMetadata(data))
+		if (inputs[i]->updateMetadata(data))
 			declareStream(data);
 		auto encoderData = safe_cast<const DataAVPacket>(data);
 
-		/*auto pkt =*/ encoderData->getPacket();
-   
-		/* write the compressed frame to the output. */
-		
+		inputData[i]->push(encoderData);
 	}
 
 	const char *ts_pck;
