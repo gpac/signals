@@ -2,26 +2,21 @@
 #include "../common/libav.hpp"
 #include <cassert>
 
-extern "C" 
-{
+extern "C"  {
 #include <gpac/mpegts.h>
 #include <libavformat/avformat.h>
 }
 
-namespace Modules 
-{
+namespace Modules  {
+namespace Mux  {
 
-namespace Mux 
-{
-GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_ms, int64_t pcr_init_val) 
-{
+GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_ms, int64_t pcr_init_val) {
 	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
 	gf_sys_init(GF_FALSE);
 	gf_log_set_tool_level(GF_LOG_ALL, GF_LOG_WARNING);
 
 	muxer = gf_m2ts_mux_new(mux_rate, GF_M2TS_PSI_DEFAULT_REFRESH_RATE, real_time == true ? GF_TRUE : GF_FALSE);
-	if (muxer != NULL) 
-	{
+	if (muxer != NULL)  {
 		const Bool single_au_pes = GF_FALSE;
 		gf_m2ts_mux_use_single_au_pes_mode(muxer, single_au_pes);
 	}
@@ -32,43 +27,31 @@ GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_m
 	const int pcrOffset = 0;
 	const int curPid    = 100;
 	program = gf_m2ts_mux_program_add(muxer, 1, curPid, GF_M2TS_PSI_DEFAULT_REFRESH_RATE, pcrOffset, GF_FALSE);
-
 }
 
-GPACMuxMPEG2TS::~GPACMuxMPEG2TS() 
-{
+GPACMuxMPEG2TS::~GPACMuxMPEG2TS() {
 }
 
-void GPACMuxMPEG2TS::declareStream(Data data) 
-{
+void GPACMuxMPEG2TS::declareStream(Data data) {
 	auto const metadata_ = data->getMetadata();
-	if (auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) 
-	{
+	if (auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavVideo(metadata->getAVCodecContext()));
-	} 
-	else if (auto metadata2 = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata_)) 
-	{
+	} else if (auto metadata2 = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata_)) {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavAudio(metadata2->getAVCodecContext()));
-	} 
-	else 
+	} else 
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
 	//GF_ESInterface ifce;	
 
 	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
-	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;
-		
+	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;	
 }
 
-void GPACMuxMPEG2TS::process() 
-{
-	
-
-	for (size_t i = 0; i < getNumInputs() - 1; ++i) 
-	{
+void GPACMuxMPEG2TS::process() {
+	for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 		Data data;
 		if(!inputs[0]->tryPop(data))
 			continue;
@@ -77,25 +60,18 @@ void GPACMuxMPEG2TS::process()
 			declareStream(data);
 		auto encoderData = safe_cast<const DataAVPacket>(data);
 
-		
-		
 		/*auto pkt =*/ encoderData->getPacket();
    
 		/* write the compressed frame to the output. */
 		
 	}
+
 	const char *ts_pck;
 	u32 status, usec_till_next;
-	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != NULL) 
-	{
+	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != NULL) {
 		getOutput(0)->emit(uptr(new DataRaw((uint8_t*)ts_pck, 188)));
 	}
-
-}
-	
-/* data */
-
-
-};
 }
 
+}
+}
