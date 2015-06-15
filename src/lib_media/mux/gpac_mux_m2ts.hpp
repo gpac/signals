@@ -5,6 +5,7 @@
 
 typedef struct __m2ts_mux_program GF_M2TS_Mux_Program;
 typedef struct __m2ts_mux GF_M2TS_Mux;
+typedef struct __elementary_stream_ifce GF_ESInterface;
 
 namespace Modules {
 namespace Mux {
@@ -17,6 +18,8 @@ public:
 
 private:
 	void declareStream(Data data);
+	GF_Err fillInput(GF_ESInterface *esi, u32 ctrl_type, void *param);
+	static GF_Err staticFillInput(GF_ESInterface *esi, u32 ctrl_type, void *param);
 	GF_M2TS_Mux *muxer;
 	GF_M2TS_Mux_Program *program;
 };

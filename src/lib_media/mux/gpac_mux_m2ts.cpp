@@ -32,6 +32,15 @@ GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_m
 GPACMuxMPEG2TS::~GPACMuxMPEG2TS() {
 }
 
+GF_Err GPACMuxMPEG2TS::staticFillInput(GF_ESInterface *esi, u32 ctrl_type, void *param) {
+	return GF_OK;
+}
+
+GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, void *param) {
+	//esi->output_ctrl(esi, , );
+	return GF_OK;
+}
+
 void GPACMuxMPEG2TS::declareStream(Data data) {
 	auto const metadata_ = data->getMetadata();
 	if (auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) {
@@ -44,8 +53,8 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
-	//GF_ESInterface ifce;	
-
+	GF_ESInterface ifce;
+	ifce.input_ctrl = &GPACMuxMPEG2TS::staticFillInput;
 	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
 	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;	
 }
