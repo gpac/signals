@@ -24,7 +24,7 @@ public:
 
 private:
 	void declareStream(Data data);
-	GF_Err fillInput(GF_ESInterface *esi, u32 ctrl_type, void *param);
+	GF_Err fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inputIdx);
 	static GF_Err staticFillInput(GF_ESInterface *esi, u32 ctrl_type, void *param);
 
 	GF_M2TS_Mux *muxer;

@@ -2,7 +2,7 @@
 #include "../common/libav.hpp"
 #include <cassert>
 
-extern "C"  {
+extern "C" {
 #include <gpac/mpegts.h>
 #include <libavformat/avformat.h>
 }
@@ -13,6 +13,12 @@ namespace Mux  {
 const Bool single_au_pes = GF_FALSE;
 const int pcrOffset = 0;
 const int curPid = 100;
+
+struct UserData {
+	UserData(GPACMuxMPEG2TS *muxer, size_t inputIdx) : muxer(muxer), inputIdx(inputIdx) {}
+	GPACMuxMPEG2TS *muxer;
+	size_t inputIdx;
+};
 
 GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_ms, int64_t pcr_init_val) {
 	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
@@ -33,11 +39,29 @@ GPACMuxMPEG2TS::~GPACMuxMPEG2TS() {
 }
 
 GF_Err GPACMuxMPEG2TS::staticFillInput(GF_ESInterface *esi, u32 ctrl_type, void *param) {
-	return GF_OK;
+	auto userData = (UserData*)esi->input_udta;
+	return userData->muxer->fillInput(esi, ctrl_type, userData->inputIdx);
 }
 
-GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, void *param) {
-	//esi->output_ctrl(esi, , );
+GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inputIdx) {
+	switch (ctrl_type) {
+	case GF_ESI_INPUT_DATA_FLUSH: {
+		std::shared_ptr<const DataAVPacket> data;
+		if (!inputData[inputIdx]->tryPop(data))
+			return GF_OK;
+		auto pkt = data->getPacket();
+		//TODO: this is the libav strcuture, copy the fiels to match the GF_ESIPacket
+		//pkt->
+		//esi->output_ctrl(esi, , );
+		break;
+	}
+	case GF_ESI_INPUT_DESTROY:
+		delete (UserData*)esi->input_udta;
+		return GF_OK;
+	default:
+		return GF_BAD_PARAM;
+	}
+
 	return GF_OK;
 }
 
@@ -54,9 +78,11 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
 	inputData.resize(getNumInputs());
-	inputData[getNumInputs() - 1] = uptr(new DataInput);
+	const size_t inputIdx = getNumInputs() - 1;
+	inputData[inputIdx] = uptr(new DataInput);
 	GF_ESInterface ifce;
 	ifce.input_ctrl = &GPACMuxMPEG2TS::staticFillInput;
+	ifce.input_udta = (void*)new UserData(this, inputIdx);
 	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
 	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;	
 }
