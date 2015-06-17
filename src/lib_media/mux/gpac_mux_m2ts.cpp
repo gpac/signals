@@ -78,13 +78,14 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
 #if 0 
 	//HARDCODED
-	
+
 	inputData.resize(getNumInputs());
 	const size_t inputIdx = getNumInputs() - 1;
 	inputData[inputIdx] = uptr(new DataInput);
 	GF_ESInterface ifce;
 	ifce.input_ctrl             = &GPACMuxMPEG2TS::staticFillInput;
 	ifce.input_udta             = (void*)new UserData(this, inputIdx);
+	ifce.output_udta            = nullptr;
 	ifce.caps                   = 2;
 	ifce.stream_id              = 1;
 	ifce.program_number         = 0;
