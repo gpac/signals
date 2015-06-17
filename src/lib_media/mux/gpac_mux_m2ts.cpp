@@ -78,6 +78,7 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
 #if 0 
 	//HARDCODED
+	
 	inputData.resize(getNumInputs());
 	const size_t inputIdx = getNumInputs() - 1;
 	inputData[inputIdx] = uptr(new DataInput);
