@@ -76,13 +76,43 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
-#if 0
+#if 0 
+	//HARDCODED
 	inputData.resize(getNumInputs());
 	const size_t inputIdx = getNumInputs() - 1;
 	inputData[inputIdx] = uptr(new DataInput);
 	GF_ESInterface ifce;
-	ifce.input_ctrl = &GPACMuxMPEG2TS::staticFillInput;
-	ifce.input_udta = (void*)new UserData(this, inputIdx);
+	ifce.input_ctrl             = &GPACMuxMPEG2TS::staticFillInput;
+	ifce.input_udta             = (void*)new UserData(this, inputIdx);
+	ifce.caps                   = 2;
+	ifce.stream_id              = 1;
+	ifce.program_number         = 0;
+	ifce.stream_type            = 4
+	ifce.object_type_indication = 33;
+	ifce.fourcc                 = 0;
+	ifce.lang                   = 0;
+	ifce.timescale              = 12288;
+	ifce.duration               = 608.125  
+	ifce.bit_rate               = 1696968;
+	ifce.repeat_rate            = 0;
+	ifce.info_audio.sample_rate = 0;
+	ifce.info_audio.nb_channels = 0;
+	ifce.info_video.bitrate     = 0;
+	ifce.info_video.par         = 0;
+	ifce.info_video.width       = 0;
+	ifce.info_video.height      = 0;
+	GF_SAFEALLOC(ifce.sl_config, GF_SLConfig);
+	ifce.sl_config.tag = GF_ODF_SLC_TAG;
+	ifce.sl_config.predefined = 3;
+	ifce.sl_config.useAccessUnitStartFlag = 1;
+	ifce.sl_config.useAccessUnitEndFlag = 1;
+	ifce.sl_config.useRandomAccessPointFlag = 1;
+	ifce.sl_config.useTimestampsFlag = 1;
+	ifce.sl_config.timestampLength = 33;
+	ifce.sl_config.timestampResolution = ifce.timescale;
+
+
+
 	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
 	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;	
 #endif
