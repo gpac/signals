@@ -3,6 +3,7 @@
 #include <cassert>
 
 extern "C" {
+#include <gpac/constants.h>
 #include <gpac/mpegts.h>
 #include <libavformat/avformat.h>
 }
@@ -72,59 +73,67 @@ GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inpu
 }
 
 void GPACMuxMPEG2TS::declareStream(Data data) {
+	GF_ESInterface ifce;
+	memset(&ifce, 0, sizeof(ifce));
+
 	auto const metadata_ = data->getMetadata();
 	if (auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) {
 		auto input = addInput(new Input<DataAVPacket>(this));
+
+		ifce.caps = GF_ESI_SIGNAL_DTS;
+		ifce.stream_id = 1;
+		ifce.program_number = 0;
+		ifce.stream_type = GF_STREAM_VISUAL;
+		ifce.object_type_indication = GPAC_OTI_VIDEO_AVC;
+		ifce.fourcc = 0;
+		ifce.lang = 0;
+		ifce.timescale = 12288;
+		ifce.duration = 608.125;
+		ifce.bit_rate = 1696968;
+		ifce.repeat_rate = 0;
+		ifce.info_video.par = 0;
+		ifce.info_video.width = 0;
+		ifce.info_video.height = 0;
+#if 0
+		GF_SAFEALLOC(ifce.sl_config, GF_SLConfig);
+		ifce.sl_config->tag = GF_ODF_SLC_TAG;
+		ifce.sl_config->predefined = 3;
+		ifce.sl_config->useAccessUnitStartFlag = 1;
+		ifce.sl_config->useAccessUnitEndFlag = 1;
+		ifce.sl_config->useRandomAccessPointFlag = 1;
+		ifce.sl_config->useTimestampsFlag = 1;
+		ifce.sl_config->timestampLength = 33;
+		ifce.sl_config->timestampResolution = ifce.timescale;
+#endif
+
 		input->setMetadata(new MetadataPktLibavVideo(metadata->getAVCodecContext()));
 	} else if (auto metadata2 = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata_)) {
+#if 0
 		auto input = addInput(new Input<DataAVPacket>(this));
+
+		ifce.info_audio.sample_rate = 0;
+		ifce.info_audio.nb_channels = 0;
+
 		input->setMetadata(new MetadataPktLibavAudio(metadata2->getAVCodecContext()));
+#else
+		throw std::runtime_error("[GPACMuxMPEG2TS] Stream (audio) creation failed: unknown type.");
+#endif
 	} else 
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
-#if 0 
-	//HARDCODED
 
 	inputData.resize(getNumInputs());
 	const size_t inputIdx = getNumInputs() - 1;
 	inputData[inputIdx] = uptr(new DataInput);
-	GF_ESInterface ifce;
-	ifce.input_ctrl             = &GPACMuxMPEG2TS::staticFillInput;
-	ifce.input_udta             = (void*)new UserData(this, inputIdx);
-	ifce.output_udta            = nullptr;
-	ifce.caps                   = 2;
-	ifce.stream_id              = 1;
-	ifce.program_number         = 0;
-	ifce.stream_type            = 4
-	ifce.object_type_indication = 33;
-	ifce.fourcc                 = 0;
-	ifce.lang                   = 0;
-	ifce.timescale              = 12288;
-	ifce.duration               = 608.125  
-	ifce.bit_rate               = 1696968;
-	ifce.repeat_rate            = 0;
-	ifce.info_audio.sample_rate = 0;
-	ifce.info_audio.nb_channels = 0;
-	ifce.info_video.bitrate     = 0;
-	ifce.info_video.par         = 0;
-	ifce.info_video.width       = 0;
-	ifce.info_video.height      = 0;
-	GF_SAFEALLOC(ifce.sl_config, GF_SLConfig);
-	ifce.sl_config.tag = GF_ODF_SLC_TAG;
-	ifce.sl_config.predefined = 3;
-	ifce.sl_config.useAccessUnitStartFlag = 1;
-	ifce.sl_config.useAccessUnitEndFlag = 1;
-	ifce.sl_config.useRandomAccessPointFlag = 1;
-	ifce.sl_config.useTimestampsFlag = 1;
-	ifce.sl_config.timestampLength = 33;
-	ifce.sl_config.timestampResolution = ifce.timescale;
 
+	ifce.input_ctrl = &GPACMuxMPEG2TS::staticFillInput;
+	ifce.input_udta = (void*)new UserData(this, inputIdx);
+	ifce.output_udta = nullptr;
 
-
-	//auto stream = gf_m2ts_program_stream_add(program, &sources[i].streams[j], cur_pid+j+1, (sources[i].pcr_idx==j) ? 1 : 0, force_pes_mode);
-	//if ((sources[i].streams[j].stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = 1;	
-#endif
+	Bool isPCR = (ifce.stream_type == GF_STREAM_AUDIO) ? GF_TRUE : GF_FALSE;
+	auto stream = gf_m2ts_program_stream_add(program, &ifce, (u32)(curPid + inputIdx), isPCR, GF_FALSE);
+	if ((ifce.stream_type==GF_STREAM_VISUAL)) stream->start_pes_at_rap = GF_TRUE;
 }
 
 void GPACMuxMPEG2TS::process() {
