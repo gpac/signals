@@ -49,7 +49,14 @@ GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inpu
 		std::shared_ptr<const DataAVPacket> data;
 		while (inputData[inputIdx]->tryPop(data)) {
 			//TODO: this is the libav strcuture, copy the fiels to match the GF_ESIPacket
-			//auto pkt = data->getPacket();
+			/*auto pkt = data->getPacket();
+
+			pkt.dts      = 0;
+			pkt.pts      = 512;
+			pkt.size     = 1088; //pck.data_len
+			pkt.flags    = 31;
+			pkt.duration = 512;
+
 			//esi->output_ctrl(esi, , );
 		}
 		break;
