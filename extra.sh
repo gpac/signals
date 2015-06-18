@@ -35,7 +35,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	rm -rf extra/src/zenbuild
 	git clone https://github.com/gpac/zenbuild extra/src/zenbuild
 	pushd extra/src/zenbuild
-	git checkout e3886072c464f73
+	git checkout 02c84ff62652c00
 	popd
 fi
 
