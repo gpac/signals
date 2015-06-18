@@ -25,7 +25,7 @@ GPACMuxMPEG2TS::GPACMuxMPEG2TS(bool real_time, unsigned mux_rate, unsigned pcr_m
 	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
 
 	muxer = gf_m2ts_mux_new(mux_rate, GF_M2TS_PSI_DEFAULT_REFRESH_RATE, real_time == true ? GF_TRUE : GF_FALSE);
-	if (muxer != nullptr)
+	if (muxer == nullptr)
 		throw std::runtime_error("[GPACMuxMPEG2TS] Could not create the muxer.");
 
 	gf_m2ts_mux_use_single_au_pes_mode(muxer, single_au_pes);
@@ -73,6 +73,10 @@ GF_Err GPACMuxMPEG2TS::fillInput(GF_ESInterface *esi, u32 ctrl_type, size_t inpu
 }
 
 void GPACMuxMPEG2TS::declareStream(Data data) {
+	const size_t inputIdx = inputs.size() - 1;
+	inputData.resize(inputIdx + 1);
+	inputData[inputIdx] = uptr(new DataInput);
+
 	GF_ESInterface ifce;
 	memset(&ifce, 0, sizeof(ifce));
 
@@ -122,11 +126,6 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
 
 	//TODO: Fill the interface with test content; the current GPAC importer needs to be generalized
-
-	inputData.resize(getNumInputs());
-	const size_t inputIdx = getNumInputs() - 1;
-	inputData[inputIdx] = uptr(new DataInput);
-
 	ifce.input_ctrl = &GPACMuxMPEG2TS::staticFillInput;
 	ifce.input_udta = (void*)new UserData(this, inputIdx);
 	ifce.output_udta = nullptr;
@@ -150,7 +149,7 @@ void GPACMuxMPEG2TS::process() {
 
 	const char *ts_pck;
 	u32 status, usec_till_next;
-	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != NULL) {
+	while ((ts_pck = gf_m2ts_mux_process(muxer, &status, &usec_till_next)) != nullptr) {
 		getOutput(0)->emit(uptr(new DataRaw((uint8_t*)ts_pck, 188)));
 	}
 }
