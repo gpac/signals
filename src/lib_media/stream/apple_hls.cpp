@@ -7,9 +7,18 @@
 namespace Modules {
 namespace Stream {
 
-Apple_HLS::Apple_HLS(Type type, uint64_t segDurationInMs)
+Apple_HLS::Apple_HLS(std::string const url, Type type, std::string const httpPrefix /* = "" */, uint64_t segDurationInMs /* = 10 */)
 : type(type), segDurationInMs(segDurationInMs) {
 	addInput(new Input<DataAVPacket>(this));
+
+	if (size_t pos = url.rfind("\\") != std::string::npos) {
+		char *str = new char[url.length() - pos];
+		url.copy(str, url.length() - pos, pos + 1);
+		name = std::string(str);
+	} else {
+		name = url;
+	}
+	//manifestFile = new Manifest(url, httpPrefix, segDurationInMs);
 }
 
 void Apple_HLS::endOfStream() {
@@ -37,21 +46,21 @@ void Apple_HLS::HLSThread() {
 				}
 
 				durationInMs += clockToTimescale(data[i]->getDuration(), 1000);
-				if (durationInMs > segDurationInMs) {
-					//TODO: do sth with data[i]
+				/* if (durationInMs > segDurationInMs) {
+					manifestFile.update();
 					break;
-				}
+				} */
 			}
 
 		}
 
-		u32 nextInMs = GenerateM3U8();
-
-		if (type == Live) {
+#if 0 // 		
+	if (type == Live) {
 			auto dur = std::chrono::milliseconds(nextInMs);
 			Log::msg(Log::Info, "[Apple_HLS] Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 			std::this_thread::sleep_for(dur);
 		}
+#endif
 	}
 }
 
@@ -59,10 +68,6 @@ void Apple_HLS::process() {
 	numDataQueueNotify = (int)getNumInputs() - 1; //FIXME: connection/disconnection cannot occur dynamically. Lock inputs?
 	if (!workingThread.joinable())
 		workingThread = std::thread(&Apple_HLS::HLSThread, this);
-}
-
-u32 Apple_HLS::GenerateM3U8() {
-	return 0;
 }
 
 void Apple_HLS::flush() {

@@ -13,7 +13,7 @@ public:
 		Static
 	};
 
-	Apple_HLS(Type type, uint64_t segDurationInMs);
+	Apple_HLS(std::string const url, Type type, std::string const httpPrefix  = "", uint64_t segDurationInMs = 10000);
 	~Apple_HLS();
 	void process(Data data);
 	void process() override;
@@ -21,13 +21,16 @@ public:
 
 private:
 	void HLSThread();
-	u32 GenerateM3U8();
 	void endOfStream();
 
-	int numDataQueueNotify = 0;
-	std::thread workingThread;
+	std::string path;
+	std::string name;
 	Type type;
 	uint64_t segDurationInMs;
+	FILE *currentSegment;
+	//Manifest manifestFile;	
+	int numDataQueueNotify = 0;
+	std::thread workingThread;
 };
 
 }
