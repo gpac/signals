@@ -51,7 +51,7 @@ void Apple_HLS::HLSThread() {
 				/* if (durationInMs > segDurationInMs) {
 					manifestFile.update(index);
 					++index;
-					fwrite(currentSegment, data[i]->data);
+					fwrite(data[i]->data, data[i]->size, 1, currentSegment);
 					fclose(currentSegment);
 					currentSegment = fopen(url, "w");					
 					break;
