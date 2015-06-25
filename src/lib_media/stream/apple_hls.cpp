@@ -8,7 +8,7 @@ namespace Modules {
 namespace Stream {
 
 Apple_HLS::Apple_HLS(std::string const url, Type type, std::string const httpPrefix /* = "" */, uint64_t segDurationInMs /* = 10 */)
-: type(type), segDurationInMs(segDurationInMs) {
+: url(url), type(type), segDurationInMs(segDurationInMs), index(0) {
 	addInput(new Input<DataAVPacket>(this));
 
 	if (size_t pos = url.rfind("\\") != std::string::npos) {
@@ -19,6 +19,7 @@ Apple_HLS::Apple_HLS(std::string const url, Type type, std::string const httpPre
 		name = url;
 	}
 	//manifestFile = new Manifest(url, httpPrefix, segDurationInMs);
+	currentFile    = fopen(url.c_str(), "w");
 }
 
 void Apple_HLS::endOfStream() {
@@ -30,6 +31,7 @@ void Apple_HLS::endOfStream() {
 }
 
 Apple_HLS::~Apple_HLS() {
+	fclose(currentSegment);
 	endOfStream();
 }
 
@@ -47,7 +49,11 @@ void Apple_HLS::HLSThread() {
 
 				durationInMs += clockToTimescale(data[i]->getDuration(), 1000);
 				/* if (durationInMs > segDurationInMs) {
-					manifestFile.update();
+					manifestFile.update(index);
+					++index;
+					fwrite(currentSegment, data[i]->data);
+					fclose(currentSegment);
+					currentSegment = fopen(url, "w");					
 					break;
 				} */
 			}
@@ -78,3 +84,4 @@ void Apple_HLS::flush() {
 
 }
 }
+

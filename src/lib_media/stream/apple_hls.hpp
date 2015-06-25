@@ -23,12 +23,13 @@ private:
 	void HLSThread();
 	void endOfStream();
 
-	std::string path;
+	std::string url;
 	std::string name;
 	Type type;
 	uint64_t segDurationInMs;
 	FILE *currentSegment;
 	//Manifest manifestFile;	
+	int index;
 	int numDataQueueNotify = 0;
 	std::thread workingThread;
 };
