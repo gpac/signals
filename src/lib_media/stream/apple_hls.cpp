@@ -11,15 +11,8 @@ Apple_HLS::Apple_HLS(std::string const url, Type type, std::string const httpPre
 : url(url), type(type), segDurationInMs(segDurationInMs), index(0) {
 	addInput(new Input<DataAVPacket>(this));
 
-	if (size_t pos = url.rfind("\\") != std::string::npos) {
-		char *str = new char[url.length() - pos];
-		url.copy(str, url.length() - pos, pos + 1);
-		name = std::string(str);
-	} else {
-		name = url;
-	}
 	//manifestFile = new Manifest(url, httpPrefix, segDurationInMs);
-	currentFile    = fopen(url.c_str(), "w");
+	currentSegment = fopen(url.c_str(), "w");
 }
 
 void Apple_HLS::endOfStream() {
@@ -53,7 +46,8 @@ void Apple_HLS::HLSThread() {
 					++index;
 					fwrite(data[i]->data, data[i]->size, 1, currentSegment);
 					fclose(currentSegment);
-					currentSegment = fopen(url, "w");					
+					std::string newSegment(url + "_" + index);
+					currentSegment = fopen(newSegment, "w");					
 					break;
 				} */
 			}
