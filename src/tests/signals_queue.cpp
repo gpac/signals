@@ -62,5 +62,73 @@ unittest("Thread-safe queue can be cleared while several blocking pop() are wait
 	tf2.join();
 	tf3.join();
 }
+
+unittest("Thread-safe queue has an optional max size") {
+	const int maxSize = 2;
+	QueueMaxSize<int> queue(maxSize);
+	bool res;
+	for (int i = 0; i < maxSize; ++i) {
+		res = queue.tryPush(i);
+		ASSERT_EQUALS(true, res);
+	}
+	res = queue.tryPush(maxSize);
+	ASSERT_EQUALS(false, res);
+
+	int val;
+	res = queue.tryPop(val);
+	ASSERT_EQUALS(true, res);
+	ASSERT_EQUALS(0, val);
+	queue.clear();
+}
+
+unittest("Thread-safe queue has an optional blocking max size") {
+	const int maxSize = 1;
+	QueueMaxSize<int> queue(maxSize);
+	std::condition_variable mustPop;
+
+	auto f2 = [&]() {
+		for (int i = 0; i < maxSize; ++i) {
+			queue.push(i);
+		}
+		bool res = queue.tryPush(maxSize);
+		ASSERT_EQUALS(false, res);
+		auto f1 = [&]() {
+			queue.push(maxSize); //blocking
+		};
+		std::thread tf1(f1);
+		mustPop.notify_one();
+		tf1.join();
+	};
+
+	std::thread tf2(f2);
+	std::mutex mutex;
+	std::unique_lock<std::mutex> lock(mutex);
+	mustPop.wait(lock);
+	int val;
+	for (int i = 0; i <= maxSize; ++i) {
+		val = queue.pop();
+		ASSERT_EQUALS(i, val);
+	}
+	bool res = queue.tryPop(val);
+	ASSERT_EQUALS(false, res);
+	queue.clear();
+	tf2.join();
+}
+
+unittest("Thread-safe queue can be destroyed while element is blocked while pushing") {
+	const int maxSize = 1;
+	QueueMaxSize<int> queue(maxSize);
+
+	auto f = [&]() {
+		for (int i = 0; i < maxSize; ++i) {
+			queue.push(i);
+		}
+		queue.push(maxSize); //blocking
+	};
+	std::thread tf(f);
+	queue.clear();
+	tf.join();
+}
+
 }
 

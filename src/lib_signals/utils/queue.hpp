@@ -14,13 +14,12 @@ public:
 	Queue() {}
 	virtual ~Queue() noexcept(false) {}
 
-	void push(T data) {
+	virtual void push(T data) {
 		std::lock_guard<std::mutex> lock(mutex);
-		dataQueue.push(std::move(data));
-		dataAvailable.notify_one();
+		pushUnsafe(data);
 	}
 
-	bool tryPop(T &value) {
+	virtual bool tryPop(T &value) {
 		std::lock_guard<std::mutex> lock(mutex);
 		if (dataQueue.empty()) {
 			return false;
@@ -30,7 +29,7 @@ public:
 		return true;
 	}
 
-	T pop() {
+	virtual T pop() {
 		std::unique_lock<std::mutex> lock(mutex);
 		while (dataQueue.empty())
 			dataAvailable.wait(lock);
@@ -40,7 +39,7 @@ public:
 		return p;
 	}
 
-	void clear() {
+	virtual void clear() {
 		std::lock_guard<std::mutex> lock(mutex);
 		std::queue<T> emptyQueue;
 		std::swap(emptyQueue, dataQueue);
@@ -78,13 +77,65 @@ public:
 	}
 #endif
 
-private:
-	Queue(const Queue&) = delete;
-	Queue& operator= (const Queue&) = delete;
+protected:
+	void pushUnsafe(T data) {
+		dataQueue.push(std::move(data));
+		dataAvailable.notify_one();
+	}
 
 	mutable std::mutex mutex;
 	std::queue<T> dataQueue;
 	std::condition_variable dataAvailable;
+
+private:
+	Queue(const Queue&) = delete;
+	Queue& operator= (const Queue&) = delete;
+};
+
+template<typename T>
+class QueueMaxSize : public Queue<T> {
+public:
+	QueueMaxSize(size_t maxSize = std::numeric_limits<size_t>::max()) : maxSize(maxSize) {
+		if (maxSize == 0)
+			throw std::runtime_error("QueueMaxSize size cannot be 0.");
+	}
+	virtual ~QueueMaxSize() noexcept(false) {}
+
+	bool tryPush(T data) {
+		std::lock_guard<std::mutex> lock(mutex);
+		if (dataQueue.size() < maxSize) {
+			pushUnsafe(data);
+			dataAvailable.notify_one();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	void push(T data) {
+		std::unique_lock<std::mutex> lock(mutex);
+		while (dataQueue.size() > maxSize)
+			dataPopped.wait(lock);
+		Queue::pushUnsafe(data);
+	}
+	
+	T pop() {
+		T p = Queue::pop();
+		dataPopped.notify_one();
+		return p;
+	}
+
+	virtual void clear() {
+		dataPopped.notify_all();
+		Queue::clear();
+	}
+
+private:
+	QueueMaxSize(const QueueMaxSize&) = delete;
+	QueueMaxSize& operator= (const QueueMaxSize&) = delete;
+
+	size_t maxSize;
+	std::condition_variable dataPopped;
 };
 
 }
