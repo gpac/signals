@@ -111,20 +111,23 @@ public:
 			return false;
 		}
 	}
-	
+
 	void push(T data) {
 		std::unique_lock<std::mutex> lock(mutex);
 		while (dataQueue.size() > maxSize)
 			dataPopped.wait(lock);
 		Queue::pushUnsafe(data);
 	}
-	
+
 	T pop() {
 		T p = Queue::pop();
 		dataPopped.notify_one();
 		return p;
 	}
 
+	/* After a clear() call, you are guaranteed that all blocking push() will
+	   awaken. Data will be effectively pushed and it is your reponsability to
+	   pop() them if necessary (e.g. when more pushers than the queue size) */
 	virtual void clear() {
 		dataPopped.notify_all();
 		Queue::clear();
