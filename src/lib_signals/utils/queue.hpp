@@ -114,9 +114,11 @@ public:
 
 	void push(T data) {
 		std::unique_lock<std::mutex> lock(mutex);
+		dataWaitingToBePushed++;
 		while (dataQueue.size() > maxSize)
 			dataPopped.wait(lock);
 		Queue::pushUnsafe(data);
+		dataWaitingToBePushed--;
 	}
 
 	T pop() {
@@ -126,10 +128,10 @@ public:
 	}
 
 	/* After a clear() call, you are guaranteed that all blocking push() will
-	   awaken. Data will be effectively pushed and it is your reponsability to
-	   pop() them if necessary (e.g. when more pushers than the queue size) */
+	   awaken and that the queue is empty. */
 	virtual void clear() {
-		dataPopped.notify_all();
+		while (dataWaitingToBePushed > 0)
+			pop();
 		Queue::clear();
 	}
 
@@ -138,6 +140,7 @@ private:
 	QueueMaxSize& operator= (const QueueMaxSize&) = delete;
 
 	size_t maxSize;
+	std::atomic_size_t dataWaitingToBePushed;
 	std::condition_variable dataPopped;
 };
 

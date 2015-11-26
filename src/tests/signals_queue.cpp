@@ -115,6 +115,28 @@ unittest("Thread-safe queue has an optional blocking max size") {
 	tf2.join();
 }
 
+unittest("Thread-safe queue can be cleared with several blocking push() calls") {
+	const int maxSize = 1;
+	ASSERT(maxSize < 4); //the example has 4 threads
+	QueueMaxSize<int> queue(maxSize);
+
+	auto f = [&]() {
+		queue.push(0);
+	};
+
+	std::thread tf1(f);
+	std::thread tf2(f);
+	std::thread tf3(f);
+	std::thread tf4(f);
+	queue.clear();
+	ASSERT_EQUALS(0, queue.size());
+	tf1.join();
+	tf2.join();
+	tf3.join();
+	tf4.join();
+	ASSERT_EQUALS(0, queue.size());
+}
+
 unittest("Thread-safe queue can be destroyed while element is blocked while pushing") {
 	const int maxSize = 1;
 	QueueMaxSize<int> queue(maxSize);
