@@ -27,6 +27,9 @@ public:
 	void WaitForCompletion() {
 		waitAndExit = true;
 		for (size_t i = 0; i < threads.size(); ++i) {
+			workQueue.push([]{});
+		}
+		for (size_t i = 0; i < threads.size(); ++i) {
 			if (threads[i].joinable()) {
 				threads[i].join();
 			}
@@ -48,14 +51,10 @@ private:
 
 	void run() {
 		while (!done) {
-			std::function<void(void)> task;
-			if (workQueue.tryPop(task)) {
-				task();
-			} else {
-				std::this_thread::yield();
-				if (waitAndExit) {
-					done = true;
-				}
+			std::function<void(void)> task = workQueue.pop();
+			task();
+			if (waitAndExit) {
+				done = true;
 			}
 		}
 	}
