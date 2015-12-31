@@ -21,6 +21,15 @@ DummyStruct runAtStartup(R f(Args...), Args... argVal) {
 }
 
 inline
+const char *redirectStdToNul() {
+#ifndef _WIN32
+	return " > /dev/null 2>&1";
+#else
+	return " > nul 2>&1";
+#endif
+}
+
+inline
 std::vector<char> stringDup(const char *src) {
 	const size_t srcStrLen = strlen(src) + 1;
 	std::vector<char> data(srcStrLen);
