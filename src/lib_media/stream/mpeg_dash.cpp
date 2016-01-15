@@ -269,7 +269,7 @@ void MPEG_DASH::ensureInitializeDASHer() {
 		if (!e) e = gf_dasher_set_switch_mode(dasher, bitstream_switching_mode);
 
 		Double dash_duration = (double)segDurationInMs / 1000;
-		if (!e) e = gf_dasher_set_durations(dasher, dash_duration, dash_duration);
+		if (!e) e = gf_dasher_set_durations(dasher, dash_duration, GF_FALSE, dash_duration);
 
 		Bool seg_at_rap = GF_TRUE, frag_at_rap = GF_TRUE;
 		if (!e) e = gf_dasher_enable_rap_splitting(dasher, seg_at_rap, frag_at_rap);

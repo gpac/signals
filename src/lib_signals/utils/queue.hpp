@@ -103,27 +103,27 @@ public:
 	virtual ~QueueMaxSize() noexcept(false) {}
 
 	bool tryPush(T data) {
-		std::lock_guard<std::mutex> lock(mutex);
-		if (dataQueue.size() < maxSize) {
-			pushUnsafe(data);
-			dataAvailable.notify_one();
+		std::lock_guard<std::mutex> lock(Queue<T>::mutex);
+		if (Queue<T>::dataQueue.size() < maxSize) {
+			Queue<T>::pushUnsafe(data);
+			Queue<T>::dataAvailable.notify_one();
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	void push(T data) {
-		std::unique_lock<std::mutex> lock(mutex);
+		std::unique_lock<std::mutex> lock(Queue<T>::mutex);
 		dataWaitingToBePushed++;
-		while (dataQueue.size() > maxSize)
+		while (Queue<T>::dataQueue.size() > maxSize)
 			dataPopped.wait(lock);
-		Queue::pushUnsafe(data);
+		Queue<T>::pushUnsafe(data);
 		dataWaitingToBePushed--;
 	}
 
 	T pop() {
-		T p = Queue::pop();
+		T p = Queue<T>::pop();
 		dataPopped.notify_one();
 		return p;
 	}
@@ -133,7 +133,7 @@ public:
 	virtual void clear() {
 		while (dataWaitingToBePushed > 0)
 			pop();
-		Queue::clear();
+		Queue<T>::clear();
 	}
 
 private:
