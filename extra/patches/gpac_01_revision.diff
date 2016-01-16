@@ -1,0 +1,13 @@
+diff --git a/zen-gpac.sh b/zen-gpac.sh
+index a80e15d..0c84fb5 100755
+--- a/zen-gpac.sh
++++ b/zen-gpac.sh
+@@ -19,7 +19,7 @@ function gpac_build {
+   host=$1
+   pushDir $WORK/src
+ 
+-  lazy_git_clone https://github.com/gpac/gpac.git gpac 473def563d54b
++  lazy_git_clone https://github.com/gpac/gpac.git gpac b1ec25e0d6b81
+ 
+   local OS=$(get_os $host)
+   local crossPrefix=$(get_cross_prefix $BUILD $host)

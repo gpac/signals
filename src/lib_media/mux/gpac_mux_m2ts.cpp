@@ -1,9 +1,9 @@
 #include "gpac_mux_m2ts.hpp"
-#include <gpac/mpegts.h>
 #include "../common/libav.hpp"
 #include <cassert>
 
 extern "C" {
+#include <gpac/mpegts.h>
 #include <libavformat/avformat.h>
 }
 
