@@ -10,7 +10,7 @@ Bugs:
 Tasks (from higher to lower priority):
 - DashCast:
  * write in /tmp
- * use an event loop so that the user interacts (and then insert 'lsmg')
+ * use an event loop so that the user interacts (and then insert 'lsmg') (https://github.com/libevent/libevent ?)
 - Multiple inputs:
  * A/V muxer
 - dynamic media types:
