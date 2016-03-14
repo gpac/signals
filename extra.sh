@@ -35,7 +35,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	rm -rf extra/src/zenbuild
 	git clone https://github.com/gpac/zenbuild extra/src/zenbuild
 	pushd extra/src/zenbuild
-	git checkout e3886072c464f73
+	git checkout f63eac8a5bad
 	patch -p1 < ../../patches/gpac_01_revision.diff
 	popd
 fi
@@ -108,10 +108,15 @@ if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ; then
 fi
 
 if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
-	mkdir -p extra/build/libjpeg_turbo_1.3.x
-	pushd extra/build/libjpeg_turbo_1.3.x
-	../../src/libjpeg_turbo_1.3.x/configure \
-		--prefix=$EXTRA_DIR
+	if [[ "$OSTYPE" == "linux-gnu" ]]; then
+		mkdir -p extra/build/libjpeg_turbo_1.3.x
+		pushd extra/build/libjpeg_turbo_1.3.x
+		../../src/libjpeg_turbo_1.3.x/configure \
+			--prefix=$EXTRA_DIR
+	elif [[ "$OSTYPE" == "msys" ]]; then
+		pushd extra/src/libjpeg_turbo_1.3.x
+		cmake -G "Unix Makefiles"  -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX:PATH=$EXTRA_DIR ../../src/libjpeg_turbo_1.3.x
+	fi
 
 	$MAKE
 	$MAKE install
