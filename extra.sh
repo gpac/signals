@@ -40,7 +40,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 fi
 
 if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
-	## X264
+	## x264
 	if [ ! -f extra/build/flags/$CPREFIX/x264.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" x264 $CPREFIX
@@ -52,10 +52,10 @@ if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 		./zenbuild.sh "$PWD/../../../extra/build" voaac-enc $CPREFIX
 		popd
 	fi
-	## FFMPEG
-	if [ ! -f extra/build/flags/$CPREFIX/x264.built ] ; then
+	## FFmpeg
+	if [ ! -f extra/build/flags/$CPREFIX/ffmpeg.built ] ; then
 		pushd extra/src/zenbuild
-		./zenbuild.sh "$PWD/../../../extra/build" x264 $CPREFIX
+		./zenbuild.sh "$PWD/../../../extra/build" ffmpeg $CPREFIX
 		popd
 	fi
 	## GPAC
@@ -79,7 +79,6 @@ fi
 #-------------------------------------------------------------------------------
 # ASIO
 #-------------------------------------------------------------------------------
-
 if [ ! -f extra/src/asio/asio/include/asio.hpp ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/asio
