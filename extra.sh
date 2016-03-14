@@ -36,6 +36,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	git clone https://github.com/gpac/zenbuild extra/src/zenbuild
 	pushd extra/src/zenbuild
 	git checkout e3886072c464f73
+	patch -p1 < ../../patches/gpac_01_revision.diff
 	popd
 fi
 
@@ -61,7 +62,6 @@ if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 	## GPAC
 	if [ ! -f extra/build/flags/$CPREFIX/gpac.built ] ; then
 		pushd extra/src/zenbuild
-		patch -p1 < ../../patches/gpac_01_revision.diff
 		./zenbuild.sh "$PWD/../../../extra/build" gpac $CPREFIX
 		popd
 	fi
