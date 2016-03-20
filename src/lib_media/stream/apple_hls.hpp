@@ -15,7 +15,6 @@ public:
 
 	Apple_HLS(Type type, uint64_t segDurationInMs);
 	~Apple_HLS();
-	void process(Data data);
 	void process() override;
 	void flush() override;
 
