@@ -343,8 +343,9 @@ namespace Mux {
 
 //TODO: segments start with RAP
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
-: m_DTS(0), m_curFragDur(0), m_chunkNum(0), m_useSegments(useSegments), m_useFragments(useSegments),
-  m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)) {
+: m_DTS(0),
+  m_useFragments(useSegments), m_curFragDur(0),
+  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0) {
 	if (m_chunkDuration == 0) {
 		Log::msg(Log::Debug, "[GPAC Mux] Configuration: single file.");
 		assert(!useSegments);
@@ -630,38 +631,9 @@ void GPACMuxMP4::declareStream(Data data) {
 	}
 }
 
-void GPACMuxMP4::process() {
-	//FIXME: reimplement with multiple inputs
-	Data data_ = inputs[0]->pop();
-	if (inputs[0]->updateMetadata(data_))
-		declareStream(data_);
-	auto data = safe_cast<const DataAVPacket>(data_);
-
-	GF_ISOSample sample;
-	memset(&sample, 0, sizeof(sample));
-	bool sampleDataMustBeDeleted = false;
-
-	{
-		u32 bufLen = (u32)data->size();
-		const u8 *bufPtr = data->data();
-
-		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
-		if (mediaType == GF_ISOM_MEDIA_VISUAL) {
-			fillVideoSample(bufPtr, bufLen, sample);
-			sampleDataMustBeDeleted = true;
-			sample.DTS = m_DTS;
-		} else if (mediaType == GF_ISOM_MEDIA_AUDIO) {
-			sample.data = (char*)bufPtr;
-			sample.dataLength = bufLen;
-			sample.DTS = m_DTS;
-		} else {
-			Log::msg(Log::Warning, "[GPACMuxMP4] only audio or video supported yet");
-			return;
-		}
-	}
-
+void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuration) {
 	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
-	u32 deltaDTS = (u32)clockToTimescale(data->getDuration(), mediaTimescale);
+	u32 deltaDTS = (u32)clockToTimescale(dataDuration, mediaTimescale);
 	m_DTS += deltaDTS;
 
 	if (m_useFragments) {
@@ -726,6 +698,38 @@ void GPACMuxMP4::process() {
 			return;
 		}
 	}
+}
+
+void GPACMuxMP4::process() {
+	//FIXME: reimplement with multiple inputs
+	Data data_ = inputs[0]->pop();
+	if (inputs[0]->updateMetadata(data_))
+		declareStream(data_);
+	auto data = safe_cast<const DataAVPacket>(data_);
+
+	gpacpp::IsoSample sample;
+	bool sampleDataMustBeDeleted = false;
+
+	{
+		u32 bufLen = (u32)data->size();
+		const u8 *bufPtr = data->data();
+
+		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
+		if (mediaType == GF_ISOM_MEDIA_VISUAL) {
+			fillVideoSample(bufPtr, bufLen, sample);
+			sampleDataMustBeDeleted = true;
+			sample.DTS = m_DTS;
+		} else if (mediaType == GF_ISOM_MEDIA_AUDIO) {
+			sample.data = (char*)bufPtr;
+			sample.dataLength = bufLen;
+			sample.DTS = m_DTS;
+		} else {
+			Log::msg(Log::Warning, "[GPACMuxMP4] only audio or video supported yet");
+			return;
+		}
+	}
+
+	addSample(sample, data->getDuration());
 
 	if (sampleDataMustBeDeleted) {
 		gf_free(sample.data);

@@ -5,9 +5,8 @@
 #include <string>
 
 typedef struct __tag_isom GF_ISOFile;
-
 namespace gpacpp {
-class IsoSample;
+	class IsoSample;
 }
 
 namespace Modules {
@@ -24,14 +23,23 @@ private:
 	void declareStream(Data stream);
 	void declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> stream);
 	void declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio> stream);
-	void setupFragments();
-	void closeSegment(bool isLastSeg);
+	void addSample(gpacpp::IsoSample &sample, const uint64_t dataDuration);
+
 	GF_ISOFile *m_iso;
-	uint64_t m_DTS, m_curFragDur, m_chunkNum;
 	uint32_t m_trackId;
-	bool m_useSegments, m_useFragments;
-	uint64_t m_chunkDuration;
+	uint64_t m_DTS;
+	
+	//fragments
+	void setupFragments();
+	bool m_useFragments;
+	uint64_t m_curFragDur;
+
+	//segments
+	void closeSegment(bool isLastSeg);
+	bool m_useSegments;
+	uint64_t m_chunkDuration, m_chunkNum;
 	std::string m_chunkName;
+
 	OutputDataDefault<DataAVPacket>* output;
 };
 
