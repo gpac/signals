@@ -366,14 +366,14 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, 
 		m_iso = gf_isom_open(fileName.str().c_str(), GF_ISOM_OPEN_WRITE, nullptr);
 		if (!m_iso) {
 			Log::msg(Log::Warning, "Cannot open iso file %s", fileName.str());
-			throw std::runtime_error("Cannot open output file.");
+			throw std::runtime_error("[GPACMuxMP4] Cannot open output file.");
 		}
 	}
 
 	GF_Err e = gf_isom_set_storage_mode(m_iso, GF_ISOM_STORE_INTERLEAVED);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "Cannot make iso file %s interleaved", fileName.str());
-		throw std::runtime_error("Cannot make iso file interleaved.");
+		throw std::runtime_error("[GPACMuxMP4] Cannot make iso file interleaved.");
 	}
 
 	output = addOutput(new OutputDataDefault<DataAVPacket>);
@@ -386,7 +386,7 @@ void GPACMuxMP4::closeSegment(bool isLastSeg) {
 		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, (Bool)isLastSeg, GF_4CC('e', 'o', 'd', 's'), nullptr, nullptr);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
-			throw std::runtime_error("Cannot close output segment.");
+			throw std::runtime_error("[GPACMuxMP4] Cannot close output segment.");
 		}
 	}
 }
@@ -403,7 +403,7 @@ GPACMuxMP4::~GPACMuxMP4() {
 	e = gf_isom_close(m_iso);
 	if (e != GF_OK) {
 		Log::msg(Log::Error, "%s: gf_isom_close", gf_error_to_string(e));
-		throw std::runtime_error("Cannot close output file.");
+		throw std::runtime_error("[GPACMuxMP4] Cannot close output file.");
 	}
 }
 
@@ -414,7 +414,7 @@ void GPACMuxMP4::setupFragments() {
 		e = gf_isom_setup_track_fragment(m_iso, m_trackId, 1, 1, 0, 0, 0, 0);
 		if (e != GF_OK) {
 			Log::msg(Log::Warning, "%s: gf_isom_setup_track_fragment", gf_error_to_string(e));
-			throw std::runtime_error("Cannot setup track as fragmented");
+			throw std::runtime_error("[GPACMuxMP4] Cannot setup track as fragmented");
 		}
 	}
 
@@ -425,7 +425,7 @@ void GPACMuxMP4::setupFragments() {
 			e = gf_isom_finalize_for_fragment(m_iso, 1);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-				throw std::runtime_error("Cannot prepare track for movie fragmentation");
+				throw std::runtime_error("[GPACMuxMP4] Cannot prepare track for movie fragmentation");
 			}
 
 			std::stringstream ss;
@@ -434,26 +434,26 @@ void GPACMuxMP4::setupFragments() {
 			e = gf_isom_start_segment(m_iso, (char*)m_chunkName.c_str(), GF_TRUE);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_chunkNum, m_chunkName);
-				throw std::runtime_error("Impossible to start the segment");
+				throw std::runtime_error("[GPACMuxMP4] Impossible to start the segment");
 			}
 		} else {
 			e = gf_isom_finalize_for_fragment(m_iso, 0);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_finalize_for_fragment", gf_error_to_string(e));
-				throw std::runtime_error("Cannot prepare track for movie fragmentation");
+				throw std::runtime_error("[GPACMuxMP4] Cannot prepare track for movie fragmentation");
 			}
 		}
 
 		e = gf_isom_start_fragment(m_iso, GF_TRUE);
 		if (e != GF_OK) {
 			Log::msg(Log::Warning, "%s: gf_isom_start_fragment\n", gf_error_to_string(e));
-			throw std::runtime_error("Impossible to create the moof");
+			throw std::runtime_error("[GPACMuxMP4] Impossible to create the moof");
 		}
 
 		e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), 0);
 		if (e != GF_OK) {
 			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
-			throw std::runtime_error("Impossible to create UTC marquer");
+			throw std::runtime_error("[GPACMuxMP4] Impossible to create UTC marquer");
 		}
 	}
 }
@@ -466,7 +466,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 	GF_ESD *esd = gf_odf_desc_esd_new(2);
 	if (!esd) {
 		Log::msg(Log::Warning, "Cannot create GF_ESD\n");
-		throw std::runtime_error("Cannot create GF_ESD");
+		throw std::runtime_error("[GPACMuxMP4] Cannot create GF_ESD");
 	}
 
 	esd->decoderConfig = (GF_DecoderConfig *)gf_odf_desc_new(GF_ODF_DCD_TAG);
@@ -521,7 +521,7 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 	Log::msg(Log::Warning, "TimeScale: %s\n", metadata->getSampleRate());
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track\n");
-		throw std::runtime_error("Cannot create new track");
+		throw std::runtime_error("[GPACMuxMP4] Cannot create new track");
 	}
 
 	m_trackId = gf_isom_get_track_id(m_iso, trackNum);
@@ -529,13 +529,13 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 	e = gf_isom_set_track_enabled(m_iso, trackNum, GF_TRUE);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled\n", gf_error_to_string(e));
-		throw std::runtime_error("gf_isom_set_track_enabled");
+		throw std::runtime_error("[GPACMuxMP4] gf_isom_set_track_enabled");
 	}
 
 	e = gf_isom_new_mpeg4_description(m_iso, trackNum, esd, nullptr, nullptr, &di);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_new_mpeg4_description\n", gf_error_to_string(e));
-		throw std::runtime_error("gf_isom_new_mpeg4_description");
+		throw std::runtime_error("[GPACMuxMP4] gf_isom_new_mpeg4_description");
 	}
 
 	gf_odf_desc_del((GF_Descriptor *)esd);
@@ -544,13 +544,13 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 	e = gf_isom_set_audio_info(m_iso, trackNum, di, metadata->getSampleRate(), metadata->getNumChannels(), metadata->getBitsPerSample());
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_audio_info\n", gf_error_to_string(e));
-		throw std::runtime_error("gf_isom_set_audio_info");
+		throw std::runtime_error("[GPACMuxMP4] gf_isom_set_audio_info");
 	}
 
 	e = gf_isom_set_pl_indication(m_iso, GF_ISOM_PL_AUDIO, acfg.audioPL);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_pl_indication\n", gf_error_to_string(e));
-		throw std::runtime_error("Container format import failed");
+		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
 	}
 
 	setupFragments();
@@ -564,7 +564,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 	GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
 	if (!avccfg) {
 		Log::msg(Log::Warning, "Cannot create AVCConfig");
-		throw std::runtime_error("Container format import failed");
+		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
 	}
 
 	const uint8_t *extradata;
@@ -574,13 +574,13 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 	if (e) {
 		Log::msg(Log::Warning, "Cannot parse H264 SPS/PPS");
 		gf_odf_avc_cfg_del(avccfg);
-		throw std::runtime_error("Container format import failed");
+		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
 	}
 
 	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale());
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track");
-		throw std::runtime_error("Cannot create new track");
+		throw std::runtime_error("[GPACMuxMP4] Cannot create new track");
 	}
 
 	m_trackId = gf_isom_get_track_id(m_iso, trackNum);
@@ -588,14 +588,14 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 	e = gf_isom_set_track_enabled(m_iso, trackNum, GF_TRUE);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled", gf_error_to_string(e));
-		throw std::runtime_error("Cannot enable track");
+		throw std::runtime_error("[GPACMuxMP4] Cannot enable track");
 	}
 
 	u32 di;
 	e = gf_isom_avc_config_new(m_iso, trackNum, avccfg, nullptr, nullptr, &di);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
-		throw std::runtime_error("Cannot create AVC config");
+		throw std::runtime_error("[GPACMuxMP4] Cannot create AVC config");
 	}
 
 	gf_odf_avc_cfg_del(avccfg);
@@ -609,7 +609,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 	e = gf_isom_avc_set_inband_config(m_iso, trackNum, di);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
-		throw std::runtime_error("Cannot set inband PPS/SPS for AVC track");
+		throw std::runtime_error("[GPACMuxMP4] Cannot set inband PPS/SPS for AVC track");
 	}
 #endif
 
@@ -644,7 +644,6 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_chunkDuration)) {
 			closeSegment(false);
 			if (m_useSegments) {
-				auto oldChunkName = m_chunkName;
 				m_chunkNum++;
 
 				std::stringstream ss;
@@ -653,15 +652,8 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 				e = gf_isom_start_segment(m_iso, (char*)m_chunkName.c_str(), GF_TRUE);
 				if (e != GF_OK) {
 					Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)\n", gf_error_to_string(e), m_chunkNum, m_chunkName);
-					throw std::runtime_error("Impossible to start the segment");
+					throw std::runtime_error("[GPACMuxMP4] Impossible to start the segment");
 				}
-
-				//MP4Box dasher requires complete ISOBMF files
-				auto s = format("%s/%s_x.mp4", gf_get_default_cache_directory(), oldChunkName);
-				auto s_tmp = format("%s/%s_x.tmp.mp4", gf_get_default_cache_directory(), oldChunkName);
-				system(format("cat %s %s > %s", gf_isom_get_filename(m_iso), oldChunkName, s_tmp).c_str());
-				system(format("MP4Box -add %s:ext=mp4 -new %s %s", s_tmp, s, redirectStdToNul()).c_str());
-				system(format("rm %s %s %s", s_tmp, oldChunkName, redirectStdToNul()).c_str());
 
 				auto out = output->getBuffer(0);
 				out->setMetadata(std::make_shared<MetadataFile>(s));
@@ -673,13 +665,13 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 			e = gf_isom_start_fragment(m_iso, GF_TRUE);
 			if (e != GF_OK) {
 				Log::msg(Log::Error, "%s: gf_isom_start_fragment", gf_error_to_string(e));
-				return;
+				throw std::runtime_error("[GPACMuxMP4] Impossible to start the fragment");
 			}
 
 			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), m_DTS);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
-				throw std::runtime_error("Impossible to set the UTC marquer");
+				throw std::runtime_error("[GPACMuxMP4] Impossible to set the UTC marquer");
 			}
 
 			const u64 oneFragDurInTimescale = clockToTimescale(m_chunkDuration, mediaTimescale);

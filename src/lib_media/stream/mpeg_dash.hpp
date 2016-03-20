@@ -15,7 +15,6 @@ public:
 
 	MPEG_DASH(Type type, uint64_t segDurationInMs);
 	~MPEG_DASH();
-	void process(Data data);
 	void process() override;
 	void flush() override;
 
