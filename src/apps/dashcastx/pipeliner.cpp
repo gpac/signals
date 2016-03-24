@@ -49,7 +49,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	};
 
 	auto demux = pipeline.addModule(new Demux::LibavDemux(opt.url));
-	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH(
+	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH("dashcastx.mpd",
 		opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
 	int numDashInputs = 0;

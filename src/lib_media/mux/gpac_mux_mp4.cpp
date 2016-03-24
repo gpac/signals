@@ -12,6 +12,7 @@ extern "C" {
 #include "lib_ffpp/ffpp.hpp"
 #include "../common/libav.hpp"
 
+//#define AVC_INBAND_CONFIG
 
 namespace Modules {
 
@@ -553,6 +554,8 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
 	}
 
+	sampleRate = metadata->getSampleRate();
+
 	setupFragments();
 
 	auto input = addInput(new Input<DataAVPacket>(this));
@@ -602,14 +605,18 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 
 	auto const res = metadata->getResolution();
 	gf_isom_set_visual_info(m_iso, trackNum, di, res.width, res.height);
+	resolution[0] = res.width;
+	resolution[1] = res.height;
 	gf_isom_set_sync_table(m_iso, trackNum);
 
+#ifdef AVC_INBAND_CONFIG
 	//inband SPS/PPS
-#if 0
-	e = gf_isom_avc_set_inband_config(m_iso, trackNum, di);
-	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
-		throw std::runtime_error("[GPACMuxMP4] Cannot set inband PPS/SPS for AVC track");
+	if (m_useSegments) {
+		e = gf_isom_avc_set_inband_config(m_iso, trackNum, di);
+		if (e != GF_OK) {
+			Log::msg(Log::Warning, "%s: gf_isom_avc_set_inband_config", gf_error_to_string(e));
+			throw std::runtime_error("[GPACMuxMP4] Cannot set inband PPS/SPS for AVC track");
+		}
 	}
 #endif
 
@@ -629,6 +636,38 @@ void GPACMuxMP4::declareStream(Data data) {
 	} else {
 		throw std::runtime_error("[GPACMuxMP4] Stream creation failed: unknown type.");
 	}
+}
+
+void GPACMuxMP4::sendOutput() {
+	StreamType streamType;
+	std::string mimeType;
+	switch (gf_isom_get_media_type(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId))) {
+	case GF_ISOM_MEDIA_VISUAL: streamType = VIDEO_PKT; mimeType = "video/mp4"; break;
+	case GF_ISOM_MEDIA_AUDIO: streamType = AUDIO_PKT; mimeType = "audio/mp4"; break;
+	default: throw std::runtime_error("[GPACMuxMP4] Segment contains neither audio nor video");
+	}
+	Bool isInband =
+#ifdef AVC_INBAND_CONFIG
+		GF_TRUE;
+#else
+		GF_FALSE;
+#endif
+	char codecName[256]; //FIXME: security issue on the GPAC API
+	GF_Err e = gf_media_get_rfc_6381_codec_name(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId), codecName, isInband, GF_FALSE);
+	if (e) throw std::runtime_error("[GPACMuxMP4] Could not compute codec name (RFC 6381)");
+
+	auto out = output->getBuffer(0);
+	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName));
+	out->setMetadata(metadata);
+	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
+	switch (gf_isom_get_media_type(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId))) {
+	case GF_ISOM_MEDIA_VISUAL: metadata->resolution[0] = resolution[0]; metadata->resolution[1] = resolution[1]; break;
+	case GF_ISOM_MEDIA_AUDIO: metadata->sampleRate = sampleRate; break;
+	default: throw std::runtime_error("[GPACMuxMP4] Segment contains neither audio nor video");
+	}
+	out->setTime(m_DTS, mediaTimescale);
+	out->setDuration(m_curFragDur, mediaTimescale);
+	output->emit(out);
 }
 
 void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuration) {
@@ -655,11 +694,7 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 					throw std::runtime_error("[GPACMuxMP4] Impossible to start the segment");
 				}
 
-				auto out = output->getBuffer(0);
-				out->setMetadata(std::make_shared<MetadataFile>(s));
-				out->setTime(m_DTS, mediaTimescale);
-				out->setDuration(m_curFragDur, mediaTimescale);
-				output->emit(out);
+				sendOutput();
 			}
 
 			e = gf_isom_start_fragment(m_iso, GF_TRUE);
@@ -700,7 +735,6 @@ void GPACMuxMP4::process() {
 	auto data = safe_cast<const DataAVPacket>(data_);
 
 	gpacpp::IsoSample sample;
-	bool sampleDataMustBeDeleted = false;
 
 	{
 		u32 bufLen = (u32)data->size();
@@ -709,12 +743,12 @@ void GPACMuxMP4::process() {
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
 		if (mediaType == GF_ISOM_MEDIA_VISUAL) {
 			fillVideoSample(bufPtr, bufLen, sample);
-			sampleDataMustBeDeleted = true;
 			sample.DTS = m_DTS;
 		} else if (mediaType == GF_ISOM_MEDIA_AUDIO) {
 			sample.data = (char*)bufPtr;
 			sample.dataLength = bufLen;
 			sample.DTS = m_DTS;
+			sample.setDataOwnership(false);
 		} else {
 			Log::msg(Log::Warning, "[GPACMuxMP4] only audio or video supported yet");
 			return;
@@ -722,10 +756,6 @@ void GPACMuxMP4::process() {
 	}
 
 	addSample(sample, data->getDuration());
-
-	if (sampleDataMustBeDeleted) {
-		gf_free(sample.data);
-	}
 }
 
 }

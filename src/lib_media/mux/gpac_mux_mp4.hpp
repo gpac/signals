@@ -23,6 +23,7 @@ private:
 	void declareStream(Data stream);
 	void declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> stream);
 	void declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio> stream);
+	void sendOutput();
 	void addSample(gpacpp::IsoSample &sample, const uint64_t dataDuration);
 
 	GF_ISOFile *m_iso;
@@ -41,6 +42,10 @@ private:
 	std::string m_chunkName;
 
 	OutputDataDefault<DataAVPacket>* output;
+	union {
+		unsigned int resolution[2];
+		unsigned int sampleRate;
+	};
 };
 
 }

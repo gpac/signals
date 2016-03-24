@@ -7,7 +7,7 @@ index a80e15d..0c84fb5 100755
    pushDir $WORK/src
  
 -  lazy_git_clone https://github.com/gpac/gpac.git gpac 473def563d54b
-+  lazy_git_clone https://github.com/gpac/gpac.git gpac b1ec25e0d6b81
++  lazy_git_clone https://github.com/gpac/gpac.git gpac 29ffbdef64574
  
    local OS=$(get_os $host)
    local crossPrefix=$(get_cross_prefix $BUILD $host)

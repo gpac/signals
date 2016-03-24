@@ -28,16 +28,29 @@ struct IMetadata {
 
 class MetadataFile : public IMetadata {
 public:
-	MetadataFile(const std::string &filename) : filename(filename) {}
+	MetadataFile(const std::string filename, StreamType streamType, const std::string mimeType, const std::string codecName)
+		: streamType(streamType), filename(filename), mimeType(mimeType), codecName(codecName) {}
 	std::string getFilename() const {
 		return filename;
 	}
+	std::string getMimeType() const {
+		return mimeType;
+	}
+	std::string getCodecName() const {
+		return codecName;
+	}
 	virtual StreamType getStreamType() const override {
-		return UNKNOWN_ST;
+		return streamType;
 	}
 
+	union {
+		unsigned int resolution[2];
+		unsigned int sampleRate;
+	};
+
 private:
-	std::string filename;
+	StreamType streamType;
+	std::string filename, mimeType, codecName/*as per RFC6381*/;
 };
 
 //TODO: should be picture and Pcm and return the same fields as MetadataPkt

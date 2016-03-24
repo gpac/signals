@@ -11,6 +11,7 @@ extern "C" {
 #include <gpac/media_tools.h>
 #include <gpac/download.h>
 #include <gpac/dash.h>
+#include <gpac/internal/mpd.h>
 }
 
 //#define GPAC_MEM_TRACKER
@@ -52,6 +53,7 @@ public:
 		DTS = 0;
 		CTS_Offset = 0;
 		IsRAP = RAP_NO;
+		ownsData = true;
 	}
 	IsoSample(GF_ISOSample* pOther) {
 		GF_ISOSample* pMe = this;
@@ -59,10 +61,16 @@ public:
 		gf_free(pOther);
 	}
 	~IsoSample() {
-		gf_free(data);
+		if (ownsData)
+			gf_free(data);
+	}
+	void setDataOwnership(bool ownsData) {
+		this->ownsData = ownsData;
 	}
 
+private:
 	IsoSample const& operator=(IsoSample const&) = delete;
+	bool ownsData;
 };
 
 //------------------------------------------------
@@ -70,13 +78,13 @@ public:
 //------------------------------------------------
 class Init {
 public:
-	Init(/*bool memTracker = false, */uint32_t globalLogTools = GF_LOG_ALL, uint32_t globalLogLevel = GF_LOG_WARNING) {
+	Init(/*bool memTracker = false, */GF_LOG_Tool globalLogTools = GF_LOG_ALL, GF_LOG_Level globalLogLevel = GF_LOG_WARNING) {
 #ifdef GPAC_MEM_TRACKER
 		gf_sys_init(GF_TRUE);
 #else
 		gf_sys_init(GF_FALSE);
 #endif
-		//Romain: gf_log_set_tool_level(globalLogTools, globalLogLevel);
+		gf_log_set_tool_level(globalLogTools, globalLogLevel);
 	}
 
 	~Init() {
@@ -233,7 +241,7 @@ public:
 		assert(state == Init);
 		GF_Err e = gf_dash_open(dashClient, url.c_str());
 		if (e)
-			throw Error(format("[MPEG DASH Client] Can't open URL %s", url).c_str(), e);
+			throw Error(format("[MPEG-DASH Client] Can't open URL %s", url).c_str(), e);
 		state = Started;
 	}
 
@@ -268,6 +276,183 @@ private:
 	std::unique_ptr<Config> cfg;
 	std::unique_ptr<DownloadManager> dm;
 	GF_DashClient *dashClient;
+};
+
+//------------------------------------------------
+// wrapper for GF_MPD
+//------------------------------------------------
+class MPD {
+public:
+	MPD(GF_MPD_Type type, u32 minBufferTime) {
+		mpd = gf_mpd_new();
+		mpd->xml_namespace = "urn:mpeg:dash:schema:mpd:2011";
+		mpd->type = type;
+		mpd->min_buffer_time = minBufferTime;
+		//mpd->ID
+		//mpd->profiles
+		//mpd->availabilityStartTime
+		//mpd->availabilityEndTime
+		//mpd->publishTime
+		//mpd->media_presentation_duration
+		//mpd->minimum_update_period
+		//mpd->time_shift_buffer_depth
+		//mpd->suggested_presentation_delay
+		//mpd->max_segment_duration
+		//mpd->max_subsegment_duration
+		//mpd->attributes) gf_mpd_extensible_print_attr(out, (GF_MPD_ExtensibleVirtual*)mpd);
+		//mpd->children) gf_mpd_extensible_print_nodes(out, (GF_MPD_ExtensibleVirtual*)mpd);
+		//mpd->program_infos
+		//mpd->base_URLs
+		//mpd->locations
+	}
+
+	virtual ~MPD() {
+		gf_mpd_del(mpd);
+	}
+
+	bool write(std::string const& url) const {
+		if (!minimalCheck())
+			return false;
+
+		GF_Err e = gf_mpd_write_file(mpd, url.c_str());
+		if (e != GF_OK)
+			throw Error(format("[MPEG-DASH MPD] Can't write file %s", url).c_str(), e);
+
+		return true;
+	}
+
+	GF_MPD_Representation* addRepresentation(GF_MPD_AdaptationSet *as, const char *id, u32 bandwidth) {
+		GF_MPD_Representation *rep;
+		GF_SAFEALLOC(rep, GF_MPD_Representation);
+
+		//GF_MPD_COMMON_ATTRIBUTES_ELEMENTS
+		//
+		rep->id = gf_strdup(id);
+		rep->bandwidth = bandwidth;
+		//u32 quality_ranking;
+		//char *dependency_id;
+		//char *media_stream_structure_id;
+		//
+		//GF_List *base_URLs;
+		//GF_MPD_SegmentBase *segment_base;
+		//GF_MPD_SegmentList *segment_list;
+		//GF_MPD_SegmentTemplate *segment_template;
+		//
+		//GF_List *sub_representations;
+		//
+		///*index of the next enhancement representation plus 1, 0 is reserved in case of the highest representation*/
+		//u32 enhancement_rep_index_plus_one;
+		//
+		///*GPAC playback implementation*/
+		//GF_DASH_RepresentationPlayback playback;
+		//u32 m3u8_media_seq_min, m3u8_media_seq_max;
+
+		if (!as->representations)
+			as->representations = gf_list_new();
+		gf_list_add(as->representations, rep);
+		return rep;
+	}
+
+	GF_MPD_AdaptationSet* addAdaptationSet(GF_MPD_Period *period) {
+		GF_MPD_AdaptationSet *as;
+		GF_SAFEALLOC(as, GF_MPD_AdaptationSet);
+
+		//GF_MPD_COMMON_ATTRIBUTES_ELEMENTS
+
+		//u32 id;
+		///*default value is -1: not set in MPD*/
+		as->group = -1;
+		//
+		//char *lang;
+		//char *content_type;
+		//GF_MPD_Fractional *par;
+		//u32 min_bandwidth;
+		//u32 max_bandwidth;
+		//u32 min_width;
+		//u32 max_width;
+		//u32 min_height;
+		//u32 max_height;
+		//u32 min_framerate;
+		//u32 max_framerate;
+		//Bool segment_alignment;
+		//Bool bitstream_switching;
+		//Bool subsegment_alignment;
+		//Bool subsegment_starts_with_sap;
+		//
+		//GF_List *accessibility;
+		//GF_List *role;
+		//GF_List *rating;
+		//GF_List *viewpoint;
+		//GF_List *content_component;
+		//
+		//GF_List *base_URLs;
+		//GF_MPD_SegmentBase *segment_base;
+		//GF_MPD_SegmentList *segment_list;
+		//GF_MPD_SegmentTemplate *segment_template;
+		//
+		//char *xlink_href;
+		//Bool xlink_actuate_on_load;
+
+		if (!period->adaptation_sets)
+			period->adaptation_sets = gf_list_new();
+		gf_list_add(period->adaptation_sets, as);
+		return as;
+	}
+
+	GF_MPD_Period* addPeriod() {
+		GF_MPD_Period *period;
+		GF_SAFEALLOC(period, GF_MPD_Period);
+
+		//char *ID;
+		period->start = 0;
+		//u32 duration; /* expressed in ms*/
+		//Bool bitstream_switching;
+
+		//GF_List *base_URLs;
+		//GF_MPD_SegmentBase *segment_base;
+		//GF_MPD_SegmentList *segment_list;
+		//GF_MPD_SegmentTemplate *segment_template;
+
+		//GF_List *subsets;
+		//char *xlink_href;
+		//Bool xlink_actuate_on_load;
+
+		if (!mpd->periods)
+			mpd->periods = gf_list_new();
+		gf_list_add(mpd->periods, period);
+		return period;
+	}
+
+	GF_MPD *mpd;
+
+private:
+	bool minimalCheck() const {
+		if (!mpd->min_buffer_time)
+			return false;
+
+		if (mpd->type == GF_MPD_TYPE_STATIC) {
+			if (!mpd->media_presentation_duration)
+				return false;
+		} else if (mpd->type == GF_MPD_TYPE_DYNAMIC) {
+			if (!mpd->availabilityStartTime)
+				return false;
+		} else {
+			//unknown mpd type
+			return false;
+		}
+
+		//check we have at least one AS with one representation
+		if (!gf_list_count(mpd->periods))
+			return false;
+		GF_MPD_Period *period = (GF_MPD_Period*)gf_list_get(mpd->periods, 0);
+		if (!gf_list_count(period->adaptation_sets))
+			return false;
+		GF_MPD_AdaptationSet *as = (GF_MPD_AdaptationSet*)gf_list_get(period->adaptation_sets, 0);
+		if (!gf_list_count(as->representations))
+			return false;
+
+		return true;
+	}
 };
 
 }

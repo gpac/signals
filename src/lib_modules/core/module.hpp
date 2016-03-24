@@ -38,12 +38,15 @@ public:
 };
 
 //dynamic input number specialized module
+//note: pins added automatically will carry the DataLoose type which doesn't
+//      allow to perform all safety checks ; consider adding pins manually if
+//      you can
 class ModuleDynI : public Module {
 public:
 	ModuleDynI() = default;
 	virtual ~ModuleDynI() noexcept(false) {}
 
-	//Takes ownership
+	//takes ownership
 	template<typename T>
 	T* addInput(T* p) {
 		bool isDyn = false;

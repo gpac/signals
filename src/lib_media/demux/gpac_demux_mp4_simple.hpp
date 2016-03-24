@@ -17,7 +17,6 @@ public:
 	void process(Data data) override;
 
 private:
-
 	std::unique_ptr<ISOFileReader> reader;
 	OutputDefault* output;
 };
