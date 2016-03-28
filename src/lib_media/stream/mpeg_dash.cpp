@@ -56,7 +56,7 @@ void MPEG_DASH::DASHThread() {
 		generateMPD(Live);
 
 		if (type == Live) {
-			auto dur = std::chrono::milliseconds(gf_net_get_utc() - mpd->mpd->availabilityStartTime + totalDurationInMs);
+			auto dur = std::chrono::milliseconds(mpd->mpd->availabilityStartTime + totalDurationInMs - gf_net_get_utc());
 			Log::msg(Log::Info, "[MPEG_DASH] Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 			std::this_thread::sleep_for(dur);
 		}
@@ -69,9 +69,10 @@ void MPEG_DASH::DASHThread() {
 }
 
 void MPEG_DASH::process() {
-	numDataQueueNotify = (int)getNumInputs() - 1; //FIXME: connection/disconnection cannot occur dynamically. Lock inputs?
-	if (!workingThread.joinable())
+	if (!workingThread.joinable()) {
+		numDataQueueNotify = (int)getNumInputs() - 1; //FIXME: connection/disconnection cannot occur dynamically. Lock inputs?
 		workingThread = std::thread(&MPEG_DASH::DASHThread, this);
+	}
 }
 
 void  MPEG_DASH::ensureMPD() {
