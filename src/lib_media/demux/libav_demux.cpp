@@ -17,6 +17,7 @@ extern "C" {
 namespace Modules {
 
 namespace {
+
 auto g_InitAv = runAtStartup(&av_register_all);
 auto g_InitAvformat = runAtStartup(&avformat_network_init);
 auto g_InitAvcodec = runAtStartup(&avcodec_register_all);
@@ -34,6 +35,11 @@ const char* webcamFormat() {
 #error "unknown platform"
 #endif
 }
+
+bool isRaw(AVCodecID codecID) {
+	return codecID == AV_CODEC_ID_RAWVIDEO;
+}
+
 }
 
 namespace Demux {
@@ -84,10 +90,11 @@ LibavDemux::LibavDemux(const std::string &url) {
 	}
 
 	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {
-		MetadataPktLibav *m;
+		IMetadata *m;
 		switch (m_formatCtx->streams[i]->codec->codec_type) {
 		case AVMEDIA_TYPE_AUDIO: m = new MetadataPktLibavAudio(m_formatCtx->streams[i]->codec); break;
-		case AVMEDIA_TYPE_VIDEO: m = new MetadataPktLibavVideo(m_formatCtx->streams[i]->codec); break;
+		case AVMEDIA_TYPE_VIDEO: /*isRaw(m_formatCtx->streams[i]->codec->codec_id) ? m = new MetadataRawVideo :*/
+			m = new MetadataPktLibavVideo(m_formatCtx->streams[i]->codec); break;
 		default: m = nullptr; break;
 		}
 		outputs.push_back(addOutput(new OutputDataDefault<DataAVPacket>(m)));

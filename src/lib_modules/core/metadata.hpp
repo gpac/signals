@@ -23,7 +23,28 @@ enum StreamType {
 
 struct IMetadata {
 	virtual ~IMetadata() {}
+
 	virtual StreamType getStreamType() const = 0;
+
+	bool isVideo() const {
+		switch (getStreamType()) {
+		case VIDEO_RAW:
+		case VIDEO_PKT:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	bool isAudio() const {
+		switch (getStreamType()) {
+		case AUDIO_RAW:
+		case AUDIO_PKT:
+			return true;
+		default:
+			return false;
+		}
+	}
 };
 
 class MetadataFile : public IMetadata {
