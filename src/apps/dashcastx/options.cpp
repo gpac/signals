@@ -60,10 +60,10 @@ enum optionIndex { UNKNOWN, HELP, OPT, REQUIRED, NUMERIC, VIDEO, NONEMPTY };
 const option::Descriptor usage[] = {
 	{ UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
 	"Options:" },
-	{ HELP,    0, "h", "help",    Arg::None,    "  --help,        -h       \tPrint usage and exit." },
-	{ OPT,     0, "l", "live",    Arg::None,    "  --live,        -l       \tRun at system clock pace (otherwise runs as fast as possible) with low latency settings (quality may be degraded)." },
-	{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur,     -s       \tSet the segment duration in millisecond (default value: 2000)." },
-	{ VIDEO,   0, "v", "video",   Arg::Video,   "  --video wxh:b, -v wxh:b \tSet a video resolution and bitrate." },
+	{ HELP,    0, "h", "help",    Arg::None,    "  --help,          -h         \tPrint usage and exit." },
+	{ OPT,     0, "l", "live",    Arg::None,    "  --live,          -l         \tRun at system clock pace (otherwise runs as fast as possible) with low latency settings (quality may be degraded)." },
+	{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur,       -s         \tSet the segment duration (in ms) (default value: 2000)." },
+	{ VIDEO,   0, "v", "video",   Arg::Video,   "  --video wxh[:b], -v wxh[:b] \tSet a video resolution and optionally bitrate (enables resize and/or transcoding)." },
 	{ UNKNOWN, 0, "",  "",        Arg::None,
 	"\nExamples:\n"
 	"  dashcastx file.ts\n"
@@ -119,9 +119,10 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 	if (options[NUMERIC].first()->desc && options[NUMERIC].first()->desc->shortopt == std::string("s"))
 		opt.segmentDuration = atol(options[NUMERIC].first()->arg);
 	if (options[VIDEO].first()->desc && options[VIDEO].first()->desc->shortopt == std::string("v")) {
-		unsigned w, h, bitrate;
+		unsigned w=0, h=0, bitrate=0;
 		for (option::Option* o = options[VIDEO]; o; o = o->next()) {
-			if (sscanf(o->arg, "%ux%u:%u", &w, &h, &bitrate) != 3)
+			auto const parsed = sscanf(o->arg, "%ux%u:%u", &w, &h, &bitrate);
+			if (parsed < 2) /*bitrate is optional*/
 				throw std::runtime_error("Internal error while retrieving resolution.");
 			opt.v.push_back(Video(Modules::Resolution(w, h), bitrate));
 		}
