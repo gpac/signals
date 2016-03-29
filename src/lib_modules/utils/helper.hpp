@@ -52,10 +52,16 @@ size_t ConnectModules(ModuleType1 *prev, size_t outputIdx, ModuleType2 *next, si
 	return ConnectOutputToInput(output, next->getInput(inputIdx), executor);
 }
 
-template <typename T>
+template <typename T = IMetadata>
 std::shared_ptr<const T> getMetadataFromOutput(IOutput const * const out) {
 	auto const metadata = safe_cast<const IMetadataCap>(out)->getMetadata();
 	return safe_cast<const T>(metadata);
+}
+
+template <typename T>
+std::shared_ptr<const T> getMetadataFromOutputUnsafe(IOutput const * const out) {
+	auto const metadata = safe_cast<const IMetadataCap>(out)->getMetadata();
+	return std::dynamic_pointer_cast<const T>(metadata);
 }
 
 }
