@@ -13,8 +13,8 @@ namespace Modules {
 namespace Stream {
 
 MPEG_DASH::MPEG_DASH(const std::string &mpdPath, Type type, uint64_t segDurationInMs)
-: mpdPath(mpdPath), type(type), segDurationInMs(segDurationInMs), totalDurationInMs(0),
-  mpd(new gpacpp::MPD(type == Live ? GF_MPD_TYPE_DYNAMIC : GF_MPD_TYPE_STATIC, MIN_BUFFER_TIME_IN_MS)) {
+	: mpdPath(mpdPath), type(type), segDurationInMs(segDurationInMs), totalDurationInMs(0),
+	  mpd(new gpacpp::MPD(type == Live ? GF_MPD_TYPE_DYNAMIC : GF_MPD_TYPE_STATIC, MIN_BUFFER_TIME_IN_MS)) {
 	addInput(new Input<DataAVPacket>(this));
 }
 

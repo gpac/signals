@@ -42,7 +42,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Encode {
 
 LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
-: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1) {
+	: pcmFormat(new PcmFormat()), avFrame(new ffpp::Frame), frameNum(-1) {
 	std::string codecOptions, generalOptions, codecName;
 	switch (type) {
 	case Video:

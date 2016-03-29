@@ -92,9 +92,9 @@ bool SDLVideo::processOneFrame(Data data) {
 
 	if (pictureFormat.format == YUV420P) {
 		SDL_UpdateYUVTexture(texture, nullptr,
-			pic->getPlane(0), (int)pic->getPitch(0),
-			pic->getPlane(1), (int)pic->getPitch(1),
-			pic->getPlane(2), (int)pic->getPitch(2));
+		                     pic->getPlane(0), (int)pic->getPitch(0),
+		                     pic->getPlane(1), (int)pic->getPitch(1),
+		                     pic->getPlane(2), (int)pic->getPitch(2));
 	} else {
 		SDL_UpdateTexture(texture, nullptr, pic->getPlane(0), (int)pic->getPitch(0));
 	}

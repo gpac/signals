@@ -48,30 +48,30 @@ struct IMetadata {
 };
 
 class MetadataFile : public IMetadata {
-public:
-	MetadataFile(const std::string filename, StreamType streamType, const std::string mimeType, const std::string codecName)
-		: streamType(streamType), filename(filename), mimeType(mimeType), codecName(codecName) {}
-	std::string getFilename() const {
-		return filename;
-	}
-	std::string getMimeType() const {
-		return mimeType;
-	}
-	std::string getCodecName() const {
-		return codecName;
-	}
-	virtual StreamType getStreamType() const override {
-		return streamType;
-	}
+	public:
+		MetadataFile(const std::string filename, StreamType streamType, const std::string mimeType, const std::string codecName)
+			: streamType(streamType), filename(filename), mimeType(mimeType), codecName(codecName) {}
+		std::string getFilename() const {
+			return filename;
+		}
+		std::string getMimeType() const {
+			return mimeType;
+		}
+		std::string getCodecName() const {
+			return codecName;
+		}
+		virtual StreamType getStreamType() const override {
+			return streamType;
+		}
 
-	union {
-		unsigned int resolution[2];
-		unsigned int sampleRate;
-	};
+		union {
+			unsigned int resolution[2];
+			unsigned int sampleRate;
+		};
 
-private:
-	StreamType streamType;
-	std::string filename, mimeType, codecName/*as per RFC6381*/;
+	private:
+		StreamType streamType;
+		std::string filename, mimeType, codecName/*as per RFC6381*/;
 };
 
 //TODO: should be picture and Pcm and return the same fields as MetadataPkt
@@ -103,45 +103,45 @@ struct MetadataPktAudio : public MetadataPkt {
 };
 
 class MetadataCap : public IMetadataCap {
-public:
-	MetadataCap(IMetadata *metadata = nullptr) : m_metadata(metadata) {}
-	virtual ~MetadataCap() noexcept(false) {}
+	public:
+		MetadataCap(IMetadata *metadata = nullptr) : m_metadata(metadata) {}
+		virtual ~MetadataCap() noexcept(false) {}
 
-	std::shared_ptr<const IMetadata> getMetadata() const override {
-		return m_metadata;
-	}
-
-	//Takes ownership.
-	void setMetadata(IMetadata *metadata) override {
-		m_metadata = std::shared_ptr<const IMetadata>(metadata);
-	}
-	void setMetadata(std::shared_ptr<const IMetadata> metadata) override {
-		m_metadata = metadata;
-	}
-
-	bool updateMetadata(Data data) {
-		if (!data) {
-			return false;
-		} else if (!data->getMetadata()) {
-			const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
-			return true;
-		} else if (data->getMetadata() != m_metadata) {
-			if (m_metadata) {
-				Log::msg(Log::Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
-				return true;
-			}
-			Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
-			if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
-				throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", data->getMetadata()->getStreamType(), m_metadata->getStreamType()));
-			m_metadata = data->getMetadata();
-			return true;
-		} else {
-			return false;
+		std::shared_ptr<const IMetadata> getMetadata() const override {
+			return m_metadata;
 		}
-	}
 
-private:
-	std::shared_ptr<const IMetadata> m_metadata;
+		//Takes ownership.
+		void setMetadata(IMetadata *metadata) override {
+			m_metadata = std::shared_ptr<const IMetadata>(metadata);
+		}
+		void setMetadata(std::shared_ptr<const IMetadata> metadata) override {
+			m_metadata = metadata;
+		}
+
+		bool updateMetadata(Data data) {
+			if (!data) {
+				return false;
+			} else if (!data->getMetadata()) {
+				const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
+				return true;
+			} else if (data->getMetadata() != m_metadata) {
+				if (m_metadata) {
+					Log::msg(Log::Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
+					return true;
+				}
+				Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
+				if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
+					throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", data->getMetadata()->getStreamType(), m_metadata->getStreamType()));
+				m_metadata = data->getMetadata();
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	private:
+		std::shared_ptr<const IMetadata> m_metadata;
 };
 
 }

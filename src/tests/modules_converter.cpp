@@ -34,8 +34,7 @@ unittest("audio converter: interleaved to planar to interleaved") {
 	bool thrown = false;
 	try {
 		comparator->process(nullptr);
-	}
-	catch (std::exception const& e) {
+	} catch (std::exception const& e) {
 		std::cerr << "Expected error: " << e.what() << std::endl;
 		thrown = true;
 	}
@@ -61,8 +60,7 @@ unittest("audio converter: 44100 to 48000") {
 	bool thrown = false;
 	try {
 		comparator->process(nullptr);
-	}
-	catch (std::exception const& e) {
+	} catch (std::exception const& e) {
 		std::cerr << "Expected error: " << e.what() << std::endl;
 		thrown = true;
 	}
@@ -83,8 +81,7 @@ unittest("audio converter: dynamic formats") {
 		bool thrown = false;
 		try {
 			soundGen->process(nullptr);
-		}
-		catch (std::exception const& e) {
+		} catch (std::exception const& e) {
 			std::cerr << "Expected error: " << e.what() << std::endl;
 			thrown = true;
 		}
@@ -96,8 +93,7 @@ unittest("audio converter: dynamic formats") {
 		try {
 			Tools::Profiler profilerGlobal("  Send to converter");
 			soundGen->process(nullptr);
-		}
-		catch (std::exception const& e) {
+		} catch (std::exception const& e) {
 			std::cerr << "Expected error: " << e.what() << std::endl;
 			thrown = true;
 		}
@@ -116,8 +112,7 @@ unittest("audio converter: dynamic formats") {
 			while (data = recorder->pop()) {
 				converter->process(data);
 			}
-		}
-		catch (std::exception const& e) {
+		} catch (std::exception const& e) {
 			std::cerr << "Expected error: " << e.what() << std::endl;
 			thrown = true;
 		}

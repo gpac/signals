@@ -344,9 +344,9 @@ namespace Mux {
 
 //TODO: segments start with RAP
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
-: m_DTS(0),
-  m_useFragments(useSegments), m_curFragDur(0),
-  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0) {
+	: m_DTS(0),
+	  m_useFragments(useSegments), m_curFragDur(0),
+	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0) {
 	if (m_chunkDuration == 0) {
 		Log::msg(Log::Debug, "[GPAC Mux] Configuration: single file.");
 		assert(!useSegments);
@@ -648,9 +648,9 @@ void GPACMuxMP4::sendOutput() {
 	}
 	Bool isInband =
 #ifdef AVC_INBAND_CONFIG
-		GF_TRUE;
+	    GF_TRUE;
 #else
-		GF_FALSE;
+	    GF_FALSE;
 #endif
 	char codecName[256]; //FIXME: security issue on the GPAC API
 	GF_Err e = gf_media_get_rfc_6381_codec_name(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId), codecName, isInband, GF_FALSE);

@@ -7,9 +7,9 @@ namespace Out {
 
 //Open bar output. Thread-safe by design ©
 class Null : public ModuleS {
-public:
-	Null();
-	void process(Data data) override;
+	public:
+		Null();
+		void process(Data data) override;
 };
 
 }

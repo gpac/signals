@@ -24,7 +24,7 @@ void SoundGenerator::process(Data /*data*/) {
 	auto const bytesPerSample = pcmFormat.getBytesPerSample();
 	auto const sampleDurationInMs = 40;
 	auto const bufferSize = bytesPerSample * sampleDurationInMs * pcmFormat.sampleRate / 1000;
-	
+
 	auto out = output->getBuffer(0);
 	out->setFormat(pcmFormat);
 	for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i)

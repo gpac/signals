@@ -9,18 +9,18 @@ namespace Modules {
 namespace Demux {
 
 class LibavDemux : public ModuleS {
-public:
-	//@param url may be a file, a remote URL, or a webcam (set "webcam" to list the available devices)
-	LibavDemux(const std::string &url);
-	~LibavDemux();
-	void process(Data data) override;
+	public:
+		//@param url may be a file, a remote URL, or a webcam (set "webcam" to list the available devices)
+		LibavDemux(const std::string &url);
+		~LibavDemux();
+		void process(Data data) override;
 
-private:
-	void webcamList();
-	bool webcamOpen(const std::string &options);
+	private:
+		void webcamList();
+		bool webcamOpen(const std::string &options);
 
-	struct AVFormatContext *m_formatCtx;
-	std::vector<OutputDataDefault<DataAVPacket>*> outputs;
+		struct AVFormatContext *m_formatCtx;
+		std::vector<OutputDataDefault<DataAVPacket>*> outputs;
 };
 
 }

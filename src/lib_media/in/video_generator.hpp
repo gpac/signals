@@ -9,13 +9,13 @@ namespace Modules {
 namespace In {
 
 class VideoGenerator : public ModuleS {
-public:
-	VideoGenerator();
-	void process(Data data) override;
+	public:
+		VideoGenerator();
+		void process(Data data) override;
 
-private:
-	uint64_t m_numFrames;
-	OutputPicture* output;
+	private:
+		uint64_t m_numFrames;
+		OutputPicture* output;
 };
 
 }

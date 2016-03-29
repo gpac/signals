@@ -22,7 +22,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Mux {
 
 LibavMux::LibavMux(const std::string &baseName)
-: m_headerWritten(false) {
+	: m_headerWritten(false) {
 	/* parse the format optionsDict */
 	std::string optionsStr = "-format mp4"; //TODO
 	AVDictionary *optionsDict = nullptr;

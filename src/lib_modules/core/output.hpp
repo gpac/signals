@@ -23,41 +23,41 @@ struct IOutput {
 
 template<typename Allocator, typename Signal>
 class OutputT : public IOutput, public MetadataCap {
-public:
-	typedef Allocator AllocatorType;
+	public:
+		typedef Allocator AllocatorType;
 
-	OutputT(IMetadata *metadata = nullptr)
-		: MetadataCap(metadata), allocator(new Allocator) {
-	}
-	virtual ~OutputT() noexcept(false) {
-		allocator->unblock();
-	}
+		OutputT(IMetadata *metadata = nullptr)
+			: MetadataCap(metadata), allocator(new Allocator) {
+		}
+		virtual ~OutputT() noexcept(false) {
+			allocator->unblock();
+		}
 
-	size_t emit(Data data) {
-		updateMetadata(data);
-		size_t numReceivers = signal.emit(data);
-		if (numReceivers == 0)
-			Log::msg(Log::Debug, "emit(): Output had no receiver");
-		return numReceivers;
-	}
+		size_t emit(Data data) {
+			updateMetadata(data);
+			size_t numReceivers = signal.emit(data);
+			if (numReceivers == 0)
+				Log::msg(Log::Debug, "emit(): Output had no receiver");
+			return numReceivers;
+		}
 
-	template<typename T = typename Allocator::MyType>
-	std::shared_ptr<T> getBuffer(size_t size) {
-		return allocator->getBuffer<T>(size);
-	}
+		template<typename T = typename Allocator::MyType>
+		std::shared_ptr<T> getBuffer(size_t size) {
+			return allocator->getBuffer<T>(size);
+		}
 
-	Signals::ISignal<void(Data)>& getSignal() override {
-		return signal;
-	}
+		Signals::ISignal<void(Data)>& getSignal() override {
+			return signal;
+		}
 
-	//Takes ownership.
-	void setAllocator(Allocator *allocator) {
-		this->allocator = uptr(allocator);
-	}
+		//Takes ownership.
+		void setAllocator(Allocator *allocator) {
+			this->allocator = uptr(allocator);
+		}
 
-private:
-	Signal signal;
-	std::unique_ptr<Allocator> allocator;
+	private:
+		Signal signal;
+		std::unique_ptr<Allocator> allocator;
 };
 
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
@@ -70,33 +70,33 @@ struct IOutputCap {
 };
 
 class OutputCap : public IOutputCap {
-public:
-	virtual ~OutputCap() noexcept(false) {}
+	public:
+		virtual ~OutputCap() noexcept(false) {}
 
-	virtual size_t getNumOutputs() const {
-		return outputs.size();
-	}
-	virtual IOutput* getOutput(size_t i) const {
-		return outputs[i].get();
-	}
+		virtual size_t getNumOutputs() const {
+			return outputs.size();
+		}
+		virtual IOutput* getOutput(size_t i) const {
+			return outputs[i].get();
+		}
 
-	void setLowLatency(bool isLowLatency) {
-		m_isLowLatency = isLowLatency;
-	}
+		void setLowLatency(bool isLowLatency) {
+			m_isLowLatency = isLowLatency;
+		}
 
-protected:
-	//Takes ownership
-	template<typename T>
-	T* addOutput(T* p) {
-		if (m_isLowLatency)
-			p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
-		outputs.push_back(uptr(p));
-		return p;
-	}
+	protected:
+		//Takes ownership
+		template<typename T>
+		T* addOutput(T* p) {
+			if (m_isLowLatency)
+				p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
+			outputs.push_back(uptr(p));
+			return p;
+		}
 
-private:
-	std::vector<std::unique_ptr<IOutput>> outputs;
-	bool m_isLowLatency = false;
+	private:
+		std::vector<std::unique_ptr<IOutput>> outputs;
+		bool m_isLowLatency = false;
 };
 
 }

@@ -55,8 +55,7 @@ std::string format(const std::string& fmt, const T& firstArg, Arguments... args)
 				r += toString(firstArg);
 				return r + format(fmt.substr(i + 1), args...);
 			}
-		}
-		else {
+		} else {
 			r += fmt[i];
 		}
 		++i;

@@ -5,7 +5,7 @@ using namespace Pipelines;
 
 int safeMain(int argc, char const* argv[]) {
 	dashcastXOptions opt = processArgs(argc, argv);
-	
+
 	Tools::Profiler profilerGlobal("DashcastX");
 
 	Pipeline pipeline(opt.isLive);

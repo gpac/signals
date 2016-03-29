@@ -7,15 +7,15 @@ namespace Modules {
 namespace Utils {
 
 class Recorder : public ModuleS {
-public:
-	Recorder();
-	void process(Data data) override;
-	void flush() override;
+	public:
+		Recorder();
+		void process(Data data) override;
+		void flush() override;
 
-	Data pop();
+		Data pop();
 
-private:
-	Signals::Queue<Data> record;
+	private:
+		Signals::Queue<Data> record;
 };
 
 }

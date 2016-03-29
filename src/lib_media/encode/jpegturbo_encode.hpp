@@ -11,15 +11,15 @@ namespace Encode {
 class JPEGTurbo;
 
 class JPEGTurboEncode : public ModuleS {
-public:
-	JPEGTurboEncode(int JPEGQuality = JPEG_DEFAULT_QUALITY);
-	~JPEGTurboEncode();
-	void process(Data data) override;
+	public:
+		JPEGTurboEncode(int JPEGQuality = JPEG_DEFAULT_QUALITY);
+		~JPEGTurboEncode();
+		void process(Data data) override;
 
-private:
-	OutputDefault* output;
-	std::unique_ptr<JPEGTurbo> const jtHandle;
-	int JPEGQuality;
+	private:
+		OutputDefault* output;
+		std::unique_ptr<JPEGTurbo> const jtHandle;
+		int JPEGQuality;
 };
 
 }

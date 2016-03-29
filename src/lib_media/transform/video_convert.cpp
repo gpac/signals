@@ -16,7 +16,7 @@ namespace Modules {
 namespace Transform {
 
 VideoConvert::VideoConvert(const PictureFormat &dstFormat)
-: m_SwContext(nullptr), dstFormat(dstFormat) {
+	: m_SwContext(nullptr), dstFormat(dstFormat) {
 	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataRawVideo);
 	output = addOutput(new OutputPicture);
@@ -25,8 +25,8 @@ VideoConvert::VideoConvert(const PictureFormat &dstFormat)
 void VideoConvert::reconfigure(const PictureFormat &format) {
 	sws_freeContext(m_SwContext);
 	m_SwContext = sws_getContext(format.res.width, format.res.height, libavPixFmtConvert(format.format),
-		                         dstFormat.res.width, dstFormat.res.height, libavPixFmtConvert(dstFormat.format),
-								 SWS_BILINEAR, nullptr, nullptr, nullptr);
+	                             dstFormat.res.width, dstFormat.res.height, libavPixFmtConvert(dstFormat.format),
+	                             SWS_BILINEAR, nullptr, nullptr, nullptr);
 	if (!m_SwContext)
 		throw std::runtime_error("[VideoConvert] Impossible to set up video converter.");
 	srcFormat = format;
@@ -58,14 +58,14 @@ void VideoConvert::process(Data data) {
 	case YUV420P:
 	case YUYV422:
 	case RGB24: {
-			auto pic = DataPicture::create(output, dstFormat.res, dstFormat.format);
-			for (size_t i=0; i<pic->getNumPlanes(); ++i) {
-				pDst[i] = pic->getPlane(i);
-				dstStride[i] = (int)pic->getPitch(i);
-			}
-			out = pic;
-			break;
+		auto pic = DataPicture::create(output, dstFormat.res, dstFormat.format);
+		for (size_t i=0; i<pic->getNumPlanes(); ++i) {
+			pDst[i] = pic->getPlane(i);
+			dstStride[i] = (int)pic->getPitch(i);
 		}
+		out = pic;
+		break;
+	}
 	default:
 		throw std::runtime_error("[VideoConvert] Destination colorspace not supported.");
 	}

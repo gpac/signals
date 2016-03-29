@@ -9,17 +9,17 @@ namespace Modules {
 namespace Transform {
 
 class VideoConvert : public ModuleS {
-public:
-	VideoConvert(const PictureFormat &dstFormat);
-	~VideoConvert();
-	void process(Data data) override;
+	public:
+		VideoConvert(const PictureFormat &dstFormat);
+		~VideoConvert();
+		void process(Data data) override;
 
-private:
-	void reconfigure(const PictureFormat &format);
+	private:
+		void reconfigure(const PictureFormat &format);
 
-	SwsContext *m_SwContext;
-	PictureFormat srcFormat, dstFormat;
-	OutputPicture* output;
+		SwsContext *m_SwContext;
+		PictureFormat srcFormat, dstFormat;
+		OutputPicture* output;
 };
 
 }

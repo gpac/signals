@@ -8,18 +8,18 @@ namespace Modules {
 namespace Mux {
 
 class LibavMux : public ModuleDynI {
-public:
-	LibavMux(const std::string &baseName);
-	~LibavMux();
-	void process() override;
+	public:
+		LibavMux(const std::string &baseName);
+		~LibavMux();
+		void process() override;
 
-private:
-	void ensureHeader();
+	private:
+		void ensureHeader();
 
-	void declareStream(Data stream);
+		void declareStream(Data stream);
 
-	struct AVFormatContext *m_formatCtx;
-	bool m_headerWritten;
+		struct AVFormatContext *m_formatCtx;
+		bool m_headerWritten;
 };
 
 }

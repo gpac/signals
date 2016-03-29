@@ -8,7 +8,7 @@ namespace Modules {
 namespace Stream {
 
 Apple_HLS::Apple_HLS(Type type, uint64_t segDurationInMs)
-: type(type), segDurationInMs(segDurationInMs) {
+	: type(type), segDurationInMs(segDurationInMs) {
 	addInput(new Input<DataAVPacket>(this));
 }
 

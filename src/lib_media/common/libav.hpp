@@ -24,50 +24,50 @@ extern "C" {
 namespace Modules {
 
 class MetadataPktLibav : public IMetadata {
-public:
-	//Doesn't take codecCtx ownership
-	MetadataPktLibav(AVCodecContext *codecCtx);
-	virtual ~MetadataPktLibav() {}
-	StreamType getStreamType() const override;
-	AVCodecContext* getAVCodecContext() const;
+	public:
+		//Doesn't take codecCtx ownership
+		MetadataPktLibav(AVCodecContext *codecCtx);
+		virtual ~MetadataPktLibav() {}
+		StreamType getStreamType() const override;
+		AVCodecContext* getAVCodecContext() const;
 
-protected:
-	AVCodecContext *codecCtx;
+	protected:
+		AVCodecContext *codecCtx;
 };
 
 class MetadataPktLibavVideo : public MetadataPktLibav {
-public:
-	MetadataPktLibavVideo(AVCodecContext *codecCtx) : MetadataPktLibav(codecCtx) {}
-	PixelFormat getPixelFormat() const;
-	Resolution getResolution() const;
-	uint32_t getTimeScale() const;
-	void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
+	public:
+		MetadataPktLibavVideo(AVCodecContext *codecCtx) : MetadataPktLibav(codecCtx) {}
+		PixelFormat getPixelFormat() const;
+		Resolution getResolution() const;
+		uint32_t getTimeScale() const;
+		void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
 };
 
 class MetadataPktLibavAudio : public MetadataPktLibav {
-public:
-	MetadataPktLibavAudio(AVCodecContext *codecCtx) : MetadataPktLibav(codecCtx) {}
-	std::string getCodecName() const;
-	uint32_t getNumChannels() const;
-	uint32_t getSampleRate() const;
-	uint8_t getBitsPerSample() const;
-	uint32_t getFrameSize() const;
-	void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
+	public:
+		MetadataPktLibavAudio(AVCodecContext *codecCtx) : MetadataPktLibav(codecCtx) {}
+		std::string getCodecName() const;
+		uint32_t getNumChannels() const;
+		uint32_t getSampleRate() const;
+		uint8_t getBitsPerSample() const;
+		uint32_t getFrameSize() const;
+		void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
 };
 
 class DataAVPacket : public DataBase {
-public:
-	DataAVPacket(size_t size = 0);
-	~DataAVPacket();
-	uint8_t* data() override;
-	uint8_t const* data() const override;
-	uint64_t size() const override;
-	void resize(size_t size) override;
+	public:
+		DataAVPacket(size_t size = 0);
+		~DataAVPacket();
+		uint8_t* data() override;
+		uint8_t const* data() const override;
+		uint64_t size() const override;
+		void resize(size_t size) override;
 
-	AVPacket* getPacket() const;
+		AVPacket* getPacket() const;
 
-private:
-	std::unique_ptr<AVPacket> const pkt;
+	private:
+		std::unique_ptr<AVPacket> const pkt;
 };
 
 class PcmFormat;

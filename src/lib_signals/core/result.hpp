@@ -7,110 +7,110 @@
 namespace Signals {
 
 class IResult {
-public:
-	virtual ~IResult() {
-	}
+	public:
+		virtual ~IResult() {
+		}
 };
 
 
 template<typename ResultType>
 class ResultQueue : public IResult {
-public:
-	typedef std::shared_ptr<Queue<ResultType>> ResultValue;
+	public:
+		typedef std::shared_ptr<Queue<ResultType>> ResultValue;
 
-	explicit ResultQueue() : results(new Queue<ResultType>()) {
-	}
+		explicit ResultQueue() : results(new Queue<ResultType>()) {
+		}
 
-	virtual ~ResultQueue() {
-	}
+		virtual ~ResultQueue() {
+		}
 
-	void set(ResultType r) {
-		results->push(r);
-	}
+		void set(ResultType r) {
+			results->push(r);
+		}
 
-	ResultValue& get() {
-		return results;
-	}
+		ResultValue& get() {
+			return results;
+		}
 
-	void clear() {
-		results->clear();
-	}
+		void clear() {
+			results->clear();
+		}
 
-private:
-	ResultValue results;
+	private:
+		ResultValue results;
 };
 
 //specialized for void
 template<>
 class ResultQueue<void> : public IResult {
-public:
-	typedef std::shared_ptr<void> ResultValue;
+	public:
+		typedef std::shared_ptr<void> ResultValue;
 
-	explicit ResultQueue() {
-	}
+		explicit ResultQueue() {
+		}
 
-	virtual ~ResultQueue() {
-	}
+		virtual ~ResultQueue() {
+		}
 
-	void set(int) {
-	}
+		void set(int) {
+		}
 
-	std::shared_ptr<void> get() {
-		return std::shared_ptr<void>();
-	}
+		std::shared_ptr<void> get() {
+			return std::shared_ptr<void>();
+		}
 
-	void clear() {
-	}
+		void clear() {
+		}
 };
 
 template<typename ResultType>
 class ResultVector : public IResult {
-public:
-	typedef std::shared_ptr<std::vector<ResultType>> ResultValue;
+	public:
+		typedef std::shared_ptr<std::vector<ResultType>> ResultValue;
 
-	explicit ResultVector() : results(new std::vector<ResultType>()) {
-	}
+		explicit ResultVector() : results(new std::vector<ResultType>()) {
+		}
 
-	virtual ~ResultVector() {
-	}
+		virtual ~ResultVector() {
+		}
 
-	void set(ResultType r) {
-		results->push_back(r);
-	}
+		void set(ResultType r) {
+			results->push_back(r);
+		}
 
-	ResultValue& get() {
-		return results;
-	}
+		ResultValue& get() {
+			return results;
+		}
 
-	void clear() {
-		results->clear();
-	}
+		void clear() {
+			results->clear();
+		}
 
-private:
-	ResultValue results;
+	private:
+		ResultValue results;
 };
 
 //specialized for void
 template<>
 class ResultVector<void> : public IResult {
-public:
-	typedef std::shared_ptr<void> ResultValue;
+	public:
+		typedef std::shared_ptr<void> ResultValue;
 
-	explicit ResultVector()  {
-	}
+		explicit ResultVector()  {
+		}
 
-	virtual ~ResultVector() {
-	}
+		virtual ~ResultVector() {
+		}
 
-	void set(int) {
-	}
+		void set(int) {
+		}
 
-	std::shared_ptr<void> get() {
-		return std::shared_ptr<void>();
-	}
+		std::shared_ptr<void> get() {
+			return std::shared_ptr<void>();
+		}
 
-	void clear() {
-	}
+		void clear() {
+		}
 };
 
 /**
@@ -120,28 +120,28 @@ public:
  */
 template<typename ResultType>
 class ResultLast : public IResult {
-public:
-	typedef ResultType ResultValue;
+	public:
+		typedef ResultType ResultValue;
 
-	explicit ResultLast() {
-	}
+		explicit ResultLast() {
+		}
 
-	virtual ~ResultLast() {
-	}
+		virtual ~ResultLast() {
+		}
 
-	void set(ResultType r) {
-		last = r;
-	}
+		void set(ResultType r) {
+			last = r;
+		}
 
-	ResultValue& get() {
-		return last;
-	}
+		ResultValue& get() {
+			return last;
+		}
 
-	void clear() {
-	}
+		void clear() {
+		}
 
-private:
-	ResultType last;
+	private:
+		ResultType last;
 };
 
 }

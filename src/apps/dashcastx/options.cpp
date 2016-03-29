@@ -58,21 +58,25 @@ struct Arg : public option::Arg {
 
 enum optionIndex { UNKNOWN, HELP, OPT, REQUIRED, NUMERIC, VIDEO, NONEMPTY };
 const option::Descriptor usage[] = {
-	{ UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
-	"Options:" },
+	{
+		UNKNOWN, 0, "", "", Arg::Unknown, "Usage: dashcastx [options] <URL>\n\n"
+		"Options:"
+	},
 	{ HELP,    0, "h", "help",    Arg::None,    "  --help,          -h         \tPrint usage and exit." },
 	{ OPT,     0, "l", "live",    Arg::None,    "  --live,          -l         \tRun at system clock pace (otherwise runs as fast as possible) with low latency settings (quality may be degraded)." },
 	{ NUMERIC, 0, "s", "seg-dur", Arg::Numeric, "  --seg-dur,       -s         \tSet the segment duration (in ms) (default value: 2000)." },
 	{ VIDEO,   0, "v", "video",   Arg::Video,   "  --video wxh[:b], -v wxh[:b] \tSet a video resolution and optionally bitrate (enables resize and/or transcoding)." },
-	{ UNKNOWN, 0, "",  "",        Arg::None,
-	"\nExamples:\n"
-	"  dashcastx file.ts\n"
-	"  dashcastx udp://226.0.0.1:1234?fifo_size=1000000&overrun_nonfatal=1\n"
-	"  dashcastx -l -s 10000 file.mp4\n"
-	"  dashcastx --live --seg-dur 10000 --video 320x180:50000 -v 640x360:300000 http://server.com/file.mp4\n"
-	"  dashcastx --live -v 1280x720:100000 webcam:video=/dev/video0:audio=/dev/audio1\n"
+	{
+		UNKNOWN, 0, "",  "",        Arg::None,
+		"\nExamples:\n"
+		"  dashcastx file.ts\n"
+		"  dashcastx udp://226.0.0.1:1234?fifo_size=1000000&overrun_nonfatal=1\n"
+		"  dashcastx -l -s 10000 file.mp4\n"
+		"  dashcastx --live --seg-dur 10000 --video 320x180:50000 -v 640x360:300000 http://server.com/file.mp4\n"
+		"  dashcastx --live -v 1280x720:100000 webcam:video=/dev/video0:audio=/dev/audio1\n"
 	},
-	{ 0, 0, 0, 0, 0, 0 } };
+	{ 0, 0, 0, 0, 0, 0 }
+};
 
 void printDetectedOptions(option::Parser &parse, option::Option * const options) {
 	if (parse.nonOptionsCount() == 1) {

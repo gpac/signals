@@ -6,18 +6,18 @@ namespace Signals {
 /* member function helper */
 template<typename Result, typename Class, typename MemberFunction>
 class MemberFunctor {
-public:
-	MemberFunctor(Class *object, MemberFunction function) : object(object), function(function) {
-	}
+	public:
+		MemberFunctor(Class *object, MemberFunction function) : object(object), function(function) {
+		}
 
-	template<typename... Args>
-	Result operator()(Args... args) {
-		return (object->*function)(args...);
-	}
+		template<typename... Args>
+		Result operator()(Args... args) {
+			return (object->*function)(args...);
+		}
 
-private:
-	Class *object;
-	MemberFunction function;
+	private:
+		Class *object;
+		MemberFunction function;
 };
 
 template<typename Result, typename Class, typename... Args>

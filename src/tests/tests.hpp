@@ -82,12 +82,12 @@ inline int compute(int a) {
 	int64_t n = (int64_t)1 << a;
 	if (a <= 0) {
 		return 1;
-}
-uint64_t res = n;
+	}
+	uint64_t res = n;
 	while (--n > 1) {
 		res *= n;
-}
-return (int)res;
+	}
+	return (int)res;
 }
 
 inline void sleepInMs(int ms) {

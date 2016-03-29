@@ -10,33 +10,33 @@ using namespace Modules;
 namespace Pipelines {
 
 class PipelinedInput : public IInput {
-public:
-	PipelinedInput(IInput *input, ICompletionNotifier * const notify) : delegate(input), notify(notify) {}
-	virtual ~PipelinedInput() noexcept(false) {}
+	public:
+		PipelinedInput(IInput *input, ICompletionNotifier * const notify) : delegate(input), notify(notify) {}
+		virtual ~PipelinedInput() noexcept(false) {}
 
-	/* direct call: receiving nullptr stops the execution */
-	virtual void process(Data data) override {
-		if (data) {
-			delegate->process(data);
-		} else {
-			notify->finished();
+		/* direct call: receiving nullptr stops the execution */
+		virtual void process(Data data) override {
+			if (data) {
+				delegate->process(data);
+			} else {
+				notify->finished();
+			}
 		}
-	}
 
-	virtual size_t getNumConnections() const override {
-		return delegate->getNumConnections();
-	}
-	virtual void connect() override {
-		delegate->connect();
-	}
+		virtual size_t getNumConnections() const override {
+			return delegate->getNumConnections();
+		}
+		virtual void connect() override {
+			delegate->connect();
+		}
 
-private:
-	IInput *delegate;
-	ICompletionNotifier * const notify;
+	private:
+		IInput *delegate;
+		ICompletionNotifier * const notify;
 };
 
 PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
-: delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
+	: delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
 
 void PipelinedModule::mimicInputs() {

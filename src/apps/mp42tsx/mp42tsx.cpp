@@ -5,7 +5,7 @@ using namespace Pipelines;
 
 int safeMain(int argc, char const* argv[]) {
 	mp42tsXOptions opt = processArgs(argc, argv);
-	
+
 	Tools::Profiler profilerGlobal("MP42TS");
 
 	const bool isLive = false; //FIXME: hardcoded

@@ -26,27 +26,27 @@ struct LibavEncodeParams {
 };
 
 class LibavEncode : public ModuleS {
-public:
-	enum Type {
-		Video,
-		Audio,
-		Unknown
-	};
+	public:
+		enum Type {
+			Video,
+			Audio,
+			Unknown
+		};
 
-	LibavEncode(Type type, const LibavEncodeParams &params = *uptr(new LibavEncodeParams));
-	~LibavEncode();
-	void process(Data data) override;
-	void flush() override;
+		LibavEncode(Type type, const LibavEncodeParams &params = *uptr(new LibavEncodeParams));
+		~LibavEncode();
+		void process(Data data) override;
+		void flush() override;
 
-private:
-	bool processAudio(const DataPcm *data);
-	bool processVideo(const DataPicture *data);
+	private:
+		bool processAudio(const DataPcm *data);
+		bool processVideo(const DataPicture *data);
 
-	AVCodecContext *codecCtx;
-	std::unique_ptr<PcmFormat> pcmFormat;
-	std::unique_ptr<ffpp::Frame> const avFrame;
-	int frameNum;
-	OutputDataDefault<DataAVPacket>* output;
+		AVCodecContext *codecCtx;
+		std::unique_ptr<PcmFormat> pcmFormat;
+		std::unique_ptr<ffpp::Frame> const avFrame;
+		int frameNum;
+		OutputDataDefault<DataAVPacket>* output;
 };
 
 }

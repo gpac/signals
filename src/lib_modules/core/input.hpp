@@ -15,18 +15,18 @@ struct IProcessor {
 };
 
 class ConnectedCap {
-public:
-	ConnectedCap() : connections(0) {}
-	virtual ~ConnectedCap() noexcept(false) {}
-	virtual size_t getNumConnections() const {
-		return connections;
-	}
-	virtual void connect() {
-		connections++;
-	}
+	public:
+		ConnectedCap() : connections(0) {}
+		virtual ~ConnectedCap() noexcept(false) {}
+		virtual size_t getNumConnections() const {
+			return connections;
+		}
+		virtual void connect() {
+			connections++;
+		}
 
-private:
-	std::atomic_size_t connections;
+	private:
+		std::atomic_size_t connections;
 };
 
 struct IInput : public IProcessor, public ConnectedCap, public MetadataCap, public Signals::Queue<Data> {
@@ -37,20 +37,20 @@ struct IModule;
 
 template<typename DataType, typename ModuleType = IModule>
 class Input : public IInput {
-public:
-	Input(ModuleType * const module) : module(module) {}
+	public:
+		Input(ModuleType * const module) : module(module) {}
 
-	virtual void process(Data data) override {
-		if (typeid(DataType) == typeid(DataLoose))
-			push(data);
-		else
-			push(safe_cast<const DataType>(data));
+		virtual void process(Data data) override {
+			if (typeid(DataType) == typeid(DataLoose))
+				push(data);
+			else
+				push(safe_cast<const DataType>(data));
 
-		module->process();
-	}
+			module->process();
+		}
 
-private:
-	ModuleType * const module;
+	private:
+		ModuleType * const module;
 };
 
 struct IInputCap {
@@ -60,24 +60,24 @@ struct IInputCap {
 };
 
 class InputCap : public IInputCap {
-public:
-	virtual ~InputCap() noexcept(false) {}
+	public:
+		virtual ~InputCap() noexcept(false) {}
 
-	//Takes ownership
-	template<typename T>
-	T* addInput(T* p) {
-		inputs.push_back(uptr(p));
-		return p;
-	}
-	virtual size_t getNumInputs() const override {
-		return inputs.size();
-	}
-	virtual IInput* getInput(size_t i) override {
-		return inputs[i].get();
-	}
+		//Takes ownership
+		template<typename T>
+		T* addInput(T* p) {
+			inputs.push_back(uptr(p));
+			return p;
+		}
+		virtual size_t getNumInputs() const override {
+			return inputs.size();
+		}
+		virtual IInput* getInput(size_t i) override {
+			return inputs[i].get();
+		}
 
-protected:
-	std::vector<std::unique_ptr<IInput>> inputs;
+	protected:
+		std::vector<std::unique_ptr<IInput>> inputs;
 };
 
 }

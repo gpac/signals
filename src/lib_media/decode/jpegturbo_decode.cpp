@@ -13,19 +13,19 @@ namespace Modules {
 namespace Decode {
 
 class JPEGTurbo {
-public:
-	JPEGTurbo() {
-		handle = tjInitDecompress();
-	}
-	~JPEGTurbo() {
-		tjDestroy(handle);
-	}
-	tjhandle get() {
-		return handle;
-	}
+	public:
+		JPEGTurbo() {
+			handle = tjInitDecompress();
+		}
+		~JPEGTurbo() {
+			tjDestroy(handle);
+		}
+		tjhandle get() {
+			return handle;
+		}
 
-private:
-	tjhandle handle;
+	private:
+		tjhandle handle;
 };
 
 AVPixelFormat getAVPF(int JPEGTurboPixelFmt) {

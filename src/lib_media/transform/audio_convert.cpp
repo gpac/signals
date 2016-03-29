@@ -9,7 +9,7 @@ namespace Modules {
 namespace Transform {
 
 AudioConvert::AudioConvert(const PcmFormat &dstFormat)
-: dstPcmFormat(dstFormat), m_Swr(nullptr), accumulatedTimeInDstSR(0), autoConfigure(true) {
+	: dstPcmFormat(dstFormat), m_Swr(nullptr), accumulatedTimeInDstSR(0), autoConfigure(true) {
 	memset(&srcPcmFormat, 0, sizeof(srcPcmFormat));
 	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
@@ -17,8 +17,8 @@ AudioConvert::AudioConvert(const PcmFormat &dstFormat)
 }
 
 AudioConvert::AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstFormat)
-: srcPcmFormat(srcFormat), dstPcmFormat(dstFormat),
-  m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0), autoConfigure(false) {
+	: srcPcmFormat(srcFormat), dstPcmFormat(dstFormat),
+	  m_Swr(new ffpp::SwResampler), accumulatedTimeInDstSR(0), autoConfigure(false) {
 	configure(srcPcmFormat);
 	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
