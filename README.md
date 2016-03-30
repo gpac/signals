@@ -29,7 +29,7 @@ Signals is built using TDD. There are plenty of tests. If you contribute please 
 # build
 
 We have two build systems:
- - Unix (tested under gcc >= 4.9)
+ - Make (tested under gcc >= 4.9)
  - Visual Studio (tested >= 2015)
 
 ## Make
