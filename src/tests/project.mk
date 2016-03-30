@@ -1,25 +1,34 @@
-
 OUTDIR:=$(BIN)/$(ProjectName)
 
 TEST_COMMON_OBJ:=\
-	$(OUTDIR)/tests.o \
-	$(OUTDIR)/utils.o
+	$(OUTDIR)/tests.o
 DEPS+=$(TEST_COMMON_OBJ:%.o=%.deps)
 
 $(BIN)/$(ProjectName)/signals_%.o: CFLAGS+=-DUNIT
 $(BIN)/$(ProjectName)/modules_%.o: CFLAGS+=-DUNIT
-$(BIN)/$(ProjectName)/mm_%.o: CFLAGS+=-DUNIT
+$(BIN)/$(ProjectName)/utils_%.o: CFLAGS+=-DUNIT
+
+#---------------------------------------------------------------
+# utils.exe
+#---------------------------------------------------------------
+EXE_UTILS_OBJS:=\
+ 	$(OUTDIR)/utils.o\
+ 	$(TEST_COMMON_OBJ)
+DEPS+=$(EXE_UTILS_OBJS:%.o=%.deps)
+
+TARGETS+=$(OUTDIR)/utils.exe
+$(OUTDIR)/utils.exe: $(EXE_UTILS_OBJS)
 
 #---------------------------------------------------------------
 # signals.exe
 #---------------------------------------------------------------
-SIGNALS_OBJS:=\
+EXE_SIGNALS_OBJS:=\
  	$(OUTDIR)/signals.o\
  	$(TEST_COMMON_OBJ)
-DEPS+=$(SIGNALS_OBJS:%.o=%.deps)
+DEPS+=$(EXE_SIGNALS_OBJS:%.o=%.deps)
 
 TARGETS+=$(OUTDIR)/signals.exe
-$(OUTDIR)/signals.exe: $(SIGNALS_OBJS)
+$(OUTDIR)/signals.exe: $(EXE_SIGNALS_OBJS)
 
 #---------------------------------------------------------------
 # modules.exe
@@ -45,4 +54,4 @@ TestOutDir:=$(OUTDIR)
 run: unit
 	$(TestOutDir)/modules.exe
 	$(TestOutDir)/signals.exe
-
+	$(TestOutDir)/utils.exe

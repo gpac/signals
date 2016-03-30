@@ -45,6 +45,8 @@ $ make
 ```
 
 #### MSYS2
+The libx265 DLL is not installed correctly. Copy it from ```extra/build/src/x265/bin/x86_64-w64-mingw32/libx265.dll``` to ```extra/bin```.
+
 Remove ```-XCClinker``` and add ```-D_WIN32_WINNT=0x0501 -DWIN32_LEAN_AND_MEAN``` in bin/make/config.mk (introduced by SDL2)
 
 In the Signals root path:

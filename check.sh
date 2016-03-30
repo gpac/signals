@@ -7,4 +7,4 @@ if [ ! -d "bin" ]; then
   mkdir bin
 fi
 make -j`nproc`
-make run
+PATH=$PATH:$PWD/extra/bin:/mingw64/bin make run
