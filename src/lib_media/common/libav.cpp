@@ -15,7 +15,6 @@ namespace {
 Log::Level avLogLevel(int level) {
 	switch (level) {
 	case AV_LOG_QUIET:
-		return Log::Quiet;
 	case AV_LOG_PANIC:
 	case AV_LOG_FATAL:
 	case AV_LOG_ERROR:
@@ -24,8 +23,9 @@ Log::Level avLogLevel(int level) {
 		return Log::Info;
 	case AV_LOG_INFO:
 	case AV_LOG_VERBOSE:
-	case AV_LOG_DEBUG:
 		return Log::Debug;
+	case AV_LOG_DEBUG:
+		return Log::Quiet;
 	default:
 		assert(0);
 		return Log::Debug;

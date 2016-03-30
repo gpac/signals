@@ -1,4 +1,6 @@
 #include "pipeline.hpp"
+#include "lib_utils/log.hpp"
+#include <typeinfo>
 
 #define EXECUTOR_SYNC         Signals::ExecutorSync<void(Data)>
 #define EXECUTOR_ASYNC_THREAD Signals::ExecutorThread<void(Data)>
@@ -78,6 +80,8 @@ void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
 }
 
 void PipelinedModule::dispatch(Data data) {
+	Log::msg(Log::Debug, format("Module %s: dispatch data", typeid(delegate).name()));
+
 	if (isSource()) {
 		assert(data == nullptr);
 		assert(getNumInputs() == 0);
@@ -120,17 +124,21 @@ void Pipeline::connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule 
 }
 
 void Pipeline::start() {
+	Log::msg(Log::Info, "Pipeline: starting");
 	for (auto &m : modules) {
 		if (m->isSource())
 			m->dispatch(nullptr);
 	}
+	Log::msg(Log::Info, "Pipeline: started");
 }
 
 void Pipeline::waitForCompletion() {
+	Log::msg(Log::Info, "Pipeline: waiting for completion");
 	std::unique_lock<std::mutex> lock(mutex);
 	while (numRemainingNotifications > 0) {
 		condition.wait(lock);
 	}
+	Log::msg(Log::Info, "Pipeline: completed");
 }
 
 void Pipeline::finished() {

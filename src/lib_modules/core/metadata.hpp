@@ -3,6 +3,7 @@
 #include "data.hpp"
 #include "lib_utils/log.hpp"
 #include <memory>
+#include <typeinfo>
 
 namespace Modules {
 
@@ -23,29 +24,24 @@ enum StreamType {
 
 struct IMetadata {
 	virtual ~IMetadata() {}
-
 	virtual StreamType getStreamType() const = 0;
-
 	bool isVideo() const {
 		switch (getStreamType()) {
-		case VIDEO_RAW:
-		case VIDEO_PKT:
-			return true;
-		default:
-			return false;
+		case VIDEO_RAW: case VIDEO_PKT: return true;
+		default: return false;
 		}
 	}
-
 	bool isAudio() const {
 		switch (getStreamType()) {
-		case AUDIO_RAW:
-		case AUDIO_PKT:
-			return true;
-		default:
-			return false;
+		case AUDIO_RAW: case AUDIO_PKT: return true;
+		default: return false;
 		}
 	}
 };
+
+static bool operator==(const IMetadata &left, const IMetadata &right) {
+	return typeid(left) == typeid(right);
+}
 
 class MetadataFile : public IMetadata {
 	public:
@@ -122,21 +118,29 @@ class MetadataCap : public IMetadataCap {
 		bool updateMetadata(Data data) {
 			if (!data) {
 				return false;
-			} else if (!data->getMetadata()) {
-				const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
-				return true;
-			} else if (data->getMetadata() != m_metadata) {
-				if (m_metadata) {
-					Log::msg(Log::Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
-					return true;
-				}
-				Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
-				if (m_metadata && (data->getMetadata()->getStreamType() != m_metadata->getStreamType()))
-					throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", data->getMetadata()->getStreamType(), m_metadata->getStreamType()));
-				m_metadata = data->getMetadata();
-				return true;
 			} else {
-				return false;
+				auto const metadata = data->getMetadata();
+				if (!metadata) {
+					const_cast<DataBase*>(data.get())->setMetadata(m_metadata);
+					return true;
+				} else if (metadata != m_metadata) {
+					if (m_metadata) {
+						if (*m_metadata == *metadata) {
+							Log::msg(Log::Debug, "Output: metadata not equal but comparable by value. Updating.");
+							m_metadata = metadata;
+						} else {
+							Log::msg(Log::Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
+						}
+						return true;
+					}
+					Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
+					if (m_metadata && (metadata->getStreamType() != m_metadata->getStreamType()))
+						throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", metadata->getStreamType(), m_metadata->getStreamType()));
+					m_metadata = metadata;
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 
