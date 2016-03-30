@@ -1,5 +1,6 @@
 #include "log.hpp"
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <string>
 
@@ -20,8 +21,25 @@ static WORD console_attr_ori = 0;
 Log::Level Log::globalLogLevel = Log::Info;
 
 
+namespace {
+
+static std::chrono::time_point<std::chrono::high_resolution_clock> const m_Start = std::chrono::high_resolution_clock::now();
+
+uint64_t now() {
+	auto const timeNow = std::chrono::high_resolution_clock::now();
+	auto const timeNowInMs = std::chrono::duration_cast<std::chrono::milliseconds>(timeNow - m_Start);
+	return timeNowInMs.count();
+}
+
+}
+
+
 std::ostream& Log::get(Level /*level*/) {
 	return std::cerr;
+}
+
+std::string Log::getTime() {
+	return format("[%s] ", now()/1000.0);
 }
 
 std::string Log::getColorBegin(Level level) {

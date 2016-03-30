@@ -17,7 +17,7 @@ class Log {
 		template<typename... Arguments>
 		static void msg(Level level, const std::string& fmt, Arguments... args) {
 			if ((level != Quiet) && (level <= globalLogLevel)) {
-				get(level) << getColorBegin(level) << format(fmt, args...) << getColorEnd(level) << std::endl;
+				get(level) << getTime() << getColorBegin(level) << format(fmt, args...) << getColorEnd(level) << std::endl;
 				get(level).flush();
 			}
 		}
@@ -29,6 +29,7 @@ class Log {
 		Log();
 		~Log();
 		static std::ostream& get(Level level);
+		static std::string getTime();
 		static std::string getColorBegin(Level level);
 		static std::string getColorEnd(Level level);
 
