@@ -21,11 +21,9 @@ class Frame {
 			if(!avFrame)
 				throw std::runtime_error("Frame allocation failed");
 		}
-
 		~Frame() {
 			av_frame_free(&avFrame);
 		}
-
 		AVFrame* get() {
 			return avFrame;
 		}

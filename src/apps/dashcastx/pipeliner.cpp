@@ -6,7 +6,7 @@
 using namespace Modules;
 using namespace Pipelines;
 
-#define DEBUG_MONITOR
+//#define DEBUG_MONITOR
 
 namespace {
 Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t i) {

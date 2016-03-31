@@ -80,7 +80,7 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 		for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i) {
 			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0] / pcmFormat.numPlanes);
 		}
-		setTimestamp(out, avFrame->get()->nb_samples);
+		setTimestampBasedOnData(out, avFrame->get()->nb_samples);
 		audioOutput->emit(out);
 		++m_numFrames;
 		return true;
@@ -123,7 +123,14 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	if (gotPicture) {
 		auto pic = DataPicture::create(videoOutput, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
 		copyToPicture(avFrame->get(), pic.get());
-		setTimestamp(pic);
+		/*we don't trust the input data rate, so let's propagate the demux timings (TODO: should be a "restamper" module)*/
+		//setTimestampBasedOnData(pic);
+		auto const base = codecCtx->time_base;
+		auto const time = timescaleToClock(avFrame->get()->pkt_pts, base.den);
+		if (timeOffset == -1)
+			timeOffset = time;
+		pic->setTime(time - timeOffset);
+
 		videoOutput->emit(pic);
 		++m_numFrames;
 		return true;
@@ -132,7 +139,7 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	return false;
 }
 
-void LibavDecode::setTimestamp(std::shared_ptr<DataBase> s, uint64_t increment) const {
+void LibavDecode::setTimestampBasedOnData(std::shared_ptr<DataBase> s, uint64_t increment) const {
 	uint64_t t;
 	if (m_numFrames == 0) {
 		t = 0;
