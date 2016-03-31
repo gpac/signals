@@ -114,6 +114,7 @@ if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
 		../../src/libjpeg_turbo_1.3.x/configure \
 			--prefix=$EXTRA_DIR
 	elif [[ "$OSTYPE" == "msys" ]]; then
+		mkdir -p extra/build/libjpeg_turbo_1.3.x
 		pushd extra/src/libjpeg_turbo_1.3.x
 		cmake -G "Unix Makefiles"  -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX:PATH=$EXTRA_DIR ../../src/libjpeg_turbo_1.3.x
 	fi

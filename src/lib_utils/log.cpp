@@ -9,14 +9,14 @@
 #include <wincon.h>
 static HANDLE console = NULL;
 static WORD console_attr_ori = 0;
-
+#else /*_WIN32*/
 #define RED    "\x1b[31m"
 #define YELLOW "\x1b[33m"
 #define GREEN  "\x1b[32m"
 #define CYAN   "\x1b[36m"
 #define WHITE  "\x1b[37m"
 #define RESET  "\x1b[0m"
-#endif
+#endif /*_WIN32*/
 
 Log::Level Log::globalLogLevel = Log::Info;
 
