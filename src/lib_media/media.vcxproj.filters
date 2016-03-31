@@ -124,6 +124,9 @@
     <ClInclude Include="stream\apple_hls.hpp">
       <Filter>src\stream</Filter>
     </ClInclude>
+    <ClInclude Include="transform\restamp.hpp">
+      <Filter>src\transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common\libav.cpp">
@@ -206,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="stream\apple_hls.cpp">
       <Filter>src\stream</Filter>
+    </ClCompile>
+    <ClCompile Include="transform\restamp.cpp">
+      <Filter>src\transform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
