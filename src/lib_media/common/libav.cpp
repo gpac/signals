@@ -236,6 +236,13 @@ AVPacket* DataAVPacket::getPacket() const {
 	return pkt.get();
 }
 
+void DataAVPacket::restamp(int64_t offsetIn180k, uint64_t pktTimescale) const {
+	auto p = pkt.get();
+	auto const offset = clockToTimescale(offsetIn180k, pktTimescale);
+	p->pts += offset;
+	p->dts += offset;
+}
+
 void DataAVPacket::resize(size_t /*size*/) {
 	assert(0);
 }

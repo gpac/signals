@@ -6,6 +6,11 @@
 struct AVFormatContext;
 
 namespace Modules {
+
+	namespace Transform {
+		class Restamp;
+	}
+
 namespace Demux {
 
 class LibavDemux : public ModuleS {
@@ -18,6 +23,9 @@ class LibavDemux : public ModuleS {
 	private:
 		void webcamList();
 		bool webcamOpen(const std::string &options);
+
+		void setTime(std::shared_ptr<DataAVPacket> data);
+		std::unique_ptr<Transform::Restamp> restamp;
 
 		struct AVFormatContext *m_formatCtx;
 		std::vector<OutputDataDefault<DataAVPacket>*> outputs;

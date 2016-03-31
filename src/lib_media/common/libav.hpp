@@ -65,6 +65,7 @@ class DataAVPacket : public DataBase {
 		void resize(size_t size) override;
 
 		AVPacket* getPacket() const;
+		void restamp(int64_t offsetIn180k, uint64_t pktTimescale) const;
 
 	private:
 		std::unique_ptr<AVPacket> const pkt;

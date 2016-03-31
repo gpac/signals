@@ -38,6 +38,11 @@ std::vector<char> stringDup(const char *src) {
 	return data;
 }
 
+template <typename T>
+int sign(T num) {
+	return (T(0) < num) - (num < T(0));
+}
+
 template<typename T>
 T divUp(T num, T divisor) {
 	return (num + divisor - 1) / divisor;

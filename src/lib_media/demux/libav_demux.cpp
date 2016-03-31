@@ -1,4 +1,5 @@
 #include "libav_demux.hpp"
+#include "../transform/restamp.hpp"
 #include "../common/libav.hpp"
 #include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
@@ -71,6 +72,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
 			throw std::runtime_error("Webcam init failed.");
 		}
+		restamp = uptr(new Transform::Restamp(Transform::Restamp::Reset)); /*some webcams timestamps don't start at 0 (based on UTC)*/
 	} else {
 		ffpp::Dict dict;
 		dict.set("probesize", "100M");
@@ -87,6 +89,8 @@ LibavDemux::LibavDemux(const std::string &url) {
 			avformat_close_input(&m_formatCtx);
 			throw std::runtime_error("Couldn't find stream info.");
 		}
+
+		restamp = uptr(new Transform::Restamp(Transform::Restamp::Passthru));
 	}
 
 	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {
@@ -105,6 +109,21 @@ LibavDemux::~LibavDemux() {
 	avformat_close_input(&m_formatCtx);
 }
 
+void LibavDemux::setTime(std::shared_ptr<DataAVPacket> data) {
+	auto pkt = data->getPacket();
+	auto const base = m_formatCtx->streams[pkt->stream_index]->time_base;
+	auto const time = timescaleToClock(pkt->pts * base.num, base.den);
+	data->setTime(time);
+
+	restamp->process(data);
+
+	auto offset = restamp->getOffset();
+	if (offset) {
+		/*propagate to AVPacket*/
+		data->restamp(offset * base.num, base.den);
+	}
+}
+
 void LibavDemux::process(Data /*data*/) {
 	for (;;) {
 		auto out = outputs[0]->getBuffer(0);
@@ -118,9 +137,8 @@ void LibavDemux::process(Data /*data*/) {
 			return;
 		}
 
-		auto const base = m_formatCtx->streams[pkt->stream_index]->time_base;
-		auto const time = timescaleToClock(pkt->pts * base.num, base.den);
-		out->setTime(time);
+		setTime(out);
+
 		outputs[pkt->stream_index]->emit(out);
 	}
 }

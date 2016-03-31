@@ -19,8 +19,10 @@ class PipelinedInput : public IInput {
 		/* direct call: receiving nullptr stops the execution */
 		virtual void process(Data data) override {
 			if (data) {
+				Log::msg(Log::Debug, format("Module %s: dispatch data for time %s", typeid(notify).name(), data->getTime() / (double)IClock::Rate));
 				delegate->process(data);
 			} else {
+				Log::msg(Log::Debug, format("Module %s: notify finished.", typeid(notify).name()));
 				notify->finished();
 			}
 		}
@@ -45,8 +47,9 @@ void PipelinedModule::mimicInputs() {
 	auto const delegateInputs = delegate->getNumInputs();
 	auto const thisInputs = inputs.size();
 	if (thisInputs < delegateInputs) {
-		for (size_t i = thisInputs; i < delegateInputs; ++i)
+		for (size_t i = thisInputs; i < delegateInputs; ++i) {
 			addInput(new PipelinedInput(delegate->getInput(i), this));
+		}
 	}
 }
 
@@ -89,8 +92,9 @@ void PipelinedModule::dispatch(Data data) {
 		executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), data);
 	}
 
-	for (size_t i = 0; i < getNumInputs(); ++i)
+	for (size_t i = 0; i < getNumInputs(); ++i) {
 		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)), data);
+	}
 }
 
 /* end of stream */

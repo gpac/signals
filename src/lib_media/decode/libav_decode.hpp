@@ -26,15 +26,10 @@ class LibavDecode : public ModuleS {
 		bool processAudio(const DataAVPacket*);
 		bool processVideo(const DataAVPacket*);
 
-		/*we can forward the timestamp from the input (e.g. video) or ensure continuity by trusting the data input (e.g. audio)*/
-		void setTimestampBasedOnData(std::shared_ptr<DataBase> s, uint64_t increment = 1) const;
-		int64_t timeOffset=-1;
-
 		AVCodecContext * const codecCtx;
 		std::unique_ptr<ffpp::Frame> const avFrame;
 		OutputPicture* videoOutput;
 		OutputPcm* audioOutput;
-		uint64_t m_numFrames;
 };
 
 }

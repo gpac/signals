@@ -48,7 +48,7 @@ bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
 		return false;
 	}
 
-	m_Latency = timescaleToClock(realSpec.samples, realSpec.freq);
+	m_Latency = timescaleToClock((uint64_t)realSpec.samples, realSpec.freq);
 	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency * 1000.0f / IClock::Rate);
 
 	pcmFormat = uptr(new PcmFormat(*pcmData));

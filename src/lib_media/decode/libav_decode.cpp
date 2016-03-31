@@ -16,7 +16,7 @@ auto g_InitAvLog = runAtStartup(&av_log_set_callback, avLog);
 namespace Decode {
 
 LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
-	: codecCtx(avcodec_alloc_context3(nullptr)), avFrame(new ffpp::Frame), m_numFrames(0) {
+	: codecCtx(avcodec_alloc_context3(nullptr)), avFrame(new ffpp::Frame) {
 	avcodec_copy_context(codecCtx, metadata.getAVCodecContext());
 
 	switch (codecCtx->codec_type) {
@@ -80,9 +80,8 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 		for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i) {
 			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0] / pcmFormat.numPlanes);
 		}
-		setTimestampBasedOnData(out, avFrame->get()->nb_samples);
+		out->setTime(timescaleToClock(avFrame->get()->pkt_pts, codecCtx->time_base.den));
 		audioOutput->emit(out);
-		++m_numFrames;
 		return true;
 	}
 
@@ -123,33 +122,12 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	if (gotPicture) {
 		auto pic = DataPicture::create(videoOutput, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
 		copyToPicture(avFrame->get(), pic.get());
-		/*we don't trust the input data rate, so let's propagate the demux timings (TODO: should be a "restamper" module)*/
-		//setTimestampBasedOnData(pic);
-		auto const base = codecCtx->time_base;
-		auto const time = timescaleToClock(avFrame->get()->pkt_pts, base.den);
-		if (timeOffset == -1)
-			timeOffset = time;
-		pic->setTime(time - timeOffset);
-
+		pic->setTime(timescaleToClock(avFrame->get()->pkt_pts, codecCtx->time_base.den));
 		videoOutput->emit(pic);
-		++m_numFrames;
 		return true;
 	}
 
 	return false;
-}
-
-void LibavDecode::setTimestampBasedOnData(std::shared_ptr<DataBase> s, uint64_t increment) const {
-	uint64_t t;
-	if (m_numFrames == 0) {
-		t = 0;
-	} else if (codecCtx->time_base.den == 0) {
-		throw std::runtime_error("[LibavDecode] Unknown frame rate. Cannot set the timestamp.");
-	} else {
-		auto const curTime = m_numFrames * increment * codecCtx->time_base.num * codecCtx->ticks_per_frame;
-		t = timescaleToClock(curTime, codecCtx->time_base.den);
-	}
-	s->setTime(t);
 }
 
 void LibavDecode::process(Data data) {
