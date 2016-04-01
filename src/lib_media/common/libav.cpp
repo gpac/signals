@@ -20,8 +20,8 @@ Log::Level avLogLevel(int level) {
 	case AV_LOG_ERROR:
 		return Log::Warning;
 	case AV_LOG_WARNING:
-		return Log::Info;
 	case AV_LOG_INFO:
+		return Log::Info;
 	case AV_LOG_VERBOSE:
 		return Log::Debug;
 	case AV_LOG_DEBUG:
