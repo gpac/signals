@@ -30,7 +30,7 @@ const char* webcamFormat() {
 	return "dshow";
 #elif __linux__
 	return "v4l2";
-#elif TARGET_OS_MAC
+#elif __APPLE__
 	return "avfoundation";
 #else
 #error "unknown platform"

@@ -109,7 +109,7 @@ unittest("audio converter: dynamic formats") {
 		try {
 			Tools::Profiler profilerGlobal("  Passthru");
 			Data data;
-			while (data = recorder->pop()) {
+			while ((data = recorder->pop())) {
 				converter->process(data);
 			}
 		} catch (std::exception const& e) {

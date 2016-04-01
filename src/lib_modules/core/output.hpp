@@ -33,7 +33,7 @@ class OutputT : public IOutput, public MetadataCap {
 			allocator->unblock();
 		}
 
-		size_t emit(Data data) {
+		size_t emit(Data data) override {
 			updateMetadata(data);
 			size_t numReceivers = signal.emit(data);
 			if (numReceivers == 0)
@@ -43,7 +43,7 @@ class OutputT : public IOutput, public MetadataCap {
 
 		template<typename T = typename Allocator::MyType>
 		std::shared_ptr<T> getBuffer(size_t size) {
-			return allocator->getBuffer<T>(size);
+			return allocator->template getBuffer<T>(size);
 		}
 
 		Signals::ISignal<void(Data)>& getSignal() override {

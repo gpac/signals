@@ -40,16 +40,16 @@ $(BIN)/config.mk:
 	@set -e ; \
 	mkdir -p $(BIN)
 	export PKG_CONFIG_PATH=./extra/lib/pkgconfig:$$PKG_CONFIG_PATH ; \
-	echo '# config file' > $(BIN)/config.mk.tmp ; \
-	echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
+	/bin/echo '# config file' > $(BIN)/config.mk.tmp ; \
+	/bin/echo -n 'CFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --cflags libavcodec libavdevice libavformat libswresample libswscale x264 sdl2 >> $(BIN)/config.mk.tmp ; \
-	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
+	/bin/echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --libs sdl2 >> $(BIN)/config.mk.tmp ; \
-	echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
+	/bin/echo -n 'LDFLAGS+=' >> $(BIN)/config.mk.tmp ; \
 	pkg-config --libs --static libavcodec libavdevice libavformat libswresample libswscale x264 gpac >> $(BIN)/config.mk.tmp ; \
 	sed -i "s/-lgpac/-lgpac_static/" $(BIN)/config.mk.tmp ; \
-	echo 'CFLAGS+=-I./extra/include/asio' >> $(BIN)/config.mk.tmp
-	echo 'LDFLAGS+=-lturbojpeg' >> $(BIN)/config.mk.tmp ; \
+	/bin/echo 'CFLAGS+=-I./extra/include/asio -Wno-unused-local-typedefs' >> $(BIN)/config.mk.tmp
+	/bin/echo 'LDFLAGS+=-lturbojpeg' >> $(BIN)/config.mk.tmp ; \
 	mv $(BIN)/config.mk.tmp $(BIN)/config.mk ; \
 
 include $(BIN)/config.mk
