@@ -228,6 +228,7 @@ bool LibavEncode::processVideo(const DataPicture *pic) {
 		f = std::make_shared<ffpp::Frame>();
 		f->get()->pict_type = AV_PICTURE_TYPE_NONE;
 		f->get()->pts = ++frameNum;
+		pixelFormat2libavPixFmt(pic->getFormat().format, (AVPixelFormat&)f->get()->format);
 		for (int i = 0; i < 3; ++i) {
 			f->get()->width = pic->getFormat().res.width;
 			f->get()->height = pic->getFormat().res.height;
