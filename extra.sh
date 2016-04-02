@@ -7,28 +7,38 @@ set -e
 EXTRA_DIR=$PWD/extra
 HOST=$(gcc -dumpmachine)
 export CFLAGS=-w
-
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
 if [ -z "$MAKE" ]; then
-	CORES=$(nproc)
+	if [ $(uname -s) == "Darwin" ]; then
+		CORES=$(sysctl -n hw.logicalcpu)
+	else
+		CORES=$(nproc)
+	fi
+
 	MAKE="make -j$CORES"
 fi
 
-if [ -z "$var" ]; then 
-	if [[ "$OSTYPE" == "linux-gnu" ]]; then
+if [ -z "$CPREFIX" ]; then
+	case $OSTYPE in
+	linux-gnu)
 		CPREFIX=x86_64-linux-gnu
-	elif [[ "$OSTYPE" == "msys" ]]; then
+		;;
+	msys)
 		CPREFIX=x86_64-w64-mingw32
-	else
+		;;
+	darwin*)
+		CPREFIX=-
+		;;
+	*)
 		echo "Unknown platform. Please specify manually your compiler prefix with the CPREFIX environment variable."
 		exit 1
-	fi
+	esac
 fi
 echo "Using compiler host prefix: $CPREFIX"
 
 #-------------------------------------------------------------------------------
-# zenbuild
+echo zenbuild
 #-------------------------------------------------------------------------------
 if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	mkdir -p extra/src
@@ -72,12 +82,13 @@ if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 		popd
 	fi
 	## move files
-	rsync -ar --remove-source-files extra/build/release/$CPREFIX/* extra/
+	DIRNAME=$(extra/src/zenbuild/config.guess | sed 's/-unknown//' | sed 's/-msys$/-mingw32/')
+	rsync -ar --remove-source-files extra/build/release/$DIRNAME/* extra/
 	touch extra/src/zenbuild/zenbuild.built
 fi
 
 #-------------------------------------------------------------------------------
-# ASIO
+echo ASIO
 #-------------------------------------------------------------------------------
 if [ ! -f extra/src/asio/asio/include/asio.hpp ] ; then
 	mkdir -p extra/src
@@ -94,7 +105,7 @@ if [ ! -f extra/include/asio/asio.hpp ] ; then
 fi
 
 #-------------------------------------------------------------------------------
-# libjpeg-turbo
+echo libjpeg-turbo
 #-------------------------------------------------------------------------------
 if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ; then
 	mkdir -p extra/src
@@ -108,16 +119,24 @@ if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ; then
 fi
 
 if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
-	if [[ "$OSTYPE" == "linux-gnu" ]]; then
-		mkdir -p extra/build/libjpeg_turbo_1.3.x
-		pushd extra/build/libjpeg_turbo_1.3.x
-		../../src/libjpeg_turbo_1.3.x/configure \
-			--prefix=$EXTRA_DIR
-	elif [[ "$OSTYPE" == "msys" ]]; then
-		mkdir -p extra/build/libjpeg_turbo_1.3.x
-		pushd extra/src/libjpeg_turbo_1.3.x
-		cmake -G "Unix Makefiles"  -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX:PATH=$EXTRA_DIR ../../src/libjpeg_turbo_1.3.x
-	fi
+	mkdir -p extra/build/libjpeg_turbo_1.3.x
+        case $OSTYPE in
+        linux-gnu)
+                pushd extra/build/libjpeg_turbo_1.3.x
+                ../../src/libjpeg_turbo_1.3.x/configure \
+                        --prefix=$EXTRA_DIR
+                ;;
+        msys)
+                pushd extra/src/libjpeg_turbo_1.3.x
+                cmake -G "Unix Makefiles" -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX:PATH=$EXTRA_DIR ../../src/libjpeg_turbo_1.3.x
+                ;;
+        darwin*)
+                pushd extra/build/libjpeg_turbo_1.3.x
+                ../../src/libjpeg_turbo_1.3.x/configure \
+                        --prefix=$EXTRA_DIR \
+			--host x86_64-apple-darwin NASM=/opt/local/bin/nasm
+                ;;
+	esac
 
 	$MAKE
 	$MAKE install
@@ -126,13 +145,13 @@ if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
 fi
 
 #-------------------------------------------------------------------------------
-# optionparser
+echo optionparser
 #-------------------------------------------------------------------------------
 if [ ! -f extra/src/optionparser-1.3/src/optionparser.h ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/optionparser-1.3
 	wget http://sourceforge.net/projects/optionparser/files/optionparser-1.3.tar.gz/download -O optionparser-1.3.tar.gz
-	tar xvlf optionparser-1.3.tar.gz -C extra/src
+	tar xvf optionparser-1.3.tar.gz -C extra/src
 	rm optionparser-1.3.tar.gz
 fi
 

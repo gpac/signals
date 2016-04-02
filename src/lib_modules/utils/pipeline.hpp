@@ -30,7 +30,7 @@ class PipelinedModule : public ICompletionNotifier, public IPipelineModule, publ
 
 		size_t getNumInputs() const override;
 		size_t getNumOutputs() const;
-		Modules::IOutput* getOutput(size_t i) const;
+		Modules::IOutput* getOutput(size_t i) const override;
 
 		/* source modules are stopped manually - then the message propagates to other connected modules */
 		bool isSource() const override;

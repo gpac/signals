@@ -146,10 +146,10 @@ class PictureYUYV422 : public DataPicture {
 		size_t getNumPlanes() const override {
 			return 1;
 		}
-		const uint8_t* getPlane(size_t planeIdx) const {
+		const uint8_t* getPlane(size_t planeIdx) const override {
 			return data();
 		}
-		uint8_t* getPlane(size_t planeIdx) {
+		uint8_t* getPlane(size_t planeIdx) override {
 			return data();
 		}
 		size_t getPitch(size_t planeIdx) const override {
@@ -173,10 +173,10 @@ class PictureRGB24 : public DataPicture {
 		size_t getNumPlanes() const override {
 			return 1;
 		}
-		const uint8_t* getPlane(size_t planeIdx) const {
+		const uint8_t* getPlane(size_t planeIdx) const override {
 			return data();
 		}
-		uint8_t* getPlane(size_t planeIdx) {
+		uint8_t* getPlane(size_t planeIdx) override {
 			return data();
 		}
 		size_t getPitch(size_t planeIdx) const override {
