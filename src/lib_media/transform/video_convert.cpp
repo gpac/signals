@@ -72,6 +72,7 @@ void VideoConvert::process(Data data) {
 
 	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcFormat.res.height, pDst, dstStride);
 
+	out->setTime(data->getTime());
 	output->emit(out);
 }
 
