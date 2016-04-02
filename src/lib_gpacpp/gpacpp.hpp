@@ -288,13 +288,15 @@ class MPD {
 			mpd->xml_namespace = "urn:mpeg:dash:schema:mpd:2011";
 			mpd->type = type;
 			mpd->min_buffer_time = minBufferTime;
+			mpd->profiles = gf_strdup("urn:mpeg:dash:profile:full:2011");
+			if (type == GF_MPD_TYPE_DYNAMIC) {
+				mpd->minimum_update_period = 1000;
+			}
 			//mpd->ID
-			//mpd->profiles
 			//mpd->availabilityStartTime
 			//mpd->availabilityEndTime
 			//mpd->publishTime
 			//mpd->media_presentation_duration
-			//mpd->minimum_update_period
 			//mpd->time_shift_buffer_depth
 			//mpd->suggested_presentation_delay
 			//mpd->max_segment_duration

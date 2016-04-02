@@ -7,14 +7,18 @@
 #include <fstream>
 
 
-#define MIN_BUFFER_TIME_IN_MS 3000
+#define MIN_BUFFER_TIME_IN_MS_VOD  3000
+#define MIN_BUFFER_TIME_IN_MS_LIVE 100
+
+#define AVAILABILITY_TIMEOFFSET_IN_MS 0.8
 
 namespace Modules {
 namespace Stream {
 
 MPEG_DASH::MPEG_DASH(const std::string &mpdPath, Type type, uint64_t segDurationInMs)
 	: mpdPath(mpdPath), type(type), segDurationInMs(segDurationInMs), totalDurationInMs(0),
-	  mpd(new gpacpp::MPD(type == Live ? GF_MPD_TYPE_DYNAMIC : GF_MPD_TYPE_STATIC, MIN_BUFFER_TIME_IN_MS)) {
+	  mpd(type == Live ? new gpacpp::MPD(GF_MPD_TYPE_DYNAMIC, MIN_BUFFER_TIME_IN_MS_LIVE)
+	  : new gpacpp::MPD(GF_MPD_TYPE_STATIC, MIN_BUFFER_TIME_IN_MS_VOD)) {
 	addInput(new Input<DataAVPacket>(this));
 }
 
@@ -37,8 +41,6 @@ void MPEG_DASH::DASHThread() {
 
 	Data data;
 	for (;;) {
-		Log::msg(Log::Warning, "[MPEG_DASH] Processing new segment (total processed: %ss).", (double)totalDurationInMs / 1000);
-
 		meta.resize(getNumInputs() - 1);
 		for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 			data = inputs[i]->pop();
@@ -54,6 +56,7 @@ void MPEG_DASH::DASHThread() {
 			break;
 
 		generateMPD(Live);
+		Log::msg(Log::Info, "[MPEG_DASH] Processes segment (total processed: %ss, UTC: %s (deltaAST=%s).", (double)totalDurationInMs / 1000, gf_net_get_utc(), gf_net_get_utc() - mpd->mpd->availabilityStartTime);
 
 		if (type == Live) {
 			auto dur = std::chrono::milliseconds(mpd->mpd->availabilityStartTime + totalDurationInMs - gf_net_get_utc());
@@ -63,7 +66,7 @@ void MPEG_DASH::DASHThread() {
 	}
 
 	if (type == Static) {
-		mpd->mpd->media_presentation_duration = (u32)totalDurationInMs; //FIXME: is u64 in latest GPAC
+		mpd->mpd->media_presentation_duration = totalDurationInMs;
 		generateMPD(Static);
 	}
 }
@@ -86,14 +89,16 @@ void  MPEG_DASH::ensureMPD() {
 			as->segment_template->media = gf_strdup(format("%s.mp4_$Number$", i).c_str());
 			as->segment_template->initialization = gf_strdup(format("$RepresentationID$.mp4", i).c_str());
 			as->segment_template->start_number = 0;
+			as->segment_template->availability_time_offset = AVAILABILITY_TIMEOFFSET_IN_MS;
 
 			//FIXME: arbitrary: should be set by the app, or computed
 			as->segment_alignment = GF_TRUE;
 			as->bitstream_switching = GF_TRUE;
 
-			auto rep = mpd->addRepresentation(as, format("%s", i).c_str(), (u32)i * 100000/*FIXME: get bitrate*/);
+			auto rep = mpd->addRepresentation(as, format("%s", i).c_str(), (u32)(i+1) * 100000/*FIXME: get bitrate*/);
 			rep->mime_type = gf_strdup(meta[i]->getMimeType().c_str());
 			rep->codecs = gf_strdup(meta[i]->getCodecName().c_str());
+			rep->starts_with_sap = GF_TRUE; //FIXME: arbitrary: should be set by the app, or computed
 			switch (meta[i]->getStreamType()) {
 			case AUDIO_PKT: rep->samplerate = meta[i]->sampleRate; break;
 			case VIDEO_PKT: rep->width = meta[i]->resolution[0]; rep->height = meta[i]->resolution[1]; break;

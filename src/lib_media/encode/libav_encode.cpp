@@ -210,7 +210,7 @@ bool LibavEncode::processAudio(const DataPcm *data) {
 	}
 	if (gotPkt) {
 		pkt->pts = pkt->dts = frameNum * pkt->duration;
-		out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
+		out->setTime(data->getTime());
 		assert(pkt->size);
 		output->emit(out);
 		return true;
@@ -245,9 +245,11 @@ bool LibavEncode::processVideo(const DataPicture *pic) {
 		if (gotPkt) {
 			assert(pkt->size);
 			if (pkt->duration <= 0) {
-				pkt->duration = codecCtx->time_base.num;
+				/*store duration in 180k in case a forward module (e.g. muxer) would need it*/
+				assert(codecCtx->time_base.num >= 0);
+				pkt->duration = (int)timescaleToClock((uint64_t)codecCtx->time_base.num, codecCtx->time_base.den);
 			}
-			out->setDuration(pkt->duration * codecCtx->time_base.num, codecCtx->time_base.den);
+			out->setTime(pic->getTime());
 			output->emit(out);
 			return true;
 		}

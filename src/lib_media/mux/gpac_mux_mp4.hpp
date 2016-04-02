@@ -24,11 +24,11 @@ class GPACMuxMP4 : public ModuleDynI {
 		void declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> stream);
 		void declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio> stream);
 		void sendOutput();
-		void addSample(gpacpp::IsoSample &sample, const uint64_t dataDuration);
+		void addSample(gpacpp::IsoSample &sample, const uint64_t dataDurationInTs);
 
 		GF_ISOFile *m_iso;
 		uint32_t m_trackId;
-		uint64_t m_DTS;
+		uint64_t m_DTS, m_lastDTS;
 
 		//fragments
 		void setupFragments();

@@ -17,14 +17,6 @@ extern "C" {
 namespace Modules {
 
 namespace {
-static u64 getNTP() {
-	u32 sec, frac;
-	gf_net_get_ntp(&sec, &frac);
-	u64 ntpts = sec;
-	ntpts <<= 32;
-	ntpts |= frac;
-	return ntpts;
-}
 
 static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSize, GF_AVCConfig *dstcfg) {
 	u8 nalSize;
@@ -308,7 +300,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 	return GF_OK;
 }
 
-void fillVideoSample(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
+void fillVideoSampleData(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 	u32 scSize = 0;
 	u32 NALUSize = 0;
 	GF_BitStream *out_bs = gf_bs_new(nullptr, 2 * bufLen, GF_BITSTREAM_WRITE);
@@ -344,7 +336,7 @@ namespace Mux {
 
 //TODO: segments start with RAP
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
-	: m_DTS(0),
+	: m_DTS(0), m_lastDTS(0),
 	  m_useFragments(useSegments), m_curFragDur(0),
 	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0) {
 	if (m_chunkDuration == 0) {
@@ -389,6 +381,7 @@ void GPACMuxMP4::closeSegment(bool isLastSeg) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
 			throw std::runtime_error("[GPACMuxMP4] Cannot close output segment.");
 		}
+		Log::msg(Log::Info, "[GPACMuxMP4] Segment %s completed.\n", m_chunkName);
 	}
 }
 
@@ -451,9 +444,9 @@ void GPACMuxMP4::setupFragments() {
 			throw std::runtime_error("[GPACMuxMP4] Impossible to create the moof");
 		}
 
-		e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), 0);
+		e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, gf_net_get_ntp_ts(), 0);
 		if (e != GF_OK) {
-			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
+			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), gf_net_get_ntp_ts());
 			throw std::runtime_error("[GPACMuxMP4] Impossible to create UTC marquer");
 		}
 	}
@@ -579,7 +572,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
 	}
 
-	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale());
+	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale() * 1000);
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track");
 		throw std::runtime_error("[GPACMuxMP4] Cannot create new track");
@@ -655,7 +648,7 @@ void GPACMuxMP4::sendOutput() {
 	if (e) throw std::runtime_error("[GPACMuxMP4] Could not compute codec name (RFC 6381)");
 
 	auto out = output->getBuffer(0);
-	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName));
+	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName), m_curFragDur);
 	out->setMetadata(metadata);
 	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	switch (gf_isom_get_media_type(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId))) {
@@ -664,17 +657,16 @@ void GPACMuxMP4::sendOutput() {
 	default: throw std::runtime_error("[GPACMuxMP4] Segment contains neither audio nor video");
 	}
 	out->setTime(m_DTS, mediaTimescale);
-	out->setDuration(m_curFragDur, mediaTimescale);
 	output->emit(out);
 }
 
-void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuration) {
-	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
-	u32 deltaDTS = (u32)clockToTimescale(dataDuration, mediaTimescale);
-	m_DTS += deltaDTS;
+void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDurationInTs) {
+	m_lastDTS = m_DTS;
+	m_DTS += dataDurationInTs;
 
+	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	if (m_useFragments) {
-		m_curFragDur += deltaDTS;
+		m_curFragDur += dataDurationInTs;
 		//TODO: gf_isom_set_traf_base_media_decode_time(m_iso, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
 
 		GF_Err e;
@@ -701,7 +693,7 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 				throw std::runtime_error("[GPACMuxMP4] Impossible to start the fragment");
 			}
 
-			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, getNTP(), m_DTS);
+			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, gf_net_get_ntp_ts(), m_DTS);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
 				throw std::runtime_error("[GPACMuxMP4] Impossible to set the UTC marquer");
@@ -711,7 +703,7 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
 		}
 
-		e = gf_isom_fragment_add_sample(m_iso, m_trackId, &sample, 1, deltaDTS, 0, 0, GF_FALSE);
+		e = gf_isom_fragment_add_sample(m_iso, m_trackId, &sample, 1, (u32)dataDurationInTs, 0, 0, GF_FALSE);
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_fragment_add_sample", gf_error_to_string(e));
 			return;
@@ -740,20 +732,27 @@ void GPACMuxMP4::process() {
 
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
 		if (mediaType == GF_ISOM_MEDIA_VISUAL) {
-			fillVideoSample(bufPtr, bufLen, sample);
-			sample.DTS = m_DTS;
+			fillVideoSampleData(bufPtr, bufLen, sample);
 		} else if (mediaType == GF_ISOM_MEDIA_AUDIO) {
 			sample.data = (char*)bufPtr;
 			sample.dataLength = bufLen;
-			sample.DTS = m_DTS;
 			sample.setDataOwnership(false);
 		} else {
 			Log::msg(Log::Warning, "[GPACMuxMP4] only audio or video supported yet");
 			return;
 		}
+
+		sample.DTS = m_DTS;
+		sample.IsRAP = (SAPType)(data->getPacket()->flags & AV_PKT_FLAG_KEY);
 	}
 
-	addSample(sample, data->getDuration());
+	int64_t duration = clockToTimescale((int64_t)data->getPacket()->duration, gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId)));
+	if (m_lastDTS && (m_lastDTS+duration != m_DTS)) {
+		/*VBR: computing current sample duration from previous*/
+		duration = duration + m_DTS - m_lastDTS;
+		Log::msg(Log::Info, "[GPACMuxMP4] VBR: adding sample with duration %ss", duration / (double)IClock::Rate);
+	}
+	addSample(sample, duration);
 }
 
 }

@@ -36,7 +36,8 @@ void Apple_HLS::HLSThread() {
 					return;
 				}
 
-				durationInMs += clockToTimescale(data[i]->getDuration(), 1000);
+				//FIXME: durationInMs += clockToTimescale(data[i]->getDuration(), 1000);
+				durationInMs = 10000;
 				if (durationInMs > segDurationInMs) {
 					//TODO: do sth with data[i]
 					break;
