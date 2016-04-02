@@ -72,7 +72,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
 			throw std::runtime_error("Webcam init failed.");
 		}
-		restamp = uptr(new Transform::Restamp(Transform::Restamp::Reset)); /*some webcams timestamps don't start at 0 (based on UTC)*/
+		restamp = uptr(new Transform::Restamp(Transform::Restamp::ClockSystem)); /*some webcams timestamps don't start at 0 (based on UTC)*/
 	} else {
 		ffpp::Dict dict;
 		dict.set("probesize", "100M");
@@ -117,8 +117,8 @@ void LibavDemux::setTime(std::shared_ptr<DataAVPacket> data) {
 
 	restamp->process(data);
 
-	auto offset = restamp->getOffset();
-	if (offset) {
+	int64_t offset = time - data->getTime();
+	if (offset != 0) {
 		/*propagate to AVPacket*/
 		data->restamp(offset * base.num, base.den);
 	}

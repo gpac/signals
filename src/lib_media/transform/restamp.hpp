@@ -9,8 +9,9 @@ namespace Modules {
 		class Restamp : public ModuleS {
 		public:
 			enum Mode {
-				Reset,   /*set the first received timestamp to 0 - aside from the offsetIn180k param*/
-				Passthru /*offset only*/
+				Passthru,    /*offset only*/
+				Reset,       /*set the first received timestamp to 0 - aside from the offsetIn180k param*/
+				ClockSystem, /*the system clock: starts at 0 on first packet*/
 			};
 
 			/*offset will be added to the current time*/
@@ -18,15 +19,10 @@ namespace Modules {
 			~Restamp();
 			void process(Data data) override;
 
-			/*returned offset in 180k timescale*/
-			int64_t getOffset() const;
-
 		private:
-			void ensureInit(uint64_t time);
-
 			int64_t offset;
-			int64_t initTime = -1; //TODO: add a boolean if we don't need to expose it
 			Mode mode;
+			bool isInitTime = false;
 		};
 
 	}

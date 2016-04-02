@@ -12,24 +12,32 @@ namespace Modules {
 		Restamp::~Restamp() {
 		}
 
-		void Restamp::ensureInit(uint64_t time) {
-			if (mode == Reset) {
-				if (initTime == -1) {
-					initTime = time;
-					offset -= initTime;
-				}
-			}
-		}
-
 		void Restamp::process(Data data) {
-			auto time = data->getTime();
-			ensureInit(time);
+			uint64_t time;
+			switch (mode) {
+			case Passthru:
+				time = data->getTime();
+				break;
+			case Reset:
+				time = data->getTime();
+				if (!isInitTime) {
+					isInitTime = true;
+					offset -= time;
+				}
+				break;
+			case ClockSystem:
+				time = g_DefaultClock->now();
+				if (!isInitTime) {
+					isInitTime = true;
+					offset -= time;
+				}
+				break;
+			default:
+				throw std::runtime_error("[Restamp] Unknown mode");
+			}
+
 			const_cast<DataBase*>(data.get())->setTime(time + offset); //FIXME: we should have input&output on the same allocator
 			getOutput(0)->emit(data);
-		}
-
-		int64_t Restamp::getOffset() const {
-			return offset;
 		}
 
 	}
