@@ -81,7 +81,12 @@ class OutputCap : public IOutputCap {
 		}
 
 		void setLowLatency(bool isLowLatency) {
-			m_isLowLatency = isLowLatency;
+			//m_isLowLatency = isLowLatency;
+			//FIXME: low latency is not propagated to existing outputs
+			// this is a general limitation for threading and allocators
+			// which may need to be injected dynamically
+			//for (auto o : outputs)
+			//	o->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
 		}
 
 	protected:
