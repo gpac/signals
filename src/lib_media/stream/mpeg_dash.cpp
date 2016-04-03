@@ -80,7 +80,10 @@ void MPEG_DASH::process() {
 
 void  MPEG_DASH::ensureMPD() {
 	if (!gf_list_count(mpd->mpd->periods)) {
+		mpd->mpd->publishTime = mpd->mpd->availabilityStartTime;
+
 		auto period = mpd->addPeriod();
+		period->ID = gf_strdup("p0");
 		for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 			auto as = mpd->addAdaptationSet(period);
 			GF_SAFEALLOC(as->segment_template, GF_MPD_SegmentTemplate);
