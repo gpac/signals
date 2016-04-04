@@ -9,8 +9,7 @@ auto const FRAMERATE = 25;
 namespace Modules {
 namespace In {
 
-VideoGenerator::VideoGenerator()
-	: m_numFrames(0) {
+VideoGenerator::VideoGenerator() {
 	output = addOutput(new OutputPicture);
 }
 
@@ -29,7 +28,7 @@ void VideoGenerator::process(Data /*data*/) {
 	assert(IClock::Rate % FRAMERATE == 0);
 	pic->setTime(m_numFrames * framePeriodIn180k);
 
-	if(m_numFrames % 25 < 2)
+	if (m_numFrames % 25 < 2)
 		output->emit(pic);
 
 	++m_numFrames;

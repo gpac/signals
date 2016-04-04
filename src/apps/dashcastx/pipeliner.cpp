@@ -78,8 +78,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 			connect(decode, converter);
 
-			auto rawEncoder = createEncoder(metadata, opt, r);
-			auto encoder = pipeline.addModule(rawEncoder);
+			auto encoder = pipeline.addModule(createEncoder(metadata, opt, r));
 			if (!encoder)
 				continue;
 

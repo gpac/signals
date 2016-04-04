@@ -14,7 +14,7 @@ class VideoGenerator : public ModuleS {
 		void process(Data data) override;
 
 	private:
-		uint64_t m_numFrames;
+		uint64_t m_numFrames = 0;
 		OutputPicture* output;
 };
 
