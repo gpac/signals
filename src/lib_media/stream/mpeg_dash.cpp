@@ -91,7 +91,7 @@ void  MPEG_DASH::ensureMPD() {
 			as->segment_template->timescale = 1000;
 			as->segment_template->media = gf_strdup(format("%s.mp4_$Number$", i).c_str());
 			as->segment_template->initialization = gf_strdup(format("$RepresentationID$.mp4", i).c_str());
-			as->segment_template->start_number = 0;
+			as->segment_template->start_number = 1;
 			as->segment_template->availability_time_offset = AVAILABILITY_TIMEOFFSET_IN_MS;
 
 			//FIXME: arbitrary: should be set by the app, or computed

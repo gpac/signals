@@ -423,7 +423,7 @@ void GPACMuxMP4::setupFragments() {
 			}
 
 			std::stringstream ss;
-			ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum;
+			ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum+1;
 			m_chunkName = ss.str();
 			e = gf_isom_start_segment(m_iso, (char*)m_chunkName.c_str(), GF_TRUE);
 			if (e != GF_OK) {
@@ -676,7 +676,7 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 				m_chunkNum++;
 
 				std::stringstream ss;
-				ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum;
+				ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum+1;
 				m_chunkName = ss.str();
 				e = gf_isom_start_segment(m_iso, (char*)m_chunkName.c_str(), GF_TRUE);
 				if (e != GF_OK) {
