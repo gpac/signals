@@ -63,6 +63,8 @@ Once the dependencies are built, on Windows with msys2, there are still 2 proble
 * The libx265 DLL is not installed correctly. Copy it from ```extra/build/src/x265/bin/x86_64-w64-mingw32/libx265.dll``` to ```extra/bin```.
 * In bin/make/config.mk, remove ```-XCClinker``` and add ```-D_WIN32_WINNT=0x0501 -DWIN32_LEAN_AND_MEAN``` (introduced by SDL2)
 
+For cmake, make sure you have its subpackages installed.
+
 Finally, you can run:
 ```
 $ make
