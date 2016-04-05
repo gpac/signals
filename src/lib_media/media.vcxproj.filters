@@ -127,6 +127,9 @@
     <ClInclude Include="transform\restamp.hpp">
       <Filter>src\transform</Filter>
     </ClInclude>
+    <ClInclude Include="render\render_common.hpp">
+      <Filter>src\render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common\libav.cpp">
