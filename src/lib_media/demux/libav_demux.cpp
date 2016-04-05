@@ -125,8 +125,11 @@ void LibavDemux::setTime(std::shared_ptr<DataAVPacket> data) {
 	}
 }
 
-void LibavDemux::process(Data /*data*/) {
+void LibavDemux::process(Data data) {
 	for (;;) {
+		if (getNumInputs() && !getInput(0)->tryPop(data))
+			break;
+
 		auto out = outputs[0]->getBuffer(0);
 		AVPacket *pkt = out->getPacket();
 		int status = av_read_frame(m_formatCtx, pkt);
@@ -142,6 +145,8 @@ void LibavDemux::process(Data /*data*/) {
 
 		outputs[pkt->stream_index]->emit(out);
 	}
+
+	Log::msg(Log::Info, "[LibavDemux] Exit from an external event.");
 }
 
 }

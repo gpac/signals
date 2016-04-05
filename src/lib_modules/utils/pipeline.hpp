@@ -58,6 +58,7 @@ class Pipeline : public ICompletionNotifier {
 		void connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *next, size_t inputIdx);
 		void start();
 		void waitForCompletion();
+		void exitSync(); /*ask for all sources to finish*/
 
 	private:
 		void finished() override;

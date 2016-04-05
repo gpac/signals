@@ -27,8 +27,11 @@ File::~File() {
 	fclose(file);
 }
 
-void File::process(Data /*data*/) {
-	for(;;) {
+void File::process(Data data) {
+	for (;;) {
+		if (getNumInputs() && getInput(0)->tryPop(data))
+			break;
+
 		auto out = output->getBuffer(IOSIZE);
 		size_t read = fread(out->data(), 1, IOSIZE, file);
 		if (read < IOSIZE) {

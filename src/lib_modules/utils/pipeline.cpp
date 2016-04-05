@@ -71,7 +71,13 @@ IOutput* PipelinedModule::getOutput(size_t i) const {
 }
 
 bool PipelinedModule::isSource() const {
-	return delegate->getNumInputs() == 0;
+	if (delegate->getNumInputs() == 0) {
+		return true;
+	} else if (delegate->getNumInputs() == 1 && dynamic_cast<Modules::Input<DataLoose, Modules::IModule>*>(delegate->getInput(0))) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool PipelinedModule::isSink() const {
@@ -87,9 +93,15 @@ void PipelinedModule::dispatch(Data data) {
 
 	if (isSource()) {
 		assert(data == nullptr);
-		assert(getNumInputs() == 0);
-		delegate->addInput(new Input<DataBase>(delegate.get()));
-		executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), data);
+		if (getNumInputs() == 0) {
+			/*first time: create a fake pin and push null to trigger execution*/
+			delegate->addInput(new Input<DataLoose>(delegate.get()));
+			executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), data);
+		} else {
+			/*the source is likely processing: push null in the loop to exit and let things follow their way*/
+			delegate->getInput(0)->push(data);
+			return;
+		}
 	}
 
 	for (size_t i = 0; i < getNumInputs(); ++i) {
@@ -137,12 +149,20 @@ void Pipeline::start() {
 }
 
 void Pipeline::waitForCompletion() {
-	Log::msg(Log::Info, "Pipeline: waiting for completion");
+	Log::msg(Log::Info, "Pipeline: waiting for completion (remaning: %s)", (int)numRemainingNotifications);
 	std::unique_lock<std::mutex> lock(mutex);
 	while (numRemainingNotifications > 0) {
 		condition.wait(lock);
 	}
 	Log::msg(Log::Info, "Pipeline: completed");
+}
+
+void Pipeline::exitSync() {
+	Log::msg(Log::Warning, format("Pipeline: asked to exit now."));
+	for (auto &m : modules) {
+		if (m->isSource())
+			m->dispatch(nullptr);
+	}
 }
 
 void Pipeline::finished() {
