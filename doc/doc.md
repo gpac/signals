@@ -102,6 +102,17 @@ MAKE A LIST OF BASIC OBJECTS
 ...
 
 
+Data and metadata
+=================
+
+```
+auto const metadata = data->getMetadata();
+	if (auto video = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata)) {
+		declareStreamVideo(video);
+	} else if (auto audio = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata)) {
+		declareStreamAudio(audio);
+```
+
 Debugging
 =========
 
