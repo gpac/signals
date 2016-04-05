@@ -38,6 +38,7 @@ MPEG_DASH::~MPEG_DASH() {
 //TODO: add clock to the scheduler
 void MPEG_DASH::DASHThread() {
 	mpd->mpd->availabilityStartTime = gf_net_get_utc();
+	Log::msg(Log::Info, "[MPEG_DASH] start processing at UTC: %s.", mpd->mpd->availabilityStartTime);
 
 	Data data;
 	for (;;) {
@@ -55,7 +56,9 @@ void MPEG_DASH::DASHThread() {
 		if (!data)
 			break;
 
-		generateMPD(Live);
+		if (type == Live) {
+			generateMPD();
+		}
 		Log::msg(Log::Info, "[MPEG_DASH] Processes segment (total processed: %ss, UTC: %s (deltaAST=%s).", (double)totalDurationInMs / 1000, gf_net_get_utc(), gf_net_get_utc() - mpd->mpd->availabilityStartTime);
 
 		if (type == Live) {
@@ -65,10 +68,11 @@ void MPEG_DASH::DASHThread() {
 		}
 	}
 
-	if (type == Static) {
-		mpd->mpd->media_presentation_duration = totalDurationInMs;
-		generateMPD(Static);
-	}
+	/*final rewrite of MPD in static mode*/
+	mpd->mpd->type = GF_MPD_TYPE_STATIC;
+	mpd->mpd->minimum_update_period = 0;
+	mpd->mpd->media_presentation_duration = totalDurationInMs;
+	generateMPD();
 }
 
 void MPEG_DASH::process() {
@@ -111,9 +115,9 @@ void  MPEG_DASH::ensureMPD() {
 	}
 }
 
-void MPEG_DASH::generateMPD(Type ifType) {
+void MPEG_DASH::generateMPD() {
 	ensureMPD();
-	if (ifType == type && !mpd->write(mpdPath))
+	if (!mpd->write(mpdPath))
 		Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s. Check you have sufficient rights.", mpdPath);
 	totalDurationInMs += segDurationInMs;
 }
