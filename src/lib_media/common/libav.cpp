@@ -25,6 +25,7 @@ Log::Level avLogLevel(int level) {
 	case AV_LOG_VERBOSE:
 		return Log::Debug;
 	case AV_LOG_DEBUG:
+	case AV_LOG_TRACE:
 		return Log::Quiet;
 	default:
 		assert(0);
@@ -50,6 +51,8 @@ const char* avlogLevelName(int level) {
 		return "verbose";
 	case AV_LOG_DEBUG:
 		return "debug";
+	case AV_LOG_TRACE:
+		return "trace";
 	default:
 		assert(0);
 		return "unknown";
