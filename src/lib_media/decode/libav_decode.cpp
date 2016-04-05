@@ -80,7 +80,7 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 		for (uint8_t i = 0; i < pcmFormat.numPlanes; ++i) {
 			out->setPlane(i, avFrame->get()->data[i], avFrame->get()->linesize[0] / pcmFormat.numPlanes);
 		}
-		out->setTime(timescaleToClock(avFrame->get()->pkt_pts, codecCtx->time_base.den));
+		out->setTime(data->getTime());
 		audioOutput->emit(out);
 		return true;
 	}
@@ -122,7 +122,7 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	if (gotPicture) {
 		auto pic = DataPicture::create(videoOutput, Resolution(avFrame->get()->width, avFrame->get()->height), libavPixFmt2PixelFormat((AVPixelFormat)avFrame->get()->format));
 		copyToPicture(avFrame->get(), pic.get());
-		pic->setTime(timescaleToClock(avFrame->get()->pkt_pts, codecCtx->time_base.den));
+		pic->setTime(data->getTime());
 		videoOutput->emit(pic);
 		return true;
 	}
