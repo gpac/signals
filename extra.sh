@@ -23,12 +23,15 @@ if [ -z "$CPREFIX" ]; then
 	case $OSTYPE in
 	linux-gnu)
 		CPREFIX=x86_64-linux-gnu
+		DIRNAME=$CPREFIX
 		;;
 	msys)
 		CPREFIX=x86_64-w64-mingw32
+		DIRNAME=$CPREFIX
 		;;
 	darwin*)
 		CPREFIX=-
+		DIRNAME=$(extra/src/zenbuild/config.guess | sed 's/-unknown//')
 		;;
 	*)
 		echo "Unknown platform. Please specify manually your compiler prefix with the CPREFIX environment variable."
@@ -82,7 +85,6 @@ if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 		popd
 	fi
 	## move files
-	DIRNAME=$(extra/src/zenbuild/config.guess | sed 's/-unknown//' | sed 's/-msys$/-mingw32/')
 	rsync -ar --remove-source-files extra/build/release/$DIRNAME/* extra/
 	touch extra/src/zenbuild/zenbuild.built
 fi
