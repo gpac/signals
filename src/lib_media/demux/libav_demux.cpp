@@ -102,6 +102,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 		default: m = nullptr; break;
 		}
 		outputs.push_back(addOutput(new OutputDataDefault<DataAVPacket>(m)));
+		av_dump_format(m_formatCtx, i, "", 0);
 	}
 }
 
