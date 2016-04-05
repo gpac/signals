@@ -26,7 +26,10 @@ BOOL WINAPI signalHandler(_In_ DWORD dwCtrlType) {
 #else
 void sigTermHandler(int sig) {
 	if (sig == SIGTERM) {
-		std::cerr << "Caught signal(" << dwCtrlType << "), exiting." << std::endl;
+		std::cerr << "Caught signal(SIGTERM), exiting." << std::endl;
+		if (g_Pipeline) {
+			g_Pipeline->exitSync();
+		}
 	}
 }
 #endif
