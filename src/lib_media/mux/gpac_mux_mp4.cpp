@@ -751,7 +751,7 @@ void GPACMuxMP4::process() {
 	m_lastInputTimeIn180k = data->getTime();
 	//TODO: make tests and integrate in a module, see #18
 #if 1
-	if (dataDurationInTs != m_DTS) {
+	if (dataDurationInTs - m_DTS != 0) {
 		/*VFR: computing current sample duration from previous*/
 		dataDurationInTs = clockToTimescale(data->getTime(), mediaTimescale) - m_DTS + dataDurationInTs;
 		if (dataDurationInTs <= 0) {
