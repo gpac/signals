@@ -757,7 +757,7 @@ void GPACMuxMP4::process() {
 		if (dataDurationInTs <= 0) {
 			dataDurationInTs = 1;
 		}
-		Log::msg(Log::Info, "[GPACMuxMP4] VFR: adding sample with duration %ss", dataDurationInTs / (double)mediaTimescale);
+		Log::msg(Log::Debug, "[GPACMuxMP4] VFR: adding sample with duration %ss", dataDurationInTs / (double)mediaTimescale);
 	}
 #else
 	/*wait to have two samples - FIXME: should be in a separate class + mast segment is never processed (should be in flush())*/
