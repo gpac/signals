@@ -50,6 +50,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	pushd extra/src/zenbuild
 	git checkout f63eac8a5bad
 	patch -p1 < ../../patches/gpac_01_revision.diff
+	patch -p1 < ../../patches/ffmpeg_01_version.diff
 	popd
 fi
 
