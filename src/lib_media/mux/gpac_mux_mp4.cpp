@@ -13,6 +13,7 @@ extern "C" {
 #include "../common/libav.hpp"
 
 //#define AVC_INBAND_CONFIG
+#define TIMESCALE_MUL 1000
 
 namespace Modules {
 
@@ -336,7 +337,7 @@ namespace Mux {
 
 //TODO: segments start with RAP
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
-	: m_DTS(0), m_lastDTS(0),
+	: m_DTS(0), m_lastInputTimeIn180k(0),
 	  m_useFragments(useSegments), m_curFragDur(0),
 	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0) {
 	if (m_chunkDuration == 0) {
@@ -572,7 +573,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
 	}
 
-	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale() * 1000);
+	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale() * TIMESCALE_MUL);
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track");
 		throw std::runtime_error("[GPACMuxMP4] Cannot create new track");
@@ -650,7 +651,7 @@ void GPACMuxMP4::sendOutput() {
 	auto out = output->getBuffer(0);
 	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName), m_curFragDur);
 	out->setMetadata(metadata);
-	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
+	auto const mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	switch (gf_isom_get_media_type(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId))) {
 	case GF_ISOM_MEDIA_VISUAL: metadata->resolution[0] = resolution[0]; metadata->resolution[1] = resolution[1]; break;
 	case GF_ISOM_MEDIA_AUDIO: metadata->sampleRate = sampleRate; break;
@@ -661,10 +662,9 @@ void GPACMuxMP4::sendOutput() {
 }
 
 void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDurationInTs) {
-	m_lastDTS = m_DTS;
 	m_DTS += dataDurationInTs;
 
-	auto mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
+	auto const mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	if (m_useFragments) {
 		m_curFragDur += dataDurationInTs;
 		//TODO: gf_isom_set_traf_base_media_decode_time(m_iso, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
@@ -746,13 +746,34 @@ void GPACMuxMP4::process() {
 		sample.IsRAP = (SAPType)(data->getPacket()->flags & AV_PKT_FLAG_KEY);
 	}
 
-	int64_t duration = clockToTimescale((int64_t)data->getPacket()->duration, gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId)));
-	if (m_lastDTS && (m_lastDTS+duration != m_DTS)) {
-		/*VBR: computing current sample duration from previous*/
-		duration = duration + m_DTS - m_lastDTS;
-		Log::msg(Log::Info, "[GPACMuxMP4] VBR: adding sample with duration %ss", duration / (double)IClock::Rate);
+	auto const mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
+	int64_t dataDurationInTs = clockToTimescale(data->getTime() - m_lastInputTimeIn180k, mediaTimescale);
+	m_lastInputTimeIn180k = data->getTime();
+	//TODO: make tests and integrate in a module, see #18
+#if 1
+	if (dataDurationInTs != m_DTS) {
+		/*VFR: computing current sample duration from previous*/
+		dataDurationInTs = clockToTimescale(data->getTime(), mediaTimescale) - m_DTS + dataDurationInTs;
+		if (dataDurationInTs <= 0) {
+			dataDurationInTs = 1;
+		}
+		Log::msg(Log::Info, "[GPACMuxMP4] VFR: adding sample with duration %ss", dataDurationInTs / (double)mediaTimescale);
 	}
-	addSample(sample, duration);
+#else
+	/*wait to have two samples - FIXME: should be in a separate class + mast segment is never processed (should be in flush())*/
+	static std::shared_ptr<const DataAVPacket> lastData = nullptr;
+	if (lastData) {
+		dataDurationInTs = clockToTimescale(data->getTime()-lastData->getTime(), mediaTimescale);
+	} else {
+		lastData = data;
+		return;
+	}
+	lastData = data;
+#endif
+	if (dataDurationInTs == 0) {
+		dataDurationInTs = TIMESCALE_MUL;
+	}
+	addSample(sample, dataDurationInTs);
 }
 
 }
