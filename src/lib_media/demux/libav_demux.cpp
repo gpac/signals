@@ -127,7 +127,7 @@ void LibavDemux::setTime(std::shared_ptr<DataAVPacket> data) {
 
 void LibavDemux::process(Data data) {
 	for (;;) {
-		if (getNumInputs() && !getInput(0)->tryPop(data))
+		if (getNumInputs() && getInput(0)->tryPop(data))
 			break;
 
 		auto out = outputs[0]->getBuffer(0);
