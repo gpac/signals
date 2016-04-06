@@ -1,0 +1,44 @@
+digraph "Modules::Demux::LibavDemux::LibavDemux"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::Demux::LibavDemux\l::LibavDemux",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Log::msg",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a84056ae8f88a105f7b5fa3770f2f15d8"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Log::getColorBegin",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a00080fae9f969e7c3eff2f40c7211cb3"];
+  Node2 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Log::getTime",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a1e8efa09c5b342ba1f9ba6d13811fa14"];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="format",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$format_8hpp.html#a3aca22086b5c6398b980286ac7dd89ad"];
+  Node2 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Log::getColorEnd",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a1a3e0507d4f5f0486dc7fa8d98954941"];
+  Node2 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Log::setLevel",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a64a94fff24e5ed45a1d627d3709b6e52"];
+  Node2 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Log::getLevel",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a8def54b27ed38887e1fd074c2ea18a82"];
+  Node2 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Log::Log",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#af6071a60aa52b6c1b511f99b4bc1b8fe"];
+  Node2 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Log::~Log",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_log.html#a0fbfda88fbee5027c89f6eb121059360"];
+  Node1 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Modules::Demux::LibavDemux\l::webcamOpen",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_demux_1_1_libav_demux.html#adf20cc15e7f85a9c4984a8077aab8963"];
+  Node1 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Modules::Demux::LibavDemux\l::webcamList",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_demux_1_1_libav_demux.html#a3a50d14e1d8caadb17238e0cebf1671c"];
+  Node12 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="Modules::buildAVDictionary",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#acf924c96c61225e66fd1d38eb9e02b78"];
+  Node13 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="stringDup",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8hpp.html#ad73864f25a0e8fc863b591202b7620c7"];
+  Node13 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="uptr",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8hpp.html#a61a0866ea29f447bc7a060aa5e6f1622"];
+  Node1 -> Node16 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="ffpp::Dict::set",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classffpp_1_1_dict.html#a84c878490c83c71a1c68744697e7faab"];
+  Node1 -> Node17 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 [label="Modules::OutputCap\l::addOutput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_output_cap.html#a0886d7898e6531f952032ea6202d4805"];
+  Node17 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

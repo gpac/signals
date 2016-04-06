@@ -1,0 +1,28 @@
+digraph "Modules::timescaleToClock"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::timescaleToClock",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Transform\l::AudioConvert::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_transform_1_1_audio_convert.html#a8193326c3bf3b7cdce8e740f521b1065"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::DataBase::\lsetTime",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_data_base.html#ac3a0915a20d683165b92bcd6772d8eab"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::Demux::LibavDemux\l::setTime",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_demux_1_1_libav_demux.html#a8af8f5a46ddeb2e92d1491ea008e833a"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Modules::Demux::LibavDemux\l::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_demux_1_1_libav_demux.html#a754cc192eef52dbbd1e2cd2bc3232242"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Modules::Encode::LibavEncode\l::processVideo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#aa403370c2299223e14a266e60bb3c3c8"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Modules::Encode::LibavEncode\l::flush",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#a4dfdf8512d03a74def3125c536b523fd"];
+  Node6 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Modules::Encode::LibavEncode\l::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#ab841a579d99a52c73c05f4370b0d5765"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Modules::Render::SDLAudio\l::reconfigure",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_render_1_1_s_d_l_audio.html#ac0f1338899d804a683faee819374374c"];
+  Node9 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Modules::Render::SDLAudio\l::SDLAudio",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_render_1_1_s_d_l_audio.html#ad899ba30efaf0021c42140adc843a870"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Modules::In::SoundGenerator\l::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_in_1_1_sound_generator.html#a45456674c6189f634b52f1d841cd2d75"];
+}

@@ -1,0 +1,18 @@
+digraph "gpacpp::Error::operator="
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="gpacpp::Error::operator=",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="gpacpp::IsoSample::\lsetDataOwnership",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_iso_sample.html#a78281ccd7364b07fc17b8d2757b8e214"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="gpacpp::IsoFile::~IsoFile",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_iso_file.html#aa132038c2b915f589f4438e3bef835f8"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="gpacpp::Config::getKey",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_config.html#ac6eada5fcd277d5f08d564e13d66d352"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="gpacpp::DownloadManager::get",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_download_manager.html#a18e43fa5ae650a7546753a6da55da0a2"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="gpacpp::DashClient\l::downloader",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_dash_client.html#ac447fc4a1ca19dd72a597481b02de6d4"];
+}

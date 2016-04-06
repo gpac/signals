@@ -1,0 +1,14 @@
+digraph "ffpp::Dict::set"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="ffpp::Dict::set",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Decode::LibavDecode\l::LibavDecode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_decode_1_1_libav_decode.html#acca2be63a6ce0423bdf076617b885347"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::Demux::LibavDemux\l::LibavDemux",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_demux_1_1_libav_demux.html#aa80ce41ac20c24554650ff8f4d58ce80"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::Encode::LibavEncode\l::LibavEncode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#aa90de937d63965d62425c85f73a2b1f4"];
+}

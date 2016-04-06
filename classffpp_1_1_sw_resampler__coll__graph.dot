@@ -1,0 +1,7 @@
+digraph "ffpp::SwResampler"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="{ffpp::SwResampler\n|- m_SwrContext\l|+ SwResampler()\l+ setInputLayout()\l+ setInputSampleRate()\l+ setInputSampleFmt()\l+ setOutputLayout()\l+ setOutputSampleRate()\l+ setOutputSampleFmt()\l+ init()\l+ convert()\l+ getDelay()\l+ ~SwResampler()\l}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+}

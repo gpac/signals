@@ -1,0 +1,46 @@
+digraph "Modules::InputCap::addInput"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::InputCap::\laddInput",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Transform\l::AudioConvert::AudioConvert",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_transform_1_1_audio_convert.html#a0354b035af350ad2e8e81901878eb5f5"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::Utils::PcmComparator\l::PcmComparator",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_utils_1_1_pcm_comparator.html#a7730395dec283ef98a0510398f6c2dd7"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::Out::File\l::File",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_out_1_1_file.html#a8c2c0620900fdfb4f790198dcb143781"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Modules::Demux::GPACDemux\lMP4Full::GPACDemuxMP4Full",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_demux_1_1_g_p_a_c_demux_m_p4_full.html#a553d574058fe318aba699e8d7801d35d"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Modules::Decode::JPEGTurbo\lDecode::JPEGTurboDecode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_decode_1_1_j_p_e_g_turbo_decode.html#a584c53c8603953bf880e92495927fbe4"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Modules::Encode::JPEGTurbo\lEncode::JPEGTurboEncode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_j_p_e_g_turbo_encode.html#a714fc8c519ea45d8a5aae2db836f0c19"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Modules::Decode::LibavDecode\l::LibavDecode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_decode_1_1_libav_decode.html#acca2be63a6ce0423bdf076617b885347"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Modules::Encode::LibavEncode\l::LibavEncode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#aa90de937d63965d62425c85f73a2b1f4"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Modules::Out::Null\l::Null",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_out_1_1_null.html#a0303327f05d07787e4bd39f0da4d9503"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Pipelines::PipelinedModule\l::mimicInputs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipelined_module.html#a969bf9acc0dd51c95dbb29ef03785335"];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Pipelines::PipelinedModule\l::getInput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipelined_module.html#adbf5da1a0377caea5bb050c54d15a701"];
+  Node12 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="Pipelines::PipelinedModule\l::connect",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipelined_module.html#a35adc574ffb660eae3ec0bf8991f72cf"];
+  Node12 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="Pipelines::PipelinedModule\l::dispatch",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipelined_module.html#ae55029b7f7a10aac7d41e03c64034047"];
+  Node1 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="Modules::Out::Print\l::Print",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_out_1_1_print.html#ae56a8b687ac74472fe393c83e94d129b"];
+  Node1 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="Modules::Utils::Recorder\l::Recorder",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_utils_1_1_recorder.html#a31ce4a79311619fc9524c16d4ebce042"];
+  Node1 -> Node17 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 [label="Modules::Transform\l::Restamp::Restamp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_transform_1_1_restamp.html#a156a80f318d8f94cb9b8476be01eae38"];
+  Node1 -> Node18 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 [label="Modules::Render::SDLAudio\l::SDLAudio",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_render_1_1_s_d_l_audio.html#ad899ba30efaf0021c42140adc843a870"];
+  Node1 -> Node19 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node19 [label="Modules::Render::SDLVideo\l::SDLVideo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_render_1_1_s_d_l_video.html#afe66a97cc4ced03477904e8ed3c55792"];
+  Node1 -> Node20 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node20 [label="Modules::Transform\l::VideoConvert::VideoConvert",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_transform_1_1_video_convert.html#a45972f8e661b417b2be8b7d2d33b34ea"];
+}

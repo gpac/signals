@@ -1,0 +1,9 @@
+digraph "Signals::IExecutor&lt; typename &gt;"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="{Signals::IExecutor\l\< typename \>\n||}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node2 [label="{Modules::StrandedPoolModule\lExecutor\< void(Data)\>\n|- strand\l|+ StrandedPoolModuleExecutor()\l+ StrandedPoolModuleExecutor()\l+ operator()()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_stranded_pool_module_executor.html"];
+}

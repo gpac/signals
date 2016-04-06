@@ -1,0 +1,49 @@
+digraph "pipeliner.hpp"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="pipeliner.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="lib_modules/utils/pipeline.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$pipeline_8hpp.html"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="memory",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node2 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="vector",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node2 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="stranded_pool_executor.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$stranded__pool__executor_8hpp.html"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="asio/asio.hpp",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node5 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="../core/data.hpp",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$data_8hpp.html"];
+  Node7 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="lib_signals/core/executor.hpp",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$executor_8hpp.html"];
+  Node5 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="../core/module.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$module_8hpp.html"];
+  Node9 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="input.hpp",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$input_8hpp.html"];
+  Node10 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="output.hpp",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$output_8hpp.html"];
+  Node11 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="helper.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$lib__modules_2utils_2helper_8hpp.html"];
+  Node12 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="utils/helper.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$lib__signals_2utils_2helper_8hpp.html"];
+  Node12 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="options.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashcastx_2options_8hpp.html"];
+  Node14 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="lib_media/common/picture.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$picture_8hpp.html"];
+  Node15 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

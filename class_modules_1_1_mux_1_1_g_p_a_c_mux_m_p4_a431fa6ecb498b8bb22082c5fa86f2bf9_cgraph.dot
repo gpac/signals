@@ -1,0 +1,43 @@
+digraph "Modules::Mux::GPACMuxMP4::process"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::Mux::GPACMuxMP4\l::process",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Mux::GPACMuxMP4\l::declareStream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#ac1f94e81a7a78eb084aa3d0b4ca7d49b"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::Mux::GPACMuxMP4\l::declareStreamVideo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#a41750f5163d399c3e44326de03be0506"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Log::msg",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$class_log.html#a84056ae8f88a105f7b5fa3770f2f15d8"];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="format",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$format_8hpp.html#a3aca22086b5c6398b980286ac7dd89ad"];
+  Node3 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Modules::Mux::GPACMuxMP4\l::setupFragments",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#a9728df71b886c32c16873c00e38888af"];
+  Node6 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Modules::ModuleDynI\l::addInput",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$class_modules_1_1_module_dyn_i.html#ae71f2fbca12dfc39a9057d4f73a2ab8b"];
+  Node2 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Modules::Mux::GPACMuxMP4\l::declareStreamAudio",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#a34195351654a54fefc9602b4be26da55"];
+  Node8 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="safe_cast",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8hpp.html#ad0cd9d62cdc4d8ad0ad279bc6b8d5dc2"];
+  Node9 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Modules::clockToTimescale",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#a9498c5e19c9f996d8da58ea1758b799e"];
+  Node10 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Modules::convertToTimescale",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#ae71b9f7b9d637c5862f04c71a0d65a6e"];
+  Node1 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Modules::Mux::GPACMuxMP4\l::addSample",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#a8ba26cf465902e0877eb48d57d0f5ecf"];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="Modules::Mux::GPACMuxMP4\l::closeSegment",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#a7bcc5339df6709745798d2470a3438a9"];
+  Node13 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="Modules::Mux::GPACMuxMP4\l::sendOutput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#af88cec708f08186126d1b4c062894858"];
+  Node12 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

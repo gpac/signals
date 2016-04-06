@@ -1,0 +1,10 @@
+digraph "Modules::Stream::Apple_HLS::HLSThread"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::Stream::Apple\l_HLS::HLSThread",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Stream::Apple\l_HLS::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_stream_1_1_apple___h_l_s.html#aed26b04e15585ba638baf0e2f8d31b02"];
+}

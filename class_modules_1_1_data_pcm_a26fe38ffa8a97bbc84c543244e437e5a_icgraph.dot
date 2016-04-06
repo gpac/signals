@@ -1,0 +1,18 @@
+digraph "Modules::DataPcm::getFormat"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::DataPcm::getFormat",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Utils::PcmComparator\l::compare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_utils_1_1_pcm_comparator.html#a0f93848a9baff1679c12a1d45ccdc0f0"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::libavFrameDataConvert",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#a80c5e4240d6fcb63e8a3f4fcbc7e5380"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::Encode::LibavEncode\l::processAudio",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#a181e7eaa68fa575d44236e976d094c17"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Modules::Encode::LibavEncode\l::flush",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#a4dfdf8512d03a74def3125c536b523fd"];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Modules::Encode::LibavEncode\l::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_encode_1_1_libav_encode.html#ab841a579d99a52c73c05f4370b0d5765"];
+}

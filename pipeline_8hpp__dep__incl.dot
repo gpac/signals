@@ -1,0 +1,37 @@
+digraph "pipeline.hpp"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="pipeline.hpp",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="pipeliner.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashcastx_2pipeliner_8hpp.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="dashcastx.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashcastx_8cpp.html"];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="pipeliner.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashcastx_2pipeliner_8cpp.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="pipeliner.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashclient_2pipeliner_8hpp.html"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="dashclient.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashclient_8cpp.html"];
+  Node5 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="pipeliner.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashclient_2pipeliner_8cpp.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="pipeliner.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$mp42tsx_2pipeliner_8hpp.html"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="mp42tsx.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$mp42tsx_8cpp.html"];
+  Node8 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="pipeliner.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$mp42tsx_2pipeliner_8cpp.html"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="pipeliner.hpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$player_2pipeliner_8hpp.html"];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="pipeliner.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$player_2pipeliner_8cpp.html"];
+  Node11 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="player.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$player_8cpp.html"];
+  Node1 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="pipeline.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$pipeline_8cpp.html"];
+  Node1 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="modules_pipeline.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$modules__pipeline_8cpp.html"];
+  Node15 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="modules.cpp",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$modules_8cpp.html"];
+}

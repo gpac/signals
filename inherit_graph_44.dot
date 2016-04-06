@@ -1,0 +1,20 @@
+digraph "Graphical Class Hierarchy"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Signals::IExecutor\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_i_executor_3_01_r_07_args_8_8_8_08_4.html"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Signals::ExecutorAsync\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_executor_async_3_01_r_07_args_8_8_8_08_4.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Signals::ExecutorAuto\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_executor_auto_3_01_r_07_args_8_8_8_08_4.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Signals::ExecutorLazy\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_executor_lazy_3_01_r_07_args_8_8_8_08_4.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Signals::ExecutorSync\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_executor_sync_3_01_r_07_args_8_8_8_08_4.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Signals::ExecutorThread\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_executor_thread_3_01_r_07_args_8_8_8_08_4.html"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Signals::ExecutorThreadPool\l\< R(Args...)\>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_signals_1_1_executor_thread_pool_3_01_r_07_args_8_8_8_08_4.html"];
+}

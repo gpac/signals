@@ -1,0 +1,15 @@
+digraph "gpacpp::Init"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="{gpacpp::Init\n||+ Init()\l+ ~Init()\l}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node2 [label="{gpacpp::DashClient\n|- state\l- dashIO\l- cfg\l- dm\l- dashClient\l|+ DashClient()\l+ start()\l+ stop()\l+ ~DashClient()\l+ get()\l+ downloader()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_dash_client.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node3 [label="{gpacpp::DownloadManager\n|- dm\l|+ DownloadManager()\l+ ~DownloadManager()\l+ get()\l+ operator=()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_download_manager.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node4 [label="{gpacpp::IsoFile\n|- movie_\l|+ IsoFile()\l+ IsoFile()\l+ ~IsoFile()\l+ operator=()\l+ setSingleMoofMode()\l+ refreshFragmented()\l+ getTrackId()\l+ getTrackById()\l+ getSampleCount()\l+ getSample()\l+ getDecoderConfig()\l+ resetTables()\l+ resetDataOffset()\l+ getMissingBytes()\l+ lastError()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classgpacpp_1_1_iso_file.html"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node5 [label="{Modules::Stream::MPEG_DASH\n|- numDataQueueNotify\l- workingThread\l- mpdPath\l- type\l- segDurationInMs\l- totalDurationInMs\l- meta\l- mpd\l|+ MPEG_DASH()\l+ ~MPEG_DASH()\l+ process()\l+ flush()\l- DASHThread()\l- endOfStream()\l- generateMPD()\l- ensureMPD()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_stream_1_1_m_p_e_g___d_a_s_h.html"];
+}

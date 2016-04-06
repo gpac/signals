@@ -1,0 +1,12 @@
+digraph "Modules::Mux::GPACMuxMP4::declareStreamVideo"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::Mux::GPACMuxMP4\l::declareStreamVideo",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Mux::GPACMuxMP4\l::declareStream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#ac1f94e81a7a78eb084aa3d0b4ca7d49b"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::Mux::GPACMuxMP4\l::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p4.html#a431fa6ecb498b8bb22082c5fa86f2bf9"];
+}

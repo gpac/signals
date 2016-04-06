@@ -1,0 +1,14 @@
+digraph "Modules::DataBase::~DataBase"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::DataBase::\l~DataBase",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::DataBase::data",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_data_base.html#a9c0894c9d9d8b5af9852b74ddc19669e"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::DataBase::size",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_data_base.html#abb5c7224e0d9d5f78d55ccd65ae67109"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::DataBase::\lresize",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_data_base.html#a45dad0e29d7c41c35f95eb006276f99c"];
+}

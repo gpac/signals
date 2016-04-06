@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['resulttype',['ResultType',['../class_signals_1_1_p_signal_3_01_result_00_01_callback_07_args_8_8_8_08_4.html#af9e420858e1f85487b10ed421ac60208',1,'Signals::PSignal&lt; Result, Callback(Args...)&gt;']]],
+  ['resultvalue',['ResultValue',['../class_signals_1_1_result_queue.html#accabd5a32b1e49da522c542e66c2b67a',1,'Signals::ResultQueue::ResultValue()'],['../class_signals_1_1_result_queue_3_01void_01_4.html#a8eb6b345b1aa1b6304c692afc3b3b6f0',1,'Signals::ResultQueue&lt; void &gt;::ResultValue()'],['../class_signals_1_1_result_vector.html#acce125a6ba492f859b7f7326e5441c8a',1,'Signals::ResultVector::ResultValue()'],['../class_signals_1_1_result_vector_3_01void_01_4.html#abf3098c821155c01ece255cf601471af',1,'Signals::ResultVector&lt; void &gt;::ResultValue()'],['../class_signals_1_1_result_last.html#a193230aee00a6f8596f36ce85677a455',1,'Signals::ResultLast::ResultValue()'],['../class_signals_1_1_p_signal_3_01_result_00_01_callback_07_args_8_8_8_08_4.html#a680c0e03bda236f62a53cfdb575ff34f',1,'Signals::PSignal&lt; Result, Callback(Args...)&gt;::ResultValue()']]]
+];

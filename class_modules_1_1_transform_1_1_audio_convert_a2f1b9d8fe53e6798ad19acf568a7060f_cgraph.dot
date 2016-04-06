@@ -1,0 +1,20 @@
+digraph "Modules::Transform::AudioConvert::reconfigure"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::Transform\l::AudioConvert::reconfigure",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::Transform\l::AudioConvert::flush",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_transform_1_1_audio_convert.html#aece061e37ec66840fd40e685e682c261"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::ModuleS::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_module_s.html#ae5e882cb1f1a524735e4c2c8b33ea1ab"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::IModule::process",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$struct_modules_1_1_i_module.html#a7dd3a50a96eb7c25b9c3209b1f96a56e"];
+  Node1 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="uptr",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8hpp.html#a61a0866ea29f447bc7a060aa5e6f1622"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Modules::Transform\l::AudioConvert::configure",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_transform_1_1_audio_convert.html#ac83946607aed0ff92442acb0a69653b5"];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Modules::libavAudioCtxConvert\lLibav",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#aaf7532301bc5ce344ec4075dd449bd9d"];
+}

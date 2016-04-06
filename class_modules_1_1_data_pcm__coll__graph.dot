@@ -1,0 +1,13 @@
+digraph "Modules::DataPcm"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="{Modules::DataPcm\n|- planes\l- planeSize\l|+ DataPcm()\l+ ~DataPcm()\l+ getFormat()\l+ setFormat()\l+ data()\l+ data()\l+ size()\l+ resize()\l+ getPlane()\l+ getPlaneSize()\l+ getPlanes()\l+ setPlanes()\l+ setPlane()\l- freePlane()\l- freePlanes()\l}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node2 [label="{Modules::DataRaw\n|- buffer\l|+ DataRaw()\l+ data()\l+ data()\l+ size()\l+ resize()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_data_raw.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node3 [label="{Modules::DataBase\n|- m_TimeIn180k\l- m_metadata\l|+ DataBase()\l+ ~DataBase()\l+ data()\l+ data()\l+ size()\l+ resize()\l+ getMetadata()\l+ setMetadata()\l+ setTime()\l+ setTime()\l+ getTime()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_data_base.html"];
+  Node4 -> Node1 [color="grey25",fontsize="10",style="solid",label=" -format" ,arrowhead="odiamond",fontname="Helvetica"];
+  Node4 [label="{Modules::PcmFormat\n|+ sampleRate\l+ numChannels\l+ layout\l+ sampleFormat\l+ numPlanes\l|+ PcmFormat()\l+ PcmFormat()\l+ operator!=()\l+ operator=()\l+ operator==()\l+ getBytesPerSample()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_pcm_format.html"];
+}

@@ -1,0 +1,20 @@
+digraph "Modules::Mux::GPACMuxMPEG2TS::process"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::Mux::GPACMuxMPEG2\lTS::process",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::ModuleDynI\l::getNumInputs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_module_dyn_i.html#a2a9a5f8c8e1397accc85f405d56f4ab4"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::Mux::GPACMuxMPEG2\lTS::declareStream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_mux_1_1_g_p_a_c_mux_m_p_e_g2_t_s.html#a2926f32e6289ccf90b265bf08ebfe6b2"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::ModuleDynI\l::addInput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_module_dyn_i.html#ae71f2fbca12dfc39a9057d4f73a2ab8b"];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="uptr",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8hpp.html#a61a0866ea29f447bc7a060aa5e6f1622"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="safe_cast",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$tools_8hpp.html#ad0cd9d62cdc4d8ad0ad279bc6b8d5dc2"];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="format",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$format_8hpp.html#a3aca22086b5c6398b980286ac7dd89ad"];
+}

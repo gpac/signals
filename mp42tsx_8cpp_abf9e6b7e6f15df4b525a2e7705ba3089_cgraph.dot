@@ -1,0 +1,26 @@
+digraph "main"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="main",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="safeMain",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$mp42tsx_8cpp.html#aa400efc830b0819630294f736401c2f7"];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="processArgs",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashcastx_2options_8cpp.html#a25320dc989db82161b4da990ea5a8f12"];
+  Node2 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="declarePipeline",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$dashcastx_2pipeliner_8cpp.html#a0d00da6efccbea05f1de14f3959e94a0"];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Pipelines::Pipeline\l::connect",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipeline.html#a46ac7cb721c7dd0a8e185c84a607d155"];
+  Node4 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Pipelines::Pipeline\l::addModule",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipeline.html#aa3807fdc51116abec7e221164a5ebfdd"];
+  Node4 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Log::msg",height=0.2,width=0.4,color="red", fillcolor="white", style="filled",URL="$class_log.html#a84056ae8f88a105f7b5fa3770f2f15d8"];
+  Node2 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Pipelines::Pipeline\l::start",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipeline.html#af233993d60816a2eda2551db89b5cb35"];
+  Node8 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Pipelines::Pipeline\l::waitForCompletion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipeline.html#a0ded025260d4f813d23623428916a108"];
+  Node9 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

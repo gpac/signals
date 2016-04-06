@@ -1,0 +1,12 @@
+digraph "Modules::IMetadataCap::setMetadata"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::IMetadataCap\l::setMetadata",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::IMetadataCap\l::~IMetadataCap",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$struct_modules_1_1_i_metadata_cap.html#a0e658f279d690670bac3e1ba33e45243"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::MetadataCap\l::updateMetadata",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_metadata_cap.html#a57882fef5ffe289b38c8fbf41dcd18c2"];
+}

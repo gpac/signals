@@ -1,0 +1,20 @@
+digraph "Modules::In::SoundGenerator::process"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Modules::In::SoundGenerator\l::process",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Modules::PcmFormat\l::getBytesPerSample",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_pcm_format.html#ab0e4ee6ab93f1c96188bc89653012f68"];
+  Node1 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Modules::OutputT::getBuffer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_output_t.html#ab6263dca52d17a2498cd88a6c89f9c7c"];
+  Node1 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Modules::timescaleToClock",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#a74c0641888783a1f3478e578647e7058"];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Modules::convertToTimescale",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_modules.html#ae71b9f7b9d637c5862f04c71a0d65a6e"];
+  Node1 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Modules::In::SoundGenerator\l::nextSample",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_in_1_1_sound_generator.html#a547506c0855ff286b464d5d6cf4bbe38"];
+  Node1 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Modules::OutputT::emit",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_modules_1_1_output_t.html#ae88c40c22415f35248f12f2018bddb4c"];
+}

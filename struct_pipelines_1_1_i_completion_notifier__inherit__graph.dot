@@ -1,0 +1,11 @@
+digraph "Pipelines::ICompletionNotifier"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="{Pipelines::ICompletionNotifier\n||+ finished()\l}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node2 [label="{Pipelines::Pipeline\n|- modules\l- isLowLatency\l- mutex\l- condition\l- numRemainingNotifications\l|+ Pipeline()\l+ addModule()\l+ connect()\l+ start()\l+ waitForCompletion()\l+ exitSync()\l- finished()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipeline.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",arrowtail="onormal",fontname="Helvetica"];
+  Node3 [label="{Pipelines::PipelinedModule\n|- delegate\l- localExecutor\l- executor\l- m_notify\l|+ PipelinedModule()\l+ ~PipelinedModule()\l+ getNumInputs()\l+ getNumOutputs()\l+ getOutput()\l+ isSource()\l+ isSink()\l- connect()\l- getInput()\l- mimicInputs()\l- dispatch()\l- finished()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipelines_1_1_pipelined_module.html"];
+}
