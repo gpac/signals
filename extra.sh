@@ -5,9 +5,13 @@
 
 set -e
 EXTRA_DIR=$PWD/extra
-HOST=$($CC -dumpmachine)
 export CFLAGS=-w
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
+
+if [ -z "$CC" ]; then
+    CC=gcc
+fi
+HOST=$($CC -dumpmachine)
 
 if [ -z "$MAKE" ]; then
 	if [ $(uname -s) == "Darwin" ]; then
@@ -36,6 +40,16 @@ if [ -z "$CPREFIX" ]; then
 	esac
 fi
 echo "Using compiler host ($HOST) prefix: $CPREFIX"
+
+
+case $OSTYPE in
+darwin*)
+    if [ -z "$NASM" ]; then
+        echo "You must set the NASM env variable."
+    fi
+    ;;
+esac
+
 
 #-------------------------------------------------------------------------------
 echo zenbuild
@@ -136,7 +150,7 @@ if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
 		pushd extra/build/libjpeg_turbo_1.3.x
 		../../src/libjpeg_turbo_1.3.x/configure \
 			--prefix=$EXTRA_DIR \
-			--host x86_64-apple-darwin NASM=/opt/local/bin/nasm
+			--host x86_64-apple-darwin
 		;;
 	esac
 
