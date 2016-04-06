@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Coding consideration](#coding-consideration)
+- [Design](#design)
+- [Write an application](#write-an-application)
+- [Write a module](#write-a-module)
+- [Data and metadata](#data-and-metadata)
+- [Debugging](#debugging)
+- [Technical considerations](#technical-considerations)
+- [Contributing](#contributing)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Coding consideration
 ====================
 
@@ -135,8 +150,17 @@ a clock can be injected in modules
 
 * metadata
 
+
+Generating this doc
+===================
+
+Markdown: doctoc for tables of content
+
+Doxygen: http://gpac.github.io/signals/
+
 Contributing
 ============
 
 TODO
+Github, pull requests.
 

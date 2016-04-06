@@ -1,3 +1,7 @@
+In github issues
++ inputs share the same lock because: that means that the previous module waits for the next?
++ low latency allocator doesn't propagate correctly
+
 Mid Term apps:
 - socket in, GPAC demux (MP4 or TS), DASH out
 - player example plugged with Qt
