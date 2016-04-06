@@ -28,7 +28,12 @@ If you want to use the make build system, the dependencies for Signals need to b
 ```
 $ ./extra.sh
 ```
-This script will ask you to install some tools (make, libtools, nasm, rsync ...). 
+This script will ask you to install some tools (make, libtools, nasm, rsync ...).
+
+You can use the ```CPREFIX``` environment variable to indicate another build toolchain e.g.:
+```
+CPREFIX=x86_64-w64-mingw32 ./extra.sh
+```
 
 On Windows, to be able to use make, we recommend using [msys2](https://msys2.github.io/) which comes with the package manager pacman to install those tools. However, some environment variables including PATH need to be tweaked (especially if it contains spaces) as follows:
   64 bits:
@@ -47,13 +52,23 @@ On Windows, to be able to use make, we recommend using [msys2](https://msys2.git
 
 Once the dependencies are built, on Windows with msys2, there are still 2 problems to fix:
 * The libx265 DLL is not installed correctly. Copy it from ```extra/build/src/x265/bin/x86_64-w64-mingw32/libx265.dll``` to ```extra/bin```.
-* In bin/make/config.mk, remove ```-XCClinker``` and add ```-D_WIN32_WINNT=0x0501 -DWIN32_LEAN_AND_MEAN``` (introduced by SDL2)
+* In bin/make/config.mk, remove ```-XCClinker``` (introduced by SDL2).
 
-For cmake, make sure you have its subpackages installed.
+Note: when using a mingw-w64 toolchains please modify the bin/make/config.mk file accordingly:
+ - add ```-D_WIN32_WINNT=0x0501 -DWIN32_LEAN_AND_MEAN```
+ - Linux only: remove -mwindows
+
+For cmake, make sure you have its subpackages (modules) installed.
 
 Finally, you can run:
 ```
-$ make
+$ ./check.sh
+```
+
+or
+
+```
+$ PKG_CONFIG_PATH=$PWD/extra/x86_64-w64-mingw32/lib/pkgconfig CXX=x86_64-w64-mingw32-g++ ./check.sh
 ```
 
 # Run

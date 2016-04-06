@@ -5,7 +5,7 @@
 
 set -e
 EXTRA_DIR=$PWD/extra
-HOST=$(gcc -dumpmachine)
+HOST=$($CC -dumpmachine)
 export CFLAGS=-w
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
@@ -23,22 +23,19 @@ if [ -z "$CPREFIX" ]; then
 	case $OSTYPE in
 	linux-gnu)
 		CPREFIX=x86_64-linux-gnu
-		DIRNAME=$CPREFIX
 		;;
 	msys)
 		CPREFIX=x86_64-w64-mingw32
-		DIRNAME=$CPREFIX
 		;;
 	darwin*)
 		CPREFIX=-
-		DIRNAME=$(extra/src/zenbuild/config.guess | sed 's/-unknown//')
 		;;
 	*)
 		echo "Unknown platform. Please specify manually your compiler prefix with the CPREFIX environment variable."
 		exit 1
 	esac
 fi
-echo "Using compiler host prefix: $CPREFIX"
+echo "Using compiler host ($HOST) prefix: $CPREFIX"
 
 #-------------------------------------------------------------------------------
 echo zenbuild
@@ -86,7 +83,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 		popd
 	fi
 	## move files
-	rsync -ar --remove-source-files extra/build/release/$DIRNAME/* extra/
+	rsync -ar --remove-source-files extra/build/release/$HOST/* extra/
 	touch extra/src/zenbuild/zenbuild.built
 fi
 
@@ -123,22 +120,24 @@ fi
 
 if [ ! -f extra/build/libjpeg_turbo_1.3.x/buildOk ] ; then
 	mkdir -p extra/build/libjpeg_turbo_1.3.x
-        case $OSTYPE in
-        linux-gnu)
-                pushd extra/build/libjpeg_turbo_1.3.x
-                ../../src/libjpeg_turbo_1.3.x/configure \
-                        --prefix=$EXTRA_DIR
-                ;;
-        msys)
-                pushd extra/src/libjpeg_turbo_1.3.x
-                cmake -G "Unix Makefiles" -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX:PATH=$EXTRA_DIR ../../src/libjpeg_turbo_1.3.x
-                ;;
-        darwin*)
-                pushd extra/build/libjpeg_turbo_1.3.x
-                ../../src/libjpeg_turbo_1.3.x/configure \
-                        --prefix=$EXTRA_DIR \
+
+    case $OSTYPE in
+	linux-gnu)
+		pushd extra/build/libjpeg_turbo_1.3.x
+		../../src/libjpeg_turbo_1.3.x/configure \
+			--prefix=$EXTRA_DIR \
+			--host=$HOST
+		;;
+	msys)
+		pushd extra/src/libjpeg_turbo_1.3.x
+		cmake -G "Unix Makefiles" -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_INSTALL_PREFIX:PATH=$EXTRA_DIR ../../src/libjpeg_turbo_1.3.x
+		;;
+	darwin*)
+		pushd extra/build/libjpeg_turbo_1.3.x
+		../../src/libjpeg_turbo_1.3.x/configure \
+			--prefix=$EXTRA_DIR \
 			--host x86_64-apple-darwin NASM=/opt/local/bin/nasm
-                ;;
+		;;
 	esac
 
 	$MAKE
