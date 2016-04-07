@@ -302,8 +302,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 }
 
 void fillVideoSampleData(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
-	u32 scSize = 0;
-	u32 NALUSize = 0;
+	u32 scSize = 0, NALUSize = 0;
 	GF_BitStream *out_bs = gf_bs_new(nullptr, 2 * bufLen, GF_BITSTREAM_WRITE);
 	NALUSize = gf_media_nalu_next_start_code(bufPtr, bufLen, &scSize);
 	if (NALUSize != 0) {
