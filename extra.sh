@@ -8,11 +8,6 @@ EXTRA_DIR=$PWD/extra
 export CFLAGS=-w
 export PKG_CONFIG_PATH=$EXTRA_DIR/lib/pkgconfig
 
-if [ -z "$CC" ]; then
-    CC=gcc
-fi
-HOST=$($CC -dumpmachine)
-
 if [ -z "$MAKE" ]; then
 	if [ $(uname -s) == "Darwin" ]; then
 		CORES=$(sysctl -n hw.logicalcpu)
@@ -25,22 +20,18 @@ fi
 
 if [ -z "$CPREFIX" ]; then
 	case $OSTYPE in
-	linux-gnu)
-		CPREFIX=x86_64-linux-gnu
-		;;
 	msys)
 		CPREFIX=x86_64-w64-mingw32
-		;;
-	darwin*)
-		CPREFIX=-
+		echo "MSYS detected ($OSTYPE): forcing use of prefix \"$CPREFIX\""
 		;;
 	*)
-		echo "Unknown platform. Please specify manually your compiler prefix with the CPREFIX environment variable."
-		exit 1
+		CPREFIX=$(gcc -dumpmachine)
+		echo "Platform $OSTYPE detected."
+		;;
 	esac
 fi
-echo "Using compiler host ($HOST) prefix: $CPREFIX"
-
+HOST=$($CPREFIX-gcc -dumpmachine)
+echo "Using compiler host ($HOST) with prefix ($CPREFIX)"
 
 case $OSTYPE in
 darwin*)
