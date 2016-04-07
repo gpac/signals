@@ -120,6 +120,8 @@ MAKE A LIST OF BASIC OBJECTS
 Data and metadata
 =================
 
+Data size should have a size so that the allocator can recycle => TODO: return a Size class that can be compared, see #17 and allocator.hpp
+
 ```
 auto const metadata = data->getMetadata();
 	if (auto video = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata)) {

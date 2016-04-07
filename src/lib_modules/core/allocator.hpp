@@ -33,11 +33,16 @@ class PacketAllocator {
 
 		template<typename T>
 		std::shared_ptr<T> getBuffer(size_t size) {
-			auto event = freeBlocks.pop();
-			switch(event) {
+			auto block = freeBlocks.pop();
+			switch(block.event) {
 			case OneBufferIsFree: {
-				std::shared_ptr<T> data(new T(size), deleter);
-				return data;
+				if (block.data && (block.data->size() <= size)) { //TODO: see #17 and doc on data: we should have Size classes that allow comparisons (and deal with zero-sized allocs)
+					block.data = new(block.data) T(size);
+				} else {
+					delete block.data;
+					block.data = new T(size);
+				}
+				return std::shared_ptr<T>(safe_cast<T>(block.data), deleter);
 			}
 			case Exit:
 				return nullptr;
@@ -46,7 +51,7 @@ class PacketAllocator {
 		}
 
 		void unblock() {
-			freeBlocks.push(Exit);
+			freeBlocks.push(Block(Exit, nullptr));
 		}
 
 	private:
@@ -56,13 +61,17 @@ class PacketAllocator {
 			OneBufferIsFree,
 			Exit,
 		};
+		struct Block {
+			Block(Event event = OneBufferIsFree, DataType *data = nullptr) : event(event), data(data) {}
+			Event event;
+			DataType *data;
+		};
 
 		Deleter deleter;
-		Signals::Queue<Event> freeBlocks;
+		Signals::Queue<Block> freeBlocks;
 
 		void recycle(DataType* p) {
-			delete p;
-			freeBlocks.push(OneBufferIsFree);
+			freeBlocks.push(Block(OneBufferIsFree, p));
 		}
 };
 
