@@ -210,8 +210,12 @@ enum PixelFormat libavPixFmt2PixelFormat(const AVPixelFormat &avPixfmt) {
 }
 
 //DataAVPacket
+void AVPacketDeleter::operator()(AVPacket *p) {
+	av_free_packet(p);
+}
+
 DataAVPacket::DataAVPacket(size_t size)
-	: pkt(new AVPacket) {
+	: pkt(std::unique_ptr<AVPacket, AVPacketDeleter>(new AVPacket)) {
 	av_init_packet(pkt.get());
 	av_free_packet(pkt.get());
 	if (size)
@@ -220,7 +224,6 @@ DataAVPacket::DataAVPacket(size_t size)
 
 DataAVPacket::~DataAVPacket() {
 	Log::msg(Log::Debug, "Freeing %s, pts=%s", this, pkt->pts);
-	av_free_packet(pkt.get());
 }
 
 uint8_t* DataAVPacket::data() {

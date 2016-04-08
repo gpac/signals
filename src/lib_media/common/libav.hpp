@@ -55,6 +55,11 @@ class MetadataPktLibavAudio : public MetadataPktLibav {
 		void getExtradata(const uint8_t *&extradata, size_t &extradataSize) const;
 };
 
+struct AVPacketDeleter {
+	AVPacketDeleter() = default;
+	void operator()(AVPacket *p);
+};
+
 class DataAVPacket : public DataBase {
 	public:
 		DataAVPacket(size_t size = 0);
@@ -68,7 +73,7 @@ class DataAVPacket : public DataBase {
 		void restamp(int64_t offsetIn180k, uint64_t pktTimescale) const;
 
 	private:
-		std::unique_ptr<AVPacket> const pkt;
+		std::unique_ptr<AVPacket, AVPacketDeleter> const pkt;
 };
 
 class PcmFormat;
