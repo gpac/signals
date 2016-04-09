@@ -58,6 +58,7 @@ void MPEG_DASH::DASHThread() {
 		if (type == Live) {
 			generateMPD();
 		}
+		totalDurationInMs += segDurationInMs;
 		Log::msg(Log::Info, "[MPEG_DASH] Processes segment (total processed: %ss, UTC: %s (deltaAST=%s).", (double)totalDurationInMs / 1000, gf_net_get_utc(), gf_net_get_utc() - mpd->mpd->availabilityStartTime);
 
 		if (type == Live) {
@@ -118,7 +119,6 @@ void MPEG_DASH::generateMPD() {
 	ensureMPD();
 	if (!mpd->write(mpdPath))
 		Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s. Check you have sufficient rights.", mpdPath);
-	totalDurationInMs += segDurationInMs;
 	if (!mpd->mpd->availabilityStartTime) {
 		mpd->mpd->availabilityStartTime = gf_net_get_utc() - segDurationInMs;
 	}
