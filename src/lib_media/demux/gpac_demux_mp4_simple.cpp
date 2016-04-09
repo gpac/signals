@@ -11,7 +11,7 @@ class ISOFileReader {
 	public:
 		void init(GF_ISOFile* m) {
 			movie.reset(new gpacpp::IsoFile(m));
-			u32 trackId = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in create() but in a stateful process? or a control module?
+			u32 trackId = movie->getTrackId(1); //FIXME should be a parameter? hence not processed in constructor but in a stateful process? or a control module?
 			trackNumber = movie->getTrackById(trackId);
 			sampleCount = movie->getSampleCount(trackNumber);
 			sampleIndex = 1;

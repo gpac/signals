@@ -111,7 +111,7 @@ If your last input pin has the type DataLoose, you should ignore it. It means it
 TODO
 
 * Allocator
-MAKE A LIST OF BASIC OBJECTS
+MAKE A LIST OF BASIC OBJECTS => link to doxygen
 * Data: shared_ptr
 * Output
 ...
