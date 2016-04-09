@@ -14,6 +14,7 @@ extern "C" {
 
 //#define AVC_INBAND_CONFIG
 #define TIMESCALE_MUL 1000
+//#define CHROME_DASHJS_2_0_COMPAT
 
 namespace Modules {
 
@@ -376,7 +377,11 @@ void GPACMuxMP4::closeSegment(bool isLastSeg) {
 	gf_isom_flush_fragments(m_iso, (Bool)isLastSeg);
 
 	if (m_useSegments) {
+#ifdef CHROME_DASHJS_2_0_COMPAT
+		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, (Bool)isLastSeg, 0, nullptr, nullptr);
+#else
 		GF_Err e = gf_isom_close_segment(m_iso, 0, 0, 0, 0, 0, GF_FALSE, (Bool)isLastSeg, GF_4CC('e', 'o', 'd', 's'), nullptr, nullptr);
+#endif
 		if (e != GF_OK) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
 			throw std::runtime_error("[GPACMuxMP4] Cannot close output segment.");
@@ -444,11 +449,19 @@ void GPACMuxMP4::setupFragments() {
 			throw std::runtime_error("[GPACMuxMP4] Impossible to create the moof");
 		}
 
+		e = gf_isom_set_traf_base_media_decode_time(m_iso, m_trackId, m_DTS);
+		if (e != GF_OK) {
+			Log::msg(Log::Warning, "%s: gf_isom_set_traf_base_media_decode_time %s\n", gf_error_to_string(e), gf_net_get_ntp_ts());
+			throw std::runtime_error("[GPACMuxMP4] Impossible to create TFDT");
+		}
+
+#ifndef CHROME_DASHJS_2_0_COMPAT
 		e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, gf_net_get_ntp_ts(), 0);
 		if (e != GF_OK) {
 			Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), gf_net_get_ntp_ts());
 			throw std::runtime_error("[GPACMuxMP4] Impossible to create UTC marquer");
 		}
+#endif
 	}
 }
 
@@ -666,7 +679,6 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 	auto const mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	if (m_useFragments) {
 		m_curFragDur += dataDurationInTs;
-		//TODO: gf_isom_set_traf_base_media_decode_time(m_iso, 1, audio_output_file->first_dts * audio_output_file->codec_ctx->frame_size);
 
 		GF_Err e;
 		if ((m_curFragDur * IClock::Rate) > (mediaTimescale * m_chunkDuration)) {
@@ -692,11 +704,19 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 				throw std::runtime_error("[GPACMuxMP4] Impossible to start the fragment");
 			}
 
-			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, gf_net_get_ntp_ts(), m_DTS);
+			e = gf_isom_set_traf_base_media_decode_time(m_iso, m_trackId, sample.DTS);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_set_traf_base_media_decode_time %s\n", gf_error_to_string(e), gf_net_get_ntp_ts());
+				throw std::runtime_error("[GPACMuxMP4] Impossible to create TFDT");
+			}
+
+#ifndef CHROME_DASHJS_2_0_COMPAT
+			e = gf_isom_set_fragment_reference_time(m_iso, m_trackId, gf_net_get_ntp_ts(), sample.DTS + sample.CTS_Offset);
 			if (e != GF_OK) {
 				Log::msg(Log::Warning, "%s: gf_isom_set_fragment_reference_time %s\n", gf_error_to_string(e), m_chunkNum);
 				throw std::runtime_error("[GPACMuxMP4] Impossible to set the UTC marquer");
 			}
+#endif
 
 			const u64 oneFragDurInTimescale = clockToTimescale(m_chunkDuration, mediaTimescale);
 			m_curFragDur = m_DTS - oneFragDurInTimescale * (m_DTS / oneFragDurInTimescale);
