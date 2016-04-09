@@ -15,20 +15,18 @@ template<typename DataType>
 class PacketAllocator {
 	public:
 		typedef DataType MyType;
-		PacketAllocator(size_t numBlocks = ALLOC_NUM_BLOCKS_DEFAULT)
-			: deleter(this) {
+		PacketAllocator(size_t numBlocks = ALLOC_NUM_BLOCKS_DEFAULT) : deleter(this) {
 			for(size_t i=0; i < numBlocks; ++i) {
-				freeBlocks.push(OneBufferIsFree);
+				freeBlocks.push(Block());
 			}
 		}
 
 		struct Deleter {
-			Deleter(PacketAllocator<DataType>* allocator) : m_allocator(allocator) {
+			Deleter(PacketAllocator<DataType> *allocator) : allocator(allocator) {}
+			void operator()(DataType *p) const {
+				allocator->recycle(p);
 			}
-			void operator()(DataType* p) {
-				m_allocator->recycle(p);
-			}
-			PacketAllocator<DataType>* const m_allocator;
+			PacketAllocator<DataType> * const allocator;
 		};
 
 		template<typename T>
@@ -36,13 +34,15 @@ class PacketAllocator {
 			auto block = freeBlocks.pop();
 			switch(block.event) {
 			case OneBufferIsFree: {
-				if (block.data && (block.data->size() <= size)) { //TODO: see #17 and doc on data: we should have Size classes that allow comparisons (and deal with zero-sized allocs)
+				if (block.data && (!block.data->isRecyclable() || block.data->size() <= size)) { //TODO: see #17 and doc on data: we should have Size classes that allow comparisons or are resizable
+					if (!block.data->isRecyclable())
+						block.data->~DataType();
 					block.data = new(block.data) T(size);
 				} else {
 					delete block.data;
 					block.data = new T(size);
 				}
-				return std::shared_ptr<T>(safe_cast<T>(block.data), deleter);
+				return std::shared_ptr<T>(safe_cast<T>(block.data), Deleter(this));
 			}
 			case Exit:
 				return nullptr;
@@ -51,28 +51,27 @@ class PacketAllocator {
 		}
 
 		void unblock() {
-			freeBlocks.push(Block(Exit, nullptr));
+			freeBlocks.push(Block(Exit));
 		}
 
 	private:
 		PacketAllocator& operator= (const PacketAllocator&) = delete;
+		Deleter const deleter;
+		void recycle(DataType *p) {
+			freeBlocks.push(Block(OneBufferIsFree, p));
+		}
 
 		enum Event {
 			OneBufferIsFree,
 			Exit,
 		};
 		struct Block {
-			Block(Event event = OneBufferIsFree, DataType *data = nullptr) : event(event), data(data) {}
+			Block(Event event = OneBufferIsFree, DataType *data = nullptr): event(event), data(data) {}
 			Event event;
 			DataType *data;
 		};
 
-		Deleter deleter;
 		Signals::Queue<Block> freeBlocks;
-
-		void recycle(DataType* p) {
-			freeBlocks.push(Block(OneBufferIsFree, p));
-		}
 };
 
 }

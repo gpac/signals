@@ -75,6 +75,10 @@ class DataPicture : public DataRaw {
 		DataPicture(size_t unused) : DataRaw(0) {}
 		static std::shared_ptr<DataPicture> create(OutputPicture *out, const Resolution &res, const PixelFormat &format);
 
+		virtual bool isRecyclable() const override {
+			return true;
+		}
+
 		PictureFormat getFormat() const {
 			return m_format;
 		}

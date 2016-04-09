@@ -15,6 +15,7 @@ class DataBase {
 	public:
 		DataBase() = default;
 		virtual ~DataBase() {}
+		virtual bool isRecyclable() const = 0;
 		virtual uint8_t* data() = 0;
 		virtual const uint8_t* data() const = 0;
 		virtual uint64_t size() const = 0;
@@ -52,6 +53,9 @@ class DataRaw : public DataBase {
 		DataRaw(size_t size) : buffer(size) {}
 		uint8_t* data() override {
 			return buffer.data();
+		}
+		virtual bool isRecyclable() const override {
+			return true;
 		}
 		const uint8_t* data() const override {
 			return buffer.data();

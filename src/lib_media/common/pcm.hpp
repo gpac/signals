@@ -125,9 +125,11 @@ class DataPcm : public DataRaw {
 				setPlane(0, nullptr, size);
 			}
 		}
-
 		~DataPcm() {
 			freePlanes();
+		}
+		virtual bool isRecyclable() const override {
+			return false;
 		}
 
 		const PcmFormat& getFormat() const {

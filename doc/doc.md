@@ -120,7 +120,9 @@ MAKE A LIST OF BASIC OBJECTS
 Data and metadata
 =================
 
-Data size should have a size so that the allocator can recycle => TODO: return a Size class that can be compared, see #17 and allocator.hpp
+Data size should have a size so that the allocator can recycle => TODO: return a Size class that can be compared or properties (resizable etc.), see #17 and allocator.hpp
+ATM we set isRecyclable(). Set it to false if you make ```new``` in your allocator: the destructor will be called.
+
 
 ```
 auto const metadata = data->getMetadata();
