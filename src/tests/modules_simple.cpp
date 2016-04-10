@@ -36,11 +36,11 @@ unittest("empty param test: Out::Print") {
 }
 
 unittest("simple param test") {
-	auto f = uptr(new In::File("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto f = uptr(new In::File("data/beepbop.mp4"));
 }
 
 unittest("print packets size from file: File -> Out::Print") {
-	auto f = uptr(new In::File("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto f = uptr(new In::File("data/beepbop.mp4"));
 	auto p = uptr(new Out::Print(std::cout));
 
 	ConnectOutputToInput(f->getOutput(0), p);

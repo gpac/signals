@@ -42,7 +42,7 @@ unittest("Pipeline: connect while running") {
 
 unittest("Pipeline: connect one input (out of 2) to one output") {
 	Pipeline p;
-	auto demux = p.addModule(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 	ASSERT(demux->getNumOutputs() > 1);
 	auto null = p.addModule(new Out::Null);
 	p.connect(demux, 0, null, 0);
@@ -53,7 +53,7 @@ unittest("Pipeline: connect one input (out of 2) to one output") {
 #ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: connect inputs to outputs") {
 	Pipeline p;
-	auto demux = p.addModule(new Demux::LibavDemux("data/BatmanHD_1000kbit_mpeg.mp4"));
+	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 	auto muxer = p.addModule(new Mux::GPACMuxMP4("output"));
 	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
 		p.connect(demux, i, muxer, i);
