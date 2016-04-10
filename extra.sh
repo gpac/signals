@@ -51,7 +51,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	git clone https://github.com/gpac/zenbuild extra/src/zenbuild
 	pushd extra/src/zenbuild
 	git checkout 75c2d6dbac6d
-	#patch -p1 < ../../patches/gpac_01_revision.diff
+	patch -p1 < ../../patches/gpac_01_revision.diff
 	#patch -p1 < ../../patches/ffmpeg_01_version.diff
 	popd
 fi

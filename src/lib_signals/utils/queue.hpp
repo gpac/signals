@@ -96,7 +96,7 @@ class Queue {
 template<typename T>
 class QueueMaxSize : public Queue<T> {
 	public:
-		QueueMaxSize(size_t maxSize = std::numeric_limits<size_t>::max()) : maxSize(maxSize) {
+		QueueMaxSize(size_t maxSize = std::numeric_limits<size_t>::max()) : maxSize(maxSize), dataWaitingToBePushed(0) {
 			if (maxSize == 0)
 				throw std::runtime_error("QueueMaxSize size cannot be 0.");
 		}

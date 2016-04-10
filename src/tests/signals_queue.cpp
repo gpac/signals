@@ -129,12 +129,13 @@ unittest("Thread-safe queue can be cleared with several blocking push() calls") 
 	std::thread tf3(f);
 	std::thread tf4(f);
 	queue.clear();
-	ASSERT_EQUALS(0, queue.size());
 	tf1.join();
+	queue.clear();
 	tf2.join();
+	queue.clear();
 	tf3.join();
+	queue.clear();
 	tf4.join();
-	ASSERT_EQUALS(0, queue.size());
 }
 
 unittest("Thread-safe queue can be destroyed while element is blocked while pushing") {

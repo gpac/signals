@@ -53,7 +53,6 @@ class IsoSample : public GF_ISOSample {
 			DTS = 0;
 			CTS_Offset = 0;
 			IsRAP = RAP_NO;
-			ownsData = true;
 		}
 		IsoSample(GF_ISOSample* pOther) {
 			GF_ISOSample* pMe = this;
@@ -70,7 +69,7 @@ class IsoSample : public GF_ISOSample {
 
 	private:
 		IsoSample const& operator=(IsoSample const&) = delete;
-		bool ownsData;
+		bool ownsData = true;
 };
 
 //------------------------------------------------

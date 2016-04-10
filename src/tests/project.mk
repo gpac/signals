@@ -52,6 +52,6 @@ TestProjectName:=$(ProjectName)
 TestOutDir:=$(OUTDIR)
 
 run: unit
-	$(TestOutDir)/modules.exe
-	$(TestOutDir)/signals.exe
 	$(TestOutDir)/utils.exe
+	$(TestOutDir)/signals.exe
+	$(TestOutDir)/modules.exe
