@@ -55,7 +55,7 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audi
 	ASSERT(audioIndex != std::numeric_limits<size_t>::max());
 	auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(audioIndex));
 	auto decode = uptr(new Decode::LibavDecode(*metadata));
-	auto srcFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
+	auto srcFormat = PcmFormat(44100, 1, AudioLayout::Mono, AudioSampleFormat::F32, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
 	auto render = uptr(new Render::SDLAudio());
