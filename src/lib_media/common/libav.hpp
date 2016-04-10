@@ -56,7 +56,6 @@ class MetadataPktLibavAudio : public MetadataPktLibav {
 };
 
 struct AVPacketDeleter {
-	AVPacketDeleter() = default;
 	void operator()(AVPacket *p);
 };
 

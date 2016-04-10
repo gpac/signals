@@ -34,11 +34,7 @@ class PacketAllocator {
 			auto block = freeBlocks.pop();
 			switch(block.event) {
 			case OneBufferIsFree: {
-				if (block.data && (!block.data->isRecyclable() || block.data->size() <= size)) { //TODO: see #17 and doc on data: we should have Size classes that allow comparisons or are resizable
-					if (!block.data->isRecyclable())
-						block.data->~DataType();
-					block.data = new(block.data) T(size);
-				} else {
+				if (!block.data) {
 					delete block.data;
 					block.data = new T(size);
 				}
@@ -58,6 +54,10 @@ class PacketAllocator {
 		PacketAllocator& operator= (const PacketAllocator&) = delete;
 		Deleter const deleter;
 		void recycle(DataType *p) {
+			if (!p->isRecyclable()) {
+				delete p;
+				p = nullptr;
+			}
 			freeBlocks.push(Block(OneBufferIsFree, p));
 		}
 
