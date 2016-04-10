@@ -37,7 +37,12 @@ class PacketAllocator {
 				if (!block.data) {
 					delete block.data;
 					block.data = new T(size);
+				} else {
+					auto data = safe_cast<T>(block.data);
+					if (data->size() < size)
+						data->resize(size);
 				}
+
 				return std::shared_ptr<T>(safe_cast<T>(block.data), Deleter(this));
 			}
 			case Exit:
