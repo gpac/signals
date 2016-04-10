@@ -36,9 +36,6 @@ void GPACMuxMPEG2TS::process() {
 	Bool real_time = GF_FALSE;
 	GF_M2TS_Mux *muxer = gf_m2ts_mux_new(mux_rate, psi_refresh_rate, real_time);
 
-	gf_sys_init(GF_FALSE);
-	gf_log_set_tool_level(GF_LOG_ALL, GF_LOG_WARNING);
-
 	for (size_t i = 0; i < getNumInputs() - 1; ++i) {
 		Data data = inputs[0]->pop();
 		if (inputs[0]->updateMetadata(data))

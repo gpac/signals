@@ -80,9 +80,9 @@ class Init {
 	public:
 		Init(/*bool memTracker = false, */GF_LOG_Tool globalLogTools = GF_LOG_ALL, GF_LOG_Level globalLogLevel = GF_LOG_WARNING) {
 #ifdef GPAC_MEM_TRACKER
-			gf_sys_init(GF_TRUE);
+			gf_sys_init(GF_MemTrackerBackTrace);
 #else
-			gf_sys_init(GF_FALSE);
+			gf_sys_init(GF_MemTrackerNone);
 #endif
 			gf_log_set_tool_level(globalLogTools, globalLogLevel);
 		}
