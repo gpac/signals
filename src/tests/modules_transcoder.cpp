@@ -125,7 +125,7 @@ unittest("transcoder: jpg to resized jpg") {
 unittest("transcoder: h264/mp4 to jpg") {
 	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
 
-	auto metadata = getMetadataFromOutput<MetadataPktLibavVideo>(demux->getOutput(0));
+	auto metadata = getMetadataFromOutput<MetadataPktLibavVideo>(demux->getOutput(1));
 	auto decode = uptr(new Decode::LibavDecode(*metadata));
 
 	auto encoder = uptr(new Encode::JPEGTurboEncode());
@@ -136,7 +136,7 @@ unittest("transcoder: h264/mp4 to jpg") {
 	auto dstFormat = PictureFormat(dstRes, RGB24);
 	auto converter = uptr(new Transform::VideoConvert(dstFormat));
 
-	ConnectOutputToInput(demux->getOutput(0), decode);
+	ConnectOutputToInput(demux->getOutput(1), decode);
 	ConnectOutputToInput(decode->getOutput(0), converter);
 	ConnectOutputToInput(converter->getOutput(0), encoder);
 	ConnectOutputToInput(encoder->getOutput(0), writer);
@@ -166,6 +166,9 @@ unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	ConnectOutputToInput(encoder->getOutput(0), mux);
 
 	reader->process(nullptr);
+	converter->flush();
+	encoder->flush();
+	mux->flush();
 }
 
 }

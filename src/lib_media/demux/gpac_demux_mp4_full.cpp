@@ -101,7 +101,7 @@ bool GPACDemuxMP4Full::processSample() {
 
 					reader->samplesProcessed++;
 					/*here we dump some sample info: samp->data, samp->dataLength, samp->isRAP, samp->DTS, samp->CTS_Offset */
-					Log::msg(Log::Info,
+					Log::msg(Log::Debug,
 					         "Found sample #%s(#%s) of length %s , RAP: %s, DTS : %s, CTS : %s",
 					         reader->sampleIndex,
 					         reader->samplesProcessed,
@@ -119,7 +119,7 @@ bool GPACDemuxMP4Full::processSample() {
 
 				/* once we have read all the samples, we can release some data and force a reparse of the input buffer */
 				if (reader->sampleIndex > reader->sampleCount) {
-					u64 newBufferStart;
+					u64 newBufferStart = 0;
 					u64 missingBytes;
 
 					Log::msg(Log::Debug, "Releasing unnecessary buffers");

@@ -154,7 +154,9 @@ class IsoFile : public Init {
 		}
 
 		void resetDataOffset(uint64_t& newBufferStart) {
-			gf_isom_reset_data_offset(movie_, &newBufferStart);
+			GF_Err e = gf_isom_reset_data_offset(movie_, &newBufferStart);
+			if (e != GF_OK)
+				throw gpacpp::Error("Could not release data", e);
 		}
 
 		uint64_t getMissingBytes(int trackNumber) {
