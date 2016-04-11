@@ -13,7 +13,6 @@ class GPACMuxMPEG2TS : public ModuleDynI {
 
 	private:
 		void declareStream(Data data);
-		//TODO
 };
 
 }

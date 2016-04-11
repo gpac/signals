@@ -71,7 +71,6 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 		auto const numRes = metadata->isVideo() ? opt.v.size() : 1;
 		for (size_t r = 0; r < numRes; ++r) {
-			//TODO: add optional bitrate a/o transcode
 			auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
 			if (!converter)
 				continue;

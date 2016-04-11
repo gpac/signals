@@ -190,7 +190,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 
 				dstCfg->avgFrameRate = hevc.vps[idx].rates[0].avg_pic_rate;
 				dstCfg->constantFrameRate = hevc.vps[idx].rates[0].constand_pic_rate_idc;
-				//TODO: update GPAC for Signals: dstCfg->numTemporalLayers = hevc.vps[idx].max_sub_layers;
+				dstCfg->numTemporalLayers = hevc.vps[idx].max_sub_layers;
 				dstCfg->temporalIdNested = hevc.vps[idx].temporal_id_nesting;
 
 				if (!vpss) {
@@ -335,7 +335,6 @@ void fillVideoSampleData(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 
 namespace Mux {
 
-//TODO: segments start with RAP
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
 	: m_DTS(0), m_lastInputTimeIn180k(0),
 	  m_useFragments(useSegments), m_curFragDur(0),

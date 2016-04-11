@@ -63,7 +63,6 @@ unittest("Pipeline: connect inputs to outputs") {
 }
 
 unittest("Pipeline: connect incompatible i/o") {
-	//TODO
 	bool thrown = false;
 	try {
 		thrown = true; //TODO

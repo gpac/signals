@@ -24,7 +24,7 @@ namespace Mux {
 LibavMux::LibavMux(const std::string &baseName)
 	: m_headerWritten(false) {
 	/* parse the format optionsDict */
-	std::string optionsStr = "-format mp4"; //TODO
+	std::string optionsStr = "-format mp4";
 	AVDictionary *optionsDict = nullptr;
 	buildAVDictionary("[libav_mux]", &optionsDict, optionsStr.c_str(), "format");
 

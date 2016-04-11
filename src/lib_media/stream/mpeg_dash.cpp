@@ -35,7 +35,7 @@ MPEG_DASH::~MPEG_DASH() {
 }
 
 //needed because of the use of system time for live - otherwise awake on data as for any multi-input module
-//TODO: add clock to the scheduler
+//TODO: add clock to the scheduler, see #14
 void MPEG_DASH::DASHThread() {
 	Log::msg(Log::Info, "[MPEG_DASH] start processing at UTC: %s.", gf_net_get_utc());
 

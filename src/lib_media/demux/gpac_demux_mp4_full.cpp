@@ -9,8 +9,6 @@
 namespace Modules {
 namespace Demux {
 
-//TODO: set appropriate CCO credits
-//see http://sourceforge.net/p/gpac/code/HEAD/tree/trunk/gpac/applications/testapps/fmp4demux/main.c
 class ISOProgressiveReader {
 	public:
 		ISOProgressiveReader()
@@ -141,7 +139,6 @@ bool GPACDemuxMP4Full::processSample() {
 
 					/* update the sample count and sample index */
 					reader->sampleCount = newSampleCount - reader->sampleCount;
-					//FIXME: doesn't happen because the size of the chunck is not aligned on samples: assert(reader->sampleCount == 0);
 					reader->sampleIndex = 1;
 				}
 			}
@@ -165,7 +162,7 @@ bool GPACDemuxMP4Full::processData() {
 }
 
 void GPACDemuxMP4Full::process(Data data_) {
-#if 0 //TODO: zero copy mode, or at least improve the current system
+#if 0 //TODO: zero copy mode, or at least improve the current system with allocator packet duplication
 	reader->validDataSize = reader->dataSize = data->size();
 	reader->data.data() = data->data();
 #else

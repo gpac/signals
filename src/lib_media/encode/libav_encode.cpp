@@ -54,7 +54,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		break;
 	case Audio:
 		codecOptions = format("-b %s", params.bitrate_a);
-		generalOptions = "-acodec libvo_aacenc"; //TODO
+		generalOptions = "-acodec libvo_aacenc";
 		if (params.isLowLatency)
 			Log::msg(Log::Info, "[libav_encode] low latency has no effect for audio.");
 		codecName = "acodec";
@@ -112,7 +112,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		assert(0);
 	}
 
-#if 0 //TODO
+#if 0 //TODO: how to pass extra data?
 	/* user extra params */
 	std::string extraParams;
 	if (Parse::populateString("LibavOutputWriter", config, "extra_params", extraParams, false) == Parse::PopulateResult_Ok) {

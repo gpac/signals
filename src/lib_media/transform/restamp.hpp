@@ -5,7 +5,7 @@
 namespace Modules {
 	namespace Transform {
 
-		/* /!\ FIXMe: modifies the data in-place: use this module synchronously */
+		/* /!\ FIXME: modifies the data in-place: use this module synchronously */
 		class Restamp : public ModuleS {
 		public:
 			enum Mode {

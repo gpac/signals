@@ -10,7 +10,7 @@ struct IClock {
 	virtual uint64_t now() const = 0;
 };
 
-IClock* createSystemClock(); //TODO: move elsewhere
+IClock* createSystemClock();
 
 extern IClock* const g_DefaultClock;
 
