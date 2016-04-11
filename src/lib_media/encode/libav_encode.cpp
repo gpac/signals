@@ -210,7 +210,7 @@ bool LibavEncode::processAudio(const DataPcm *data) {
 	}
 	if (gotPkt) {
 		pkt->pts = pkt->dts = frameNum * pkt->duration;
-		out->setTime(data->getTime());
+		out->setTime(times.pop());
 		assert(pkt->size);
 		if (out) output->emit(out);
 		return true;
@@ -249,7 +249,7 @@ bool LibavEncode::processVideo(const DataPicture *pic) {
 				assert(codecCtx->time_base.num >= 0);
 				pkt->duration = (int)timescaleToClock((uint64_t)codecCtx->time_base.num, codecCtx->time_base.den);
 			}
-			if (pic) out->setTime(pic->getTime());
+			out->setTime(times.pop());
 			output->emit(out);
 			return true;
 		}
@@ -259,6 +259,7 @@ bool LibavEncode::processVideo(const DataPicture *pic) {
 }
 
 void LibavEncode::process(Data data) {
+	times.push(data->getTime());
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
 		const auto encoderData = safe_cast<const DataPicture>(data);
