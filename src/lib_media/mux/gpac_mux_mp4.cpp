@@ -339,7 +339,7 @@ namespace Mux {
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
 	: m_DTS(0), m_lastInputTimeIn180k(0),
 	  m_useFragments(useSegments), m_curFragDur(0),
-	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0) {
+	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0), m_lastChunkSize(0) {
 	if (m_chunkDuration == 0) {
 		Log::msg(Log::Debug, "[GPAC Mux] Configuration: single file.");
 		assert(!useSegments);
@@ -386,7 +386,10 @@ void GPACMuxMP4::closeSegment(bool isLastSeg) {
 			Log::msg(Log::Error, "%s: gf_isom_close_segment", gf_error_to_string(e));
 			throw std::runtime_error("[GPACMuxMP4] Cannot close output segment.");
 		}
-		Log::msg(Log::Info, "[GPACMuxMP4] Segment %s completed.", m_chunkName);
+		m_lastChunkSize = gf_isom_get_file_size(m_iso);
+
+		sendOutput();
+		Log::msg(Log::Info, "[GPACMuxMP4] Segment %s completed (size %s).", m_chunkName, m_lastChunkSize);
 	}
 }
 
@@ -661,7 +664,7 @@ void GPACMuxMP4::sendOutput() {
 	if (e) throw std::runtime_error("[GPACMuxMP4] Could not compute codec name (RFC 6381)");
 
 	auto out = output->getBuffer(0);
-	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName), m_curFragDur);
+	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName), m_curFragDur, m_lastChunkSize);
 	out->setMetadata(metadata);
 	auto const mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	switch (gf_isom_get_media_type(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId))) {
@@ -694,8 +697,6 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 					Log::msg(Log::Warning, "%s: gf_isom_start_segment %s (%s)", gf_error_to_string(e), m_chunkNum, m_chunkName);
 					throw std::runtime_error("[GPACMuxMP4] Impossible to start the segment");
 				}
-
-				sendOutput();
 			}
 
 			e = gf_isom_start_fragment(m_iso, GF_TRUE);

@@ -41,8 +41,10 @@ void MPEG_DASH::DASHThread() {
 
 	Data data;
 	for (;;) {
-		meta.resize(getNumInputs() - 1);
-		for (size_t i = 0; i < getNumInputs() - 1; ++i) {
+		auto const numInputs = getNumInputs() - 1;
+		meta.resize(numInputs);
+		bitrate_in_bps.resize(numInputs);
+		for (size_t i = 0; i < numInputs; ++i) {
 			data = inputs[i]->pop();
 			if (!data) {
 				break;
@@ -50,6 +52,8 @@ void MPEG_DASH::DASHThread() {
 				meta[i] = safe_cast<const MetadataFile>(data->getMetadata());
 				if (!meta[i])
 					throw std::runtime_error(format("[MPEG_DASH] Unknown data received on input %s", i).c_str());
+				auto const numSeg = totalDurationInMs / segDurationInMs;
+				bitrate_in_bps[i] = (meta[i]->getSize() * 8 + bitrate_in_bps[i] * numSeg) / (numSeg + 1);
 			}
 		}
 		if (!data)
@@ -102,7 +106,7 @@ void  MPEG_DASH::ensureMPD() {
 			as->segment_alignment = GF_TRUE;
 			as->bitstream_switching = GF_TRUE;
 
-			auto rep = mpd->addRepresentation(as, format("%s", i).c_str(), (u32)(i+1) * 1000000/*FIXME: get bitrate*/);
+			auto rep = mpd->addRepresentation(as, format("%s", i).c_str(), (u32)bitrate_in_bps[i]);
 			rep->mime_type = gf_strdup(meta[i]->getMimeType().c_str());
 			rep->codecs = gf_strdup(meta[i]->getCodecName().c_str());
 			rep->starts_with_sap = GF_TRUE; //FIXME: arbitrary: should be set by the app, or computed

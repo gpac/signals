@@ -30,6 +30,7 @@ class MPEG_DASH : public ModuleDynI, public gpacpp::Init {
 		Type type;
 		uint64_t segDurationInMs, totalDurationInMs;
 		std::vector<std::shared_ptr<const MetadataFile>> meta;
+		std::vector<double> bitrate_in_bps;
 
 		std::unique_ptr<gpacpp::MPD> mpd;
 };

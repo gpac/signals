@@ -38,7 +38,7 @@ class GPACMuxMP4 : public ModuleDynI {
 		//segments
 		void closeSegment(bool isLastSeg);
 		bool m_useSegments;
-		uint64_t m_chunkDuration, m_chunkNum;
+		uint64_t m_chunkDuration, m_chunkNum, m_lastChunkSize;
 		std::string m_chunkName;
 
 		OutputDataDefault<DataAVPacket>* output;
