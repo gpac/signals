@@ -28,17 +28,19 @@ class GPACMuxMP4 : public ModuleDynI {
 
 		GF_ISOFile *m_iso;
 		uint32_t m_trackId;
-		uint64_t m_DTS, m_lastInputTimeIn180k;
+		uint64_t m_DTS = 0, m_lastInputTimeIn180k = 0;
 
 		//fragments
 		void setupFragments();
 		bool m_useFragments;
-		uint64_t m_curFragDur;
+		uint64_t m_curFragDur = 0;
 
 		//segments
 		void closeSegment(bool isLastSeg);
 		bool m_useSegments;
-		uint64_t m_chunkDuration, m_chunkNum, m_lastChunkSize;
+		uint64_t m_chunkDuration;
+		uint64_t m_chunkNum = 0, m_lastChunkSize = 0;
+		bool m_chunkStartsWithRAP = true;
 		std::string m_chunkName;
 
 		OutputDataDefault<DataAVPacket>* output;

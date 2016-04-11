@@ -45,8 +45,9 @@ static bool operator==(const IMetadata &left, const IMetadata &right) {
 
 class MetadataFile : public IMetadata {
 	public:
-		MetadataFile(const std::string filename, StreamType streamType, const std::string mimeType, const std::string codecName, uint64_t durationIn180k, uint64_t filesize)
-			: streamType(streamType), filename(filename), mimeType(mimeType), codecName(codecName), durationIn180k(durationIn180k), filesize(filesize) {}
+		MetadataFile(const std::string filename, StreamType streamType, const std::string mimeType, const std::string codecName, uint64_t durationIn180k, uint64_t filesize, bool startsWithRAP)
+			: streamType(streamType), filename(filename), mimeType(mimeType), codecName(codecName), durationIn180k(durationIn180k), filesize(filesize), startsWithRAP(startsWithRAP) {
+		}
 		std::string getFilename() const {
 			return filename;
 		}
@@ -65,6 +66,9 @@ class MetadataFile : public IMetadata {
 		uint64_t getSize() const {
 			return filesize;
 		}
+		bool getStartsWithRAP() const {
+			return startsWithRAP;
+		}
 
 		union {
 			unsigned int resolution[2];
@@ -75,6 +79,7 @@ class MetadataFile : public IMetadata {
 		StreamType streamType;
 		std::string filename, mimeType, codecName/*as per RFC6381*/;
 		uint64_t durationIn180k, filesize;
+		bool startsWithRAP;
 };
 
 //TODO: should be picture and Pcm and return the same fields as MetadataPkt

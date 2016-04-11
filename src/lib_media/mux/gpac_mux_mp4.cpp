@@ -336,9 +336,8 @@ void fillVideoSampleData(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 namespace Mux {
 
 GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, bool useSegments)
-	: m_DTS(0), m_lastInputTimeIn180k(0),
-	  m_useFragments(useSegments), m_curFragDur(0),
-	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)), m_chunkNum(0), m_lastChunkSize(0) {
+	: m_useFragments(useSegments),
+	  m_useSegments(useSegments), m_chunkDuration(timescaleToClock(chunkDurationInMs, 1000)) {
 	if (m_chunkDuration == 0) {
 		Log::msg(Log::Debug, "[GPAC Mux] Configuration: single file.");
 		assert(!useSegments);
@@ -388,7 +387,7 @@ void GPACMuxMP4::closeSegment(bool isLastSeg) {
 		m_lastChunkSize = gf_isom_get_file_size(m_iso);
 
 		sendOutput();
-		Log::msg(Log::Info, "[GPACMuxMP4] Segment %s completed (size %s).", m_chunkName, m_lastChunkSize);
+		Log::msg(Log::Info, "[GPACMuxMP4] Segment %s completed (size %s) (startsWithSAP=%s).", m_chunkName, m_lastChunkSize, m_chunkStartsWithRAP);
 	}
 }
 
@@ -663,7 +662,7 @@ void GPACMuxMP4::sendOutput() {
 	if (e) throw std::runtime_error("[GPACMuxMP4] Could not compute codec name (RFC 6381)");
 
 	auto out = output->getBuffer(0);
-	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName), m_curFragDur, m_lastChunkSize);
+	auto metadata = std::make_shared<MetadataFile>(m_chunkName, streamType, mimeType, gf_strdup(codecName), m_curFragDur, m_lastChunkSize, m_chunkStartsWithRAP);
 	out->setMetadata(metadata);
 	auto const mediaTimescale = gf_isom_get_media_timescale(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId));
 	switch (gf_isom_get_media_type(m_iso, gf_isom_get_track_by_id(m_iso, m_trackId))) {
@@ -687,6 +686,8 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 			closeSegment(false);
 			if (m_useSegments) {
 				m_chunkNum++;
+				m_chunkStartsWithRAP = sample.IsRAP == RAP;
+				Log::msg(Log::Warning, "%s", m_chunkStartsWithRAP);
 
 				std::stringstream ss;
 				ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum+1;

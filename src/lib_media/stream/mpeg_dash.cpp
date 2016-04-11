@@ -42,27 +42,27 @@ void MPEG_DASH::DASHThread() {
 	Data data;
 	for (;;) {
 		auto const numInputs = getNumInputs() - 1;
-		meta.resize(numInputs);
-		bitrate_in_bps.resize(numInputs);
+		qualities.resize(numInputs);
 		for (size_t i = 0; i < numInputs; ++i) {
 			data = inputs[i]->pop();
 			if (!data) {
 				break;
 			} else {
-				meta[i] = safe_cast<const MetadataFile>(data->getMetadata());
-				if (!meta[i])
+				qualities[i].meta = safe_cast<const MetadataFile>(data->getMetadata());
+				if (!qualities[i].meta)
 					throw std::runtime_error(format("[MPEG_DASH] Unknown data received on input %s", i).c_str());
 				auto const numSeg = totalDurationInMs / segDurationInMs;
-				bitrate_in_bps[i] = (meta[i]->getSize() * 8 + bitrate_in_bps[i] * numSeg) / (numSeg + 1);
+				qualities[i].bitrate_in_bps = (qualities[i].meta->getSize() * 8 + qualities[i].bitrate_in_bps * numSeg) / (numSeg + 1);
 			}
 		}
 		if (!data)
 			break;
 
+		generateMPD();
 		if (type == Live) {
-			generateMPD();
+			if (!mpd->write(mpdPath))
+				Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s (1). Check you have sufficient rights.", mpdPath);
 		}
-		totalDurationInMs += segDurationInMs;
 		Log::msg(Log::Info, "[MPEG_DASH] Processes segment (total processed: %ss, UTC: %s (deltaAST=%s).", (double)totalDurationInMs / 1000, gf_net_get_utc(), gf_net_get_utc() - mpd->mpd->availabilityStartTime);
 
 		if (type == Live) {
@@ -77,6 +77,8 @@ void MPEG_DASH::DASHThread() {
 	mpd->mpd->minimum_update_period = 0;
 	mpd->mpd->media_presentation_duration = totalDurationInMs;
 	generateMPD();
+	if (!mpd->write(mpdPath))
+		Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s (2). Check you have sufficient rights.", mpdPath);
 }
 
 void MPEG_DASH::process() {
@@ -106,13 +108,14 @@ void  MPEG_DASH::ensureMPD() {
 			as->segment_alignment = GF_TRUE;
 			as->bitstream_switching = GF_TRUE;
 
-			auto rep = mpd->addRepresentation(as, format("%s", i).c_str(), (u32)bitrate_in_bps[i]);
-			rep->mime_type = gf_strdup(meta[i]->getMimeType().c_str());
-			rep->codecs = gf_strdup(meta[i]->getCodecName().c_str());
-			rep->starts_with_sap = GF_TRUE; //FIXME: arbitrary: should be set by the app, or computed
-			switch (meta[i]->getStreamType()) {
-			case AUDIO_PKT: rep->samplerate = meta[i]->sampleRate; break;
-			case VIDEO_PKT: rep->width = meta[i]->resolution[0]; rep->height = meta[i]->resolution[1]; break;
+			auto rep = mpd->addRepresentation(as, format("%s", i).c_str(), (u32)qualities[i].bitrate_in_bps);
+			qualities[i].rep = rep;
+			rep->mime_type = gf_strdup(qualities[i].meta->getMimeType().c_str());
+			rep->codecs = gf_strdup(qualities[i].meta->getCodecName().c_str());
+			rep->starts_with_sap = GF_TRUE;
+			switch (qualities[i].meta->getStreamType()) {
+			case AUDIO_PKT: rep->samplerate = qualities[i].meta->sampleRate; break;
+			case VIDEO_PKT: rep->width = qualities[i].meta->resolution[0]; rep->height = qualities[i].meta->resolution[1]; break;
 			default: assert(0);
 			}
 		}
@@ -121,11 +124,13 @@ void  MPEG_DASH::ensureMPD() {
 
 void MPEG_DASH::generateMPD() {
 	ensureMPD();
-	if (!mpd->write(mpdPath))
-		Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s. Check you have sufficient rights.", mpdPath);
+	for (size_t i = 0; i < getNumInputs() - 1; ++i) {
+		qualities[i].rep->starts_with_sap = (qualities[i].rep->starts_with_sap == GF_TRUE && qualities[i].meta->getStartsWithRAP()) ? GF_TRUE : GF_FALSE;
+	}
 	if (!mpd->mpd->availabilityStartTime) {
 		mpd->mpd->availabilityStartTime = gf_net_get_utc() - segDurationInMs;
 	}
+	totalDurationInMs += segDurationInMs;
 }
 
 void MPEG_DASH::flush() {
