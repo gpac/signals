@@ -92,5 +92,3 @@ $ PKG_CONFIG_PATH=$PWD/extra/x86_64-w64-mingw32/lib/pkgconfig CXX=x86_64-w64-min
 
 # Run
 The binaries are in generated in ```bin/```including a sample player, the dashcastx application, and all the unit test apps. 
-
-Note: For dashcastx, for live inputs with FFmpeg demux, please increase the fifo size: protocol://ip_address:port?fifo_size=1000000&overrun_nonfatal=1

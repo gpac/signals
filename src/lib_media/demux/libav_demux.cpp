@@ -90,7 +90,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			throw std::runtime_error("Couldn't find stream info.");
 		}
 
-		restamp = uptr(new Transform::Restamp(Transform::Restamp::Passthru));
+		restamp = uptr(new Transform::Restamp(Transform::Restamp::Reset));
 	}
 
 	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {

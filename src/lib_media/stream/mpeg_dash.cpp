@@ -125,7 +125,9 @@ void  MPEG_DASH::ensureMPD() {
 void MPEG_DASH::generateMPD() {
 	ensureMPD();
 	for (size_t i = 0; i < getNumInputs() - 1; ++i) {
-		qualities[i].rep->starts_with_sap = (qualities[i].rep->starts_with_sap == GF_TRUE && qualities[i].meta->getStartsWithRAP()) ? GF_TRUE : GF_FALSE;
+		if (qualities[i].rep->width) { /*video only*/
+			qualities[i].rep->starts_with_sap = (qualities[i].rep->starts_with_sap == GF_TRUE && qualities[i].meta->getStartsWithRAP()) ? GF_TRUE : GF_FALSE;
+		}
 	}
 	if (!mpd->mpd->availabilityStartTime) {
 		mpd->mpd->availabilityStartTime = gf_net_get_utc() - segDurationInMs;

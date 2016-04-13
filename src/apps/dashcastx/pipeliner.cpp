@@ -53,6 +53,11 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	auto dasher = pipeline.addModule(new Modules::Stream::MPEG_DASH("dashcastx.mpd",
 	                                 opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
 
+	const bool transcode = opt.v.size() > 0 ? true : false;
+	if (!transcode) {
+		Log::msg(Log::Warning, "[DashcastX] No transcode. Make passthru.");
+	}
+
 	int numDashInputs = 0;
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		auto const metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
@@ -61,32 +66,41 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 			break;
 		}
 
-		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
-		pipeline.connect(demux, i, decode, 0);
-
+		Pipelines::PipelinedModule *decode = nullptr;
+		if (transcode) {
+			decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
+			pipeline.connect(demux, i, decode, 0);
 #ifdef DEBUG_MONITOR
-		auto webcamPreview = pipeline.addModule(new Render::SDLVideo());
-		connect(decode, webcamPreview);
+			auto webcamPreview = pipeline.addModule(new Render::SDLVideo());
+			connect(decode, webcamPreview);
 #endif
+		}
 
-		auto const numRes = metadata->isVideo() ? opt.v.size() : 1;
+		auto const numRes = metadata->isVideo() ? std::max<size_t>(opt.v.size(), 1) : 1;
 		for (size_t r = 0; r < numRes; ++r) {
-			auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
-			if (!converter)
-				continue;
+			Pipelines::PipelinedModule *encoder = nullptr;
+			if (transcode) {
+				auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
+				if (!converter)
+					continue;
 
-			connect(decode, converter);
+				connect(decode, converter);
 
-			auto encoder = pipeline.addModule(createEncoder(metadata, opt, r));
-			if (!encoder)
-				continue;
+				encoder = pipeline.addModule(createEncoder(metadata, opt, r));
+				if (!encoder)
+					continue;
 
-			connect(converter, encoder);
+				connect(converter, encoder);
+			}
 
 			std::stringstream filename;
 			filename << numDashInputs;
 			auto muxer = pipeline.addModule(new Mux::GPACMuxMP4(filename.str(), opt.segmentDuration, true));
-			connect(encoder, muxer);
+			if (transcode) {
+				connect(encoder, muxer);
+			} else {
+				pipeline.connect(demux, i, muxer, 0);
+			}
 
 			pipeline.connect(muxer, 0, dasher, numDashInputs);
 			numDashInputs++;

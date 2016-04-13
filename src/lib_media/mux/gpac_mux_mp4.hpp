@@ -29,6 +29,7 @@ class GPACMuxMP4 : public ModuleDynI {
 		GF_ISOFile *m_iso;
 		uint32_t m_trackId;
 		uint64_t m_DTS = 0, m_lastInputTimeIn180k = 0;
+		bool isAnnexB = true;
 
 		//fragments
 		void setupFragments();

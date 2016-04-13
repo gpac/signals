@@ -34,7 +34,7 @@ static GF_Err avc_import_ffextradata(const u8 *extradata, const u64 extradataSiz
 	}
 	if (gf_bs_read_u32(bs) != 0x00000001) {
 		gf_bs_del(bs);
-		return GF_BAD_PARAM;
+		return GF_NON_COMPLIANT_BITSTREAM;
 	}
 
 	//SPS
@@ -151,7 +151,7 @@ static GF_Err hevc_import_ffextradata(const u8 *extradata, const u64 extradata_s
 
 		if (gf_bs_read_u32(bs) != 0x00000001) {
 			gf_bs_del(bs);
-			return GF_BAD_PARAM;
+			return GF_NON_COMPLIANT_BITSTREAM;
 		}
 		NALStart = gf_bs_get_position(bs);
 		NALSize = gf_media_nalu_next_start_code_bs(bs);
@@ -314,6 +314,7 @@ void fillVideoSampleData(const u8 *bufPtr, u32 bufLen, GF_ISOSample &sample) {
 		bufPtr += (NALUSize + scSize);
 		bufLen -= (NALUSize + scSize);
 	}
+
 	while (bufLen) {
 		NALUSize = gf_media_nalu_next_start_code(bufPtr, bufLen, &scSize);
 		if (NALUSize != 0) {
@@ -570,22 +571,6 @@ void GPACMuxMP4::declareStreamAudio(std::shared_ptr<const MetadataPktLibavAudio>
 }
 
 void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo> metadata) {
-	GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
-	if (!avccfg) {
-		Log::msg(Log::Warning, "Cannot create AVCConfig");
-		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
-	}
-
-	const uint8_t *extradata;
-	size_t extradataSize;
-	metadata->getExtradata(extradata, extradataSize);
-	GF_Err e = avc_import_ffextradata(extradata, extradataSize, avccfg);
-	if (e) {
-		Log::msg(Log::Warning, "Cannot parse H264 SPS/PPS");
-		gf_odf_avc_cfg_del(avccfg);
-		throw std::runtime_error("[GPACMuxMP4] Container format import failed");
-	}
-
 	u32 trackNum = gf_isom_new_track(m_iso, 0, GF_ISOM_MEDIA_VISUAL, metadata->getTimeScale() * TIMESCALE_MUL);
 	if (!trackNum) {
 		Log::msg(Log::Warning, "Cannot create new track");
@@ -594,20 +579,74 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 
 	m_trackId = gf_isom_get_track_id(m_iso, trackNum);
 
-	e = gf_isom_set_track_enabled(m_iso, trackNum, GF_TRUE);
+	GF_Err e = gf_isom_set_track_enabled(m_iso, trackNum, GF_TRUE);
 	if (e != GF_OK) {
 		Log::msg(Log::Warning, "%s: gf_isom_set_track_enabled", gf_error_to_string(e));
 		throw std::runtime_error("[GPACMuxMP4] Cannot enable track");
 	}
 
-	u32 di;
-	e = gf_isom_avc_config_new(m_iso, trackNum, avccfg, nullptr, nullptr, &di);
-	if (e != GF_OK) {
-		Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
-		throw std::runtime_error("[GPACMuxMP4] Cannot create AVC config");
-	}
+	const uint8_t *extradata;
+	size_t extradataSize;
+	metadata->getExtradata(extradata, extradataSize);
 
-	gf_odf_avc_cfg_del(avccfg);
+	u32 di;
+	if (metadata->getAVCodecContext()->codec_id == CODEC_ID_H264) {
+		GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
+		if (!avccfg) {
+			Log::msg(Log::Warning, "Cannot create AVCConfig");
+			throw std::runtime_error("[GPACMuxMP4] Container format import failed (AVC)");
+		}
+		e = avc_import_ffextradata(extradata, extradataSize, avccfg);
+		if (e == GF_OK) {
+			e = gf_isom_avc_config_new(m_iso, trackNum, avccfg, nullptr, nullptr, &di);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
+				throw std::runtime_error("[GPACMuxMP4] Cannot create AVC config");
+			}
+			gf_odf_avc_cfg_del(avccfg);
+		}
+	} else if (metadata->getAVCodecContext()->codec_id == AV_CODEC_ID_H265) {
+		GF_HEVCConfig *hevccfg = gf_odf_hevc_cfg_new();
+		if (!hevccfg) {
+			Log::msg(Log::Warning, "Cannot create HEVCConfig");
+			throw std::runtime_error("[GPACMuxMP4] Container format import failed (HEVC)");
+		}
+		e = hevc_import_ffextradata(extradata, extradataSize, hevccfg);
+		if (e == GF_OK) {
+			e = gf_isom_hevc_config_new(m_iso, trackNum, hevccfg, nullptr, nullptr, &di);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_avc_config_new", gf_error_to_string(e));
+				throw std::runtime_error("[GPACMuxMP4] Cannot create AVC config");
+			}
+			gf_odf_hevc_cfg_del(hevccfg);
+		}
+	} else {
+		throw std::runtime_error("[GPACMuxMP4] Unknown codec");
+	}
+	if (e) {
+		if (e == GF_NON_COMPLIANT_BITSTREAM) {
+			/*non Annex B: assume this is AVCC*/
+			GF_ESD *esd = (GF_ESD *)gf_odf_desc_esd_new(0);
+			esd->ESID = 1; /*FIXME: only one track: set trackID?*/
+			esd->decoderConfig->streamType = GF_STREAM_VISUAL;
+			esd->decoderConfig->avgBitrate = esd->decoderConfig->maxBitrate = 0;
+			esd->decoderConfig->objectTypeIndication = metadata->getAVCodecContext()->codec_id == CODEC_ID_H264 ? GPAC_OTI_VIDEO_AVC : GPAC_OTI_VIDEO_HEVC;
+			esd->decoderConfig->decoderSpecificInfo->dataLength = (u32)extradataSize;
+			esd->decoderConfig->decoderSpecificInfo->data = (char*)gf_malloc(extradataSize);
+			memcpy(esd->decoderConfig->decoderSpecificInfo->data, extradata, extradataSize);
+			esd->slConfig->predefined = SLPredef_MP4;
+
+			e = gf_isom_new_mpeg4_description(m_iso, trackNum, esd, nullptr, nullptr, &di);
+			if (e != GF_OK) {
+				Log::msg(Log::Warning, "%s: gf_isom_new_mpeg4_description", gf_error_to_string(e));
+				throw std::runtime_error("[GPACMuxMP4] Cannot create MPEG-4 config");
+			}
+			gf_odf_desc_del((GF_Descriptor*)esd);
+			isAnnexB = false;
+		} else {
+			throw std::runtime_error("[GPACMuxMP4] Container format import failed");
+		}
+	}
 
 	auto const res = metadata->getResolution();
 	gf_isom_set_visual_info(m_iso, trackNum, di, res.width, res.height);
@@ -752,7 +791,13 @@ void GPACMuxMP4::process() {
 
 		u32 mediaType = gf_isom_get_media_type(m_iso, 1);
 		if (mediaType == GF_ISOM_MEDIA_VISUAL) {
-			fillVideoSampleData(bufPtr, bufLen, sample);
+			if (isAnnexB) {
+				fillVideoSampleData(bufPtr, bufLen, sample);
+			} else {
+				sample.data = (char*)bufPtr;
+				sample.dataLength = bufLen;
+				sample.setDataOwnership(false);
+			}
 		} else if (mediaType == GF_ISOM_MEDIA_AUDIO) {
 			sample.data = (char*)bufPtr;
 			sample.dataLength = bufLen;
