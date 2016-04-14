@@ -11,8 +11,6 @@
 
 # Build
 
-Please consult the doc/build.md file.
-
 We support two build systems:
  - Visual Studio (tested >= 2015) (recommended on Windows)
  - Make (tested under gcc >= 4.9) (all other platforms, possible on Windows using msys2)
