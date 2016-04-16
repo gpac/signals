@@ -24,13 +24,20 @@ if [ -z "$CPREFIX" ]; then
 		CPREFIX=x86_64-w64-mingw32
 		echo "MSYS detected ($OSTYPE): forcing use of prefix \"$CPREFIX\""
 		;;
+	darwin*)
+		CPREFIX=-
+		HOST=$(gcc -dumpmachine)
+		echo "Darwin detected ($OSTYPE): forcing use of prefix \"$CPREFIX\" (host=$HOST)"
+		;;
 	*)
 		CPREFIX=$(gcc -dumpmachine)
 		echo "Platform $OSTYPE detected."
 		;;
 	esac
 fi
-HOST=$($CPREFIX-gcc -dumpmachine)
+if [ -z "$HOST" ]; then
+	HOST=$($CPREFIX-gcc -dumpmachine)
+fi
 echo "Using compiler host ($HOST) with prefix ($CPREFIX)"
 
 case $OSTYPE in
