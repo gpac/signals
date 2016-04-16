@@ -65,31 +65,31 @@ fi
 
 if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 	## x264
-	if [ ! -f extra/build/flags/$CPREFIX/x264.built ] ; then
+	if [ ! -f extra/build/flags/$HOST/x264.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" x264 $CPREFIX
 		popd
 	fi
 	## vo-aacenc
-	if [ ! -f extra/build/flags/$CPREFIX/voaac-enc.built ] ; then
+	if [ ! -f extra/build/flags/$HOST/voaac-enc.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" voaac-enc $CPREFIX
 		popd
 	fi
 	## FFmpeg
-	if [ ! -f extra/build/flags/$CPREFIX/ffmpeg.built ] ; then
+	if [ ! -f extra/build/flags/$HOST/ffmpeg.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" ffmpeg $CPREFIX
 		popd
 	fi
 	## GPAC
-	if [ ! -f extra/build/flags/$CPREFIX/gpac.built ] ; then
+	if [ ! -f extra/build/flags/$HOST/gpac.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" gpac $CPREFIX
 		popd
 	fi
 	## SDL2
-	if [ ! -f extra/build/flags/$CPREFIX/libsdl2.built ] ; then
+	if [ ! -f extra/build/flags/$HOST/libsdl2.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" libsdl2 $CPREFIX
 		popd
