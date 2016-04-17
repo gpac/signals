@@ -54,4 +54,4 @@ TestOutDir:=$(OUTDIR)
 run: unit
 	$(TestOutDir)/utils.exe
 	$(TestOutDir)/signals.exe
-	$(TestOutDir)/modules.exe
+	cd src/tests ; ../../$(TestOutDir)/modules.exe
