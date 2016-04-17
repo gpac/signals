@@ -89,4 +89,9 @@ $ PKG_CONFIG_PATH=$PWD/extra/x86_64-w64-mingw32/lib/pkgconfig CXX=x86_64-w64-min
 ```
 
 # Run
-The binaries are in generated in ```bin/```including a sample player, the dashcastx application, and all the unit test apps. 
+The binaries are in generated in ```bin/```including a sample player, the dashcastx application, and all the unit test apps.
+
+#### Linux
+
+If you encounter this error message: ```[SDLVideo render] Couldn't initialize: No available video device```, please install the ```libxext-dev``` package on your system.
+

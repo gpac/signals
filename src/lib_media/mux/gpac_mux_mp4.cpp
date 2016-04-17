@@ -590,7 +590,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 	metadata->getExtradata(extradata, extradataSize);
 
 	u32 di;
-	if (metadata->getAVCodecContext()->codec_id == CODEC_ID_H264) {
+	if (metadata->getAVCodecContext()->codec_id == AV_CODEC_ID_H264) {
 		GF_AVCConfig *avccfg = gf_odf_avc_cfg_new();
 		if (!avccfg) {
 			Log::msg(Log::Warning, "Cannot create AVCConfig");
@@ -630,7 +630,7 @@ void GPACMuxMP4::declareStreamVideo(std::shared_ptr<const MetadataPktLibavVideo>
 			esd->ESID = 1; /*FIXME: only one track: set trackID?*/
 			esd->decoderConfig->streamType = GF_STREAM_VISUAL;
 			esd->decoderConfig->avgBitrate = esd->decoderConfig->maxBitrate = 0;
-			esd->decoderConfig->objectTypeIndication = metadata->getAVCodecContext()->codec_id == CODEC_ID_H264 ? GPAC_OTI_VIDEO_AVC : GPAC_OTI_VIDEO_HEVC;
+			esd->decoderConfig->objectTypeIndication = metadata->getAVCodecContext()->codec_id == AV_CODEC_ID_H264 ? GPAC_OTI_VIDEO_AVC : GPAC_OTI_VIDEO_HEVC;
 			esd->decoderConfig->decoderSpecificInfo->dataLength = (u32)extradataSize;
 			esd->decoderConfig->decoderSpecificInfo->data = (char*)gf_malloc(extradataSize);
 			memcpy(esd->decoderConfig->decoderSpecificInfo->data, extradata, extradataSize);

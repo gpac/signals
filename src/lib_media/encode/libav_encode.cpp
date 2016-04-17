@@ -94,9 +94,9 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		codecCtx->width = params.res.width;
 		codecCtx->height = params.res.height;
 		if (strcmp(generalDict.get("vcodec")->value, "mjpeg")) {
-			codecCtx->pix_fmt = PIX_FMT_YUV420P;
+			codecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
 		} else {
-			codecCtx->pix_fmt = PIX_FMT_YUVJ420P;
+			codecCtx->pix_fmt = AV_PIX_FMT_YUVJ420P;
 		}
 
 		double fr = atof(generalDict.get("r")->value);

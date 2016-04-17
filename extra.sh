@@ -57,7 +57,7 @@ if [ ! -f extra/src/zenbuild/zenbuild.sh ] ; then
 	rm -rf extra/src/zenbuild
 	git clone https://github.com/gpac/zenbuild extra/src/zenbuild
 	pushd extra/src/zenbuild
-	git checkout 75c2d6dbac6d
+	git checkout 20816630da5b3
 	patch -p1 < ../../patches/gpac_01_revision.diff
 	#patch -p1 < ../../patches/ffmpeg_01_version.diff
 	popd
@@ -68,12 +68,6 @@ if [ ! -f extra/src/zenbuild/zenbuild.built ] ; then
 	if [ ! -f extra/build/flags/$HOST/x264.built ] ; then
 		pushd extra/src/zenbuild
 		./zenbuild.sh "$PWD/../../../extra/build" x264 $CPREFIX
-		popd
-	fi
-	## vo-aacenc
-	if [ ! -f extra/build/flags/$HOST/voaac-enc.built ] ; then
-		pushd extra/src/zenbuild
-		./zenbuild.sh "$PWD/../../../extra/build" voaac-enc $CPREFIX
 		popd
 	fi
 	## FFmpeg
