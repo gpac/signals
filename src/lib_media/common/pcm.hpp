@@ -25,7 +25,7 @@ static const uint32_t AUDIO_SAMPLERATE = 44100;
 static const uint8_t AUDIO_CHANNEL_NUM = 2;
 static const AudioLayout AUDIO_LAYOUT = Stereo;
 
-static const AudioSampleFormat AUDIO_PCM_FORMAT = S16;
+static const AudioSampleFormat AUDIO_PCM_FORMAT = F32;
 static const uint8_t AUDIO_PCM_PLANES_MAX = 8;
 }
 
@@ -47,7 +47,7 @@ namespace Modules {
 class PcmFormat {
 	public:
 		PcmFormat(uint32_t sampleRate = AUDIO_SAMPLERATE, uint8_t numChannels = AUDIO_CHANNEL_NUM,
-		          AudioLayout layout = AUDIO_LAYOUT, AudioSampleFormat sampleFormat = AUDIO_PCM_FORMAT, AudioStruct structa = Interleaved) :
+		          AudioLayout layout = AUDIO_LAYOUT, AudioSampleFormat sampleFormat = AUDIO_PCM_FORMAT, AudioStruct structa = Planar) :
 			sampleRate(sampleRate), numChannels(numChannels), layout(layout), sampleFormat(sampleFormat), numPlanes((structa == Planar) ? numChannels : 1) {
 		}
 

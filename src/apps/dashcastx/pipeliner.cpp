@@ -35,7 +35,7 @@ ModuleS* createConverter(std::shared_ptr<const IMetadata> metadata, const Resolu
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Log::Info, "[Converter] Found audio stream");
-		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
+		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 		return new Transform::AudioConvert(format);
 	} else {
 		Log::msg(Log::Info, "[Converter] Found unknown stream");

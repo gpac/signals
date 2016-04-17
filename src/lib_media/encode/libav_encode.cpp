@@ -54,9 +54,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		break;
 	case Audio:
 		codecOptions = format("-b %s", params.bitrate_a);
-		generalOptions = "-acodec libvo_aacenc";
-		if (params.isLowLatency)
-			Log::msg(Log::Info, "[libav_encode] low latency has no effect for audio.");
+		generalOptions = "-acodec aac";
 		codecName = "acodec";
 		break;
 	default:

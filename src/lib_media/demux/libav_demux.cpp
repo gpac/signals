@@ -37,8 +37,8 @@ const char* webcamFormat() {
 #endif
 }
 
-bool isRaw(AVCodecID codecID) {
-	return codecID == AV_CODEC_ID_RAWVIDEO;
+bool isRaw(AVCodecContext *codecCtx) {
+	return codecCtx->codec_id == AV_CODEC_ID_RAWVIDEO;
 }
 
 }
@@ -97,7 +97,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 		IMetadata *m;
 		switch (m_formatCtx->streams[i]->codec->codec_type) {
 		case AVMEDIA_TYPE_AUDIO: m = new MetadataPktLibavAudio(m_formatCtx->streams[i]->codec); break;
-		case AVMEDIA_TYPE_VIDEO: /*isRaw(m_formatCtx->streams[i]->codec->codec_id) ? m = new MetadataRawVideo :*/
+		case AVMEDIA_TYPE_VIDEO: /*ffpp::isRaw(m_formatCtx->streams[i]->codec) ? m = new MetadataRawVideo :*/
 			m = new MetadataPktLibavVideo(m_formatCtx->streams[i]->codec); break;
 		default: m = nullptr; break;
 		}
