@@ -4,6 +4,7 @@
 
 
 //#define ENABLE_FAILING_TESTS
+//#define ENABLE_PERF_TESTS
 
 
 #include "signals_queue.cpp"
@@ -11,6 +12,8 @@
 #include "signals_simple.cpp"
 #include "signals_module.cpp"
 #include "signals_async.cpp"
+#ifdef ENABLE_PERF_TESTS
 #include "signals_perf.cpp"
+#endif
 
 using namespace Tests;
