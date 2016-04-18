@@ -89,16 +89,22 @@ unittest("Pipeline: connect inputs to outputs") {
 	ASSERT(thrown);
 }
 
-#ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: connect incompatible i/o") {
 	bool thrown = false;
 	try {
-		thrown = true; //TODO
-	} catch (std::runtime_error const& /*e*/) {
+		Pipeline p;
+		auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+		auto render = p.addModule(new Render::SDLVideo());
+		for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
+			p.connect(demux, i, render, i);
+		}
+		p.start();
+		p.waitForCompletion();
+	}
+	catch (std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
 	ASSERT(thrown);
 }
-#endif
 
 }
