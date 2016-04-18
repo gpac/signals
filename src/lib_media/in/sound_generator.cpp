@@ -15,6 +15,7 @@ auto const SINE_FREQ = 880.0;
 
 SoundGenerator::SoundGenerator()
 	: m_numSamples(20000) {
+	pcmFormat.sampleFormat = S16;
 	pcmFormat.sampleRate = SAMPLE_RATE;
 	pcmFormat.numPlanes = 1;
 	output = addOutput(new OutputPcm);
