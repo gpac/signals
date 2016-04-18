@@ -111,7 +111,7 @@ unittest("Pipeline: source only and destroy while running") {
 	bool thrown = false;
 	try {
 		Pipeline p;
-		auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+		p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 		p.start();
 		p.waitForCompletion();
 	}
