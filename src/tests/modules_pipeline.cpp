@@ -30,11 +30,22 @@ unittest("Pipeline: empty") {
 	}
 }
 
-#ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: interrupted") {
-	//TODO
+	Pipeline p;
+	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+	ASSERT(demux->getNumOutputs() > 1);
+	auto null = p.addModule(new Out::Null);
+	p.connect(demux, 0, null, 0);
+	p.start();
+	auto f = [&]() {
+		p.exitSync();
+	};
+	std::thread tf(f);
+	p.waitForCompletion();
+	tf.join();
 }
 
+#ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: connect while running") {
 	//TODO
 }
