@@ -127,7 +127,7 @@ void PipelinedModule::finished() {
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
-PipelinedModule* Pipeline::addModule(Module* rawModule) {
+PipelinedModule* Pipeline::addModule(Module *rawModule) {
 	if (!rawModule)
 		return nullptr;
 	rawModule->setLowLatency(isLowLatency);
