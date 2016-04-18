@@ -19,6 +19,7 @@ struct IOutput {
 	virtual ~IOutput() noexcept(false) {}
 	virtual size_t emit(Data data) = 0;
 	virtual Signals::ISignal<void(Data)>& getSignal() = 0;
+	virtual void setLowLatency(bool isLowLatency) = 0;
 };
 
 template<typename Allocator, typename Signal>
@@ -50,9 +51,8 @@ class OutputT : public IOutput, public MetadataCap {
 			return signal;
 		}
 
-		//Takes ownership.
-		void setAllocator(Allocator *allocator) {
-			this->allocator = uptr(allocator);
+		void setLowLatency(bool lowLatency) override {
+			this->allocator = uptr(new Allocator(lowLatency ? ALLOC_NUM_BLOCKS_LOW_LATENCY : ALLOC_NUM_BLOCKS_DEFAULT));
 		}
 
 	private:
@@ -81,20 +81,16 @@ class OutputCap : public IOutputCap {
 		}
 
 		void setLowLatency(bool isLowLatency) {
-			//m_isLowLatency = isLowLatency;
-			//FIXME: low latency is not propagated to existing outputs
-			// this is a general limitation for threading and allocators
-			// which may need to be injected dynamically
-			//for (auto o : outputs)
-			//	o->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
+			m_isLowLatency = isLowLatency;
+			for (auto &o : outputs) /*propagate to existing outputs*/
+				o->setLowLatency(isLowLatency);
 		}
 
 	protected:
 		//Takes ownership
 		template<typename T>
 		T* addOutput(T* p) {
-			if (m_isLowLatency)
-				p->setAllocator(new typename T::AllocatorType(ALLOC_NUM_BLOCKS_LOW_LATENCY));
+			p->setLowLatency(m_isLowLatency);
 			outputs.push_back(uptr(p));
 			return p;
 		}
