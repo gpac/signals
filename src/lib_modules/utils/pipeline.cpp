@@ -59,6 +59,8 @@ size_t PipelinedModule::getNumInputs() const {
 
 IInput* PipelinedModule::getInput(size_t i) {
 	mimicInputs();
+	if (i >= inputs.size())
+		throw std::runtime_error(format("PipelinedModule %s: no input %s.", typeid(delegate).name(), i));
 	return inputs[i].get();
 }
 
@@ -67,6 +69,8 @@ size_t PipelinedModule::getNumOutputs() const {
 }
 
 IOutput* PipelinedModule::getOutput(size_t i) const {
+	if (i >= delegate->getNumOutputs())
+		throw std::runtime_error(format("PipelinedModule %s: no output %s.", typeid(delegate).name(), i));
 	return delegate->getOutput(i);
 }
 

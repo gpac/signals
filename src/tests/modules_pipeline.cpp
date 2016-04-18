@@ -71,18 +71,25 @@ unittest("Pipeline: connect one input (out of 2) to one output") {
 	p.waitForCompletion();
 }
 
-#ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: connect inputs to outputs") {
-	Pipeline p;
-	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
-	auto muxer = p.addModule(new Mux::GPACMuxMP4("output"));
-	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
-		p.connect(demux, i, muxer, i);
+	bool thrown = false;
+	try {
+		Pipeline p;
+		auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+		auto null = p.addModule(new Out::Null());
+		for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
+			p.connect(null, i, demux, i);
+		}
+		p.start();
+		p.waitForCompletion();
 	}
-	p.start();
-	p.waitForCompletion();
+	catch (std::runtime_error const& /*e*/) {
+		thrown = true;
+	}
+	ASSERT(thrown);
 }
 
+#ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: connect incompatible i/o") {
 	bool thrown = false;
 	try {
