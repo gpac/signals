@@ -107,4 +107,32 @@ unittest("Pipeline: connect incompatible i/o") {
 	ASSERT(thrown);
 }
 
+unittest("Pipeline: source only and destroy while running") {
+	bool thrown = false;
+	try {
+		Pipeline p;
+		auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+		p.start();
+		p.waitForCompletion();
+	}
+	catch (std::runtime_error const& /*e*/) {
+		thrown = true;
+	}
+	ASSERT(thrown);
+}
+
+unittest("Pipeline: sink only") {
+	bool thrown = false;
+	try {
+		Pipeline p;
+		p.addModule(new Out::Null());
+		p.start();
+		p.waitForCompletion();
+	}
+	catch (std::runtime_error const& /*e*/) {
+		thrown = true;
+	}
+	ASSERT(thrown);
+}
+
 }
