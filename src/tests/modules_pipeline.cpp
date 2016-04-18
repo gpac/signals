@@ -45,11 +45,21 @@ unittest("Pipeline: interrupted") {
 	tf.join();
 }
 
-#ifdef ENABLE_FAILING_TESTS
 unittest("Pipeline: connect while running") {
-	//TODO
+	Pipeline p;
+	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+	ASSERT(demux->getNumOutputs() > 1);
+	auto null1 = p.addModule(new Out::Null);
+	auto null2 = p.addModule(new Out::Null);
+	p.connect(demux, 0, null1, 0);
+	p.start();
+	auto f = [&]() {
+		p.connect(demux, 0, null2, 0);
+	};
+	std::thread tf(f);
+	p.waitForCompletion();
+	tf.join();
 }
-#endif
 
 unittest("Pipeline: connect one input (out of 2) to one output") {
 	Pipeline p;
