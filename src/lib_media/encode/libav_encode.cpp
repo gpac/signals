@@ -208,7 +208,13 @@ bool LibavEncode::processAudio(const DataPcm *data) {
 	}
 	if (gotPkt) {
 		pkt->pts = pkt->dts = frameNum * pkt->duration;
-		out->setTime(times.pop());
+		uint64_t time;
+		if (times.tryPop(time)) {
+			out->setTime(time);
+		} else {
+			Log::msg(Log::Warning, "[libav_encode] error encountered: more output packets than input. Discard", frameNum);
+			return false;
+		}
 		assert(pkt->size);
 		if (out) output->emit(out);
 		return true;
