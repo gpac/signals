@@ -18,7 +18,7 @@ struct IModule {
 	virtual void flush() = 0;
 };
 
-class Module : public IModule, public ILog, public IError, public InputCap, public OutputCap {
+class Module : public IModule, public IError, public LogCap, public InputCap, public OutputCap {
 	public:
 		Module() = default;
 		virtual ~Module() noexcept(false) {}
