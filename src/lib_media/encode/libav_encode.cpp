@@ -75,16 +75,12 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 	if(!entry)
 		throw std::runtime_error("Could not get codecName.");
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
-	if (!codec) {
-		Log::msg(Log::Warning, "[libav_encode] codec '%s' not found, disable output.", entry->value);
-		throw std::runtime_error(format("Codec '%s' not found.", entry->value));
-	}
+	if (!codec)
+		throw std::runtime_error(format("[libav_encode] codec '%s' not found, disable output.", entry->value));
 
 	codecCtx = avcodec_alloc_context3(codec);
-	if (!codecCtx) {
-		Log::msg(Log::Warning, "[libav_encode] could not allocate the codec context.");
-		throw std::runtime_error("Codec context allocation failed.");
-	}
+	if (!codecCtx)
+		throw std::runtime_error("[libav_encode] could not allocate the codec context.");
 
 	/* parameters */
 	switch (type) {
@@ -133,10 +129,8 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 
 	/* open it */
 	codecCtx->flags |= CODEC_FLAG_GLOBAL_HEADER; //gives access to the extradata (e.g. H264 SPS/PPS, etc.)
-	if (avcodec_open2(codecCtx, codec, &codecDict) < 0) {
-		Log::msg(Log::Warning, "[libav_encode] could not open codec, disable output.");
-		throw std::runtime_error("Codec creation failed.");
-	}
+	if (avcodec_open2(codecCtx, codec, &codecDict) < 0)
+		throw std::runtime_error("[libav_encode] could not open codec, disable output.");
 
 	/* check all optionsDict have been consumed */
 	auto opt = stringDup(codecOptions.c_str());

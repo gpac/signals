@@ -61,9 +61,7 @@ bool PcmComparator::compare(Data data1, Data data2) const {
 	for (size_t planeIdx = 0; planeIdx < data->getFormat().numPlanes; ++planeIdx) {
 		for (size_t i = 0; i < data->getPlaneSize(planeIdx); ++i) {
 			if (abs(pcm1->getPlane(planeIdx)[i] - pcm2->getPlane(planeIdx)[i]) > tolerance) {
-				std::stringstream ss;
-				ss << "[PcmComparator] Samples are different at plane " << planeIdx << ", index " << i << "." << std::endl;
-				throw std::runtime_error(ss.str());
+				throw std::runtime_error(format("[PcmComparator] Samples are different at plane %s, index %s.", planeIdx, i));
 				return false;
 			}
 		}

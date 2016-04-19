@@ -9,10 +9,8 @@ namespace In {
 
 File::File(std::string const& fn) {
 	file = fopen(fn.c_str(), "rb");
-	if (!file) {
-		Log::msg(Log::Error, "Can't open file for reading: %s", fn);
-		throw std::runtime_error("File not found");
-	}
+	if (!file)
+		throw std::runtime_error(format("Can't open file for reading: %s", fn));
 
 	fseek(file, 0, SEEK_END);
 	auto size = ftell(file);

@@ -57,8 +57,7 @@ class PictureFormat {
 			case YUV420P: return res.width * res.height * 3 / 2;
 			case YUYV422: return res.width * res.height * 2;
 			case RGB24: return res.width * res.height * 3;
-			default:
-				throw std::runtime_error("Unknown pixel format. Please contact your vendor.");
+			default: throw std::runtime_error("Unknown pixel format. Please contact your vendor.");
 			}
 		}
 

@@ -20,20 +20,15 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	avcodec_copy_context(codecCtx, metadata.getAVCodecContext());
 
 	switch (codecCtx->codec_type) {
-	case AVMEDIA_TYPE_VIDEO:
-	case AVMEDIA_TYPE_AUDIO:
-		break;
-	default:
-		Log::msg(Log::Warning, "[LibavDecode] codec_type %s not supported. Must be audio or video.", codecCtx->codec_type);
-		throw std::runtime_error("[LibavDecode] Unknown decode type. Failed.");
+	case AVMEDIA_TYPE_VIDEO: break;
+	case AVMEDIA_TYPE_AUDIO: break;
+	default: throw std::runtime_error(format("[LibavDecode] codec_type %s not supported. Must be audio or video.", codecCtx->codec_type));
 	}
 
 	//find an appropriate decode
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
-	if (!codec) {
-		Log::msg(Log::Warning, "[LibavDecode] Codec not found");
-		throw std::runtime_error("[LibavDecode] Decoder not found.");
-	}
+	if (!codec)
+		throw std::runtime_error(format("[LibavDecode] Decoder not found for codecID(%s).", codecCtx->codec_id));
 
 	//force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
 	ffpp::Dict dict;

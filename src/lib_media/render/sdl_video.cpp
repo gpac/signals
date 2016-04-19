@@ -29,16 +29,13 @@ void SDLVideo::doRender() {
 	pictureFormat.res = VIDEO_RESOLUTION;
 	pictureFormat.format = YUV420P;
 	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pictureFormat.res.width, pictureFormat.res.height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	if (!window) {
-		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create window: %s", SDL_GetError());
-		throw std::runtime_error("Window creation failed");
-	}
+	if (!window)
+		throw std::runtime_error(format("[SDLVideo render] Couldn't set create window: %s", SDL_GetError()));
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
-		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create renderer: %s", SDL_GetError());
 		SDL_DestroyWindow(window);
-		throw std::runtime_error("Renderer creation failed");
+		throw std::runtime_error(format("[SDLVideo render] Couldn't set create renderer: %s", SDL_GetError()));
 	}
 	m_dataQueue.push(nullptr); //unlock the constructor
 
@@ -113,10 +110,8 @@ void SDLVideo::createTexture() {
 		SDL_DestroyTexture(texture);
 
 	texture = SDL_CreateTexture(renderer, pixelFormat2SDLFormat(pictureFormat.format), SDL_TEXTUREACCESS_STATIC, pictureFormat.res.width, pictureFormat.res.height);
-	if (!texture) {
-		Log::msg(Log::Warning, "[SDLVideo render] Couldn't set create texture: %s", SDL_GetError());
-		throw std::runtime_error("Texture creation failed");
-	}
+	if (!texture)
+		throw std::runtime_error(format("[SDLVideo render] Couldn't set create texture: %s", SDL_GetError()));
 
 	displayrect->x = 0;
 	displayrect->y = 0;

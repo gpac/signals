@@ -88,7 +88,7 @@ void printDetectedOptions(option::Parser &parse, option::Option * const options)
 		std::cout << "Several URLs detected: " << std::endl;
 		for (int i = 0; i < parse.nonOptionsCount(); ++i)
 			std::cout << "Unknown option: " << parse.nonOption(i) << std::endl;
-		throw std::runtime_error("Parse error. Please check message and usage above.");
+		throw std::runtime_error("Parse error (1). Please check message and usage above.");
 	}
 
 	for (option::Option* opt = options[NUMERIC]; opt; opt = opt->next())
@@ -111,7 +111,7 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 
 	if (parse.error()) {
 		option::printUsage(std::cout, usage);
-		throw std::runtime_error("Parse error. Please check message and usage above.");
+		throw std::runtime_error("Parse error (2). Please check message and usage above.");
 	} else if (options[HELP] || argc == 0 || parse.nonOptionsCount() == 0) {
 		option::printUsage(std::cout, usage);
 		throw std::runtime_error("Please check message and usage above.");

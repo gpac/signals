@@ -12,14 +12,12 @@ class SdlInit {
 			struct sigaction action;
 			sigaction(SIGINT, nullptr, &action);
 #endif
-			if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1) {
-				Log::msg(Log::Warning, "[SDLAudio render] Couldn't initialize: %s", SDL_GetError());
-				throw std::runtime_error("Init failed");
-			}
-			if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1) {
-				Log::msg(Log::Warning, "[SDLVideo render] Couldn't initialize: %s", SDL_GetError());
-				throw std::runtime_error("Init failed");
-			}
+			if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1)
+				throw std::runtime_error(format("[SDLAudio render] Couldn't initialize: %s", SDL_GetError()));
+
+			if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1)
+				throw std::runtime_error(format("[SDLVideo render] Couldn't initialize: %s", SDL_GetError()));
+
 #ifdef __linux__
 			sigaction(SIGINT, &action, nullptr);
 #endif

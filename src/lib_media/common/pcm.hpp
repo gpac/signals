@@ -32,12 +32,9 @@ static const uint8_t AUDIO_PCM_PLANES_MAX = 8;
 namespace {
 uint8_t getNumChannelsFromLayout(Modules::AudioLayout layout) {
 	switch (layout) {
-	case Modules::Mono:
-		return 1;
-	case Modules::Stereo:
-		return 2;
-	default:
-		throw std::runtime_error("Unknown audio layout");
+	case Modules::Mono: return 1;
+	case Modules::Stereo: return 2;
+	default: throw std::runtime_error("Unknown audio layout");
 	}
 }
 }

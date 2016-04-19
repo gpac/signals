@@ -31,18 +31,15 @@ LibavMux::LibavMux(const std::string &baseName)
 	/* setup container */
 	AVOutputFormat *of = av_guess_format(av_dict_get(optionsDict, "format", nullptr, 0)->value, nullptr, nullptr);
 	if (!of) {
-		Log::msg(Log::Warning, "[libav_mux] couldn't guess container from file extension");
 		av_dict_free(&optionsDict);
-		throw std::runtime_error("Container format guess failed");
+		throw std::runtime_error("[libav_mux] couldn't guess container from file extension");
 	}
 	av_dict_free(&optionsDict);
 
 	/* output format context */
 	m_formatCtx = avformat_alloc_context();
-	if (!m_formatCtx) {
-		Log::msg(Log::Warning, "[libav_mux] format context couldn't be allocated.");
-		throw std::runtime_error("Format Context allocation failed");
-	}
+	if (!m_formatCtx)
+		throw std::runtime_error("[libav_mux] format context couldn't be allocated.");
 	m_formatCtx->oformat = of;
 
 	std::stringstream fileName;
@@ -55,9 +52,8 @@ LibavMux::LibavMux(const std::string &baseName)
 	/* open the output file, if needed */
 	if (!(m_formatCtx->flags & AVFMT_NOFILE)) {
 		if (avio_open(&m_formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
-			Log::msg(Log::Warning, "[libav_mux] could not open %s, disable output.", baseName);
 			avformat_free_context(m_formatCtx);
-			throw std::runtime_error("Output open failed");
+			throw std::runtime_error(format("[libav_mux] could not open %s, disable output.", baseName));
 		}
 		strncpy(m_formatCtx->filename, fileName.str().c_str(), sizeof(m_formatCtx->filename));
 	}
@@ -79,10 +75,8 @@ void LibavMux::declareStream(Data data) {
 	auto const metadata_ = data->getMetadata();
 	if (auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) {
 		AVStream *avStream = avformat_new_stream(m_formatCtx, metadata->getAVCodecContext()->codec);
-		if (!avStream) {
-			Log::msg(Log::Warning, "[LibavMux] could not create the stream, disable output.");
-			throw std::runtime_error("[LibavMux] Stream creation failed.");
-		}
+		if (!avStream)
+			throw std::runtime_error("[LibavMux] Stream creation failed (1).");
 
 		m_formatCtx->streams[0]->codec->time_base = metadata->getAVCodecContext()->time_base; //FIXME: [0]: not a mux yet...
 		m_formatCtx->streams[0]->codec->width = metadata->getAVCodecContext()->width;
@@ -94,10 +88,8 @@ void LibavMux::declareStream(Data data) {
 		input->setMetadata(new MetadataPktLibavVideo(metadata->getAVCodecContext()));
 	} else if (auto metadata2 = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata_)) {
 		AVStream *avStream = avformat_new_stream(m_formatCtx, metadata2->getAVCodecContext()->codec);
-		if (!avStream) {
-			Log::msg(Log::Warning, "[LibavMux] could not create the stream, disable output.");
-			throw std::runtime_error("[LibavMux] Stream creation failed.");
-		}
+		if (!avStream)
+			throw std::runtime_error("[LibavMux] Stream creation failed (2).");
 
 		m_formatCtx->streams[0]->codec->sample_rate = metadata2->getAVCodecContext()->sample_rate;
 		auto input = addInput(new Input<DataAVPacket>(this));

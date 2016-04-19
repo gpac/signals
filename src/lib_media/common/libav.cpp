@@ -194,8 +194,7 @@ void pixelFormat2libavPixFmt(const enum PixelFormat format, AVPixelFormat &avPix
 	case YUV420P: avPixfmt = AV_PIX_FMT_YUV420P; break;
 	case YUYV422: avPixfmt = AV_PIX_FMT_YUYV422; break;
 	case RGB24: avPixfmt = AV_PIX_FMT_RGB24; break;
-	default:
-		throw std::runtime_error("Unknown pixel format to convert (1). Please contact your vendor.");
+	default: throw std::runtime_error("Unknown pixel format to convert (1). Please contact your vendor.");
 	}
 }
 
@@ -204,8 +203,7 @@ enum PixelFormat libavPixFmt2PixelFormat(const AVPixelFormat &avPixfmt) {
 	case AV_PIX_FMT_YUV420P: return YUV420P;
 	case AV_PIX_FMT_YUYV422: return YUYV422;
 	case AV_PIX_FMT_RGB24: return RGB24;
-	default:
-		throw std::runtime_error("Unknown pixel format to convert (2). Please contact your vendor.");
+	default: throw std::runtime_error("Unknown pixel format to convert (2). Please contact your vendor.");
 	}
 }
 
