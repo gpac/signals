@@ -1,7 +1,6 @@
 #include "libav_demux.hpp"
 #include "../transform/restamp.hpp"
 #include "../common/libav.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "lib_ffpp/ffpp.hpp"
 #include <cassert>
@@ -45,11 +44,11 @@ bool isRaw(AVCodecContext *codecCtx) {
 
 namespace Demux {
 void LibavDemux::webcamList() {
-	Log::msg(Log::Warning, "[LibavDemux] Webcam list:");
+	log(Warning, "Webcam list:");
 	ffpp::Dict dict;
-	buildAVDictionary("[LibavDemux]", &dict, "-list_devices true", "format");
+	buildAVDictionary(typeid(*this).name(), &dict, "-list_devices true", "format");
 	avformat_open_input(&m_formatCtx, "video=dummy:audio=dummy", av_find_input_format(webcamFormat()), &dict);
-	Log::msg(Log::Warning, "\n[LibavDemux] Webcam example: webcam:video=\"Integrated Webcam\":audio=\"Microphone (Realtek High Defini\"");
+	log(Warning, "Webcam example: webcam:video=\"Integrated Webcam\":audio=\"Microphone (Realtek High Defini\"");
 }
 
 bool LibavDemux::webcamOpen(const std::string &options) {
@@ -61,14 +60,14 @@ bool LibavDemux::webcamOpen(const std::string &options) {
 
 LibavDemux::LibavDemux(const std::string &url) {
 	if (!(m_formatCtx = avformat_alloc_context()))
-		throw std::runtime_error("[LibavDemux] Can't allocate format context");
+		throw error("Can't allocate format context");
 
 	const std::string device = url.substr(0, url.find(":"));
 	if (device == "webcam") {
 		if (url == device || !webcamOpen(url.substr(url.find(":") + 1))) {
 			webcamList();
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
-			throw std::runtime_error("Webcam init failed.");
+			throw error("Webcam init failed.");
 		}
 		restamp = uptr(new Transform::Restamp(Transform::Restamp::ClockSystem)); /*some webcams timestamps don't start at 0 (based on UTC)*/
 	} else {
@@ -77,13 +76,13 @@ LibavDemux::LibavDemux(const std::string &url) {
 		dict.set("analyzeduration", "100M");
 		if (avformat_open_input(&m_formatCtx, url.c_str(), nullptr, &dict)) {
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
-			throw std::runtime_error(format("[LibavDemux] Error when opening input '%s'", url));
+			throw error(format("Error when opening input '%s'", url));
 		}
 
 		//if you don't call you may miss the first frames
 		if (avformat_find_stream_info(m_formatCtx, nullptr) < 0) {
 			avformat_close_input(&m_formatCtx);
-			throw std::runtime_error("[LibavDemux] Couldn't get additional video stream info");
+			throw error("Couldn't get additional video stream info");
 		}
 
 		restamp = uptr(new Transform::Restamp(Transform::Restamp::Reset));
@@ -132,7 +131,7 @@ void LibavDemux::process(Data data) {
 		if (status < 0) {
 			if (status == (int)AVERROR_EOF || (m_formatCtx->pb && m_formatCtx->pb->eof_reached)) {
 			} else if (m_formatCtx->pb && m_formatCtx->pb->error) {
-				Log::msg(Log::Warning, "[LibavDemux] Stream contains an irrecoverable error - leaving");
+				log(Warning, "Stream contains an irrecoverable error - leaving");
 			}
 			return;
 		}
@@ -142,7 +141,7 @@ void LibavDemux::process(Data data) {
 		outputs[pkt->stream_index]->emit(out);
 	}
 
-	Log::msg(Log::Info, "[LibavDemux] Exit from an external event.");
+	log(Info, "Exit from an external event.");
 }
 
 }

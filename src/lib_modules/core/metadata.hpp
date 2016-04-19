@@ -45,7 +45,7 @@ static bool operator==(const IMetadata &left, const IMetadata &right) {
 
 class MetadataFile : public IMetadata {
 	public:
-		MetadataFile(const std::string filename, StreamType streamType, const std::string mimeType, const std::string codecName, uint64_t durationIn180k, uint64_t filesize, bool startsWithRAP)
+		MetadataFile(const std::string& filename, StreamType streamType, const std::string& mimeType, const std::string& codecName, uint64_t durationIn180k, uint64_t filesize, bool startsWithRAP)
 			: streamType(streamType), filename(filename), mimeType(mimeType), codecName(codecName), durationIn180k(durationIn180k), filesize(filesize), startsWithRAP(startsWithRAP) {
 		}
 		std::string getFilename() const {
@@ -138,14 +138,14 @@ class MetadataCap : public IMetadataCap {
 				} else if (metadata != m_metadata) {
 					if (m_metadata) {
 						if (*m_metadata == *metadata) {
-							Log::msg(Log::Debug, "Output: metadata not equal but comparable by value. Updating.");
+							Log::msg(Debug, "Output: metadata not equal but comparable by value. Updating.");
 							m_metadata = metadata;
 						} else {
-							Log::msg(Log::Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
+							Log::msg(Info, "Metadata update from data not supported yet: output pin and data won't carry the same metadata.");
 						}
 						return true;
 					}
-					Log::msg(Log::Info, "Output: metadata transported by data changed. Updating.");
+					Log::msg(Info, "Output: metadata transported by data changed. Updating.");
 					if (m_metadata && (metadata->getStreamType() != m_metadata->getStreamType()))
 						throw std::runtime_error(format("Metadata update: incompatible types %s for data and %s for attached", metadata->getStreamType(), m_metadata->getStreamType()));
 					m_metadata = metadata;

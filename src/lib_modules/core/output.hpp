@@ -38,7 +38,7 @@ class OutputT : public IOutput, public MetadataCap {
 			updateMetadata(data);
 			size_t numReceivers = signal.emit(data);
 			if (numReceivers == 0)
-				Log::msg(Log::Debug, "emit(): Output had no receiver");
+				Log::msg(Debug, "emit(): Output had no receiver");
 			return numReceivers;
 		}
 

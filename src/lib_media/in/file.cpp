@@ -1,4 +1,3 @@
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "file.hpp"
 
@@ -10,13 +9,13 @@ namespace In {
 File::File(std::string const& fn) {
 	file = fopen(fn.c_str(), "rb");
 	if (!file)
-		throw std::runtime_error(format("Can't open file for reading: %s", fn));
+		throw error(format("Can't open file for reading: %s", fn));
 
 	fseek(file, 0, SEEK_END);
 	auto size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	if (size > IOSIZE)
-		Log::msg(Log::Info, "File %s size is %s, will be sent by %s bytes chunks. Check the downstream modules are able to agregate data frames.", fn, size, IOSIZE);
+		log(Info, "File %s size is %s, will be sent by %s bytes chunks. Check the downstream modules are able to agregate data frames.", fn, size, IOSIZE);
 
 	output = addOutput(new OutputDefault);
 }

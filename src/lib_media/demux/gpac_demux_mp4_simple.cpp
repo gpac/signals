@@ -1,5 +1,4 @@
 #include "gpac_demux_mp4_simple.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 
 #include "lib_gpacpp/gpacpp.hpp"
@@ -28,7 +27,7 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(std::string const& path)
 	u64 missingBytes;
 	GF_Err e = gf_isom_open_progressive(path.c_str(), 0, 0, &movie, &missingBytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || movie == nullptr) {
-		throw std::runtime_error(format("Could not open file %s for reading (%s).", path, gf_error_to_string(e)));
+		throw error(format("Could not open file %s for reading (%s).", path, gf_error_to_string(e)));
 	}
 	reader->init(movie);
 	output = addOutput(new OutputDefault);
@@ -44,7 +43,7 @@ void GPACDemuxMP4Simple::process(Data /*data*/) {
 			std::unique_ptr<gpacpp::IsoSample> ISOSample;
 			ISOSample = reader->movie->getSample(reader->trackNumber, reader->sampleIndex, sampleDescriptionIndex);
 
-			Log::msg(Log::Debug, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
+			log(Debug, "Found sample #%s/%s of length %s, RAP %s, DTS: %s, CTS: %s",
 			         reader->sampleIndex,
 			         reader->sampleCount,
 			         ISOSample->dataLength,
@@ -59,7 +58,7 @@ void GPACDemuxMP4Simple::process(Data /*data*/) {
 		} catch (gpacpp::Error const& err) {
 			if (err.error_ == GF_ISOM_INCOMPLETE_FILE) {
 				u64 missingBytes = reader->movie->getMissingBytes(reader->trackNumber);
-				Log::msg(Log::Error, "Missing %s bytes on input file", missingBytes);
+				log(Error, "Missing %s bytes on input file", missingBytes);
 			} else {
 				return;
 			}

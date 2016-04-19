@@ -1,9 +1,12 @@
 #pragma once
 
 #include "data.hpp"
+#include "error.hpp"
 #include "input.hpp"
+#include "log.hpp"
 #include "output.hpp"
 #include <memory>
+#include <string>
 #include <vector>
 
 
@@ -15,7 +18,7 @@ struct IModule {
 	virtual void flush() = 0;
 };
 
-class Module : public IModule, public InputCap, public OutputCap {
+class Module : public IModule, public ILog, public IError, public InputCap, public OutputCap {
 	public:
 		Module() = default;
 		virtual ~Module() noexcept(false) {}

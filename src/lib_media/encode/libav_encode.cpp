@@ -1,5 +1,4 @@
 #include "libav_encode.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "../common/pcm.hpp"
 #include <cassert>
@@ -30,7 +29,7 @@ void fps2NumDen(const double fps, int &num, int &den) {
 	} else {
 		num = (int)fps;
 		den = 1;
-		Log::msg(Log::Warning, "[libav_encode] Frame rate '%s' was not recognized. Truncating to '%s'.", fps, num);
+		Log::msg(Warning, "Frame rate '%s' was not recognized. Truncating to '%s'.", fps, num);
 	}
 }
 
@@ -58,29 +57,29 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		codecName = "acodec";
 		break;
 	default:
-		throw std::runtime_error("Unknown encoder type. Failed.");
+		throw error("Unknown encoder type. Failed.");
 	}
 
 	/* parse the codec optionsDict */
 	ffpp::Dict codecDict;
-	buildAVDictionary("[libav_encode]", &codecDict, codecOptions.c_str(), "codec");
+	buildAVDictionary(typeid(*this).name(), &codecDict, codecOptions.c_str(), "codec");
 	codecDict.set("threads", "auto");
 
 	/* parse other optionsDict*/
 	ffpp::Dict generalDict;
-	buildAVDictionary("[libav_encode]", &generalDict, generalOptions.c_str(), "other");
+	buildAVDictionary(typeid(*this).name(), &generalDict, generalOptions.c_str(), "other");
 
 	/* find the encoder */
 	auto entry = generalDict.get(codecName);
 	if(!entry)
-		throw std::runtime_error("Could not get codecName.");
+		throw error("Could not get codecName.");
 	AVCodec *codec = avcodec_find_encoder_by_name(entry->value);
 	if (!codec)
-		throw std::runtime_error(format("[libav_encode] codec '%s' not found, disable output.", entry->value));
+		throw error(format("codec '%s' not found, disable output.", entry->value));
 
 	codecCtx = avcodec_alloc_context3(codec);
 	if (!codecCtx)
-		throw std::runtime_error("[libav_encode] could not allocate the codec context.");
+		throw error("could not allocate the codec context.");
 
 	/* parameters */
 	switch (type) {
@@ -110,7 +109,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 	/* user extra params */
 	std::string extraParams;
 	if (Parse::populateString("LibavOutputWriter", config, "extra_params", extraParams, false) == Parse::PopulateResult_Ok) {
-		Log::msg(Log::Debug, "[libav_encode] extra_params : " << extraParams.c_str());
+		log(Debug, "extra_params : " << extraParams.c_str());
 		std::vector<std::string> paramList;
 		Util::split(extraParams.c_str(), ',', &paramList);
 		auto param = paramList.begin();
@@ -118,9 +117,9 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 			std::vector<std::string> paramValue;
 			Util::split(param->c_str(), '=', &paramValue);
 			if (paramValue.size() != 2) {
-				Log::msg(Log::Warning, "[libav_encode] extra_params :   wrong param (" << paramValue.size() << " value detected, 2 expected) in " << param->c_str());
+				log(Warning, "extra_params :   wrong param (" << paramValue.size() << " value detected, 2 expected) in " << param->c_str());
 			} else {
-				Log::msg(Log::Debug, "[libav_encode] extra_params :   detected param " << paramValue[0].c_str() << " with value " << paramValue[1].c_str() << " [" << param->c_str() << "]");
+				log(Debug, "extra_params :   detected param " << paramValue[0].c_str() << " with value " << paramValue[1].c_str() << " [" << param->c_str() << "]");
 				av_dict_set(&codecDict, paramValue[0].c_str(), paramValue[1].c_str(), 0);
 			}
 		}
@@ -130,7 +129,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 	/* open it */
 	codecCtx->flags |= CODEC_FLAG_GLOBAL_HEADER; //gives access to the extradata (e.g. H264 SPS/PPS, etc.)
 	if (avcodec_open2(codecCtx, codec, &codecDict) < 0)
-		throw std::runtime_error("[libav_encode] could not open codec, disable output.");
+		throw error("could not open codec, disable output.");
 
 	/* check all optionsDict have been consumed */
 	auto opt = stringDup(codecOptions.c_str());
@@ -139,7 +138,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		AVDictionaryEntry *avde = nullptr;
 		avde = codecDict.get(tok, avde);
 		if (avde) {
-			Log::msg(Log::Warning, "[libav_encode] codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
+			log(Warning, "codec option \"%s\", value \"%s\" was ignored.", avde->key, avde->value);
 		}
 		tok = strtok(nullptr, "- ");
 	}
@@ -197,7 +196,7 @@ bool LibavEncode::processAudio(const DataPcm *data) {
 
 	int gotPkt = 0;
 	if (avcodec_encode_audio2(codecCtx, pkt, f, &gotPkt)) {
-		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding audio frame %s.", frameNum);
+		log(Warning, "error encountered while encoding audio frame %s.", frameNum);
 		return false;
 	}
 	if (gotPkt) {
@@ -206,7 +205,7 @@ bool LibavEncode::processAudio(const DataPcm *data) {
 		if (times.tryPop(time)) {
 			out->setTime(time);
 		} else {
-			Log::msg(Log::Warning, "[libav_encode] error encountered: more output packets than input. Discard", frameNum);
+			log(Warning, "error encountered: more output packets than input. Discard", frameNum);
 			return false;
 		}
 		assert(pkt->size);
@@ -237,7 +236,7 @@ bool LibavEncode::processVideo(const DataPicture *pic) {
 
 	int gotPkt = 0;
 	if (avcodec_encode_video2(codecCtx, pkt, f ? f->get() : nullptr, &gotPkt)) {
-		Log::msg(Log::Warning, "[libav_encode] error encountered while encoding video frame %s.", frameNum);
+		log(Warning, "error encountered while encoding video frame %s.", frameNum);
 		return false;
 	} else {
 		if (gotPkt) {
@@ -267,7 +266,7 @@ void LibavEncode::process(Data data) {
 	case AVMEDIA_TYPE_AUDIO: {
 		const auto pcmData = safe_cast<const DataPcm>(data);
 		if (pcmData->getFormat() != *pcmFormat)
-			throw std::runtime_error("[LibavEncode] Incompatible audio data");
+			throw error("Incompatible audio data");
 		processAudio(pcmData.get());
 		break;
 	}

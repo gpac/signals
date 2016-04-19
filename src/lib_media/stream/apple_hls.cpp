@@ -1,6 +1,5 @@
 #include "apple_hls.hpp"
 #include "lib_modules/core/clock.hpp"
-#include "lib_utils/log.hpp"
 #include "../common/libav.hpp"
 
 
@@ -50,7 +49,7 @@ void Apple_HLS::HLSThread() {
 
 		if (type == Live) {
 			auto dur = std::chrono::milliseconds(nextInMs);
-			Log::msg(Log::Info, "[Apple_HLS] Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
+			log(Info, "Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 			std::this_thread::sleep_for(dur);
 		}
 	}

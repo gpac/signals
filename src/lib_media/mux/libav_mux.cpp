@@ -1,5 +1,4 @@
 #include "libav_mux.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "../common/libav.hpp"
 #include <cassert>
@@ -26,20 +25,20 @@ LibavMux::LibavMux(const std::string &baseName)
 	/* parse the format optionsDict */
 	std::string optionsStr = "-format mp4";
 	AVDictionary *optionsDict = nullptr;
-	buildAVDictionary("[libav_mux]", &optionsDict, optionsStr.c_str(), "format");
+	buildAVDictionary(typeid(*this).name(), &optionsDict, optionsStr.c_str(), "format");
 
 	/* setup container */
 	AVOutputFormat *of = av_guess_format(av_dict_get(optionsDict, "format", nullptr, 0)->value, nullptr, nullptr);
 	if (!of) {
 		av_dict_free(&optionsDict);
-		throw std::runtime_error("[libav_mux] couldn't guess container from file extension");
+		throw error("couldn't guess container from file extension");
 	}
 	av_dict_free(&optionsDict);
 
 	/* output format context */
 	m_formatCtx = avformat_alloc_context();
 	if (!m_formatCtx)
-		throw std::runtime_error("[libav_mux] format context couldn't be allocated.");
+		throw error("format context couldn't be allocated.");
 	m_formatCtx->oformat = of;
 
 	std::stringstream fileName;
@@ -53,7 +52,7 @@ LibavMux::LibavMux(const std::string &baseName)
 	if (!(m_formatCtx->flags & AVFMT_NOFILE)) {
 		if (avio_open(&m_formatCtx->pb, fileName.str().c_str(), AVIO_FLAG_READ_WRITE) < 0) {
 			avformat_free_context(m_formatCtx);
-			throw std::runtime_error(format("[libav_mux] could not open %s, disable output.", baseName));
+			throw error(format("could not open %s, disable output.", baseName));
 		}
 		strncpy(m_formatCtx->filename, fileName.str().c_str(), sizeof(m_formatCtx->filename));
 	}
@@ -76,7 +75,7 @@ void LibavMux::declareStream(Data data) {
 	if (auto metadata = std::dynamic_pointer_cast<const MetadataPktLibavVideo>(metadata_)) {
 		AVStream *avStream = avformat_new_stream(m_formatCtx, metadata->getAVCodecContext()->codec);
 		if (!avStream)
-			throw std::runtime_error("[LibavMux] Stream creation failed (1).");
+			throw error("Stream creation failed (1).");
 
 		m_formatCtx->streams[0]->codec->time_base = metadata->getAVCodecContext()->time_base; //FIXME: [0]: not a mux yet...
 		m_formatCtx->streams[0]->codec->width = metadata->getAVCodecContext()->width;
@@ -89,23 +88,23 @@ void LibavMux::declareStream(Data data) {
 	} else if (auto metadata2 = std::dynamic_pointer_cast<const MetadataPktLibavAudio>(metadata_)) {
 		AVStream *avStream = avformat_new_stream(m_formatCtx, metadata2->getAVCodecContext()->codec);
 		if (!avStream)
-			throw std::runtime_error("[LibavMux] Stream creation failed (2).");
+			throw error("Stream creation failed (2).");
 
 		m_formatCtx->streams[0]->codec->sample_rate = metadata2->getAVCodecContext()->sample_rate;
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavAudio(metadata2->getAVCodecContext()));
 	} else {
-		throw std::runtime_error("[LibavMux] Stream creation failed: unknown type.");
+		throw error("Stream creation failed: unknown type.");
 	}
 }
 
 void LibavMux::ensureHeader() {
 	if (!m_headerWritten) {
 		if (avformat_write_header(m_formatCtx, nullptr) != 0) {
-			Log::msg(Log::Warning, "[libav_mux] fatal error: can't write the container header");
+			log(Warning, "fatal error: can't write the container header");
 			for (unsigned i = 0; i < m_formatCtx->nb_streams; i++) {
 				if (m_formatCtx->streams[i]->codec && m_formatCtx->streams[i]->codec->codec) {
-					Log::msg(Log::Debug, "[libav_mux] codec[%s] is \"%s\" (%s)", i, m_formatCtx->streams[i]->codec->codec->name, m_formatCtx->streams[i]->codec->codec->long_name);
+					log(Debug, "codec[%s] is \"%s\" (%s)", i, m_formatCtx->streams[i]->codec->codec->name, m_formatCtx->streams[i]->codec->codec->long_name);
 				}
 			}
 		} else {
@@ -134,7 +133,7 @@ void LibavMux::process() {
 	/* write the compressed frame to the container output file */
 	pkt->stream_index = avStream->index;
 	if (av_interleaved_write_frame(m_formatCtx, pkt) != 0) {
-		Log::msg(Log::Warning, "[libav_mux] can't write video frame.");
+		log(Warning, "can't write video frame.");
 		return;
 	}
 }

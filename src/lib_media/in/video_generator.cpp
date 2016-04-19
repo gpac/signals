@@ -1,4 +1,3 @@
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "video_generator.hpp"
 #include "../common/pcm.hpp"

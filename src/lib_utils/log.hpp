@@ -3,17 +3,16 @@
 #include "format.hpp"
 #include <ostream>
 
+enum Level {
+	Quiet = -1,
+	Error = 0,
+	Warning,
+	Info,
+	Debug
+};
 
 class Log {
 	public:
-		enum Level {
-			Quiet = -1,
-			Error = 0,
-			Warning,
-			Info,
-			Debug
-		};
-
 		template<typename... Arguments>
 		static void msg(Level level, const std::string& fmt, Arguments... args) {
 			if ((level != Quiet) && (level <= globalLogLevel)) {
@@ -23,7 +22,7 @@ class Log {
 		}
 
 		void setLevel(Level level);
-		Log::Level getLevel();
+		Level getLevel();
 
 	private:
 		Log();

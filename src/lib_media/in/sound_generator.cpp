@@ -1,4 +1,3 @@
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "sound_generator.hpp"
 #include <cmath>

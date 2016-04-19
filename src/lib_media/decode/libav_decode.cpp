@@ -1,6 +1,5 @@
 #include "libav_decode.hpp"
 #include "../common/pcm.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "lib_ffpp/ffpp.hpp"
 #include <cassert>
@@ -22,19 +21,19 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: break;
 	case AVMEDIA_TYPE_AUDIO: break;
-	default: throw std::runtime_error(format("[LibavDecode] codec_type %s not supported. Must be audio or video.", codecCtx->codec_type));
+	default: throw error(format("codec_type %s not supported. Must be audio or video.", codecCtx->codec_type));
 	}
 
 	//find an appropriate decode
 	auto codec = avcodec_find_decoder(codecCtx->codec_id);
 	if (!codec)
-		throw std::runtime_error(format("[LibavDecode] Decoder not found for codecID(%s).", codecCtx->codec_id));
+		throw error(format("Decoder not found for codecID(%s).", codecCtx->codec_id));
 
 	//force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
 	ffpp::Dict dict;
 	dict.set("threads", "1");
 	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
-		throw std::runtime_error("[LibavDecode] Couldn't open stream.");
+		throw error("Couldn't open stream.");
 	}
 
 	switch (codecCtx->codec_type) {
@@ -51,7 +50,7 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 		break;
 	}
 	default:
-		throw std::runtime_error("[LibavDecode] Invalid output type.");
+		throw error("Invalid output type.");
 	}
 }
 
@@ -64,7 +63,7 @@ bool LibavDecode::processAudio(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
 	int gotFrame;
 	if (avcodec_decode_audio4(codecCtx, avFrame->get(), &gotFrame, pkt) < 0) {
-		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding audio.");
+		log(Warning, "Error encoutered while decoding audio.");
 		return false;
 	}
 	if (gotFrame) {
@@ -111,7 +110,7 @@ bool LibavDecode::processVideo(const DataAVPacket *data) {
 	AVPacket *pkt = data->getPacket();
 	int gotPicture;
 	if (avcodec_decode_video2(codecCtx, avFrame->get(), &gotPicture, pkt) < 0) {
-		Log::msg(Log::Warning, "[LibavDecode] Error encoutered while decoding video.");
+		log(Warning, "Error encoutered while decoding video.");
 		return false;
 	}
 	if (gotPicture) {

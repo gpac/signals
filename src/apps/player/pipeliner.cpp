@@ -9,13 +9,13 @@ using namespace Pipelines;
 namespace {
 ModuleS* createRenderer(int codecType) {
 	if (codecType == VIDEO_PKT) {
-		Log::msg(Log::Info, "Found video stream");
+		Log::msg(Info, "Found video stream");
 		return new Render::SDLVideo();
 	} else if (codecType == AUDIO_PKT) {
-		Log::msg(Log::Info, "Found audio stream");
+		Log::msg(Info, "Found audio stream");
 		return new Render::SDLAudio();
 	} else {
-		Log::msg(Log::Info, "Found unknown stream");
+		Log::msg(Info, "Found unknown stream");
 		return new Out::Null;
 	}
 }

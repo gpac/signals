@@ -12,17 +12,17 @@ namespace {
 Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t i) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
-		Log::msg(Log::Info, "[Encoder] Found video stream");
+		Log::msg(Info, "[Encoder] Found video stream");
 		Encode::LibavEncodeParams p;
 		p.isLowLatency = opt.isLive;
 		p.res = opt.v[i].res;
 		p.bitrate_v = opt.v[i].bitrate;
 		return new Encode::LibavEncode(Encode::LibavEncode::Video, p);
 	} else if (codecType == AUDIO_PKT) {
-		Log::msg(Log::Info, "[Encoder] Found audio stream");
+		Log::msg(Info, "[Encoder] Found audio stream");
 		return new Encode::LibavEncode(Encode::LibavEncode::Audio);
 	} else {
-		Log::msg(Log::Info, "[Encoder] Found unknown stream");
+		Log::msg(Info, "[Encoder] Found unknown stream");
 		return nullptr;
 	}
 }
@@ -30,15 +30,15 @@ Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, co
 ModuleS* createConverter(std::shared_ptr<const IMetadata> metadata, const Resolution &dstRes) {
 	auto const codecType = metadata->getStreamType();
 	if (codecType == VIDEO_PKT) {
-		Log::msg(Log::Info, "[Converter] Found video stream");
+		Log::msg(Info, "[Converter] Found video stream");
 		auto dstFormat = PictureFormat(dstRes, YUV420P);
 		return new Transform::VideoConvert(dstFormat);
 	} else if (codecType == AUDIO_PKT) {
-		Log::msg(Log::Info, "[Converter] Found audio stream");
+		Log::msg(Info, "[Converter] Found audio stream");
 		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
 		return new Transform::AudioConvert(format);
 	} else {
-		Log::msg(Log::Info, "[Converter] Found unknown stream");
+		Log::msg(Info, "[Converter] Found unknown stream");
 		return nullptr;
 	}
 }
@@ -55,14 +55,14 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 	const bool transcode = opt.v.size() > 0 ? true : false;
 	if (!transcode) {
-		Log::msg(Log::Warning, "[DashcastX] No transcode. Make passthru.");
+		Log::msg(Warning, "[DashcastX] No transcode. Make passthru.");
 	}
 
 	int numDashInputs = 0;
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		auto const metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
 		if (!metadata) {
-			Log::msg(Log::Warning, "[DashcastX] Unknown metadata for stream %s. Ignoring.", i);
+			Log::msg(Warning, "[DashcastX] Unknown metadata for stream %s. Ignoring.", i);
 			break;
 		}
 

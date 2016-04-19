@@ -19,10 +19,10 @@ class PipelinedInput : public IInput {
 		/* direct call: receiving nullptr stops the execution */
 		virtual void process(Data data) override {
 			if (data) {
-				Log::msg(Log::Debug, format("Module %s: dispatch data for time %s", typeid(notify).name(), data->getTime() / (double)IClock::Rate));
+				Log::msg(Debug, format("Module %s: dispatch data for time %s", typeid(notify).name(), data->getTime() / (double)IClock::Rate));
 				delegate->process(data);
 			} else {
-				Log::msg(Log::Debug, format("Module %s: notify finished.", typeid(notify).name()));
+				Log::msg(Debug, format("Module %s: notify finished.", typeid(notify).name()));
 				notify->finished();
 			}
 		}
@@ -93,7 +93,7 @@ void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
 }
 
 void PipelinedModule::dispatch(Data data) {
-	Log::msg(Log::Debug, format("Module %s: dispatch data", typeid(delegate).name()));
+	Log::msg(Debug, format("Module %s: dispatch data", typeid(delegate).name()));
 
 	if (isSource()) {
 		assert(data == nullptr);
@@ -144,25 +144,25 @@ void Pipeline::connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule 
 }
 
 void Pipeline::start() {
-	Log::msg(Log::Info, "Pipeline: starting");
+	Log::msg(Info, "Pipeline: starting");
 	for (auto &m : modules) {
 		if (m->isSource())
 			m->dispatch(nullptr);
 	}
-	Log::msg(Log::Info, "Pipeline: started");
+	Log::msg(Info, "Pipeline: started");
 }
 
 void Pipeline::waitForCompletion() {
-	Log::msg(Log::Info, "Pipeline: waiting for completion (remaning: %s)", (int)numRemainingNotifications);
+	Log::msg(Info, "Pipeline: waiting for completion (remaning: %s)", (int)numRemainingNotifications);
 	std::unique_lock<std::mutex> lock(mutex);
 	while (numRemainingNotifications > 0) {
 		condition.wait(lock);
 	}
-	Log::msg(Log::Info, "Pipeline: completed");
+	Log::msg(Info, "Pipeline: completed");
 }
 
 void Pipeline::exitSync() {
-	Log::msg(Log::Warning, format("Pipeline: asked to exit now."));
+	Log::msg(Warning, format("Pipeline: asked to exit now."));
 	for (auto &m : modules) {
 		if (m->isSource())
 			m->dispatch(nullptr);

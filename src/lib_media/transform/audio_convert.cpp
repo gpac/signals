@@ -1,4 +1,3 @@
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "audio_convert.hpp"
 #include "lib_ffpp/ffpp.hpp"
@@ -63,10 +62,10 @@ void AudioConvert::process(Data data) {
 	if (audioData) {
 		if (audioData->getFormat() != srcPcmFormat) {
 			if (autoConfigure) {
-				Log::msg(Log::Info, "[AudioConvert] Incompatible input audio data. Reconfiguring.");
+				log(Info, "Incompatible input audio data. Reconfiguring.");
 				reconfigure(audioData->getFormat());
 			} else {
-				throw std::runtime_error("[AudioConvert] Incompatible input audio data.");
+				throw error("Incompatible input audio data.");
 			}
 			accumulatedTimeInDstSR = clockToTimescale(data->getTime(), srcPcmFormat.sampleRate);
 		}

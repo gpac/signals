@@ -1,6 +1,5 @@
 #include "mpeg_dash.hpp"
 #include "lib_modules/core/clock.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "../out/file.hpp"
 #include "../common/libav.hpp"
@@ -55,7 +54,7 @@ MPEG_DASH::~MPEG_DASH() {
 //needed because of the use of system time for live - otherwise awake on data as for any multi-input module
 //TODO: add clock to the scheduler, see #14
 void MPEG_DASH::DASHThread() {
-	Log::msg(Log::Info, "[MPEG_DASH] start processing at UTC: %s.", gf_net_get_utc());
+	log(Info, "start processing at UTC: %s.", gf_net_get_utc());
 
 	Data data;
 	for (;;) {
@@ -68,7 +67,7 @@ void MPEG_DASH::DASHThread() {
 			} else {
 				qualities[i].meta = safe_cast<const MetadataFile>(data->getMetadata());
 				if (!qualities[i].meta)
-					throw std::runtime_error(format("[MPEG_DASH] Unknown data received on input %s", i).c_str());
+					throw error(format("Unknown data received on input %s", i).c_str());
 				auto const numSeg = totalDurationInMs / segDurationInMs;
 				qualities[i].bitrate_in_bps = (qualities[i].meta->getSize() * 8 + qualities[i].bitrate_in_bps * numSeg) / (numSeg + 1);
 			}
@@ -79,13 +78,13 @@ void MPEG_DASH::DASHThread() {
 		generateMPD();
 		if (type == Live) {
 			if (!mpd->write(mpdPath))
-				Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s (1). Check you have sufficient rights.", mpdPath);
+				log(Warning, "Can't write MPD at %s (1). Check you have sufficient rights.", mpdPath);
 		}
-		Log::msg(Log::Info, "[MPEG_DASH] Processes segment (total processed: %ss, UTC: %s (deltaAST=%s).", (double)totalDurationInMs / 1000, gf_net_get_utc(), gf_net_get_utc() - mpd->mpd->availabilityStartTime);
+		log(Info, "Processes segment (total processed: %ss, UTC: %s (deltaAST=%s).", (double)totalDurationInMs / 1000, gf_net_get_utc(), gf_net_get_utc() - mpd->mpd->availabilityStartTime);
 
 		if (type == Live) {
 			auto dur = std::chrono::milliseconds(mpd->mpd->availabilityStartTime + totalDurationInMs - gf_net_get_utc());
-			Log::msg(Log::Info, "[MPEG_DASH] Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
+			log(Info, "Going to sleep for %s ms.", std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
 			std::this_thread::sleep_for(dur);
 		}
 	}
@@ -96,7 +95,7 @@ void MPEG_DASH::DASHThread() {
 	mpd->mpd->media_presentation_duration = totalDurationInMs;
 	generateMPD();
 	if (!mpd->write(mpdPath))
-		Log::msg(Log::Warning, "[MPEG_DASH] Can't write MPD at %s (2). Check you have sufficient rights.", mpdPath);
+		log(Warning, "Can't write MPD at %s (2). Check you have sufficient rights.", mpdPath);
 }
 
 void MPEG_DASH::process() {

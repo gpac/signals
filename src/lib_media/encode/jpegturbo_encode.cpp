@@ -1,5 +1,4 @@
 #include "jpegturbo_encode.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 extern "C" {
 #include <turbojpeg.h>
@@ -45,7 +44,7 @@ void JPEGTurboEncode::process(Data data_) {
 	auto jpegBuf = data->data();
 	unsigned long jpegSize;
 	if (tjCompress2(jtHandle->get(), (unsigned char*)jpegBuf, w, 0/*pitch*/, h, TJPF_RGB, &buf, &jpegSize, TJSAMP_420, JPEGQuality, TJFLAG_FASTDCT) < 0) {
-		Log::msg(Log::Warning, "[jpegturbo_encode] error encountered while compressing.");
+		log(Warning, "error encountered while compressing.");
 		return;
 	}
 	out->resize(jpegSize);

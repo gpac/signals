@@ -12,24 +12,24 @@ extern "C" {
 }
 
 namespace {
-Log::Level avLogLevel(int level) {
+Level avLogLevel(int level) {
 	switch (level) {
 	case AV_LOG_QUIET:
 	case AV_LOG_PANIC:
 	case AV_LOG_FATAL:
 	case AV_LOG_ERROR:
-		return Log::Warning;
+		return Warning;
 	case AV_LOG_WARNING:
 	case AV_LOG_INFO:
-		return Log::Info;
+		return Info;
 	case AV_LOG_VERBOSE:
-		return Log::Debug;
+		return Debug;
 	case AV_LOG_DEBUG:
 	case AV_LOG_TRACE:
-		return Log::Quiet;
+		return Quiet;
 	default:
 		assert(0);
-		return Log::Debug;
+		return Debug;
 	}
 }
 
@@ -221,7 +221,7 @@ DataAVPacket::DataAVPacket(size_t size)
 }
 
 DataAVPacket::~DataAVPacket() {
-	Log::msg(Log::Debug, "Freeing %s, pts=%s", this, pkt->pts);
+	Log::msg(Debug, "Freeing %s, pts=%s", this, pkt->pts);
 }
 
 uint8_t* DataAVPacket::data() {
@@ -258,7 +258,7 @@ void buildAVDictionary(const std::string &moduleName, AVDictionary **dict, const
 	char *tokval = nullptr;
 	while (tok && (tokval = strtok(nullptr, "- "))) {
 		if (av_dict_set(dict, tok, tokval, 0) < 0) {
-			Log::msg(Log::Warning, "[%s] unknown %s option \"%s\" with value \"%s\"", moduleName.c_str(), type, tok, tokval);
+			Log::msg(Warning, "[%s] unknown %s option \"%s\" with value \"%s\"", moduleName.c_str(), type, tok, tokval);
 		}
 		tok = strtok(nullptr, "- ");
 	}

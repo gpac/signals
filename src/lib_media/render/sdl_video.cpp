@@ -1,5 +1,4 @@
 #include "sdl_video.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "SDL2/SDL.h"
 #include "render_common.hpp"
@@ -13,7 +12,7 @@ Uint32 pixelFormat2SDLFormat(const Modules::PixelFormat format) {
 	case YUV420P: return SDL_PIXELFORMAT_IYUV;
 	case YUYV422: return SDL_PIXELFORMAT_YUY2;
 	case RGB24: return SDL_PIXELFORMAT_RGB24;
-	default: throw std::runtime_error("[SDLVideo] Pixel format not supported.");
+	default: throw std::runtime_error("Pixel format not supported.");
 	}
 }
 }
@@ -30,12 +29,12 @@ void SDLVideo::doRender() {
 	pictureFormat.format = YUV420P;
 	window = SDL_CreateWindow("Signals SDLVideo renderer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pictureFormat.res.width, pictureFormat.res.height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (!window)
-		throw std::runtime_error(format("[SDLVideo render] Couldn't set create window: %s", SDL_GetError()));
+		throw error(format("Couldn't set create window: %s", SDL_GetError()));
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
 		SDL_DestroyWindow(window);
-		throw std::runtime_error(format("[SDLVideo render] Couldn't set create renderer: %s", SDL_GetError()));
+		throw error(format("Couldn't set create renderer: %s", SDL_GetError()));
 	}
 	m_dataQueue.push(nullptr); //unlock the constructor
 
@@ -104,14 +103,14 @@ bool SDLVideo::processOneFrame(Data data) {
 }
 
 void SDLVideo::createTexture() {
-	Log::msg(Log::Info, format("[SDLVideo render] %sx%s", pictureFormat.res.width, pictureFormat.res.height));
+	log(Info, format("%sx%s", pictureFormat.res.width, pictureFormat.res.height));
 
 	if (texture)
 		SDL_DestroyTexture(texture);
 
 	texture = SDL_CreateTexture(renderer, pixelFormat2SDLFormat(pictureFormat.format), SDL_TEXTUREACCESS_STATIC, pictureFormat.res.width, pictureFormat.res.height);
 	if (!texture)
-		throw std::runtime_error(format("[SDLVideo render] Couldn't set create texture: %s", SDL_GetError()));
+		throw error(format("Couldn't set create texture: %s", SDL_GetError()));
 
 	displayrect->x = 0;
 	displayrect->y = 0;

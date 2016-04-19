@@ -27,7 +27,7 @@ void GPACMuxMPEG2TS::declareStream(Data data) {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavAudio(metadata2->getAVCodecContext()));
 	} else {
-		throw std::runtime_error("[GPACMuxMPEG2TS] Stream creation failed: unknown type.");
+		throw error("Stream creation failed: unknown type.");
 	}
 }
 

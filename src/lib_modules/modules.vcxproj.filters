@@ -40,6 +40,12 @@
     <ClInclude Include="core\output.hpp">
       <Filter>core</Filter>
     </ClInclude>
+    <ClInclude Include="core\log.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\error.hpp">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utils\stranded_pool_executor.cpp">

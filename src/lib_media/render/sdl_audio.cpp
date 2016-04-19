@@ -1,6 +1,5 @@
 #include "sdl_audio.hpp"
 #include "render_common.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "lib_modules/utils/stranded_pool_executor.hpp"
 #include "SDL2/SDL.h"
@@ -31,7 +30,7 @@ namespace Render {
 
 bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
 	if (pcmData->numPlanes > 1) {
-		Log::msg(Log::Warning, "[SDLAudio render] Support for planar audio is buggy. Please set an audio converter.");
+		log(Warning, "Support for planar audio is buggy. Please set an audio converter.");
 		return false;
 	}
 
@@ -44,12 +43,12 @@ bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
 
 	SDL_CloseAudio();
 	if (SDL_OpenAudio(&audioSpec, &realSpec) < 0) {
-		Log::msg(Log::Warning, "[SDLAudio render] Couldn't open audio: %s", SDL_GetError());
+		log(Warning, "Couldn't open audio: %s", SDL_GetError());
 		return false;
 	}
 
 	m_Latency = timescaleToClock((uint64_t)realSpec.samples, realSpec.freq);
-	Log::msg(Log::Info, "[SDLAudio render] %s Hz %s ms", realSpec.freq, m_Latency * 1000.0f / IClock::Rate);
+	log(Info, "%s Hz %s ms", realSpec.freq, m_Latency * 1000.0f / IClock::Rate);
 
 	pcmFormat = uptr(new PcmFormat(*pcmData));
 
@@ -62,7 +61,7 @@ SDLAudio::SDLAudio(IClock* clock)
 	: m_clock(clock), pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)),
 	  m_converter(new Transform::AudioConvert(*pcmFormat)), m_FifoTime(0) {
 	if (!reconfigure(pcmFormat.get()))
-		throw std::runtime_error("Audio output creation failed");
+		throw error("Audio output creation failed");
 
 	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
@@ -113,13 +112,13 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 
 	if (relativeSamplePosition < -audioJitterTolerance) {
 		auto const numSamplesToDrop = std::min<int64_t>(fifoSamplesToRead(), -relativeSamplePosition);
-		Log::msg(Log::Warning, "[SDLAudio render] must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / pcmFormat->sampleRate);
+		log(Warning, "must drop fifo data (%s ms)", numSamplesToDrop * 1000.0f / pcmFormat->sampleRate);
 		fifoConsumeSamples((size_t)numSamplesToDrop);
 	}
 
 	if (relativeSamplePosition > audioJitterTolerance) {
 		auto const numSilenceSamples = std::min<int64_t>(numSamplesToProduce, relativeSamplePosition);
-		Log::msg(Log::Warning, "[SDLAudio render] insert silence (%s ms)", numSilenceSamples * 1000.0f / pcmFormat->sampleRate);
+		log(Warning, "insert silence (%s ms)", numSilenceSamples * 1000.0f / pcmFormat->sampleRate);
 		silenceSamples(stream, (size_t)numSilenceSamples);
 		numSamplesToProduce -= numSilenceSamples;
 	}
@@ -132,7 +131,7 @@ void SDLAudio::fillAudio(uint8_t *stream, int len) {
 	}
 
 	if (numSamplesToProduce > 0) {
-		Log::msg(Log::Warning, "[SDLAudio render] underflow");
+		log(Warning, "underflow");
 		silenceSamples(stream, (size_t)numSamplesToProduce);
 	}
 }

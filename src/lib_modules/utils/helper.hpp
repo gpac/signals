@@ -21,18 +21,18 @@ size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor& e
 	if (prevMetadata && nextMetadata) {
 		if (prevMetadata->getStreamType() != next->getMetadata()->getStreamType())
 			throw std::runtime_error("Module connection: incompatible types");
-		Log::msg(Log::Info, "--------- Connect: metadata OK");
+		Log::msg(Info, "--------- Connect: metadata OK");
 	} else {
 		if (prevMetadata && !nextMetadata) {
 #if 0 //rely on data to propagate type instead of inputs or outputs - this way sent data type is on the output, processed data is on the input
 			next->setMetadata(prevMetadata);
-			Log::msg(Log::Info, "--------- Connect: metadata Propagate to next");
+			log(Info, "--------- Connect: metadata Propagate to next");
 #endif
 		} else if (!prevMetadata && nextMetadata) {
 			safe_cast<IMetadataCap>(prev)->setMetadata(nextMetadata);
-			Log::msg(Log::Info, "--------- Connect: metadata Propagate to prev (backward)");
+			Log::msg(Info, "--------- Connect: metadata Propagate to prev (backward)");
 		} else {
-			Log::msg(Log::Info, "--------- Connect: no metadata");
+			Log::msg(Info, "--------- Connect: no metadata");
 		}
 	}
 

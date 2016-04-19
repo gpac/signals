@@ -18,7 +18,7 @@ static WORD console_attr_ori = 0;
 #define RESET  "\x1b[0m"
 #endif /*_WIN32*/
 
-Log::Level Log::globalLogLevel = Log::Info;
+Level Log::globalLogLevel = Info;
 
 
 namespace {
@@ -85,6 +85,6 @@ void Log::setLevel(Level level) {
 	globalLogLevel = level;
 }
 
-Log::Level Log::getLevel() {
+Level Log::getLevel() {
 	return globalLogLevel;
 }

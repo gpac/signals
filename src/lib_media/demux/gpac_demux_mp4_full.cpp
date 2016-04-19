@@ -1,5 +1,4 @@
 #include "gpac_demux_mp4_full.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include <string>
 #include <sstream>
@@ -47,7 +46,7 @@ bool GPACDemuxMP4Full::openData() {
 	GF_ISOFile *movie;
 	GF_Err e = gf_isom_open_progressive(reader->dataUrl.c_str(), 0, 0, &movie, &missingBytes);
 	if ((e != GF_OK && e != GF_ISOM_INCOMPLETE_FILE) || reader->movie) {
-		Log::msg(Log::Warning, "Error opening fragmented mp4 in progressive mode: %s (missing %s bytes)",
+		log(Warning, "Error opening fragmented mp4 in progressive mode: %s (missing %s bytes)",
 		         gf_error_to_string(e), missingBytes);
 
 		return false;
@@ -74,7 +73,7 @@ bool GPACDemuxMP4Full::processSample() {
 			newSampleCount = reader->movie->getSampleCount(reader->trackNumber);
 			if (newSampleCount > reader->sampleCount) {
 				/* New samples have been added to the file */
-				Log::msg(Log::Info, "Found %s new samples (total: %s)",
+				log(Info, "Found %s new samples (total: %s)",
 				         newSampleCount - reader->sampleCount,
 				         newSampleCount);
 				if (reader->sampleCount == 0) {
@@ -99,7 +98,7 @@ bool GPACDemuxMP4Full::processSample() {
 
 					reader->samplesProcessed++;
 					/*here we dump some sample info: samp->data, samp->dataLength, samp->isRAP, samp->DTS, samp->CTS_Offset */
-					Log::msg(Log::Debug,
+					log(Debug,
 					         "Found sample #%s(#%s) of length %s , RAP: %s, DTS : %s, CTS : %s",
 					         reader->sampleIndex,
 					         reader->samplesProcessed,
@@ -120,7 +119,7 @@ bool GPACDemuxMP4Full::processSample() {
 					u64 newBufferStart = 0;
 					u64 missingBytes;
 
-					Log::msg(Log::Debug, "Releasing unnecessary buffers");
+					log(Debug, "Releasing unnecessary buffers");
 					/* release internal structures associated with the samples read so far */
 					reader->movie->resetTables(true);
 
@@ -146,7 +145,7 @@ bool GPACDemuxMP4Full::processSample() {
 
 		return true;
 	} catch(gpacpp::Error const& e) {
-		Log::msg(Log::Warning, "Could not get sample: %s", gf_error_to_string(e.error_));
+		log(Warning, "Could not get sample: %s", gf_error_to_string(e.error_));
 		return false;
 	}
 }

@@ -8,7 +8,7 @@ namespace Utils {
 
 void IComparator::process(Data data) {
 	if (data != nullptr)
-		throw std::runtime_error("[Comparator] data not expected");
+		throw error("data not expected");
 
 	for (;;) {
 		Data aData, bData;
@@ -16,14 +16,14 @@ void IComparator::process(Data data) {
 		auto b = other.tryPop(bData);
 		if (!a || !b) {
 			if (a || b)
-				throw std::runtime_error("[Comparator] not the same number of samples");
-			Log::msg(Log::Info, "[Comparator] end of process");
+				throw error("not the same number of samples");
+			log(Info, "end of process");
 			break;
 		}
 
 		auto res = compare(aData, bData);
 		if (!res)
-			Log::msg(Log::Info, "[Comparator] comparison failed");
+			log(Info, "comparison failed");
 	}
 }
 
@@ -46,12 +46,12 @@ bool PcmComparator::compare(Data data1, Data data2) const {
 	auto pcm1 = safe_cast<const DataPcm>(data1);
 	auto pcm2 = safe_cast<const DataPcm>(data2);
 	if (pcm1->getFormat() != pcm2->getFormat())
-		throw std::runtime_error("[PcmComparator] Incompatible audio data");
+		throw std::runtime_error("Incompatible audio data");
 
 	auto const size1 = pcm1->size();
 	auto const size2 = pcm2->size();
 	if (size1 != size2)
-		Log::msg(Log::Warning, "[PcmComparator] Sample sizes are different, comparing the overlap.");
+		Log::msg(Warning, "Sample sizes are different, comparing the overlap.");
 	const DataPcm *data;
 	if (size1 < size2)
 		data = pcm1.get();
@@ -61,7 +61,7 @@ bool PcmComparator::compare(Data data1, Data data2) const {
 	for (size_t planeIdx = 0; planeIdx < data->getFormat().numPlanes; ++planeIdx) {
 		for (size_t i = 0; i < data->getPlaneSize(planeIdx); ++i) {
 			if (abs(pcm1->getPlane(planeIdx)[i] - pcm2->getPlane(planeIdx)[i]) > tolerance) {
-				throw std::runtime_error(format("[PcmComparator] Samples are different at plane %s, index %s.", planeIdx, i));
+				throw std::runtime_error(format("Samples are different at plane %s, index %s.", planeIdx, i));
 				return false;
 			}
 		}

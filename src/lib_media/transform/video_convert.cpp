@@ -1,4 +1,3 @@
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 #include "video_convert.hpp"
 #include "lib_ffpp/ffpp.hpp"
@@ -28,7 +27,7 @@ void VideoConvert::reconfigure(const PictureFormat &format) {
 	                             dstFormat.res.width, dstFormat.res.height, libavPixFmtConvert(dstFormat.format),
 	                             SWS_BILINEAR, nullptr, nullptr, nullptr);
 	if (!m_SwContext)
-		throw std::runtime_error("[VideoConvert] Impossible to set up video converter.");
+		throw error("Impossible to set up video converter.");
 	srcFormat = format;
 }
 
@@ -40,7 +39,7 @@ void VideoConvert::process(Data data) {
 	auto videoData = safe_cast<const DataPicture>(data);
 	if (videoData->getFormat() != srcFormat) {
 		if (m_SwContext)
-			Log::msg(Log::Info, "[VideoConvert] Incompatible input video data. Reconfiguring.");
+			log(Info, "Incompatible input video data. Reconfiguring.");
 		reconfigure(videoData->getFormat());
 	}
 
@@ -67,7 +66,7 @@ void VideoConvert::process(Data data) {
 		break;
 	}
 	default:
-		throw std::runtime_error("[VideoConvert] Destination colorspace not supported.");
+		throw error("Destination colorspace not supported.");
 	}
 
 	sws_scale(m_SwContext, srcSlice, srcStride, 0, srcFormat.res.height, pDst, dstStride);

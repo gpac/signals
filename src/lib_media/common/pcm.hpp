@@ -69,23 +69,23 @@ class PcmFormat {
 
 		bool operator==(const PcmFormat& other) const {
 			if (other.sampleRate != sampleRate) {
-				Log::msg(Log::Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", other.sampleRate, sampleRate);
+				Log::msg(Info, "[Audio] Incompatible configuration: sample rate is %s, expect %s.", other.sampleRate, sampleRate);
 				return false;
 			}
 			if (other.numChannels != numChannels) {
-				Log::msg(Log::Info, "[Audio] Incompatible configuration: channel number is %s, expect %s.", other.numChannels, numChannels);
+				Log::msg(Info, "[Audio] Incompatible configuration: channel number is %s, expect %s.", other.numChannels, numChannels);
 				return false;
 			}
 			if (other.layout != layout) {
-				Log::msg(Log::Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", other.layout, layout);
+				Log::msg(Info, "[Audio] Incompatible configuration: layout is %s, expect %s.", other.layout, layout);
 				return false;
 			}
 			if (other.sampleFormat != sampleFormat) {
-				Log::msg(Log::Info, "[Audio] Incompatible configuration: sample format is %s, expect %s.", other.sampleFormat, sampleFormat);
+				Log::msg(Info, "[Audio] Incompatible configuration: sample format is %s, expect %s.", other.sampleFormat, sampleFormat);
 				return false;
 			}
 			if (other.numPlanes != numPlanes) {
-				Log::msg(Log::Info, "[Audio] Incompatible configuration: plane number is %s, expect %s.", other.numPlanes, numPlanes);
+				Log::msg(Info, "[Audio] Incompatible configuration: plane number is %s, expect %s.", other.numPlanes, numPlanes);
 				return false;
 			}
 

@@ -33,10 +33,10 @@ namespace Modules {
 				}
 				break;
 			default:
-				throw std::runtime_error("[Restamp] Unknown mode");
+				throw error("Unknown mode");
 			}
 
-			Log::msg(Log::Debug, "[Restamp] %s -> %sms", (double)data->getTime() / IClock::Rate, (double)(time + offset) / IClock::Rate);
+			log(Debug, "%s -> %sms", (double)data->getTime() / IClock::Rate, (double)(time + offset) / IClock::Rate);
 			const_cast<DataBase*>(data.get())->setTime(time + offset); //FIXME: we should have input&output on the same allocator
 			getOutput(0)->emit(data);
 		}

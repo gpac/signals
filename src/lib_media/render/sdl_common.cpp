@@ -1,4 +1,3 @@
-#include "lib_utils/log.hpp"
 #include "SDL2/SDL.h"
 
 #ifdef __linux__
@@ -13,10 +12,10 @@ class SdlInit {
 			sigaction(SIGINT, nullptr, &action);
 #endif
 			if (SDL_InitSubSystem(SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) == -1)
-				throw std::runtime_error(format("[SDLAudio render] Couldn't initialize: %s", SDL_GetError()));
+				throw std::runtime_error(format("Couldn't initialize: %s", SDL_GetError()));
 
 			if (SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) == -1)
-				throw std::runtime_error(format("[SDLVideo render] Couldn't initialize: %s", SDL_GetError()));
+				throw std::runtime_error(format("Couldn't initialize: %s", SDL_GetError()));
 
 #ifdef __linux__
 			sigaction(SIGINT, &action, nullptr);

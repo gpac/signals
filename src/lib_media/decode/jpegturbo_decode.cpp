@@ -1,6 +1,5 @@
 #include "jpegturbo_decode.hpp"
 #include "../common/libav.hpp"
-#include "lib_utils/log.hpp"
 #include "lib_utils/tools.hpp"
 extern "C" {
 #include <turbojpeg.h>
@@ -63,12 +62,12 @@ void JPEGTurboDecode::process(Data data_) {
 	int w, h, jpegSubsamp;
 	auto jpegBuf = data->data();
 	if (tjDecompressHeader2(jtHandle->get(), (unsigned char*)jpegBuf, (unsigned long)data->size(), &w, &h, &jpegSubsamp) < 0) {
-		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing header.");
+		log(Warning, "error encountered while decompressing header.");
 		return;
 	}
 	auto out = DataPicture::create(output, Resolution(w, h), RGB24);
 	if (tjDecompress2(jtHandle->get(), (unsigned char*)jpegBuf, (unsigned long)data->size(), out->data(), w, 0/*pitch*/, h, pixelFmt, TJFLAG_FASTDCT) < 0) {
-		Log::msg(Log::Warning, "[jpegturbo_decode] error encountered while decompressing frame.");
+		log(Warning, "error encountered while decompressing frame.");
 		return;
 	}
 	ensureMetadata(w, h, pixelFmt);
