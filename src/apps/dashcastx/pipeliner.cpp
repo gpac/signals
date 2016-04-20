@@ -6,7 +6,7 @@
 using namespace Modules;
 using namespace Pipelines;
 
-//#define DEBUG_MONITOR
+#define DEBUG_MONITOR
 
 namespace {
 Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t i) {
@@ -70,10 +70,6 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		if (transcode) {
 			decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 			pipeline.connect(demux, i, decode, 0);
-#ifdef DEBUG_MONITOR
-			auto webcamPreview = pipeline.addModule(new Render::SDLVideo());
-			connect(decode, webcamPreview);
-#endif
 		}
 
 		auto const numRes = metadata->isVideo() ? std::max<size_t>(opt.v.size(), 1) : 1;
@@ -83,6 +79,13 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 				auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
 				if (!converter)
 					continue;
+
+#ifdef DEBUG_MONITOR
+				if (metadata->isVideo() && r == 0) {
+					auto webcamPreview = pipeline.addModule(new Render::SDLVideo());
+					connect(converter, webcamPreview);
+				}
+#endif
 
 				connect(decode, converter);
 

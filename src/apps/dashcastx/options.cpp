@@ -110,7 +110,7 @@ dashcastXOptions processArgs(int argc, char const* argv[]) {
 	option::Parser parse(usage, argc, argv, options.get(), buffer.get());
 
 	if (parse.error()) {
-		option::printUsage(std::cout, usage);
+		option::printUsage(std::cerr, usage);
 		throw std::runtime_error("Parse error (2). Please check message and usage above.");
 	} else if (options[HELP] || argc == 0 || parse.nonOptionsCount() == 0) {
 		option::printUsage(std::cout, usage);

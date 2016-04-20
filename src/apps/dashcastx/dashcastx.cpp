@@ -17,6 +17,7 @@ BOOL WINAPI signalHandler(_In_ DWORD dwCtrlType) {
 		printf("Exit event received.\n\n");
 		if (g_Pipeline) {
 			g_Pipeline->exitSync();
+			g_Pipeline = nullptr;
 		}
 		return TRUE;
 	default:
@@ -29,6 +30,7 @@ void sigTermHandler(int sig) {
 		std::cerr << "Caught signal(SIGTERM), exiting." << std::endl;
 		if (g_Pipeline) {
 			g_Pipeline->exitSync();
+			g_Pipeline = nullptr;
 		}
 	}
 }
@@ -53,14 +55,7 @@ int safeMain(int argc, char const* argv[]) {
 	std::cerr << "DashcastX - close window or ctrl-c to exit cleanly." << std::endl;
 	pipeline->start();
 	pipeline->waitForCompletion();
+	g_Pipeline = nullptr;
 
 	return 0;
-}
-
-int main(int argc, char const* argv[]) {
-	try {
-		return safeMain(argc, argv);
-	} catch(std::exception const& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-	}
 }
