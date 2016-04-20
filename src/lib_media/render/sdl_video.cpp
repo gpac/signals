@@ -2,6 +2,10 @@
 #include "lib_utils/tools.hpp"
 #include "SDL2/SDL.h"
 #include "render_common.hpp"
+#include <csignal>
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
 
 namespace Modules {
 namespace Render {
@@ -69,7 +73,11 @@ bool SDLVideo::processOneFrame(Data data) {
 			}
 			break;
 		case SDL_QUIT:
-			exit(1);
+#ifdef _MSC_VER
+			GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
+#else
+			std::raise(SIGTERM);
+#endif
 			return false;
 		}
 	}
