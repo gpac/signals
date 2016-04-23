@@ -12,7 +12,7 @@ namespace Modules {
 
 typedef Signals::Signal<void(Data), Signals::ResultQueue<NotVoid<void>>> SignalAsync;
 typedef Signals::Signal<void(Data), Signals::ResultVector<NotVoid<void>>> SignalSync;
-
+static Signals::ExecutorSync<void(Data)> g_executorOutputSync;
 typedef SignalSync SignalDefaultSync;
 
 struct IOutput {
@@ -28,7 +28,7 @@ class OutputT : public IOutput, public MetadataCap {
 		typedef Allocator AllocatorType;
 
 		OutputT(IMetadata *metadata = nullptr)
-			: MetadataCap(metadata), allocator(new Allocator) {
+			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator) {
 		}
 		virtual ~OutputT() noexcept(false) {
 			allocator->unblock();
