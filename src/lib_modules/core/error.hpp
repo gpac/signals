@@ -7,18 +7,13 @@
 
 namespace Modules {
 
-class Exception : public std::exception {
+class Exception : public std::runtime_error {
 public:
-	Exception(std::string const &msg) throw() : msg(msg) {}
-	~Exception() throw() {}
-
-	char const* what() const throw() {
-		return msg.c_str();
-	}
+	Exception(std::string const &msg) throw() : std::runtime_error(msg) {}
+	virtual ~Exception() throw() {}
 
 private:
 	Exception& operator= (const Exception&) = delete;
-	std::string msg;
 };
 
 struct IError {
