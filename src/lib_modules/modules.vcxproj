@@ -120,13 +120,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4250;4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
-      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
-      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
+      <AssemblerListingLocation>$(IntDir)obj\%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)obj\%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)obj\%(RelativeDir)</XMLDocumentationFileName>
       <SDLCheck>true</SDLCheck>
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -146,13 +146,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0501;NOMINMAX;_USE_MATH_DEFINES;MODULES_COMPILATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>4996;4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4250;4996;4251</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
-      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
-      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
+      <AssemblerListingLocation>$(IntDir)obj\%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)obj\%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)obj\%(RelativeDir)</XMLDocumentationFileName>
       <SDLCheck>true</SDLCheck>
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <OmitFramePointers>false</OmitFramePointers>
@@ -177,13 +177,14 @@
       <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
-      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
+      <AssemblerListingLocation>$(IntDir)obj\%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)obj\%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)obj\%(RelativeDir)</XMLDocumentationFileName>
       <SDLCheck>true</SDLCheck>
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
+      <DisableSpecificWarnings>4250;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -206,13 +207,14 @@
       <AdditionalIncludeDirectories>.;$(SolutionDir)\extra_lib\include;$(SolutionDir)\src\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AssemblerListingLocation>$(IntDir)%(RelativeDir)</AssemblerListingLocation>
-      <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
-      <XMLDocumentationFileName>$(IntDir)%(RelativeDir)</XMLDocumentationFileName>
+      <AssemblerListingLocation>$(IntDir)obj\%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)obj\%(RelativeDir)</ObjectFileName>
+      <XMLDocumentationFileName>$(IntDir)obj\%(RelativeDir)</XMLDocumentationFileName>
       <SDLCheck>true</SDLCheck>
       <ControlFlowGuard>Guard</ControlFlowGuard>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
+      <DisableSpecificWarnings>4250;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
