@@ -1,10 +1,8 @@
 #pragma once
 
+#include "../core/module.hpp"
 #include <memory>
 #include <vector>
-#include "stranded_pool_executor.hpp"
-#include "../core/module.hpp"
-#include "helper.hpp"
 
 
 namespace Pipelines {
