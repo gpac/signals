@@ -39,6 +39,36 @@ class PipelinedInput : public IInput {
 		ICompletionNotifier * const notify;
 };
 
+
+class PipelinedModule : public ICompletionNotifier, public IPipelineModule, public Modules::InputCap {
+public:
+	/* take ownership of module */
+	PipelinedModule(Modules::Module *module, ICompletionNotifier *notify);
+	~PipelinedModule() noexcept(false) {}
+
+	size_t getNumInputs() const override;
+	size_t getNumOutputs() const; //Romain: missing override
+	Modules::IOutput* getOutput(size_t i) const override;
+
+	/* source modules are stopped manually - then the message propagates to other connected modules */
+	bool isSource() const override;
+	bool isSink() const override;
+
+private:
+	virtual void connect(Modules::IOutput *output, size_t inputIdx) override;
+	Modules::IInput* getInput(size_t i) override;
+	void mimicInputs();
+
+	/* same as process() but uses the executor (may defer the call) */
+	void dispatch(Modules::Data data) override;
+	void finished() override;
+
+	std::unique_ptr<Modules::Module> delegate;
+	std::unique_ptr<Modules::IProcessExecutor> const localExecutor;
+	Modules::IProcessExecutor &executor;
+	ICompletionNotifier* const m_notify;
+};
+
 PipelinedModule::PipelinedModule(Module *module, ICompletionNotifier *notify)
 	: delegate(module), localExecutor(new EXECUTOR), executor(*localExecutor), m_notify(notify) {
 }
@@ -127,7 +157,7 @@ void PipelinedModule::finished() {
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
-PipelinedModule* Pipeline::addModule(Module *rawModule) {
+IPipelineModule* Pipeline::addModule(Module *rawModule) {
 	if (!rawModule)
 		return nullptr;
 	rawModule->setLowLatency(isLowLatency);
