@@ -13,11 +13,10 @@ struct ICompletionNotifier {
 	virtual void finished() = 0;
 };
 
-struct IPipelineModule : public Modules::IInputCap, public Modules::IOutputCap {
+struct IPipelineModule : public Modules::IProcessor, public Modules::IInputCap, public Modules::IOutputCap {
 	virtual ~IPipelineModule() noexcept(false) {}
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
-	virtual void dispatch(Modules::Data data) = 0;
 	virtual void connect(Modules::IOutput *output, size_t inputIdx) = 0;
 };
 

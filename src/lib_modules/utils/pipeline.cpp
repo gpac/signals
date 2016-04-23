@@ -59,8 +59,8 @@ private:
 	Modules::IInput* getInput(size_t i) override;
 	void mimicInputs();
 
-	/* same as process() but uses the executor (may defer the call) */
-	void dispatch(Modules::Data data) override;
+	/* uses the executor (i.e. may defer the call) */
+	void process(Modules::Data data) override;
 	void finished() override;
 
 	std::unique_ptr<Modules::Module> delegate;
@@ -122,7 +122,7 @@ void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
 	ConnectOutputToInput(output, getInput(inputIdx), executor);
 }
 
-void PipelinedModule::dispatch(Data data) {
+void PipelinedModule::process(Data data) {
 	Log::msg(Debug, format("Module %s: dispatch data", typeid(delegate).name()));
 
 	if (isSource()) {
@@ -177,7 +177,7 @@ void Pipeline::start() {
 	Log::msg(Info, "Pipeline: starting");
 	for (auto &m : modules) {
 		if (m->isSource())
-			m->dispatch(nullptr);
+			m->process(nullptr);
 	}
 	Log::msg(Info, "Pipeline: started");
 }
@@ -195,7 +195,7 @@ void Pipeline::exitSync() {
 	Log::msg(Warning, format("Pipeline: asked to exit now."));
 	for (auto &m : modules) {
 		if (m->isSource())
-			m->dispatch(nullptr);
+			m->process(nullptr);
 	}
 }
 
