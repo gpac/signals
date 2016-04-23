@@ -11,7 +11,7 @@ namespace Modules {
 
 struct IProcessor {
 	virtual ~IProcessor() noexcept(false) {}
-	virtual void process(Data data) = 0;
+	virtual void process() = 0;
 };
 
 class ConnectedCap {
@@ -33,20 +33,20 @@ struct IInput : public IProcessor, public ConnectedCap, public MetadataCap, publ
 	virtual ~IInput() noexcept(false) {}
 };
 
-struct IModuleProcessor;
-
-template<typename DataType, typename ModuleType = IModuleProcessor>
+template<typename DataType, typename ModuleType = IProcessor>
 class Input : public IInput {
 	public:
 		Input(ModuleType * const module) : module(module) {}
 
-		virtual void process(Data data) override {
-			if (typeid(DataType) == typeid(DataLoose))
-				push(data);
-			else
-				push(safe_cast<const DataType>(data));
-
+		virtual void process() override {
 			module->process();
+		}
+
+		virtual void push(Data data) override {
+			if (typeid(DataType) == typeid(DataLoose))
+				Signals::Queue<Data>::push(data);
+			else
+				Signals::Queue<Data>::push(safe_cast<const DataType>(data));
 		}
 
 	private:

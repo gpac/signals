@@ -9,13 +9,13 @@
 namespace Modules {
 
 template<typename Class>
-Signals::MemberFunctor<void, Class, void(Class::*)(Data)>
+Signals::MemberFunctor<void, Class, void(Class::*)()>
 MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {
-	return Signals::MemberFunctor<void, Class, void(Class::*)(Data)>(objectPtr, &IProcessor::process);
+	return Signals::MemberFunctor<void, Class, void(Class::*)()>(objectPtr, &IProcessor::process);
 }
 
 template<typename ModuleType>
-size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor& executor = defaultExecutor) {
+size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor * const executor = defaultExecutor) {
 	auto prevMetadata = safe_cast<const IMetadataCap>(prev)->getMetadata();
 	auto nextMetadata = next->getMetadata();
 	if (prevMetadata && nextMetadata) {
@@ -37,13 +37,18 @@ size_t ConnectOutputToInput(IOutput* prev, ModuleType* next, IProcessExecutor& e
 	}
 
 	next->connect();
-	auto functor = MEMBER_FUNCTOR_PROCESS(next);
-	return prev->getSignal().connect(functor, executor);
+	return prev->getSignal().connect(
+		[=](Data data)
+	{
+		next->push(data);
+		(*executor)(MEMBER_FUNCTOR_PROCESS(next));
+	}
+	);
 }
 
 template<typename ModuleType>
 size_t ConnectOutputToInput(IOutput* prev, std::unique_ptr<ModuleType>& next, IProcessExecutor& executor = defaultExecutor) {
-	return ConnectOutputToInput(prev, next->getInput(0), executor);
+	return ConnectOutputToInput(prev, next->getInput(0), &executor);
 }
 
 template<typename ModuleType1, typename ModuleType2>

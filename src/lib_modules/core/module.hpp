@@ -12,15 +12,9 @@
 
 namespace Modules {
 
-struct IModuleProcessor {
-	virtual ~IModuleProcessor() noexcept(false) {}
-	virtual void process() = 0;
-	virtual void flush() = 0;
-};
-
-struct IModule : public IModuleProcessor, public virtual IInputCap, public virtual IOutputCap {
+struct IModule : public IProcessor, public virtual IInputCap, public virtual IOutputCap {
 	virtual ~IModule() noexcept(false) {}
-	virtual void flush() override {};
+	virtual void flush() {}
 };
 
 class Module : public IModule, public IError, public LogCap, public virtual InputCap, public virtual OutputCap {

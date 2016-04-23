@@ -3,8 +3,8 @@
 #include <typeinfo>
 #include "helper.hpp"
 
-#define EXECUTOR_SYNC         Signals::ExecutorSync<void(Data)>
-#define EXECUTOR_ASYNC_THREAD Signals::ExecutorThread<void(Data)>
+#define EXECUTOR_SYNC         Signals::ExecutorSync<void()>
+#define EXECUTOR_ASYNC_THREAD Signals::ExecutorThread<void()>
 #define EXECUTOR_ASYNC_POOL   StrandedPoolModuleExecutor
 #define EXECUTOR EXECUTOR_ASYNC_POOL
 
@@ -18,12 +18,14 @@ class PipelinedInput : public IInput {
 		virtual ~PipelinedInput() noexcept(false) {}
 
 		/* direct call: receiving nullptr stops the execution */
-		virtual void process(Data data) override {
+		virtual void process() override {
+			auto data = pop();
 			if (data) {
-				Log::msg(Debug, format("Module %s: dispatch data for time %s", typeid(notify).name(), data->getTime() / (double)IClock::Rate));
-				delegate->process(data);
+				Log::msg(Debug, format("Module %s: dispatch data for time %s", typeid(delegate).name(), data->getTime() / (double)IClock::Rate));
+				delegate->push(data);
+				delegate->process();
 			} else {
-				Log::msg(Debug, format("Module %s: notify finished.", typeid(notify).name()));
+				Log::msg(Debug, format("Module %s: notify finished.", typeid(delegate).name()));
 				notify->finished();
 			}
 		}
@@ -107,7 +109,7 @@ IOutput* PipelinedModule::getOutput(size_t i) const {
 bool PipelinedModule::isSource() const {
 	if (delegate->getNumInputs() == 0) {
 		return true;
-	} else if (delegate->getNumInputs() == 1 && dynamic_cast<Modules::Input<DataLoose, Modules::IModuleProcessor>*>(delegate->getInput(0))) {
+	} else if (delegate->getNumInputs() == 1 && dynamic_cast<Modules::Input<DataLoose, Modules::IProcessor>*>(delegate->getInput(0))) {
 		return true;
 	} else {
 		return false;
@@ -119,7 +121,7 @@ bool PipelinedModule::isSink() const {
 }
 
 void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
-	ConnectOutputToInput(output, getInput(inputIdx), executor);
+	ConnectOutputToInput(output, getInput(inputIdx), &executor);
 }
 
 void PipelinedModule::process() {
@@ -130,7 +132,8 @@ void PipelinedModule::process() {
 			/*first time: create a fake pin and push null to trigger execution*/
 			delegate->addInput(new Input<DataLoose>(delegate.get()));
 			getInput(0)->push(nullptr);
-			executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), nullptr);
+			delegate->getInput(0)->push(nullptr);
+			executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)));
 		} else {
 			/*the source is likely processing: push null in the loop to exit and let things follow their way*/
 			delegate->getInput(0)->push(nullptr);
@@ -140,7 +143,8 @@ void PipelinedModule::process() {
 
 	Data data = getInput(0)->pop();
 	for (size_t i = 0; i < getNumInputs(); ++i) {
-		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)), data);
+		getInput(i)->push(data);
+		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)));
 	}
 }
 
@@ -151,7 +155,7 @@ void PipelinedModule::finished() {
 		m_notify->finished();
 	} else {
 		for (size_t i = 0; i < delegate->getNumOutputs(); ++i) {
-			delegate->getOutput(i)->emit(Data(nullptr));
+			delegate->getOutput(i)->emit(nullptr);
 		}
 	}
 }

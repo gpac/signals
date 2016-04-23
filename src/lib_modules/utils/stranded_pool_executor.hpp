@@ -14,7 +14,7 @@ template<typename> class strand;
 
 namespace Modules {
 
-typedef Signals::IExecutor<void(Data)> IProcessExecutor;
+typedef Signals::IExecutor<void()> IProcessExecutor;
 
 //tasks occur in the default thread pool
 //when tasks belong to a strand, they are processed non-concurrently in FIFO order
@@ -22,13 +22,13 @@ class StrandedPoolModuleExecutor : public IProcessExecutor {
 	public:
 		StrandedPoolModuleExecutor();
 		StrandedPoolModuleExecutor(asio::thread_pool &threadPool);
-		std::shared_future<NotVoid<void>> operator() (const std::function<void(Data)> &fn, Data);
+		std::shared_future<NotVoid<void>> operator() (const std::function<void()> &fn);
 
 	private:
 		asio::strand<asio::thread_pool::executor_type> strand;
 };
 
-static Signals::ExecutorSync<void(Data)> g_executorSync;
+static Signals::ExecutorSync<void()> g_executorSync;
 //static StrandedPoolModuleExecutor g_StrandedExecutor;
 #define defaultExecutor g_executorSync
 

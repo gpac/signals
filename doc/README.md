@@ -76,6 +76,8 @@ When developping modules, you should not take care of concurrency (threads or mu
 
 Use the Pipeline namespace.
 
+Source called only once. Stops when given nullptr on "virtual" input pin 0.
+
 ORDER OF ALLOC
 
 Interrupting a 
