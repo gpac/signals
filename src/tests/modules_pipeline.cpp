@@ -118,7 +118,7 @@ unittest("Pipeline: source only and destroy while running") {
 	catch (std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
-	ASSERT(thrown);
+	ASSERT(!thrown);
 }
 
 unittest("Pipeline: sink only") {
@@ -132,7 +132,40 @@ unittest("Pipeline: sink only") {
 	catch (std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
-	ASSERT(thrown);
+	ASSERT(!thrown);
+}
+
+unittest("Pipeline: input data is queued while module is running") {
+	class DualInput : public Module {
+	public:
+		DualInput() {
+			addInput(new Input<DataBase>(this));
+			addInput(new Input<DataBase>(this));
+		}
+		void process() {
+			if (!done) {
+				auto i1 = getInput(0)->pop();
+				auto i2 = getInput(1)->pop();
+				done = true;
+			}
+
+			getInput(0)->clear();
+			getInput(1)->clear();
+		}
+
+	private:
+		bool done = false;
+	};
+
+	Pipeline p;
+	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
+	auto DualInputRaw = new DualInput;
+	auto dualInput = p.addModule(DualInputRaw);
+	p.connect(demux, 0, dualInput, 0);
+	p.start();
+	auto data = std::make_shared<DataRaw>(0);
+	DualInputRaw->getInput(1)->push(data);
+	p.waitForCompletion();
 }
 
 }
