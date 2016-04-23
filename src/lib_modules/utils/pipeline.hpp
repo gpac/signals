@@ -7,11 +7,7 @@
 
 namespace Pipelines {
 
-struct IPipelineModule : public Modules::IProcessor, public Modules::IInputCap, public Modules::IOutputCap {
-	virtual ~IPipelineModule() noexcept(false) {}
-};
-
-struct IPipelinedModule : public IPipelineModule {
+struct IPipelinedModule : public Modules::IModule {
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
 	virtual void connect(Modules::IOutput *output, size_t inputIdx) = 0;
@@ -24,8 +20,8 @@ struct ICompletionNotifier {
 class Pipeline : public ICompletionNotifier {
 	public:
 		Pipeline(bool isLowLatency = false);
-		IPipelineModule* addModule(Modules::Module* rawModule);
-		void connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *next, size_t inputIdx);
+		Modules::IModule* addModule(Modules::Module* rawModule);
+		void connect(Modules::IModule *prev, size_t outputIdx, Modules::IModule *next, size_t inputIdx);
 		void start();
 		void waitForCompletion();
 		void exitSync(); /*ask for all sources to finish*/

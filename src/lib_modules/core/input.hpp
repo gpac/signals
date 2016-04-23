@@ -33,9 +33,9 @@ struct IInput : public IProcessor, public ConnectedCap, public MetadataCap, publ
 	virtual ~IInput() noexcept(false) {}
 };
 
-struct IModule;
+struct IModuleProcessor;
 
-template<typename DataType, typename ModuleType = IModule>
+template<typename DataType, typename ModuleType = IModuleProcessor>
 class Input : public IInput {
 	public:
 		Input(ModuleType * const module) : module(module) {}
@@ -59,7 +59,7 @@ struct IInputCap {
 	virtual IInput* getInput(size_t i) = 0;
 };
 
-class InputCap : public IInputCap {
+class InputCap : public virtual IInputCap {
 	public:
 		virtual ~InputCap() noexcept(false) {}
 

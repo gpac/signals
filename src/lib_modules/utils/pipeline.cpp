@@ -60,7 +60,7 @@ private:
 	void mimicInputs();
 
 	/* uses the executor (i.e. may defer the call) */
-	void process(Modules::Data data) override;
+	void process() override;
 	void finished() override;
 
 	std::unique_ptr<Modules::Module> delegate;
@@ -107,7 +107,7 @@ IOutput* PipelinedModule::getOutput(size_t i) const {
 bool PipelinedModule::isSource() const {
 	if (delegate->getNumInputs() == 0) {
 		return true;
-	} else if (delegate->getNumInputs() == 1 && dynamic_cast<Modules::Input<DataLoose, Modules::IModule>*>(delegate->getInput(0))) {
+	} else if (delegate->getNumInputs() == 1 && dynamic_cast<Modules::Input<DataLoose, Modules::IModuleProcessor>*>(delegate->getInput(0))) {
 		return true;
 	} else {
 		return false;
@@ -122,22 +122,23 @@ void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
 	ConnectOutputToInput(output, getInput(inputIdx), executor);
 }
 
-void PipelinedModule::process(Data data) {
+void PipelinedModule::process() {
 	Log::msg(Debug, format("Module %s: dispatch data", typeid(delegate).name()));
 
 	if (isSource()) {
-		assert(data == nullptr);
 		if (getNumInputs() == 0) {
 			/*first time: create a fake pin and push null to trigger execution*/
 			delegate->addInput(new Input<DataLoose>(delegate.get()));
-			executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), data);
+			getInput(0)->push(nullptr);
+			executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)), nullptr);
 		} else {
 			/*the source is likely processing: push null in the loop to exit and let things follow their way*/
-			delegate->getInput(0)->push(data);
+			delegate->getInput(0)->push(nullptr);
 			return;
 		}
 	}
 
+	Data data = getInput(0)->pop();
 	for (size_t i = 0; i < getNumInputs(); ++i) {
 		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)), data);
 	}
@@ -149,15 +150,16 @@ void PipelinedModule::finished() {
 	if (isSink()) {
 		m_notify->finished();
 	} else {
-		for (size_t i = 0; i < delegate->getNumOutputs(); ++i)
+		for (size_t i = 0; i < delegate->getNumOutputs(); ++i) {
 			delegate->getOutput(i)->emit(Data(nullptr));
+		}
 	}
 }
 
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
-IPipelineModule* Pipeline::addModule(Module *rawModule) {
+IModule* Pipeline::addModule(Module *rawModule) {
 	if (!rawModule)
 		return nullptr;
 	rawModule->setLowLatency(isLowLatency);
@@ -167,7 +169,7 @@ IPipelineModule* Pipeline::addModule(Module *rawModule) {
 	return ret;
 }
 
-void Pipeline::connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *n, size_t inputIdx) {
+void Pipeline::connect(IModule *prev, size_t outputIdx, IModule *n, size_t inputIdx) {
 	auto next = safe_cast<IPipelinedModule>(n);
 	if (safe_cast<IPipelinedModule>(next)->isSink())
 		numRemainingNotifications++;
@@ -178,7 +180,7 @@ void Pipeline::start() {
 	Log::msg(Info, "Pipeline: starting");
 	for (auto &m : modules) {
 		if (m->isSource())
-			m->process(nullptr);
+			m->process();
 	}
 	Log::msg(Info, "Pipeline: started");
 }
@@ -196,7 +198,7 @@ void Pipeline::exitSync() {
 	Log::msg(Warning, format("Pipeline: asked to exit now."));
 	for (auto &m : modules) {
 		if (m->isSource())
-			m->process(nullptr);
+			m->process();
 	}
 }
 

@@ -12,17 +12,21 @@
 
 namespace Modules {
 
-struct IModule {
-	virtual ~IModule() noexcept(false) {}
+struct IModuleProcessor {
+	virtual ~IModuleProcessor() noexcept(false) {}
 	virtual void process() = 0;
 	virtual void flush() = 0;
 };
 
-class Module : public IModule, public IError, public LogCap, public InputCap, public OutputCap {
+struct IModule : public IModuleProcessor, public virtual IInputCap, public virtual IOutputCap {
+	virtual ~IModule() noexcept(false) {}
+	virtual void flush() override {};
+};
+
+class Module : public IModule, public IError, public LogCap, public virtual InputCap, public virtual OutputCap {
 	public:
 		Module() = default;
 		virtual ~Module() noexcept(false) {}
-		virtual void flush() {}
 
 	private:
 		Module(Module const&) = delete;

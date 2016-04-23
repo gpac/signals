@@ -69,7 +69,7 @@ struct IOutputCap {
 	virtual IOutput* getOutput(size_t i) const = 0;
 };
 
-class OutputCap : public IOutputCap {
+class OutputCap : public virtual IOutputCap {
 	public:
 		virtual ~OutputCap() noexcept(false) {}
 
