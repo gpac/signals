@@ -27,7 +27,7 @@ class ISignal<Callback(Args...)> {
 
 		/**
 		* When relying on shared_future (i.e. with non-void types), some implementations (such as MSVC std::launch)
-		* don't destroy the copy of 'Args... args' they hold. When using reference counted Args, they'only be
+		* don't destroy the copy of 'Args... args' they hold. When using reference counted Args, they would only be
 		* released when calling this function or when getting the results().
 		*/
 		virtual void flushAvailableResults() = 0;
@@ -91,10 +91,10 @@ class PSignal<Result, Callback(Args...)> : public ISignal<Callback(Args...)> {
 		}
 
 	protected:
-		PSignal() : uid(0), defaultExecutor(new ExecutorAsync<Callback(Args...)>()), executor(*defaultExecutor.get()) {
+		PSignal() : defaultExecutor(new ExecutorAsync<Callback(Args...)>()), executor(*defaultExecutor.get()) {
 		}
 
-		PSignal(IExecutor<Callback(Args...)> &executor) : uid(0), executor(executor) {
+		PSignal(IExecutor<Callback(Args...)> &executor) : executor(executor) {
 		}
 
 		virtual ~PSignal() {
@@ -138,7 +138,7 @@ class PSignal<Result, Callback(Args...)> : public ISignal<Callback(Args...)> {
 		std::mutex callbacksMutex;
 		ConnectionManager callbacks; //protected by callbacksMutex
 		Result result;               //protected by callbacksMutex
-		size_t uid;                  //protected by callbacksMutex
+		size_t uid = 0;              //protected by callbacksMutex
 
 		std::unique_ptr<IExecutor<Callback(Args...)>> const defaultExecutor;
 		IExecutor<Callback(Args...)> &executor;
