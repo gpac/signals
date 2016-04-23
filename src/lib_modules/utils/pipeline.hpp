@@ -9,15 +9,18 @@
 
 namespace Pipelines {
 
-struct ICompletionNotifier {
-	virtual void finished() = 0;
-};
-
 struct IPipelineModule : public Modules::IProcessor, public Modules::IInputCap, public Modules::IOutputCap {
 	virtual ~IPipelineModule() noexcept(false) {}
+};
+
+struct IPipelinedModule : public IPipelineModule {
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
 	virtual void connect(Modules::IOutput *output, size_t inputIdx) = 0;
+};
+
+struct ICompletionNotifier {
+	virtual void finished() = 0;
 };
 
 class Pipeline : public ICompletionNotifier {
@@ -32,7 +35,7 @@ class Pipeline : public ICompletionNotifier {
 	private:
 		void finished() override;
 
-		std::vector<std::unique_ptr<IPipelineModule>> modules;
+		std::vector<std::unique_ptr<IPipelinedModule>> modules;
 		bool isLowLatency;
 
 		std::mutex mutex;

@@ -39,15 +39,14 @@ class PipelinedInput : public IInput {
 		ICompletionNotifier * const notify;
 };
 
-
-class PipelinedModule : public ICompletionNotifier, public IPipelineModule, public Modules::InputCap {
+class PipelinedModule : public ICompletionNotifier, public IPipelinedModule, public Modules::InputCap {
 public:
 	/* take ownership of module */
 	PipelinedModule(Modules::Module *module, ICompletionNotifier *notify);
 	~PipelinedModule() noexcept(false) {}
 
 	size_t getNumInputs() const override;
-	size_t getNumOutputs() const; //Romain: missing override
+	size_t getNumOutputs() const override;
 	Modules::IOutput* getOutput(size_t i) const override;
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
@@ -167,8 +166,9 @@ IPipelineModule* Pipeline::addModule(Module *rawModule) {
 	return ret;
 }
 
-void Pipeline::connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *next, size_t inputIdx) {
-	if (next->isSink())
+void Pipeline::connect(IPipelineModule *prev, size_t outputIdx, IPipelineModule *n, size_t inputIdx) {
+	auto next = safe_cast<IPipelinedModule>(n);
+	if (safe_cast<IPipelinedModule>(next)->isSink())
 		numRemainingNotifications++;
 	next->connect(prev->getOutput(outputIdx), inputIdx);
 }
