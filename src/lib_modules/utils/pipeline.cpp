@@ -171,7 +171,7 @@ IModule* Pipeline::addModule(Module *rawModule) {
 
 void Pipeline::connect(IModule *prev, size_t outputIdx, IModule *n, size_t inputIdx) {
 	auto next = safe_cast<IPipelinedModule>(n);
-	if (safe_cast<IPipelinedModule>(next)->isSink())
+	if (next->isSink())
 		numRemainingNotifications++;
 	next->connect(prev->getOutput(outputIdx), inputIdx);
 }
