@@ -66,7 +66,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 			break;
 		}
 
-		Modules::IModule *decode = nullptr;
+		IModule *decode = nullptr;
 		if (transcode) {
 			decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
 			pipeline.connect(demux, i, decode, 0);
@@ -74,7 +74,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 		auto const numRes = metadata->isVideo() ? std::max<size_t>(opt.v.size(), 1) : 1;
 		for (size_t r = 0; r < numRes; ++r) {
-			Modules::IModule *encoder = nullptr;
+			IModule *encoder = nullptr;
 			if (transcode) {
 				auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
 				if (!converter)
