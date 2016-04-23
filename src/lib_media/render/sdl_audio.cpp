@@ -11,6 +11,9 @@
 namespace Modules {
 
 namespace {
+
+static Signals::ExecutorSync<void(Data)> executorSync;
+
 SDL_AudioSpec SDLAudioSpecConvert(const PcmFormat *cfg) {
 	SDL_AudioSpec audioSpec;
 	memset(&audioSpec, 0, sizeof(audioSpec));
@@ -65,7 +68,7 @@ SDLAudio::SDLAudio(IClock* clock)
 
 	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
-	Signals::Connect(m_converter->getOutput(0)->getSignal(), this, &SDLAudio::push, g_executorSync);
+	Signals::Connect(m_converter->getOutput(0)->getSignal(), this, &SDLAudio::push, executorSync);
 }
 
 SDLAudio::~SDLAudio() {
