@@ -7,7 +7,7 @@ using namespace Modules;
 
 namespace {
 
-unittest("Basic clock") {
+unittest("basic clock") {
 	for (int i = 0; i < 10; ++i) {
 		auto const now = g_DefaultClock->now();
 		std::cout << "Time: " << now << std::endl;
@@ -17,7 +17,7 @@ unittest("Basic clock") {
 	}
 }
 
-unittest("Restamp: passthru with offsets") {
+unittest("restamp: passthru with offsets") {
 	const uint64_t time = 10001;
 	auto data = std::make_shared<DataRaw>(0);
 
@@ -37,7 +37,7 @@ unittest("Restamp: passthru with offsets") {
 	ASSERT_EQUALS(time, data->getTime());
 }
 
-unittest("Restamp: reset with offsets") {
+unittest("restamp: reset with offsets") {
 	uint64_t time = 10001;
 	int64_t offset = -100;
 	auto data = std::make_shared<DataRaw>(0);

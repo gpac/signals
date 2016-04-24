@@ -7,7 +7,7 @@ using namespace Signals;
 namespace {
 
 #ifdef ENABLE_FAILING_TESTS
-unittest("Thread-safe queue with non-pointer types") {
+unittest("thread-safe queue with non-pointer types") {
 	Queue<int> queue;
 	const int val = 1;
 
@@ -33,7 +33,7 @@ unittest("Thread-safe queue with non-pointer types") {
 }
 #endif
 
-unittest("Thread-safe queue can be cleared while a blocking pop() is waiting") {
+unittest("thread-safe queue can be cleared while a blocking pop() is waiting") {
 	Queue<int> queue;
 	auto f = [&]() {
 		auto data = queue.pop();
@@ -45,7 +45,7 @@ unittest("Thread-safe queue can be cleared while a blocking pop() is waiting") {
 	tf.join();
 }
 
-unittest("Thread-safe queue can be cleared while several blocking pop() are waiting") {
+unittest("thread-safe queue can be cleared while several blocking pop() are waiting") {
 	Queue<int> queue;
 	auto f = [&]() {
 		auto data = queue.pop();
@@ -63,7 +63,7 @@ unittest("Thread-safe queue can be cleared while several blocking pop() are wait
 	tf3.join();
 }
 
-unittest("Thread-safe queue has an optional max size") {
+unittest("thread-safe queue has an optional max size") {
 	const int maxSize = 2;
 	QueueMaxSize<int> queue(maxSize);
 	bool res;
@@ -81,7 +81,7 @@ unittest("Thread-safe queue has an optional max size") {
 	queue.clear();
 }
 
-unittest("Thread-safe queue has an optional blocking max size") {
+unittest("thread-safe queue has an optional blocking max size") {
 	const int maxSize = 1;
 	QueueMaxSize<int> queue(maxSize);
 	std::condition_variable mustPop;
@@ -115,7 +115,7 @@ unittest("Thread-safe queue has an optional blocking max size") {
 	tf2.join();
 }
 
-unittest("Thread-safe queue can be cleared with several blocking push() calls") {
+unittest("thread-safe queue can be cleared with several blocking push() calls") {
 	const int maxSize = 1;
 	ASSERT(maxSize < 4); //the example has 4 threads
 	QueueMaxSize<int> queue(maxSize);
@@ -138,7 +138,7 @@ unittest("Thread-safe queue can be cleared with several blocking push() calls") 
 	tf4.join();
 }
 
-unittest("Thread-safe queue can be destroyed while element is blocked while pushing") {
+unittest("thread-safe queue can be destroyed while element is blocked while pushing") {
 	const int maxSize = 1;
 	QueueMaxSize<int> queue(maxSize);
 

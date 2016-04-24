@@ -40,7 +40,7 @@ private:
 	uint64_t numCalls = 0;
 };
 
-unittest("Pipeline: empty") {
+unittest("pipeline: empty") {
 	{
 		Pipeline p;
 	}
@@ -59,7 +59,7 @@ unittest("Pipeline: empty") {
 	}
 }
 
-unittest("Pipeline: interrupted") {
+unittest("pipeline: interrupted") {
 	Pipeline p;
 	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 	ASSERT(demux->getNumOutputs() > 1);
@@ -74,7 +74,7 @@ unittest("Pipeline: interrupted") {
 	tf.join();
 }
 
-unittest("Pipeline: connect while running") {
+unittest("pipeline: connect while running") {
 	Pipeline p;
 	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 	ASSERT(demux->getNumOutputs() > 1);
@@ -90,7 +90,7 @@ unittest("Pipeline: connect while running") {
 	tf.join();
 }
 
-unittest("Pipeline: connect one input (out of 2) to one output") {
+unittest("pipeline: connect one input (out of 2) to one output") {
 	Pipeline p;
 	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 	ASSERT(demux->getNumOutputs() > 1);
@@ -100,7 +100,7 @@ unittest("Pipeline: connect one input (out of 2) to one output") {
 	p.waitForCompletion();
 }
 
-unittest("Pipeline: connect inputs to outputs") {
+unittest("pipeline: connect inputs to outputs") {
 	bool thrown = false;
 	try {
 		Pipeline p;
@@ -118,7 +118,7 @@ unittest("Pipeline: connect inputs to outputs") {
 	ASSERT(thrown);
 }
 
-unittest("Pipeline: connect incompatible i/o") {
+unittest("pipeline: connect incompatible i/o") {
 	bool thrown = false;
 	try {
 		Pipeline p;
@@ -138,7 +138,7 @@ unittest("Pipeline: connect incompatible i/o") {
 
 /*FIXME: these test fails because the pipeline is now async and cannot stop while running*/
 #ifdef ENABLE_FAILING_TESTS
-unittest("Pipeline: source only and destroy while running") {
+unittest("pipeline: source only and destroy while running") {
 	bool thrown = false;
 	try {
 		Pipeline p;
@@ -152,7 +152,7 @@ unittest("Pipeline: source only and destroy while running") {
 	ASSERT(!thrown);
 }
 
-unittest("Pipeline: sink only") {
+unittest("pipeline: sink only") {
 	bool thrown = false;
 	try {
 		Pipeline p;
@@ -166,7 +166,7 @@ unittest("Pipeline: sink only") {
 	ASSERT(!thrown);
 }
 
-unittest("Pipeline: input data is queued while module is running") {
+unittest("pipeline: input data is queued while module is running") {
 	try {
 		Pipeline p;
 		auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
@@ -183,7 +183,7 @@ unittest("Pipeline: input data is queued while module is running") {
 }
 #endif
 
-unittest("Pipeline: multiple inputs (send same packets to 2 inputs and check call number)") {
+unittest("pipeline: multiple inputs (send same packets to 2 inputs and check call number)") {
 	Pipeline p;
 	auto generator = p.addModule(new In::VideoGenerator());
 	auto DualInputRaw = new DualInput;

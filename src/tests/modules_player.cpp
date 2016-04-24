@@ -15,7 +15,7 @@ using namespace Modules;
 
 namespace {
 
-unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
+unittest("packet type erasure + multi-output: libav Demux -> libav Decoder (Video Only) -> Render::SDL2") {
 	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
 	auto null = uptr(new Out::Null);
 
@@ -39,7 +39,7 @@ unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Vide
 	demux->process(nullptr);
 }
 
-unittest("Packet type erasure + multi-output: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
+unittest("packet type erasure + multi-output: libav Demux -> libav Decoder (Audio Only) -> Render::SDL2") {
 	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
 	auto null = uptr(new Out::Null);
 

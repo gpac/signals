@@ -8,7 +8,7 @@
 using namespace Tests;
 using namespace Modules;
 
-unittest("Fifo") {
+unittest("fifo") {
 	GenericFifo<char> fp;
 	fp.write("Hello", 5);
 	fp.write("World", 5);
