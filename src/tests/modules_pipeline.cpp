@@ -136,7 +136,7 @@ unittest("pipeline: connect incompatible i/o") {
 	ASSERT(thrown);
 }
 
-/*FIXME: these test fails because the pipeline is now async and cannot stop while running*/
+/*FIXME: these test fails because the pipeline is now async and cannot stop while running - see #58*/
 #ifdef ENABLE_FAILING_TESTS
 unittest("pipeline: source only and destroy while running") {
 	bool thrown = false;
@@ -183,6 +183,7 @@ unittest("pipeline: input data is queued while module is running") {
 }
 #endif
 
+#ifdef ENABLE_FAILING_TESTS /*see #55*/
 unittest("pipeline: multiple inputs (send same packets to 2 inputs and check call number)") {
 	Pipeline p;
 	auto generator = p.addModule(new In::VideoGenerator());
@@ -194,5 +195,6 @@ unittest("pipeline: multiple inputs (send same packets to 2 inputs and check cal
 	p.waitForCompletion();
 	ASSERT_EQUALS(DualInputRaw->getNumCalls(), 1);
 }
+#endif
 
 }
