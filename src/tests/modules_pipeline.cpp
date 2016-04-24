@@ -11,6 +11,32 @@ using namespace Pipelines;
 
 namespace {
 
+class DualInput : public Module {
+public:
+	DualInput() {
+		addInput(new Input<DataBase>(this));
+		addInput(new Input<DataBase>(this));
+	}
+	void process() {
+		if (!done) {
+			auto i1 = getInput(0)->pop();
+			auto i2 = getInput(1)->pop();
+			done = true;
+		}
+
+		getInput(0)->clear();
+		getInput(1)->clear();
+	}
+
+	uint64_t getNumCalls() const {
+		return numCalls;
+	}
+
+private:
+	bool done = false;
+	uint64_t numCalls = 0;
+};
+
 unittest("Pipeline: empty") {
 	{
 		Pipeline p;
@@ -136,27 +162,6 @@ unittest("Pipeline: sink only") {
 }
 
 unittest("Pipeline: input data is queued while module is running") {
-	class DualInput : public Module {
-	public:
-		DualInput() {
-			addInput(new Input<DataBase>(this));
-			addInput(new Input<DataBase>(this));
-		}
-		void process() {
-			if (!done) {
-				auto i1 = getInput(0)->pop();
-				auto i2 = getInput(1)->pop();
-				done = true;
-			}
-
-			getInput(0)->clear();
-			getInput(1)->clear();
-		}
-
-	private:
-		bool done = false;
-	};
-
 	Pipeline p;
 	auto demux = p.addModule(new Demux::LibavDemux("data/beepbop.mp4"));
 	auto DualInputRaw = new DualInput;
@@ -166,6 +171,18 @@ unittest("Pipeline: input data is queued while module is running") {
 	auto data = std::make_shared<DataRaw>(0);
 	DualInputRaw->getInput(1)->push(data);
 	p.waitForCompletion();
+}
+
+unittest("Pipeline: multiple inputs (send same packets to 2 inputs and check call number)") {
+	Pipeline p;
+	auto generator = p.addModule(new In::VideoGenerator());
+	auto DualInputRaw = new DualInput;
+	auto dualInput = p.addModule(DualInputRaw);
+	p.connect(generator, 0, dualInput, 0);
+	p.connect(generator, 0, dualInput, 1);
+	p.start();
+	p.waitForCompletion();
+	ASSERT_EQUALS(DualInputRaw->getNumCalls(), 1);
 }
 
 }
