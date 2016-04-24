@@ -12,6 +12,12 @@ using namespace Modules;
 
 namespace Pipelines {
 
+template<typename Class>
+Signals::MemberFunctor<void, Class, void(Class::*)()>
+MEMBER_FUNCTOR_NOTIFY_FINISHED(Class* objectPtr) {
+	return Signals::MemberFunctor<void, Class, void(Class::*)()>(objectPtr, &ICompletionNotifier::finished);
+}
+
 class PipelinedInput : public IInput {
 	public:
 		PipelinedInput(IInput *input, Modules::IProcessExecutor &executor, ICompletionNotifier * const notify)
@@ -27,7 +33,7 @@ class PipelinedInput : public IInput {
 				executor(MEMBER_FUNCTOR_PROCESS(delegate));
 			} else {
 				Log::msg(Debug, format("Module %s: notify finished.", typeid(delegate).name()));
-				notify->finished();
+				executor(MEMBER_FUNCTOR_NOTIFY_FINISHED(notify));
 			}
 		}
 

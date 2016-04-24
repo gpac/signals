@@ -17,7 +17,10 @@ public:
 		addInput(new Input<DataBase>(this));
 		addInput(new Input<DataBase>(this));
 	}
+
 	void process() {
+		numCalls++;
+
 		if (!done) {
 			auto i1 = getInput(0)->pop();
 			auto i2 = getInput(1)->pop();
