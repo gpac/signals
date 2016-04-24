@@ -14,7 +14,8 @@ namespace Pipelines {
 
 class PipelinedInput : public IInput {
 	public:
-		PipelinedInput(IInput *input, ICompletionNotifier * const notify) : delegate(input), notify(notify) {}
+		PipelinedInput(IInput *input, Modules::IProcessExecutor &executor, ICompletionNotifier * const notify)
+			: delegate(input), notify(notify), executor(executor) {}
 		virtual ~PipelinedInput() noexcept(false) {}
 
 		/* direct call: receiving nullptr stops the execution */
@@ -23,7 +24,7 @@ class PipelinedInput : public IInput {
 			if (data) {
 				Log::msg(Debug, format("Module %s: dispatch data for time %s", typeid(delegate).name(), data->getTime() / (double)IClock::Rate));
 				delegate->push(data);
-				delegate->process();
+				executor(MEMBER_FUNCTOR_PROCESS(delegate));
 			} else {
 				Log::msg(Debug, format("Module %s: notify finished.", typeid(delegate).name()));
 				notify->finished();
@@ -40,6 +41,7 @@ class PipelinedInput : public IInput {
 	private:
 		IInput *delegate;
 		ICompletionNotifier * const notify;
+		Modules::IProcessExecutor &executor;
 };
 
 class PipelinedModule : public ICompletionNotifier, public IPipelinedModule, public Modules::InputCap {
@@ -80,7 +82,7 @@ void PipelinedModule::mimicInputs() {
 	auto const thisInputs = inputs.size();
 	if (thisInputs < delegateInputs) {
 		for (size_t i = thisInputs; i < delegateInputs; ++i) {
-			addInput(new PipelinedInput(delegate->getInput(i), this));
+			addInput(new PipelinedInput(delegate->getInput(i), this->executor, this));
 		}
 	}
 }
@@ -121,7 +123,7 @@ bool PipelinedModule::isSink() const {
 }
 
 void PipelinedModule::connect(IOutput *output, size_t inputIdx) {
-	ConnectOutputToInput(output, getInput(inputIdx), &executor);
+	ConnectOutputToInput(output, getInput(inputIdx), &g_executorSync);
 }
 
 void PipelinedModule::process() {
@@ -133,7 +135,9 @@ void PipelinedModule::process() {
 			delegate->addInput(new Input<DataLoose>(delegate.get()));
 			getInput(0)->push(nullptr);
 			delegate->getInput(0)->push(nullptr);
-			executor(MEMBER_FUNCTOR_PROCESS(delegate->getInput(0)));
+			executor(MEMBER_FUNCTOR_PROCESS(delegate.get()));
+			executor(MEMBER_FUNCTOR_PROCESS(getInput(0)));
+			return;
 		} else {
 			/*the source is likely processing: push null in the loop to exit and let things follow their way*/
 			delegate->getInput(0)->push(nullptr);
@@ -144,7 +148,7 @@ void PipelinedModule::process() {
 	Data data = getInput(0)->pop();
 	for (size_t i = 0; i < getNumInputs(); ++i) {
 		getInput(i)->push(data);
-		executor(MEMBER_FUNCTOR_PROCESS(getInput(i)));
+		getInput(i)->process();
 	}
 }
 
