@@ -6,10 +6,8 @@
 
 namespace Signals {
 
-class IResult {
-	public:
-		virtual ~IResult() {
-		}
+struct IResult {
+	virtual ~IResult() {}
 };
 
 
@@ -18,11 +16,8 @@ class ResultQueue : public IResult {
 	public:
 		typedef std::shared_ptr<Queue<ResultType>> ResultValue;
 
-		explicit ResultQueue() : results(new Queue<ResultType>()) {
-		}
-
-		virtual ~ResultQueue() {
-		}
+		explicit ResultQueue() : results(new Queue<ResultType>()) {}
+		virtual ~ResultQueue() {}
 
 		void set(ResultType r) {
 			results->push(r);
@@ -46,11 +41,8 @@ class ResultQueue<void> : public IResult {
 	public:
 		typedef std::shared_ptr<void> ResultValue;
 
-		explicit ResultQueue() {
-		}
-
-		virtual ~ResultQueue() {
-		}
+		explicit ResultQueue() {}
+		virtual ~ResultQueue() {}
 
 		void set(int) {
 		}
@@ -68,11 +60,8 @@ class ResultVector : public IResult {
 	public:
 		typedef std::shared_ptr<std::vector<ResultType>> ResultValue;
 
-		explicit ResultVector() : results(new std::vector<ResultType>()) {
-		}
-
-		virtual ~ResultVector() {
-		}
+		explicit ResultVector() : results(new std::vector<ResultType>()) {}
+		virtual ~ResultVector() {}
 
 		void set(ResultType r) {
 			results->push_back(r);
@@ -96,11 +85,8 @@ class ResultVector<void> : public IResult {
 	public:
 		typedef std::shared_ptr<void> ResultValue;
 
-		explicit ResultVector()  {
-		}
-
-		virtual ~ResultVector() {
-		}
+		explicit ResultVector()  {}
+		virtual ~ResultVector() {}
 
 		void set(int) {
 		}
@@ -123,11 +109,8 @@ class ResultLast : public IResult {
 	public:
 		typedef ResultType ResultValue;
 
-		explicit ResultLast() {
-		}
-
-		virtual ~ResultLast() {
-		}
+		explicit ResultLast() {}
+		virtual ~ResultLast() {}
 
 		void set(ResultType r) {
 			last = r;
