@@ -677,7 +677,6 @@ void GPACMuxMP4::addSample(gpacpp::IsoSample &sample, const uint64_t dataDuratio
 			if (m_useSegments) {
 				m_chunkNum++;
 				m_chunkStartsWithRAP = sample.IsRAP == RAP;
-				log(Warning, "%s", m_chunkStartsWithRAP);
 
 				std::stringstream ss;
 				ss << gf_isom_get_filename(m_iso) << "_" << m_chunkNum+1;
