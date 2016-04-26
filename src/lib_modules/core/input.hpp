@@ -57,6 +57,7 @@ struct IInputCap {
 	virtual ~IInputCap() noexcept(false) {}
 	virtual size_t getNumInputs() const = 0;
 	virtual IInput* getInput(size_t i) = 0;
+	virtual IInput* addInput(IInput* p) = 0;
 };
 
 class InputCap : public virtual IInputCap {
@@ -64,8 +65,7 @@ class InputCap : public virtual IInputCap {
 		virtual ~InputCap() noexcept(false) {}
 
 		//Takes ownership
-		template<typename T>
-		T* addInput(T* p) {
+		virtual IInput* addInput(IInput* p) override {
 			inputs.push_back(uptr(p));
 			return p;
 		}
