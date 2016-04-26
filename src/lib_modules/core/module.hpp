@@ -17,7 +17,8 @@ struct IModule : public IProcessor, public virtual IInputCap, public virtual IOu
 	virtual void flush() {}
 };
 
-class Module : public IModule, public IError, public LogCap, public virtual InputCap, public virtual OutputCap {
+template <typename Error = IError, typename Log = LogCap, typename Input = InputCap, typename Output = OutputCap>
+class Module : public IModule, public Error, public Log, public virtual Input, public virtual Output {
 	public:
 		Module() = default;
 		virtual ~Module() noexcept(false) {}
@@ -28,7 +29,7 @@ class Module : public IModule, public IError, public LogCap, public virtual Inpu
 };
 
 //single input specialized module
-class ModuleS : public Module {
+class ModuleS : public Module<> {
 	public:
 		ModuleS() = default;
 		virtual ~ModuleS() noexcept(false) {}
@@ -42,14 +43,13 @@ class ModuleS : public Module {
 //note: pins added automatically will carry the DataLoose type which doesn't
 //      allow to perform all safety checks ; consider adding pins manually if
 //      you can
-class ModuleDynI : public Module {
+class ModuleDynI : public Module<> {
 	public:
 		ModuleDynI() = default;
 		virtual ~ModuleDynI() noexcept(false) {}
 
 		//takes ownership
-		template<typename T>
-		T* addInput(T* p) {
+		IInput* addInput(IInput* p) {
 			bool isDyn = false;
 			std::unique_ptr<IInput> pEx(nullptr);
 			if (inputs.size() && dynamic_cast<DataLoose*>(inputs.back().get())) {

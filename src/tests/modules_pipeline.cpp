@@ -11,7 +11,7 @@ using namespace Pipelines;
 
 namespace {
 
-class DualInput : public Module {
+class DualInput : public Module<> {
 public:
 	DualInput() {
 		addInput(new Input<DataBase>(this));

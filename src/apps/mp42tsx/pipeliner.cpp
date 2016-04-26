@@ -7,7 +7,7 @@ using namespace Modules;
 using namespace Pipelines;
 
 namespace {
-Module *createSink(bool isHLS) {
+IModule *createSink(bool isHLS) {
 	if (isHLS) {
 		const bool isLive = false; //TODO
 		const uint64_t segmentDuration = 10000; //TODO

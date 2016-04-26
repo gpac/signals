@@ -67,6 +67,7 @@ struct IOutputCap {
 	virtual ~IOutputCap() noexcept(false) {}
 	virtual size_t getNumOutputs() const = 0;
 	virtual IOutput* getOutput(size_t i) const = 0;
+	virtual void setLowLatency(bool isLowLatency) = 0;
 };
 
 class OutputCap : public virtual IOutputCap {
@@ -80,7 +81,7 @@ class OutputCap : public virtual IOutputCap {
 			return outputs[i].get();
 		}
 
-		void setLowLatency(bool isLowLatency) {
+		virtual void setLowLatency(bool isLowLatency) override {
 			m_isLowLatency = isLowLatency;
 			for (auto &o : outputs) /*propagate to existing outputs*/
 				o->setLowLatency(isLowLatency);

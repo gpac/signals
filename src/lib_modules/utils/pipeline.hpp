@@ -20,7 +20,7 @@ struct ICompletionNotifier {
 class Pipeline : public ICompletionNotifier {
 	public:
 		Pipeline(bool isLowLatency = false);
-		Modules::IModule* addModule(Modules::Module* rawModule);
+		Modules::IModule* addModule(Modules::IModule* rawModule);
 		void connect(Modules::IModule *prev, size_t outputIdx, Modules::IModule *next, size_t inputIdx);
 		void start();
 		void waitForCompletion();
