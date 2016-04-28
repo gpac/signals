@@ -16,8 +16,8 @@ private:
 	Exception& operator= (const Exception&) = delete;
 };
 
-struct IError {
-	virtual std::exception error(std::string const &msg) {
+struct ErrorCap {
+	std::exception error(std::string const &msg) {
 		throw Exception(format("[%s] %s", typeid(*this).name(), msg));
 	}
 };
