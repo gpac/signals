@@ -19,16 +19,13 @@ struct IOutput {
 	virtual ~IOutput() noexcept(false) {}
 	virtual size_t emit(Data data) = 0;
 	virtual Signals::ISignal<void(Data)>& getSignal() = 0;
-	virtual void setLowLatency(bool isLowLatency) = 0;
 };
 
 template<typename Allocator, typename Signal>
 class OutputT : public IOutput, public MetadataCap {
 	public:
-		typedef Allocator AllocatorType;
-
-		OutputT(IMetadata *metadata = nullptr)
-			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator) {
+		OutputT(size_t numBlocks = ALLOC_NUM_BLOCKS_DEFAULT, IMetadata *metadata = nullptr)
+			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator(numBlocks)) {
 		}
 		virtual ~OutputT() noexcept(false) {
 			allocator->unblock();
@@ -51,23 +48,18 @@ class OutputT : public IOutput, public MetadataCap {
 			return signal;
 		}
 
-		void setLowLatency(bool lowLatency) override {
-			this->allocator = uptr(new Allocator(lowLatency ? ALLOC_NUM_BLOCKS_LOW_LATENCY : ALLOC_NUM_BLOCKS_DEFAULT));
-		}
-
 	private:
 		Signal signal;
 		std::unique_ptr<Allocator> allocator;
 };
 
-template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
+template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>; //Romain: remove
 typedef OutputDataDefault<DataRaw> OutputDefault;
 
 struct IOutputCap {
 	virtual ~IOutputCap() noexcept(false) {}
 	virtual size_t getNumOutputs() const = 0;
 	virtual IOutput* getOutput(size_t i) const = 0;
-	virtual void setLowLatency(bool isLowLatency) = 0;
 };
 
 class OutputCap : public virtual IOutputCap {
@@ -81,24 +73,16 @@ class OutputCap : public virtual IOutputCap {
 			return outputs[i].get();
 		}
 
-		virtual void setLowLatency(bool isLowLatency) override {
-			m_isLowLatency = isLowLatency;
-			for (auto &o : outputs) /*propagate to existing outputs*/
-				o->setLowLatency(isLowLatency);
-		}
-
 	protected:
 		//Takes ownership
 		template<typename T>
-		T* addOutput(T* p) {
-			p->setLowLatency(m_isLowLatency);
+		T* addOutput(T* p) { //Romain: same factory
 			outputs.push_back(uptr(p));
 			return p;
 		}
 
 	private:
 		std::vector<std::unique_ptr<IOutput>> outputs;
-		bool m_isLowLatency = false;
 };
 
 }

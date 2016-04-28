@@ -59,9 +59,6 @@ public:
 	size_t getNumInputs() const override;
 	size_t getNumOutputs() const override;
 	Modules::IOutput* getOutput(size_t i) const override;
-	virtual void setLowLatency(bool isLowLatency) override {
-		delegate->setLowLatency(isLowLatency);
-	}
 
 	/* source modules are stopped manually - then the message propagates to other connected modules */
 	bool isSource() const override;
@@ -180,7 +177,7 @@ IModule* Pipeline::addModule(IModule *rawModule) {
 	if (!rawModule)
 		return nullptr;
 	auto module = uptr(new PipelinedModule(rawModule, this));
-	module->setLowLatency(isLowLatency);
+	//TODO: module->setLowLatency(isLowLatency);
 	auto ret = module.get();
 	modules.push_back(std::move(module));
 	return ret;
