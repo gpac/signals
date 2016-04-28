@@ -69,7 +69,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			if (m_formatCtx) avformat_close_input(&m_formatCtx);
 			throw error("Webcam init failed.");
 		}
-		restamp = uptr(new Transform::Restamp(Transform::Restamp::ClockSystem)); /*some webcams timestamps don't start at 0 (based on UTC)*/
+		restamp = uptr(create<Transform::Restamp>(Transform::Restamp::ClockSystem)); /*some webcams timestamps don't start at 0 (based on UTC)*/
 	} else {
 		ffpp::Dict dict;
 		dict.set("probesize", "100M");
@@ -85,7 +85,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			throw error("Couldn't get additional video stream info");
 		}
 
-		restamp = uptr(new Transform::Restamp(Transform::Restamp::Reset));
+		restamp = uptr(create<Transform::Restamp>(Transform::Restamp::Reset));
 	}
 
 	for (unsigned i = 0; i<m_formatCtx->nb_streams; i++) {

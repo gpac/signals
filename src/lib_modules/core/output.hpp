@@ -24,8 +24,15 @@ struct IOutput {
 template<typename Allocator, typename Signal>
 class OutputT : public IOutput, public MetadataCap {
 	public:
+#if 0 //TODO
 		OutputT(size_t numBlocks = ALLOC_NUM_BLOCKS_DEFAULT, IMetadata *metadata = nullptr)
 			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator(numBlocks)) {
+		}
+#endif
+		typedef Allocator AllocatorType;
+
+		OutputT(IMetadata *metadata = nullptr)
+			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator) {
 		}
 		virtual ~OutputT() noexcept(false) {
 			allocator->unblock();
@@ -53,33 +60,42 @@ class OutputT : public IOutput, public MetadataCap {
 		std::unique_ptr<Allocator> allocator;
 };
 
-template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>; //Romain: remove
+template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>; //TODO: remove
 typedef OutputDataDefault<DataRaw> OutputDefault;
 
-struct IOutputCap {
+class IOutputCap {
+public:
 	virtual ~IOutputCap() noexcept(false) {}
 	virtual size_t getNumOutputs() const = 0;
 	virtual IOutput* getOutput(size_t i) const = 0;
+
+protected:
+	//Takes ownership
+	template<typename T>
+	T* addOutput(T *p) {
+		addOutputInternal(p);
+		return p;
+	}
+
+private:
+	virtual void addOutputInternal(IOutput *p) = 0;
 };
 
 class OutputCap : public virtual IOutputCap {
 	public:
 		virtual ~OutputCap() noexcept(false) {}
 
-		virtual size_t getNumOutputs() const {
+		virtual size_t getNumOutputs() const override {
 			return outputs.size();
 		}
-		virtual IOutput* getOutput(size_t i) const {
+		virtual IOutput* getOutput(size_t i) const override {
 			return outputs[i].get();
 		}
 
-	protected:
-		//Takes ownership
-		template<typename T>
-		T* addOutput(T* p) { //Romain: same factory
-			outputs.push_back(uptr(p));
-			return p;
-		}
+protected:
+	virtual void addOutputInternal(IOutput *p) override {
+		outputs.push_back(uptr(p));
+	}
 
 	private:
 		std::vector<std::unique_ptr<IOutput>> outputs;

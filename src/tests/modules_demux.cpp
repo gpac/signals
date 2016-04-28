@@ -13,8 +13,8 @@ using namespace Modules;
 namespace {
 
 unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print") {
-	auto mp4Demux = uptr(new Demux::GPACDemuxMP4Simple("data/beepbop.mp4"));
-	auto p = uptr(new Out::Print(std::cout));
+	auto mp4Demux = uptr(create<Demux::GPACDemuxMP4Simple>("data/beepbop.mp4"));
+	auto p = uptr(create<Out::Print>(std::cout));
 
 	ConnectOutputToInput(mp4Demux->getOutput(0), p);
 
@@ -22,9 +22,9 @@ unittest("demux one track: Demux::GPACDemuxMP4Simple -> Out::Print") {
 }
 
 unittest("demux one track: File -> Demux::GPACDemuxMP4Full -> Out::Print") {
-	auto f = uptr(new In::File("data/beepbop.mp4"));
-	auto mp4Demux = uptr(new Demux::GPACDemuxMP4Full());
-	auto p = uptr(new Out::Print(std::cout));
+	auto f = uptr(create<In::File>("data/beepbop.mp4"));
+	auto mp4Demux = uptr(create<Demux::GPACDemuxMP4Full>());
+	auto p = uptr(create<Out::Print>(std::cout));
 
 	ConnectOutputToInput(f->getOutput(0), mp4Demux);
 	ConnectOutputToInput(mp4Demux->getOutput(0), p);

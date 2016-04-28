@@ -8,6 +8,18 @@
 
 namespace Modules {
 
+/* this default factory creates output pins with the default output - create nother one for other uses such as low latency */
+template <typename InstanceType>
+struct ModuleDefault : public InstanceType, public OutputCap {
+	template <typename ...Args>
+	ModuleDefault(Args&&... args) : InstanceType(std::forward<Args>(args)...) {}
+};
+
+template <typename InstanceType, typename ...Args>
+InstanceType* create(Args&&... args) {
+	return new ModuleDefault<InstanceType>(std::forward<Args>(args)...);
+}
+
 template<typename Class>
 Signals::MemberFunctor<void, Class, void(Class::*)()>
 MEMBER_FUNCTOR_PROCESS(Class* objectPtr) {

@@ -62,7 +62,7 @@ bool SDLAudio::reconfigure(PcmFormat const * const pcmData) {
 
 SDLAudio::SDLAudio(IClock* clock)
 	: m_clock(clock), pcmFormat(new PcmFormat(44100, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved)),
-	  m_converter(new Transform::AudioConvert(*pcmFormat)), m_FifoTime(0) {
+	  m_converter(create<Transform::AudioConvert>(*pcmFormat)), m_FifoTime(0) {
 	if (!reconfigure(pcmFormat.get()))
 		throw error("Audio output creation failed");
 

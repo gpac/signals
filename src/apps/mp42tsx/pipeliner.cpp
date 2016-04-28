@@ -11,9 +11,9 @@ IModule *createSink(bool isHLS) {
 	if (isHLS) {
 		const bool isLive = false; //TODO
 		const uint64_t segmentDuration = 10000; //TODO
-		return new Stream::Apple_HLS(isLive ? Modules::Stream::Apple_HLS::Live : Modules::Stream::Apple_HLS::Static, segmentDuration);
+		return create<Stream::Apple_HLS>(isLive ? Modules::Stream::Apple_HLS::Live : Modules::Stream::Apple_HLS::Static, segmentDuration);
 	} else {
-		return new Out::File("output.ts"); //FIXME: hardcoded
+		return create<Out::File>("output.ts"); //FIXME: hardcoded
 	}
 }
 }
@@ -25,8 +25,8 @@ void declarePipeline(Pipeline &pipeline, const mp42tsXOptions &opt) {
 
 	const bool isHLS = false; //TODO
 
-	auto demux = pipeline.addModule(new Demux::LibavDemux(opt.url));
-	auto m2tsmux = pipeline.addModule(new Mux::GPACMuxMPEG2TS());
+	auto demux = pipeline.addModule(create<Demux::LibavDemux>(opt.url));
+	auto m2tsmux = pipeline.addModule(create<Mux::GPACMuxMPEG2TS>());
 	auto sink = pipeline.addModule(createSink(isHLS));
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		pipeline.connect(demux, i, m2tsmux, i);

@@ -15,15 +15,15 @@ using namespace Modules;
 namespace {
 
 unittest("audio converter: interleaved to planar to interleaved") {
-	auto soundGen = uptr(new In::SoundGenerator);
-	auto comparator = uptr(new Utils::PcmComparator);
+	auto soundGen = uptr(create<In::SoundGenerator>());
+	auto comparator = uptr(create<Utils::PcmComparator>());
 	Connect(soundGen->getOutput(0)->getSignal(), comparator.get(), &Utils::PcmComparator::pushOriginal);
 
 	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto otherFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Planar);
 
-	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
-	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
+	auto converter1 = uptr(create<Transform::AudioConvert>(baseFormat, otherFormat));
+	auto converter2 = uptr(create<Transform::AudioConvert>(otherFormat, baseFormat));
 
 	ConnectOutputToInput(soundGen->getOutput(0), converter1);
 	ConnectOutputToInput(converter1->getOutput(0), converter2);
@@ -42,14 +42,14 @@ unittest("audio converter: interleaved to planar to interleaved") {
 }
 
 unittest("audio converter: 44100 to 48000") {
-	auto soundGen = uptr(new In::SoundGenerator);
-	auto comparator = uptr(new Utils::PcmComparator);
+	auto soundGen = uptr(create<In::SoundGenerator>());
+	auto comparator = uptr(create<Utils::PcmComparator>());
 	Connect(soundGen->getOutput(0)->getSignal(), comparator.get(), &Utils::PcmComparator::pushOriginal);
 
 	auto baseFormat  = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
 	auto otherFormat = PcmFormat(48000, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
-	auto converter1 = uptr(new Transform::AudioConvert(baseFormat, otherFormat));
-	auto converter2 = uptr(new Transform::AudioConvert(otherFormat, baseFormat));
+	auto converter1 = uptr(create<Transform::AudioConvert>(baseFormat, otherFormat));
+	auto converter2 = uptr(create<Transform::AudioConvert>(otherFormat, baseFormat));
 
 	ConnectOutputToInput(soundGen->getOutput(0), converter1);
 	ConnectOutputToInput(converter1->getOutput(0), converter2);
@@ -68,11 +68,11 @@ unittest("audio converter: 44100 to 48000") {
 }
 
 unittest("audio converter: dynamic formats") {
-	auto soundGen = uptr(new In::SoundGenerator);
-	auto recorder = uptr(new Utils::Recorder);
+	auto soundGen = uptr(create<In::SoundGenerator>());
+	auto recorder = uptr(create<Utils::Recorder>());
 
 	PcmFormat format;;
-	auto converter = uptr(new Transform::AudioConvert(format));
+	auto converter = uptr(create<Transform::AudioConvert>(format));
 
 	ConnectOutputToInput(soundGen->getOutput(0), converter);
 	ConnectOutputToInput(converter->getOutput(0), recorder);
@@ -132,7 +132,7 @@ unittest("video converter: pass-through") {
 	};
 
 	{
-		auto convert = uptr(new Transform::VideoConvert(format));
+		auto convert = uptr(create<Transform::VideoConvert>(format));
 		Connect(convert->getOutput(0)->getSignal(), onFrame);
 
 		std::shared_ptr<DataBase> pic = uptr(new PictureYUV420P(res));
@@ -155,7 +155,7 @@ unittest("video converter: different sizes") {
 	};
 
 	{
-		auto convert = uptr(new Transform::VideoConvert(format));
+		auto convert = uptr(create<Transform::VideoConvert>(format));
 		Connect(convert->getOutput(0)->getSignal(), onFrame);
 
 		std::shared_ptr<DataBase> pic = uptr(new PictureYUV420P(srcRes));

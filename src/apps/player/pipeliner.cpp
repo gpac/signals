@@ -10,13 +10,13 @@ namespace {
 ModuleS* createRenderer(int codecType) {
 	if (codecType == VIDEO_PKT) {
 		Log::msg(Info, "Found video stream");
-		return new Render::SDLVideo();
+		return create<Render::SDLVideo>();
 	} else if (codecType == AUDIO_PKT) {
 		Log::msg(Info, "Found audio stream");
-		return new Render::SDLAudio();
+		return create<Render::SDLAudio>();
 	} else {
 		Log::msg(Info, "Found unknown stream");
-		return new Out::Null;
+		return create<Out::Null>();
 	}
 }
 }
@@ -26,10 +26,10 @@ void declarePipeline(Pipeline &pipeline, const char *url) {
 		pipeline.connect(src, 0, dst, 0);
 	};
 
-	auto demux = pipeline.addModule(new Demux::LibavDemux(url));
+	auto demux = pipeline.addModule(create<Demux::LibavDemux>(url));
 	for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
 		auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(i));
-		auto decode = pipeline.addModule(new Decode::LibavDecode(*metadata));
+		auto decode = pipeline.addModule(create<Decode::LibavDecode>(*metadata));
 
 		pipeline.connect(demux, i, decode, 0);
 

@@ -14,12 +14,12 @@ namespace {
 
 unittest("render: A/V sync, one thread") {
 	auto clock = uptr(createSystemClock());
-	auto videoGen = uptr(new In::VideoGenerator);
-	auto videoRender = uptr(new Render::SDLVideo(clock.get()));
+	auto videoGen = uptr(create<In::VideoGenerator>());
+	auto videoRender = uptr(create<Render::SDLVideo>(clock.get()));
 	ConnectOutputToInput(videoGen->getOutput(0), videoRender);
 
-	auto soundGen = uptr(new In::SoundGenerator);
-	auto soundRender = uptr(new Render::SDLAudio(clock.get()));
+	auto soundGen = uptr(create<In::SoundGenerator>());
+	auto soundRender = uptr(create<Render::SDLAudio>(clock.get()));
 	ConnectOutputToInput(soundGen->getOutput(0), soundRender);
 
 	for(int i=0; i < 25*5; ++i) {
@@ -29,7 +29,7 @@ unittest("render: A/V sync, one thread") {
 }
 
 unittest("render: dynamic resolution") {
-	auto videoRender = uptr(new Render::SDLVideo);
+	auto videoRender = uptr(create<Render::SDLVideo>());
 
 	std::shared_ptr<DataBase> pic1 = uptr(new PictureYUV420P(Resolution(128, 64)));
 	pic1->setTime(1000);
@@ -43,8 +43,8 @@ unittest("render: dynamic resolution") {
 #ifdef __linux__
 unittest("render: A/V sync: separate threads") {
 	auto f = [&]() {
-		auto videoGen = uptr(new In::VideoGenerator);
-		auto videoRender = uptr(new Render::SDLVideo);
+		auto videoGen = uptr(create<In::VideoGenerator>);
+		auto videoRender = uptr(create<Render::SDLVideo>);
 		ConnectOutputToInput(videoGen->getOutput(0), videoRender);
 
 		for(int i=0; i < 25*5; ++i) {
@@ -52,8 +52,8 @@ unittest("render: A/V sync: separate threads") {
 		}
 	};
 	auto g = [&]() {
-		auto soundGen = uptr(new In::SoundGenerator);
-		auto soundRender = uptr(new Render::SDLAudio());
+		auto soundGen = uptr(create<In::SoundGenerator>);
+		auto soundRender = uptr(create<Render::SDLAudio>());
 		ConnectOutputToInput(soundGen->getOutput(0), soundRender);
 		for(int i=0; i < 25*5; ++i) {
 			soundGen->process(nullptr);

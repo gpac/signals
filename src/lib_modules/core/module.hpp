@@ -5,6 +5,7 @@
 #include "input.hpp"
 #include "log.hpp"
 #include "output.hpp"
+#include "../utils/helper.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,8 +18,7 @@ struct IModule : public IProcessor, public virtual IInputCap, public virtual IOu
 	virtual void flush() {}
 };
 
-template <typename Error = IError, typename Log = LogCap, typename Input = InputCap, typename Output = OutputCap>
-class Module : public IModule, public Error, public Log, public virtual Input, public virtual Output {
+class Module : public IModule, public ErrorCap, public LogCap, public InputCap {
 	public:
 		Module() = default;
 		virtual ~Module() noexcept(false) {}
@@ -29,7 +29,7 @@ class Module : public IModule, public Error, public Log, public virtual Input, p
 };
 
 //single input specialized module
-class ModuleS : public Module<> {
+class ModuleS : public IModule, public ErrorCap, public LogCap, public InputCap {
 	public:
 		ModuleS() = default;
 		virtual ~ModuleS() noexcept(false) {}
@@ -43,7 +43,7 @@ class ModuleS : public Module<> {
 //note: pins added automatically will carry the DataLoose type which doesn't
 //      allow to perform all safety checks ; consider adding pins manually if
 //      you can
-class ModuleDynI : public Module<> {
+class ModuleDynI : public IModule, public ErrorCap, public LogCap, public InputCap {
 	public:
 		ModuleDynI() = default;
 		virtual ~ModuleDynI() noexcept(false) {}

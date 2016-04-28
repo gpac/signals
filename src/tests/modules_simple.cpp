@@ -14,7 +14,7 @@ using namespace Modules;
 unittest("empty param test: File") {
 	bool thrown = false;
 	try {
-		auto f = uptr(new In::File(""));
+		auto f = uptr(create<In::File>(""));
 	} catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
@@ -24,7 +24,7 @@ unittest("empty param test: File") {
 unittest("empty param test: Demux") {
 	bool thrown = false;
 	try {
-		auto mp4Demux = uptr(new Demux::GPACDemuxMP4Simple(""));
+		auto mp4Demux = uptr(create<Demux::GPACDemuxMP4Simple>(""));
 	} catch(std::runtime_error const& /*e*/) {
 		thrown = true;
 	}
@@ -32,19 +32,18 @@ unittest("empty param test: Demux") {
 }
 
 unittest("empty param test: Out::Print") {
-	auto p = uptr(new Out::Print(std::cout));
+	auto p = uptr(create<Out::Print>(std::cout));
 }
 
 unittest("simple param test") {
-	auto f = uptr(new In::File("data/beepbop.mp4"));
+	auto f = uptr(create<In::File>("data/beepbop.mp4"));
 }
 
 unittest("print packets size from file: File -> Out::Print") {
-	auto f = uptr(new In::File("data/beepbop.mp4"));
-	auto p = uptr(new Out::Print(std::cout));
+	auto f = uptr(create<In::File>("data/beepbop.mp4"));
+	auto p = uptr(create<Out::Print>(std::cout));
 
 	ConnectOutputToInput(f->getOutput(0), p);
 
 	f->process(nullptr);
 }
-

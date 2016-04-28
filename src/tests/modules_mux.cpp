@@ -15,8 +15,8 @@ namespace {
 #ifdef ENABLE_FAILING_TESTS
 //ffmpeg extradata seems to be different (non annex B ?) when output from the muxer
 unittest("remux test: GPAC mp4 mux") {
-	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
-	auto mux = uptr(new Mux::GPACMuxMP4("output_video_libav"));
+	auto demux = uptr(create<Demux::LibavDemux>("data/beepbop.mp4"));
+	auto mux = uptr(create<Mux::GPACMuxMP4>("output_video_libav"));
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		ConnectModules(demux.get(), i, mux.get(), i);
 		break; //FIXME
@@ -26,8 +26,8 @@ unittest("remux test: GPAC mp4 mux") {
 }
 
 unittest("remux test: libav mp4 mux") {
-	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
-	auto mux = uptr(new Mux::LibavMux("output_video_libav"));
+	auto demux = uptr(create<Demux::LibavDemux>("data/beepbop.mp4"));
+	auto mux = uptr(create<Mux::LibavMux>("output_video_libav"));
 	for (size_t i = 0; i < demux->getNumOutputs(); ++i) {
 		ConnectModules(demux.get(), i, mux.get(), i);
 		break; //FIXME

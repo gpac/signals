@@ -54,7 +54,7 @@ class PipelinedInput : public IInput {
 };
 
 /* wrapper around the module */
-class PipelinedModule : public ICompletionNotifier, public IPipelinedModule, public InputCap {
+class PipelinedModule : public ICompletionNotifier, public IPipelinedModule, public InputCap, public OutputCap {
 public:
 	/* take ownership of module */
 	PipelinedModule(IModule *module, ICompletionNotifier *notify)
@@ -89,7 +89,7 @@ public:
 	}
 
 private:
-	virtual void connect(IOutput *output, size_t inputIdx) override {
+	void connect(IOutput *output, size_t inputIdx) override {
 		ConnectOutputToInput(output, getInput(inputIdx), &g_executorSync);
 	}
 
@@ -102,7 +102,8 @@ private:
 			}
 		}
 	}
-	IInput* PipelinedModule::getInput(size_t i) override {
+
+	IInput* getInput(size_t i) override {
 		mimicInputs();
 		if (i >= inputs.size())
 			throw std::runtime_error(format("PipelinedModule %s: no input %s.", typeid(delegate).name(), i));

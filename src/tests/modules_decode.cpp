@@ -20,7 +20,7 @@ Decode::LibavDecode* createGenericDecoder(enum AVCodecID id) {
 	auto codec = avcodec_find_decoder(id);
 	auto context = avcodec_alloc_context3(codec);
 	MetadataPktLibav metadata(context);
-	auto decode = new Decode::LibavDecode(metadata);
+	auto decode = create<Decode::LibavDecode>(metadata);
 	avcodec_close(context);
 	av_free(context);
 	return decode;
@@ -69,7 +69,7 @@ std::shared_ptr<DataBase> getTestMp3Frame() {
 unittest("decode: audio simple") {
 	auto decode = uptr(createMp3Decoder());
 
-	auto null = uptr(new Out::Null);
+	auto null = uptr(create<Out::Null>());
 	ConnectOutputToInput(decode->getOutput(0), null);
 
 	auto frame = getTestMp3Frame();
@@ -122,7 +122,7 @@ unittest("decode: video simple") {
 //TODO: this test fails because the exception is caught by a Signals future. To be tested when tasks are pushed to an executor
 unittest("decode: failing audio mp3 to AAC") {
 	auto decode = uptr(createMp3Decoder());
-	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
+	auto encoder = uptr(create<Encode::LibavEncode>(Encode::LibavEncode::Audio));
 
 	ConnectOutputToInput(decode->getOutput(0), encoder);
 
@@ -142,11 +142,11 @@ unittest("decode: failing audio mp3 to AAC") {
 //TODO: fails because the dst number of samples for the resampler is not ok for some AAC encoders
 unittest("decode: audio mp3 to converter to AAC") {
 	auto decode = uptr(createMp3Decoder());
-	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Audio));
+	auto encoder = uptr(create<Encode::LibavEncode>(Encode::LibavEncode::Audio));
 
 	auto srcFormat = PcmFormat(44100, 1, AudioLayout::Mono, AudioSampleFormat::S16, AudioStruct::Planar);
 	auto dstFormat = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::S16, AudioStruct::Interleaved);
-	auto converter = uptr(new Transform::AudioConvert(srcFormat, dstFormat));
+	auto converter = uptr(create<Transform::AudioConvert>(srcFormat, dstFormat));
 
 	ConnectOutputToInput(decode->getOutput(0), converter);
 	ConnectOutputToInput(converter->getOutput(0), encoder);

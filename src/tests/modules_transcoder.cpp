@@ -20,8 +20,8 @@ using namespace Modules;
 namespace {
 
 unittest("transcoder: video simple (libav mux)") {
-	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
-	auto null = uptr(new Out::Null);
+	auto demux = uptr(create<Demux::LibavDemux>("data/beepbop.mp4"));
+	auto null = uptr(create<Out::Null>());
 
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
@@ -37,9 +37,9 @@ unittest("transcoder: video simple (libav mux)") {
 
 	//create the video decode
 	auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(videoIndex));
-	auto decode = uptr(new Decode::LibavDecode(*metadata));
-	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
-	auto mux = uptr(new Mux::LibavMux("output_video_libav"));
+	auto decode = uptr(create<Decode::LibavDecode>(*metadata));
+	auto encode = uptr(create<Encode::LibavEncode>(Encode::LibavEncode::Video));
+	auto mux = uptr(create<Mux::LibavMux>("output_video_libav"));
 
 	ConnectOutputToInput(demux->getOutput(videoIndex), decode);
 	ConnectOutputToInput(decode->getOutput(0), encode);
@@ -49,10 +49,10 @@ unittest("transcoder: video simple (libav mux)") {
 }
 
 unittest("transcoder: video simple (gpac mux)") {
-	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
+	auto demux = uptr(create<Demux::LibavDemux>("data/beepbop.mp4"));
 
 	//create stub output (for unused demuxer's outputs)
-	auto null = uptr(new Out::Null);
+	auto null = uptr(create<Out::Null>());
 
 	//find video signal from demux
 	size_t videoIndex = std::numeric_limits<size_t>::max();
@@ -68,9 +68,9 @@ unittest("transcoder: video simple (gpac mux)") {
 
 	//create the video decode
 	auto metadata = getMetadataFromOutput<MetadataPktLibav>(demux->getOutput(videoIndex));
-	auto decode = uptr(new Decode::LibavDecode(*metadata));
-	auto encode = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
-	auto mux = uptr(new Mux::GPACMuxMP4("output_video_gpac"));
+	auto decode = uptr(create<Decode::LibavDecode>(*metadata));
+	auto encode = uptr(create<Encode::LibavEncode>(Encode::LibavEncode::Video));
+	auto mux = uptr(create<Mux::GPACMuxMP4>("output_video_gpac"));
 
 	ConnectOutputToInput(demux->getOutput(videoIndex), decode);
 	ConnectOutputToInput(decode->getOutput(0), encode);
@@ -81,16 +81,16 @@ unittest("transcoder: video simple (gpac mux)") {
 
 unittest("transcoder: jpg to jpg") {
 	const std::string filename("data/sample.jpg");
-	auto decode = uptr(new Decode::JPEGTurboDecode());
+	auto decode = uptr(create<Decode::JPEGTurboDecode>());
 	{
-		auto preReader = uptr(new In::File(filename));
+		auto preReader = uptr(create<In::File>(filename));
 		ConnectOutputToInput(preReader->getOutput(0), decode);
 		preReader->process(nullptr);
 	}
 
-	auto reader = uptr(new In::File(filename));
-	auto encoder = uptr(new Encode::JPEGTurboEncode());
-	auto writer = uptr(new Out::File("data/test.jpg"));
+	auto reader = uptr(create<In::File>(filename));
+	auto encoder = uptr(create<Encode::JPEGTurboEncode>());
+	auto writer = uptr(create<Out::File>("data/test.jpg"));
 
 	ConnectOutputToInput(reader->getOutput(0), decode);
 	ConnectOutputToInput(decode->getOutput(0), encoder);
@@ -101,18 +101,18 @@ unittest("transcoder: jpg to jpg") {
 
 unittest("transcoder: jpg to resized jpg") {
 	const std::string filename("data/sample.jpg");
-	auto decode = uptr(new Decode::JPEGTurboDecode());
+	auto decode = uptr(create<Decode::JPEGTurboDecode>());
 	{
-		auto preReader = uptr(new In::File(filename));
+		auto preReader = uptr(create<In::File>(filename));
 		ConnectOutputToInput(preReader->getOutput(0), decode);
 		preReader->process(nullptr);
 	}
-	auto reader = uptr(new In::File(filename));
+	auto reader = uptr(create<In::File>(filename));
 
 	auto dstFormat = PictureFormat(VIDEO_RESOLUTION / 2, RGB24);
-	auto converter = uptr(new Transform::VideoConvert(dstFormat));
-	auto encoder = uptr(new Encode::JPEGTurboEncode());
-	auto writer = uptr(new Out::File("data/test.jpg"));
+	auto converter = uptr(create<Transform::VideoConvert>(dstFormat));
+	auto encoder = uptr(create<Encode::JPEGTurboEncode>());
+	auto writer = uptr(create<Out::File>("data/test.jpg"));
 
 	ConnectOutputToInput(reader->getOutput(0), decode);
 	ConnectOutputToInput(decode->getOutput(0), converter);
@@ -123,18 +123,18 @@ unittest("transcoder: jpg to resized jpg") {
 }
 
 unittest("transcoder: h264/mp4 to jpg") {
-	auto demux = uptr(new Demux::LibavDemux("data/beepbop.mp4"));
+	auto demux = uptr(create<Demux::LibavDemux>("data/beepbop.mp4"));
 
 	auto metadata = getMetadataFromOutput<MetadataPktLibavVideo>(demux->getOutput(1));
-	auto decode = uptr(new Decode::LibavDecode(*metadata));
+	auto decode = uptr(create<Decode::LibavDecode>(*metadata));
 
-	auto encoder = uptr(new Encode::JPEGTurboEncode());
-	auto writer = uptr(new Out::File("data/test.jpg"));
+	auto encoder = uptr(create<Encode::JPEGTurboEncode>());
+	auto writer = uptr(create<Out::File>("data/test.jpg"));
 
 	auto dstRes = metadata->getResolution();
 	ASSERT(metadata->getPixelFormat() == YUV420P);
 	auto dstFormat = PictureFormat(dstRes, RGB24);
-	auto converter = uptr(new Transform::VideoConvert(dstFormat));
+	auto converter = uptr(create<Transform::VideoConvert>(dstFormat));
 
 	ConnectOutputToInput(demux->getOutput(1), decode);
 	ConnectOutputToInput(decode->getOutput(0), converter);
@@ -146,19 +146,19 @@ unittest("transcoder: h264/mp4 to jpg") {
 
 unittest("transcoder: jpg to h264/mp4 (gpac)") {
 	const std::string filename("data/sample.jpg");
-	auto decode = uptr(new Decode::JPEGTurboDecode());
+	auto decode = uptr(create<Decode::JPEGTurboDecode>());
 	{
-		auto preReader = uptr(new In::File(filename));
+		auto preReader = uptr(create<In::File>(filename));
 		ConnectOutputToInput(preReader->getOutput(0), decode);
 		preReader->process(nullptr);
 	}
-	auto reader = uptr(new In::File(filename));
+	auto reader = uptr(create<In::File>(filename));
 
 	auto dstFormat = PictureFormat(VIDEO_RESOLUTION, YUV420P);
-	auto converter = uptr(new Transform::VideoConvert(dstFormat));
+	auto converter = uptr(create<Transform::VideoConvert>(dstFormat));
 
-	auto encoder = uptr(new Encode::LibavEncode(Encode::LibavEncode::Video));
-	auto mux = uptr(new Mux::GPACMuxMP4("data/test"));
+	auto encoder = uptr(create<Encode::LibavEncode>(Encode::LibavEncode::Video));
+	auto mux = uptr(create<Mux::GPACMuxMP4>("data/test"));
 
 	ConnectOutputToInput(reader->getOutput(0), decode);
 	ConnectOutputToInput(decode->getOutput(0), converter);
