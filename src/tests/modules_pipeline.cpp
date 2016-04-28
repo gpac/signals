@@ -61,9 +61,9 @@ unittest("pipeline: empty") {
 
 unittest("pipeline: interrupted") {
 	Pipeline p;
-	auto demux = p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
+	auto demux = p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
 	ASSERT(demux->getNumOutputs() > 1);
-	auto null = p.addModule(create<Out::Null>());
+	auto null = p.addModule<Out::Null>();
 	p.connect(demux, 0, null, 0);
 	p.start();
 	auto f = [&]() {
@@ -76,10 +76,10 @@ unittest("pipeline: interrupted") {
 
 unittest("pipeline: connect while running") {
 	Pipeline p;
-	auto demux = p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
+	auto demux = p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
 	ASSERT(demux->getNumOutputs() > 1);
-	auto null1 = p.addModule(create<Out::Null>());
-	auto null2 = p.addModule(create<Out::Null>());
+	auto null1 = p.addModule<Out::Null>();
+	auto null2 = p.addModule<Out::Null>();
 	p.connect(demux, 0, null1, 0);
 	p.start();
 	auto f = [&]() {
@@ -92,9 +92,9 @@ unittest("pipeline: connect while running") {
 
 unittest("pipeline: connect one input (out of 2) to one output") {
 	Pipeline p;
-	auto demux = p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
+	auto demux = p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
 	ASSERT(demux->getNumOutputs() > 1);
-	auto null = p.addModule(create<Out::Null>());
+	auto null = p.addModule<Out::Null>();
 	p.connect(demux, 0, null, 0);
 	p.start();
 	p.waitForCompletion();
@@ -104,8 +104,8 @@ unittest("pipeline: connect inputs to outputs") {
 	bool thrown = false;
 	try {
 		Pipeline p;
-		auto demux = p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
-		auto null = p.addModule(create<Out::Null>());
+		auto demux = p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
+		auto null = p.addModule<Out::Null>();
 		for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
 			p.connect(null, i, demux, i);
 		}
@@ -122,8 +122,8 @@ unittest("pipeline: connect incompatible i/o") {
 	bool thrown = false;
 	try {
 		Pipeline p;
-		auto demux = p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
-		auto render = p.addModule(create<Render::SDLVideo>());
+		auto demux = p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
+		auto render = p.addModule<Render::SDLVideo>();
 		for (int i = 0; i < (int)demux->getNumOutputs(); ++i) {
 			p.connect(demux, i, render, i);
 		}
@@ -142,7 +142,7 @@ unittest("pipeline: source only and destroy while running") {
 	bool thrown = false;
 	try {
 		Pipeline p;
-		p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
+		p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
 		p.start();
 		p.waitForCompletion();
 	}
@@ -156,7 +156,7 @@ unittest("pipeline: sink only") {
 	bool thrown = false;
 	try {
 		Pipeline p;
-		p.addModule(create<Out::Null>()());
+		p.addModule<Out::Null>();
 		p.start();
 		p.waitForCompletion();
 	}
@@ -169,13 +169,12 @@ unittest("pipeline: sink only") {
 unittest("pipeline: input data is queued while module is running") {
 	try {
 		Pipeline p;
-		auto demux = p.addModule(create<Demux::LibavDemux>("data/beepbop.mp4"));
-		auto DualInputRaw = create<DualInput>();
-		auto dualInput = p.addModule(DualInputRaw);
+		auto demux = p.addModule<Demux::LibavDemux>("data/beepbop.mp4");
+		auto dualInput = p.addModule<DualInput>();
 		p.connect(demux, 0, dualInput, 0);
 		p.start();
 		auto data = std::make_shared<DataRaw>(0);
-		DualInputRaw->getInput(1)->push(data);
+		dualInput->getInput(1)->push(data);
 		p.waitForCompletion();
 	}
 	catch (std::runtime_error const& /*e*/) {
@@ -186,14 +185,13 @@ unittest("pipeline: input data is queued while module is running") {
 #ifdef ENABLE_FAILING_TESTS /*see #55*/
 unittest("pipeline: multiple inputs (send same packets to 2 inputs and check call number)") {
 	Pipeline p;
-	auto generator = p.addModule(create<In::VideoGenerator>());
-	auto DualInputRaw = create<DualInput>();
-	auto dualInput = p.addModule(DualInputRaw);
+	auto generator = p.addModule<In::VideoGenerator>();
+	auto dualInput = p.addModule<DualInput>();
 	p.connect(generator, 0, dualInput, 0);
 	p.connect(generator, 0, dualInput, 1);
 	p.start();
 	p.waitForCompletion();
-	ASSERT_EQUALS(DualInputRaw->getNumCalls(), 1);
+	ASSERT_EQUALS(dualInput->getNumCalls(), 1);
 }
 #endif
 

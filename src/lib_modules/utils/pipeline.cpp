@@ -157,11 +157,8 @@ private:
 Pipeline::Pipeline(bool isLowLatency) : isLowLatency(isLowLatency), numRemainingNotifications(0) {
 }
 
-IModule* Pipeline::addModule(IModule *rawModule) {
-	if (!rawModule)
-		return nullptr;
+IPipelinedModule* Pipeline::addModuleInternal(IModule *rawModule) {
 	auto module = uptr(new PipelinedModule(rawModule, this));
-	//TODO: module->setLowLatency(isLowLatency);
 	auto ret = module.get();
 	modules.push_back(std::move(module));
 	return ret;

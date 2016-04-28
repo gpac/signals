@@ -20,14 +20,22 @@ struct ICompletionNotifier {
 class Pipeline : public ICompletionNotifier {
 	public:
 		Pipeline(bool isLowLatency = false);
-		Modules::IModule* addModule(Modules::IModule* rawModule);
+
+		template <typename InstanceType, typename ...Args>
+		IPipelinedModule* addModule(Args&&... args) {
+			auto rawModule = Modules::create<InstanceType>(std::forward<Args>(args)...);
+			return addModuleInternal(rawModule);
+		}
+
 		void connect(Modules::IModule *prev, size_t outputIdx, Modules::IModule *next, size_t inputIdx);
+
 		void start();
 		void waitForCompletion();
 		void exitSync(); /*ask for all sources to finish*/
 
 	private:
 		void finished() override;
+		IPipelinedModule* addModuleInternal(Modules::IModule *rawModule);
 
 		std::vector<std::unique_ptr<IPipelinedModule>> modules;
 		bool isLowLatency;

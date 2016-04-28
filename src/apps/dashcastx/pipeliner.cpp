@@ -8,51 +8,50 @@ using namespace Pipelines;
 
 #define DEBUG_MONITOR
 
-namespace {
-
-Encode::LibavEncode* createEncoder(std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t i) {
-	auto const codecType = metadata->getStreamType();
-	if (codecType == VIDEO_PKT) {
-		Log::msg(Info, "[Encoder] Found video stream");
-		Encode::LibavEncodeParams p;
-		p.isLowLatency = opt.isLive;
-		p.res = opt.v[i].res;
-		p.bitrate_v = opt.v[i].bitrate;
-		return create<Encode::LibavEncode>(Encode::LibavEncode::Video, p);
-	} else if (codecType == AUDIO_PKT) {
-		Log::msg(Info, "[Encoder] Found audio stream");
-		return create<Encode::LibavEncode>(Encode::LibavEncode::Audio);
-	} else {
-		Log::msg(Info, "[Encoder] Found unknown stream");
-		return nullptr;
-	}
-}
-
-IModule* createConverter(std::shared_ptr<const IMetadata> metadata, const Resolution &dstRes) {
-	auto const codecType = metadata->getStreamType();
-	if (codecType == VIDEO_PKT) {
-		Log::msg(Info, "[Converter] Found video stream");
-		auto dstFormat = PictureFormat(dstRes, YUV420P);
-		return create<Transform::VideoConvert>(dstFormat);
-	} else if (codecType == AUDIO_PKT) {
-		Log::msg(Info, "[Converter] Found audio stream");
-		auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
-		return create<Transform::AudioConvert>(format);
-	} else {
-		Log::msg(Info, "[Converter] Found unknown stream");
-		return nullptr;
-	}
-}
-}
-
 void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 	auto connect = [&](auto* src, auto* dst) {
 		pipeline.connect(src, 0, dst, 0);
 	};
 
-	auto demux = pipeline.addModule(create<Demux::LibavDemux>(opt.url));
-	auto dasher = pipeline.addModule(create<Modules::Stream::MPEG_DASH>("dashcastx.mpd",
-	                                 opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration));
+	auto createEncoder = [&](std::shared_ptr<const IMetadata> metadata, const dashcastXOptions &opt, size_t i)->IModule* {
+		auto const codecType = metadata->getStreamType();
+		if (codecType == VIDEO_PKT) {
+			Log::msg(Info, "[Encoder] Found video stream");
+			Encode::LibavEncodeParams p;
+			p.isLowLatency = opt.isLive;
+			p.res = opt.v[i].res;
+			p.bitrate_v = opt.v[i].bitrate;
+			return pipeline.addModule<Encode::LibavEncode>(Encode::LibavEncode::Video, p);
+		}
+		else if (codecType == AUDIO_PKT) {
+			Log::msg(Info, "[Encoder] Found audio stream");
+			return pipeline.addModule<Encode::LibavEncode>(Encode::LibavEncode::Audio);
+		}
+		else {
+			Log::msg(Info, "[Encoder] Found unknown stream");
+			return nullptr;
+		}
+	};
+
+	auto createConverter = [&](std::shared_ptr<const IMetadata> metadata, const Resolution &dstRes)->IModule* {
+		auto const codecType = metadata->getStreamType();
+		if (codecType == VIDEO_PKT) {
+			Log::msg(Info, "[Converter] Found video stream");
+			auto dstFormat = PictureFormat(dstRes, YUV420P);
+			return pipeline.addModule<Transform::VideoConvert>(dstFormat);
+		} else if (codecType == AUDIO_PKT) {
+			Log::msg(Info, "[Converter] Found audio stream");
+			auto format = PcmFormat(44100, 2, AudioLayout::Stereo, AudioSampleFormat::F32, AudioStruct::Planar);
+			return pipeline.addModule<Transform::AudioConvert>(format);
+		} else {
+			Log::msg(Info, "[Converter] Found unknown stream");
+			return nullptr;
+		}
+	};
+
+	auto demux = pipeline.addModule<Demux::LibavDemux>(opt.url);
+	auto dasher = pipeline.addModule<Modules::Stream::MPEG_DASH>("dashcastx.mpd",
+	                                 opt.isLive ? Modules::Stream::MPEG_DASH::Live : Modules::Stream::MPEG_DASH::Static, opt.segmentDuration);
 
 	const bool transcode = opt.v.size() > 0 ? true : false;
 	if (!transcode) {
@@ -69,7 +68,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 		IModule *decode = nullptr;
 		if (transcode) {
-			decode = pipeline.addModule(create<Decode::LibavDecode>(*metadata));
+			decode = pipeline.addModule<Decode::LibavDecode>(*metadata);
 			pipeline.connect(demux, i, decode, 0);
 		}
 
@@ -77,20 +76,20 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 		for (size_t r = 0; r < numRes; ++r) {
 			IModule *encoder = nullptr;
 			if (transcode) {
-				auto converter = pipeline.addModule(createConverter(metadata, opt.v[r].res));
+				auto converter = createConverter(metadata, opt.v[r].res);
 				if (!converter)
 					continue;
 
 #ifdef DEBUG_MONITOR
 				if (metadata->isVideo() && r == 0) {
-					auto webcamPreview = pipeline.addModule(create<Render::SDLVideo>());
+					auto webcamPreview = pipeline.addModule<Render::SDLVideo>();
 					connect(converter, webcamPreview);
 				}
 #endif
 
 				connect(decode, converter);
 
-				encoder = pipeline.addModule(createEncoder(metadata, opt, r));
+				encoder = createEncoder(metadata, opt, r);
 				if (!encoder)
 					continue;
 
@@ -99,7 +98,7 @@ void declarePipeline(Pipeline &pipeline, const dashcastXOptions &opt) {
 
 			std::stringstream filename;
 			filename << numDashInputs;
-			auto muxer = pipeline.addModule(create<Mux::GPACMuxMP4>(filename.str(), opt.segmentDuration, true));
+			auto muxer = pipeline.addModule<Mux::GPACMuxMP4>(filename.str(), opt.segmentDuration, true);
 			if (transcode) {
 				connect(encoder, muxer);
 			} else {
