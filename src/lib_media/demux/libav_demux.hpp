@@ -7,9 +7,9 @@ struct AVFormatContext;
 
 namespace Modules {
 
-	namespace Transform {
-		class Restamp;
-	}
+namespace Transform {
+	class Restamp;
+}
 
 namespace Demux {
 
