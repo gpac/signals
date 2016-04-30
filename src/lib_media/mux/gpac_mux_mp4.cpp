@@ -364,7 +364,7 @@ GPACMuxMP4::GPACMuxMP4(const std::string &baseName, uint64_t chunkDurationInMs, 
 	if (e != GF_OK)
 		throw error(format("Cannot make iso file %s interleaved", fileName.str()));
 
-	output = addOutput(new OutputDataDefault<DataAVPacket>);
+	output = addOutput<OutputDataDefault<DataAVPacket>>();
 }
 
 void GPACMuxMP4::closeSegment(bool isLastSeg) {

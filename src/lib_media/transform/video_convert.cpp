@@ -18,7 +18,7 @@ VideoConvert::VideoConvert(const PictureFormat &dstFormat)
 	: m_SwContext(nullptr), dstFormat(dstFormat) {
 	auto input = addInput(new Input<DataPicture>(this));
 	input->setMetadata(new MetadataRawVideo);
-	output = addOutput(new OutputPicture);
+	output = addOutput<OutputPicture>();
 }
 
 void VideoConvert::reconfigure(const PictureFormat &format) {

@@ -30,7 +30,7 @@ GPACDemuxMP4Simple::GPACDemuxMP4Simple(std::string const& path)
 		throw error(format("Could not open file %s for reading (%s).", path, gf_error_to_string(e)));
 	}
 	reader->init(movie);
-	output = addOutput(new OutputDefault);
+	output = addOutput<OutputDefault>();
 }
 
 GPACDemuxMP4Simple::~GPACDemuxMP4Simple() {

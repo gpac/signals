@@ -96,7 +96,7 @@ LibavDemux::LibavDemux(const std::string &url) {
 			m = new MetadataPktLibavVideo(m_formatCtx->streams[i]->codec); break;
 		default: m = nullptr; break;
 		}
-		outputs.push_back(addOutput(new OutputDataDefault<DataAVPacket>(m)));
+		outputs.push_back(addOutput<OutputDataDefault<DataAVPacket>>(m));
 		av_dump_format(m_formatCtx, i, "", 0);
 	}
 }

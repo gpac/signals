@@ -17,7 +17,7 @@ SoundGenerator::SoundGenerator()
 	pcmFormat.sampleFormat = S16;
 	pcmFormat.sampleRate = SAMPLE_RATE;
 	pcmFormat.numPlanes = 1;
-	output = addOutput(new OutputPcm);
+	output = addOutput<OutputPcm>();
 }
 
 void SoundGenerator::process(Data /*data*/) {

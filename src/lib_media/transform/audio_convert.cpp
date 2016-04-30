@@ -12,7 +12,7 @@ AudioConvert::AudioConvert(const PcmFormat &dstFormat)
 	memset(&srcPcmFormat, 0, sizeof(srcPcmFormat));
 	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
-	output = addOutput(new OutputPcm);
+	output = addOutput<OutputPcm>();
 }
 
 AudioConvert::AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstFormat)
@@ -21,7 +21,7 @@ AudioConvert::AudioConvert(const PcmFormat &srcFormat, const PcmFormat &dstForma
 	configure(srcPcmFormat);
 	auto input = addInput(new Input<DataPcm>(this));
 	input->setMetadata(new MetadataRawAudio);
-	output = addOutput(new OutputPcm);
+	output = addOutput<OutputPcm>();
 }
 
 AudioConvert::~AudioConvert() {

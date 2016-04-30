@@ -32,21 +32,20 @@ LibavDecode::LibavDecode(const MetadataPktLibav &metadata)
 	//force single threaded as h264 probing seems to miss SPS/PPS and seek fails silently
 	ffpp::Dict dict;
 	dict.set("threads", "1");
-	if (avcodec_open2(codecCtx, codec, &dict) < 0) {
+	if (avcodec_open2(codecCtx, codec, &dict) < 0)
 		throw error("Couldn't open stream.");
-	}
 
 	switch (codecCtx->codec_type) {
 	case AVMEDIA_TYPE_VIDEO: {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavVideo(codecCtx));
-		videoOutput = addOutput(new OutputPicture(new MetadataRawVideo));
+		videoOutput = addOutput<OutputPicture>(new MetadataRawVideo);
 		break;
 	}
 	case AVMEDIA_TYPE_AUDIO: {
 		auto input = addInput(new Input<DataAVPacket>(this));
 		input->setMetadata(new MetadataPktLibavAudio(codecCtx));
-		audioOutput = addOutput(new OutputPcm(new MetadataRawAudio));
+		audioOutput = addOutput<OutputPcm>(new MetadataRawAudio);
 		break;
 	}
 	default:

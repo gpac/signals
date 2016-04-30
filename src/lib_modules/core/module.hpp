@@ -13,9 +13,18 @@
 
 namespace Modules {
 
-struct IModule : public IProcessor, public virtual IInputCap, public virtual IOutputCap {
+class IModule : public IProcessor, public virtual IInputCap, public virtual IOutputCap {
+public:
 	virtual ~IModule() noexcept(false) {}
 	virtual void flush() {}
+
+protected:
+	template <typename InstanceType, typename ...Args>
+	InstanceType* addOutput(Args&&... args) {
+		auto p = create<InstanceType>(getAllocatorSize(), std::forward<Args>(args)...);
+		addOutputInternal(p);
+		return safe_cast<InstanceType>(p);
+	}
 };
 
 class Module : public IModule, public ErrorCap, public LogCap, public InputCap {

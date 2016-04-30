@@ -9,7 +9,7 @@ namespace Modules {
 namespace In {
 
 VideoGenerator::VideoGenerator() {
-	output = addOutput(new OutputPicture);
+	output = addOutput<OutputPicture>();
 }
 
 void VideoGenerator::process(Data /*data*/) {

@@ -12,7 +12,7 @@ namespace Modules {
 namespace Mux {
 
 GPACMuxMPEG2TS::GPACMuxMPEG2TS() {
-	addOutput(new OutputDataDefault<DataAVPacket>(nullptr));
+	addOutput<OutputDataDefault<DataAVPacket>>();
 }
 
 GPACMuxMPEG2TS::~GPACMuxMPEG2TS() {

@@ -39,7 +39,7 @@ JPEGTurboDecode::JPEGTurboDecode()
 	: jtHandle(new JPEGTurbo) {
 	auto input = addInput(new Input<DataBase>(this));
 	input->setMetadata(new MetadataPktVideo);
-	output = addOutput(new OutputPicture(new MetadataRawVideo));
+	output = addOutput<OutputPicture>(new MetadataRawVideo);
 }
 
 JPEGTurboDecode::~JPEGTurboDecode() {

@@ -143,7 +143,7 @@ LibavEncode::LibavEncode(Type type, const LibavEncodeParams &params)
 		tok = strtok(nullptr, "- ");
 	}
 
-	output = addOutput(new OutputDataDefault<DataAVPacket>);
+	output = addOutput<OutputDataDefault<DataAVPacket>>();
 	switch (type) {
 	case Video: {
 		auto input = addInput(new Input<DataPicture>(this));

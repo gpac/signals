@@ -34,7 +34,7 @@ class ISOProgressiveReader {
 GPACDemuxMP4Full::GPACDemuxMP4Full()
 	: reader(new ISOProgressiveReader) {
 	addInput(new Input<DataRaw>(this));
-	output = addOutput(new OutputDefault);
+	output = addOutput<OutputDefault>();
 }
 
 GPACDemuxMP4Full::~GPACDemuxMP4Full() {

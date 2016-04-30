@@ -6,7 +6,7 @@ namespace Modules {
 		Restamp::Restamp(Mode mode, int64_t offsetIn180k)
 		: offset(offsetIn180k), mode(mode) {
 			addInput(new Input<DataBase>(this));
-			addOutput(new OutputDefault);
+			addOutput<OutputDefault>();
 		}
 
 		Restamp::~Restamp() {
