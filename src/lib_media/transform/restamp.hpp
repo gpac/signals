@@ -5,7 +5,7 @@
 namespace Modules {
 	namespace Transform {
 
-		/* /!\ FIXME: modifies the data in-place: use this module synchronously */
+		/* /!\ FIXME: modifies the data in-place: use this module synchronously -> could be fixed via the create() factory? */
 		class Restamp : public ModuleS {
 		public:
 			enum Mode {

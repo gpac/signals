@@ -22,7 +22,6 @@ public:
 	virtual ~IOutput() noexcept(false) {}
 	virtual size_t emit(Data data) = 0;
 	virtual Signals::ISignal<void(Data)>& getSignal() = 0;
-	virtual size_t getAllocatorSize() const = 0;
 };
 
 template<typename Allocator, typename Signal>
@@ -31,7 +30,7 @@ class OutputT : public IOutput, public MetadataCap {
 		typedef Allocator AllocatorType;
 
 		OutputT(size_t allocatorSize, IMetadata *metadata = nullptr)
-			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator(allocatorSize)), allocatorSize(allocatorSize) {
+			: MetadataCap(metadata), signal(g_executorOutputSync), allocator(new Allocator(allocatorSize)) {
 		}
 		virtual ~OutputT() noexcept(false) {
 			allocator->unblock();
@@ -50,10 +49,6 @@ class OutputT : public IOutput, public MetadataCap {
 			return allocator->template getBuffer<T>(size);
 		}
 
-		virtual size_t getAllocatorSize() const override {
-			return allocatorSize;
-		}
-
 		Signals::ISignal<void(Data)>& getSignal() override {
 			return signal;
 		}
@@ -61,11 +56,15 @@ class OutputT : public IOutput, public MetadataCap {
 	private:
 		Signal signal;
 		std::unique_ptr<Allocator> allocator;
-		const size_t allocatorSize;
 };
 
 template<typename DataType> using OutputDataDefault = OutputT<PacketAllocator<DataType>, SignalDefaultSync>;
 typedef OutputDataDefault<DataRaw> OutputDefault;
+
+template <typename InstanceType, typename ...Args>
+InstanceType* createOutput(size_t allocatorSize, Args&&... args) {
+	return new InstanceType(allocatorSize, std::forward<Args>(args)...);
+}
 
 class IOutputCap {
 public:
@@ -74,12 +73,21 @@ public:
 	virtual IOutput* getOutput(size_t i) const = 0;
 
 protected:
+	template <typename InstanceType, typename ...Args>
+	InstanceType* addOutput(Args&&... args) {
+		auto p = createOutput<InstanceType>(getAllocatorSize(), std::forward<Args>(args)...);
+		addOutputInternal(p);
+		return safe_cast<InstanceType>(p);
+	}
+
+private:
 	virtual size_t getAllocatorSize() const = 0;
 	virtual void addOutputInternal(IOutput *p) = 0;
 };
 
 class OutputCap : public virtual IOutputCap {
 	public:
+		OutputCap(size_t allocatorSize) : allocatorSize(allocatorSize) {}
 		virtual ~OutputCap() noexcept(false) {}
 
 		virtual size_t getNumOutputs() const override {
@@ -89,18 +97,17 @@ class OutputCap : public virtual IOutputCap {
 			return outputs[i].get();
 		}
 
-protected:
-	size_t getAllocatorSize() const override {
-		if (outputs.empty())
-			throw std::runtime_error("Cannot get allocator size with no pin instantiated.");
-		return outputs[0]->getAllocatorSize();
+private:
+	virtual size_t getAllocatorSize() const override {
+		assert(allocatorSize > 0);
+		return allocatorSize;
 	}
 	virtual void addOutputInternal(IOutput *p) override {
 		outputs.push_back(uptr(p));
 	}
 
-private:
 	std::vector<std::unique_ptr<IOutput>> outputs;
+	const size_t allocatorSize;
 };
 
 }

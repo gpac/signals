@@ -12,12 +12,12 @@ namespace Modules {
 template <typename InstanceType>
 struct ModuleDefault : public InstanceType, public OutputCap {
 	template <typename ...Args>
-	ModuleDefault(Args&&... args) : InstanceType(std::forward<Args>(args)...) {}
+	ModuleDefault(size_t allocatorSize, Args&&... args) : InstanceType(std::forward<Args>(args)...), OutputCap(allocatorSize) {}
 };
 
 template <typename InstanceType, typename ...Args>
 InstanceType* create(Args&&... args) {
-	return new ModuleDefault<InstanceType>(std::forward<Args>(args)...);
+	return new ModuleDefault<InstanceType>(ALLOC_NUM_BLOCKS_DEFAULT, std::forward<Args>(args)...);
 }
 
 template<typename Class>

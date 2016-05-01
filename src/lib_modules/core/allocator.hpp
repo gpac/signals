@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <list>
 #include <memory>
+#include <stdexcept>
 
 namespace Modules {
 
@@ -15,7 +16,9 @@ template<typename DataType>
 class PacketAllocator {
 	public:
 		typedef DataType MyType;
-		PacketAllocator(size_t numBlocks = ALLOC_NUM_BLOCKS_DEFAULT) : deleter(this) {
+		PacketAllocator(size_t numBlocks) : deleter(this) {
+			if (numBlocks == 0)
+				throw std::runtime_error("Cannot create an allocator with 0 block.");
 			for(size_t i=0; i < numBlocks; ++i) {
 				freeBlocks.push(Block());
 			}

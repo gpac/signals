@@ -7,6 +7,11 @@
 
 namespace Pipelines {
 
+template <typename InstanceType, typename ...Args>
+InstanceType* createModule(size_t allocatorSize, Args&&... args) {
+	return new Modules::ModuleDefault<InstanceType>(allocatorSize, std::forward<Args>(args)...);
+}
+
 struct IPipelinedModule : public Modules::IModule {
 	virtual bool isSource() const = 0;
 	virtual bool isSink() const = 0;
@@ -23,8 +28,11 @@ class Pipeline : public ICompletionNotifier {
 
 		template <typename InstanceType, typename ...Args>
 		IPipelinedModule* addModule(Args&&... args) {
-			auto rawModule = Modules::create<InstanceType>(std::forward<Args>(args)...);
-			return addModuleInternal(rawModule);
+			if (isLowLatency) {
+				return addModuleInternal(createModule<InstanceType>(Modules::ALLOC_NUM_BLOCKS_LOW_LATENCY, std::forward<Args>(args)...));
+			} else {
+				return addModuleInternal(createModule<InstanceType>(Modules::ALLOC_NUM_BLOCKS_DEFAULT, std::forward<Args>(args)...));
+			}
 		}
 
 		void connect(Modules::IModule *prev, size_t outputIdx, Modules::IModule *next, size_t inputIdx);
