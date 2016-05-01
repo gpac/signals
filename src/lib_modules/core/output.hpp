@@ -80,7 +80,6 @@ protected:
 		return safe_cast<InstanceType>(p);
 	}
 
-private:
 	virtual size_t getAllocatorSize() const = 0;
 	virtual void addOutputInternal(IOutput *p) = 0;
 };
@@ -97,7 +96,7 @@ class OutputCap : public virtual IOutputCap {
 			return outputs[i].get();
 		}
 
-private:
+protected:
 	virtual size_t getAllocatorSize() const override {
 		assert(allocatorSize > 0);
 		return allocatorSize;
@@ -106,6 +105,7 @@ private:
 		outputs.push_back(uptr(p));
 	}
 
+private:
 	std::vector<std::unique_ptr<IOutput>> outputs;
 	const size_t allocatorSize;
 };

@@ -8,11 +8,11 @@
 
 namespace Modules {
 
-/* this default factory creates output pins with the default output - create nother one for other uses such as low latency */
+/* this default factory creates output pins with the default output - create another one for other uses such as low latency */
 template <typename InstanceType>
-struct ModuleDefault : public InstanceType, public OutputCap {
+struct ModuleDefault : public virtual OutputCap, public virtual InstanceType {
 	template <typename ...Args>
-	ModuleDefault(size_t allocatorSize, Args&&... args) : InstanceType(std::forward<Args>(args)...), OutputCap(allocatorSize) {}
+	ModuleDefault(size_t allocatorSize, Args&&... args) : OutputCap(allocatorSize), InstanceType(std::forward<Args>(args)...) {}
 };
 
 template <typename InstanceType, typename ...Args>
