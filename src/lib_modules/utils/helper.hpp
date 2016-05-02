@@ -10,7 +10,7 @@ namespace Modules {
 
 /* this default factory creates output pins with the default output - create another one for other uses such as low latency */
 template <typename InstanceType>
-struct ModuleDefault : public virtual OutputCap, public virtual InstanceType {
+struct ModuleDefault : public OutputCap, public InstanceType {
 	template <typename ...Args>
 	ModuleDefault(size_t allocatorSize, Args&&... args) : OutputCap(allocatorSize), InstanceType(std::forward<Args>(args)...) {}
 };

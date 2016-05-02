@@ -75,18 +75,21 @@ public:
 protected:
 	template <typename InstanceType, typename ...Args>
 	InstanceType* addOutput(Args&&... args) {
-		auto p = createOutput<InstanceType>(getAllocatorSize(), std::forward<Args>(args)...);
-		addOutputInternal(p);
+		auto p = createOutput<InstanceType>(allocatorSize, std::forward<Args>(args)...);
+		outputs.push_back(uptr(p));
 		return safe_cast<InstanceType>(p);
 	}
 
-	virtual size_t getAllocatorSize() const = 0;
-	virtual void addOutputInternal(IOutput *p) = 0;
+	/*FIXME: we need to have factories to move these back to the implementation - otherwise pins created from the constructor may crash*/
+	std::vector<std::unique_ptr<IOutput>> outputs;
+	/*const*/ size_t allocatorSize;
 };
 
 class OutputCap : public virtual IOutputCap {
 	public:
-		OutputCap(size_t allocatorSize) : allocatorSize(allocatorSize) {}
+		OutputCap(size_t allocatorSize) {
+			this->allocatorSize = allocatorSize;
+		}
 		virtual ~OutputCap() noexcept(false) {}
 
 		virtual size_t getNumOutputs() const override {
@@ -95,19 +98,6 @@ class OutputCap : public virtual IOutputCap {
 		virtual IOutput* getOutput(size_t i) const override {
 			return outputs[i].get();
 		}
-
-protected:
-	virtual size_t getAllocatorSize() const override {
-		assert(allocatorSize > 0);
-		return allocatorSize;
-	}
-	virtual void addOutputInternal(IOutput *p) override {
-		outputs.push_back(uptr(p));
-	}
-
-private:
-	std::vector<std::unique_ptr<IOutput>> outputs;
-	const size_t allocatorSize;
 };
 
 }

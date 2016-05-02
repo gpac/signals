@@ -53,18 +53,8 @@ class PipelinedInput : public IInput {
 		IProcessExecutor &executor;
 };
 
-/* Fake: requested by IOuputCap */
-struct OutputCapFake : public virtual IOutputCap {
-	virtual size_t getAllocatorSize() const override final {
-		throw Exception("getAllocatorSize() not implemented for Pipeline");
-	}
-	virtual void addOutputInternal(IOutput *p) override final {
-		throw Exception("addOutputInternal() not implemented for Pipeline");
-	}
-};
-
 /* Wrapper around the module. */
-class PipelinedModule : public ICompletionNotifier, public IPipelinedModule, public InputCap, public OutputCapFake {
+class PipelinedModule : public ICompletionNotifier, public IPipelinedModule, public InputCap {
 public:
 	/* take ownership of module */
 	PipelinedModule(IModule *module, ICompletionNotifier *notify)
