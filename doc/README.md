@@ -140,6 +140,10 @@ Debugging
 Mono-thread.
 
 
+Tests
+=====
+
+Tests can also be written within .cpp implementation.
 
 
 Technical considerations
