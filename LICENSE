@@ -2,7 +2,7 @@ Signals - a modern C++ framework to build modular applications.
 
 =====
 
-Other LICENSE files in subfolders superseeds this LICENSE file.
+Other LICENSE files in subfolders superseed this LICENSE file.
 
 The core of this projet is licensed under the permissive Apache 2.0 license. This is necessary because the project uses a lot of C++ templates embedded in headers.
 
