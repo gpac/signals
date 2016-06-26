@@ -16,7 +16,7 @@ template<typename DataType>
 class PacketAllocator {
 	public:
 		typedef DataType MyType;
-		PacketAllocator(size_t numBlocks) : deleter(this) {
+		PacketAllocator(size_t numBlocks) {
 			if (numBlocks == 0)
 				throw std::runtime_error("Cannot create an allocator with 0 block.");
 			for(size_t i=0; i < numBlocks; ++i) {
@@ -60,7 +60,6 @@ class PacketAllocator {
 
 	private:
 		PacketAllocator& operator= (const PacketAllocator&) = delete;
-		Deleter const deleter;
 		void recycle(DataType *p) {
 			if (!p->isRecyclable()) {
 				delete p;

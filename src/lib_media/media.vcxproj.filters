@@ -25,9 +25,6 @@
     <Filter Include="src\transform">
       <UniqueIdentifier>{ae8eabc9-587b-4dbf-868c-b02d323ccdfc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\stream">
-      <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\utils">
       <UniqueIdentifier>{90efad11-c1ad-4a9b-86ba-8008ba2676ae}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,9 @@
     </Filter>
     <Filter Include="src\common">
       <UniqueIdentifier>{7b279ce3-3778-402b-b35c-baf5278f3f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\stream">
+      <UniqueIdentifier>{198ffbe9-d495-48ef-a045-37f1f306b3d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
