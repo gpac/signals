@@ -11,7 +11,7 @@ CFLAGS+=-Wno-write-strings
 
 CFLAGS+=-D__STDC_CONSTANT_MACROS
 
-BIN=bin
+BIN?=bin
 SRC=src
 
 # default to debug mode

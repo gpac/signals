@@ -88,6 +88,12 @@ or
 $ PKG_CONFIG_PATH=$PWD/extra/x86_64-w64-mingw32/lib/pkgconfig CXX=x86_64-w64-mingw32-g++ ./check.sh
 ```
 
+### Out of tree builds
+
+```
+$ make BIN=subdir
+```
+
 # Run
 The binaries are in generated in ```bin/```including a sample player, the dashcastx application, and all the unit test apps.
 
