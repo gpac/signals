@@ -40,33 +40,4 @@ unittest("render: dynamic resolution") {
 	videoRender->process(pic2);
 }
 
-#ifdef __linux__
-unittest("render: A/V sync: separate threads") {
-	auto f = [&]() {
-		auto videoGen = uptr(create<In::VideoGenerator>);
-		auto videoRender = uptr(create<Render::SDLVideo>);
-		ConnectOutputToInput(videoGen->getOutput(0), videoRender);
-
-		for(int i=0; i < 25*5; ++i) {
-			videoGen->process(nullptr);
-		}
-	};
-	auto g = [&]() {
-		auto soundGen = uptr(create<In::SoundGenerator>);
-		auto soundRender = uptr(create<Render::SDLAudio>());
-		ConnectOutputToInput(soundGen->getOutput(0), soundRender);
-		for(int i=0; i < 25*5; ++i) {
-			soundGen->process(nullptr);
-		}
-	};
-
-	std::thread tf(f);
-
-	std::thread tg(g);
-
-	tf.join();
-	tg.join();
-}
-#endif
-
 }
