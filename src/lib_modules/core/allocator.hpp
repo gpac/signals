@@ -24,6 +24,12 @@ class PacketAllocator {
 			}
 		}
 
+		~PacketAllocator() {
+			Block block;
+			while(freeBlocks.tryPop(block))
+				delete block.data;
+		}
+
 		struct Deleter {
 			Deleter(PacketAllocator<DataType> *allocator) : allocator(allocator) {}
 			void operator()(DataType *p) const {
