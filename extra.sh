@@ -117,7 +117,7 @@ if [ ! -f extra/src/libjpeg_turbo_1.3.x/configure.ac ] ; then
 	mkdir -p extra/src
 	rm -rf extra/src/libjpeg_turbo_1.3.x
 	pushd extra/src
-	svn co svn://svn.code.sf.net/p/libjpeg-turbo/code/branches/1.3.x -r 1397 libjpeg_turbo_1.3.x
+	git clone https://github.com/libjpeg-turbo/libjpeg-turbo.git -b 1.3.x libjpeg_turbo_1.3.x
 	pushd libjpeg_turbo_1.3.x
 	autoreconf -fiv
 	popd
